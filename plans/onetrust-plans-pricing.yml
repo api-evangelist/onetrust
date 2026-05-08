@@ -7,35 +7,42 @@ created: '2026-05-08'
 modified: '2026-05-08'
 reconciled: false
 tags:
-- GRC
 - Privacy
+- GRC
 - Compliance
-- Risk
-- Ethics
+- Consent
+- TPRM
 - Plans
-description: Placeholder plans/pricing artifact for OneTrust. Replace with real published pricing once
-  the pipeline researches the provider's plans page.
-notes: Initial scaffold — plans/pricing have not yet been reconciled.
+description: OneTrust is enterprise-only and does not publish self-serve pricing tiers. Subscriptions
+  are scoped per module (Privacy Management, GRC, Consent, ESG, etc.).
+notes: Pricing varies significantly by modules selected, headcount, and geography.
 sources:
 - https://www.onetrust.com/
+- https://developer.onetrust.com/
 plans:
-- id: onetrust-default
-  name: To Be Reconciled
+- id: onetrust-enterprise
+  name: Enterprise (Module-Based)
   type: enterprise
-  description: Initial scaffold; replace with provider plan tiers once pricing is reconciled.
+  description: Enterprise subscription priced by module (Privacy Management, GRC, Consent, TPRM, ESG,
+    Ethics, AI Governance, Certification Automation).
   entries:
-  - label: API Access
-    name: api_access
+  - label: Module Subscription
+    name: module_subscription
     type: flat
-    metric: varies
+    metric: annual module subscription
     limit: -1
-    timeFrame: usage
+    timeFrame: yearly
     geo: global
     unit: 1
-    price: see https://www.onetrust.com/
+    price: contact sales
     userMultiplied: false
   elements:
-  - name: Pending Reconciliation
+  - name: Privacy Management
+  - name: Consent & Preferences (CMP)
+  - name: GRC
+  - name: Third-Party Risk Management
+  - name: AI Governance
+  - name: Certification Automation
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

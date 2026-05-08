@@ -7,26 +7,27 @@ created: '2026-05-08'
 modified: '2026-05-08'
 reconciled: false
 tags:
-- GRC
 - Privacy
+- GRC
 - Compliance
-- Risk
-- Ethics
+- Consent
+- TPRM
 - Rate Limiting
 - Quotas
 - Throttling
-description: Placeholder rate-limit artifact for OneTrust. Replace with real limits once researched.
-notes: Initial scaffold — limits have not yet been reconciled.
+description: OneTrust does not publicly publish per-API rate limits. Server-Side CMP and Platform APIs
+  respond with HTTP 429 when throttled.
+notes: Tenant-specific limits; consult OneTrust support for exact thresholds.
 sources:
-- https://www.onetrust.com/
+- https://developer.onetrust.com/
 responseCodes:
   throttled: 429
 limits:
-- name: Default
-  scope: account
-  metric: varies
-  limit: see provider documentation
-  notes: Pending reconciliation.
+- name: Default OneTrust Platform
+  scope: tenant
+  metric: requests
+  limit: not publicly documented
+  notes: HTTP 429 returned when throttled.
 policies:
 - name: Backoff Strategy
   description: Clients should implement exponential backoff with jitter and honor any Retry-After header.
