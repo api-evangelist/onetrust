@@ -1,0 +1,29 @@
+aid: onetrust
+url: https://raw.githubusercontent.com/api-evangelist/onetrust/refs/heads/main/apis.yml
+name: OneTrust
+x-type: company
+description: >-
+  OneTrust is a trust intelligence platform covering privacy management (consent, DSAR, CMP), GRC, ethics, ESG, and third-party risk for the enterprise.
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - GRC
+  - Privacy
+  - Compliance
+  - Risk
+  - Ethics
+created: '2026-05-08'
+modified: '2026-05-08'
+specificationVersion: '0.19'
+apis: []
+common:
+  - type: Website
+    url: https://www.onetrust.com/
+  - type: Plans
+    url: plans/onetrust-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/onetrust-rate-limits.yml
+  - type: FinOps
+    url: finops/onetrust-finops.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
