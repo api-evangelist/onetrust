@@ -92,6 +92,21 @@ common:
   url: rate-limits/onetrust-rate-limits.yml
 - type: FinOps
   url: finops/onetrust-finops.yml
+- type: Integrations
+  url: https://www.onetrust.com/integrations/
+integrations:
+  - name: OneTrust logo lockup, black
+  - name: spinner
+  - name: Acoustic
+  - name: Acxiom
+  - name: Adobe
+  - name: ALTR
+  - name: Amazon API Gateway
+  - name: Amazon Athena
+  - name: Amazon Dynamo DB
+  - name: amazon RDS
+  - name: Amazon Redshift
+  - name: OneTrust logo symbol, white
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
