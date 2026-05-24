@@ -98,6 +98,8 @@ common:
     url: finops/onetrust-finops.yml
   - type: Integrations
     url: https://www.onetrust.com/integrations/
+  - type: LLMsTxt
+    url: https://developer.onetrust.com/llms.txt
 integrations:
   - name: OneTrust logo lockup, black
   - name: spinner
