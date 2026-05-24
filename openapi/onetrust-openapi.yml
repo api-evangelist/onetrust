@@ -1,0 +1,277 @@
+openapi: 3.1.0
+info:
+  title: OneTrust Platform API
+  description: |
+    Cross-product REST API for the OneTrust platform covering Consent and
+    Preference Management, Data Subjects, Privacy Notices, Cookie & Domain
+    Management, Application (Mobile/OTT) scanning, and AI Governance.
+    Authentication primarily uses OAuth 2.0 Client Credentials issuing a JWT
+    bearer token; some collection-point operations exchange JWT tokens via a
+    dedicated endpoint.
+  version: "1.0.0"
+  contact:
+    name: OneTrust Developer Portal
+    url: https://developer.onetrust.com/onetrust/reference
+servers:
+  - url: https://app.onetrust.com
+    description: OneTrust production tenant (US). Replace host for EU/other tenants.
+security:
+  - BearerAuth: []
+tags:
+  - name: Consent
+  - name: Data Subjects
+  - name: Privacy Notices
+  - name: Cookies
+  - name: Domains
+  - name: Applications
+  - name: AI Governance
+paths:
+  /api/consentmanager/v3/datasubjects:
+    get:
+      tags: [Data Subjects]
+      summary: List data subjects (V4)
+      description: List data subjects by date range.
+      parameters:
+        - name: startDate
+          in: query
+          schema: { type: string, format: date-time }
+        - name: endDate
+          in: query
+          schema: { type: string, format: date-time }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+    post:
+      tags: [Data Subjects]
+      summary: Create or update a data subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/consentmanager/v3/datasubjects/{identifier}:
+    get:
+      tags: [Data Subjects]
+      summary: Retrieve data subject details
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+    delete:
+      tags: [Data Subjects]
+      summary: Delete a data subject profile (async)
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+  /api/consentmanager/v3/consentreceipts:
+    post:
+      tags: [Consent]
+      summary: Create consent receipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/consentmanager/v3/consentreceipts/bulk:
+    post:
+      tags: [Consent]
+      summary: Bulk import consent receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { type: object, additionalProperties: true }
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+  /api/consentmanager/v3/collectionpoints:
+    get:
+      tags: [Consent]
+      summary: List collection points
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+    post:
+      tags: [Consent]
+      summary: Create collection point
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201': { $ref: '#/components/responses/Generic' }
+  /api/consentmanager/v3/collectionpoints/token:
+    get:
+      tags: [Consent]
+      summary: Retrieve JWT collection point token
+      responses:
+        '200':
+          description: JWT token issued for a collection point.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+  /api/privacynotice/v1/notices:
+    get:
+      tags: [Privacy Notices]
+      summary: List privacy notices
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/privacynotice/v1/notices/{id}/versions:
+    get:
+      tags: [Privacy Notices]
+      summary: List privacy notice versions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/cookiemanager/v2/cookies:
+    post:
+      tags: [Cookies]
+      summary: Create cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201': { $ref: '#/components/responses/Generic' }
+    put:
+      tags: [Cookies]
+      summary: Update cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/cookiemanager/v2/cookies/bulk:
+    post:
+      tags: [Cookies]
+      summary: Bulk add cookies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { type: object, additionalProperties: true }
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+    delete:
+      tags: [Cookies]
+      summary: Bulk delete cookies
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+  /api/cookiemanager/v2/cookies/categorized:
+    get:
+      tags: [Cookies]
+      summary: Get categorized cookies by domain
+      parameters:
+        - name: domain
+          in: query
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/cookiemanager/v2/websites:
+    post:
+      tags: [Domains]
+      summary: Add websites to scanner (bulk)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { type: object, additionalProperties: true }
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+    get:
+      tags: [Domains]
+      summary: List scanned websites
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/cookiemanager/v2/scans:
+    post:
+      tags: [Domains]
+      summary: Start website scans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '202': { $ref: '#/components/responses/Generic' }
+    get:
+      tags: [Domains]
+      summary: Check scan status
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+  /api/mobileconsent/v2/applications:
+    get:
+      tags: [Applications]
+      summary: List applications
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+    post:
+      tags: [Applications]
+      summary: Create application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201': { $ref: '#/components/responses/Generic' }
+  /api/aigovernance/v1/entities:
+    post:
+      tags: [AI Governance]
+      summary: Create entity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201': { $ref: '#/components/responses/Generic' }
+    get:
+      tags: [AI Governance]
+      summary: Get entity information
+      parameters:
+        - name: entityTypeName
+          in: query
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Generic' }
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT bearer token issued via OAuth 2.0 client credentials.
+  responses:
+    Generic:
+      description: Generic OneTrust API response.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
