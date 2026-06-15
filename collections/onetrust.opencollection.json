@@ -1,0 +1,427 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Data Subjects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List data subjects (V4)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects",
+            "params": [
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List data subjects by date range."
+        },
+        {
+          "info": {
+            "name": "Create or update a data subject",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create or update a data subject"
+        },
+        {
+          "info": {
+            "name": "Retrieve data subject details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects/:identifier",
+            "params": [
+              {
+                "name": "identifier",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve data subject details"
+        },
+        {
+          "info": {
+            "name": "Delete a data subject profile (async)",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects/:identifier",
+            "params": [
+              {
+                "name": "identifier",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a data subject profile (async)"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Consent",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create consent receipt",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/consentreceipts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create consent receipt"
+        },
+        {
+          "info": {
+            "name": "Bulk import consent receipts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/consentreceipts/bulk",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk import consent receipts"
+        },
+        {
+          "info": {
+            "name": "List collection points",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints"
+          },
+          "docs": "List collection points"
+        },
+        {
+          "info": {
+            "name": "Create collection point",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create collection point"
+        },
+        {
+          "info": {
+            "name": "Retrieve JWT collection point token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints/token"
+          },
+          "docs": "Retrieve JWT collection point token"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Privacy Notices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List privacy notices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/privacynotice/v1/notices"
+          },
+          "docs": "List privacy notices"
+        },
+        {
+          "info": {
+            "name": "List privacy notice versions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/privacynotice/v1/notices/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List privacy notice versions"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Cookies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create cookie",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create cookie"
+        },
+        {
+          "info": {
+            "name": "Update cookie",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update cookie"
+        },
+        {
+          "info": {
+            "name": "Bulk add cookies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/bulk",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk add cookies"
+        },
+        {
+          "info": {
+            "name": "Bulk delete cookies",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/bulk"
+          },
+          "docs": "Bulk delete cookies"
+        },
+        {
+          "info": {
+            "name": "Get categorized cookies by domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/categorized",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get categorized cookies by domain"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Domains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List scanned websites",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/websites"
+          },
+          "docs": "List scanned websites"
+        },
+        {
+          "info": {
+            "name": "Add websites to scanner (bulk)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/websites",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add websites to scanner (bulk)"
+        },
+        {
+          "info": {
+            "name": "Check scan status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/scans"
+          },
+          "docs": "Check scan status"
+        },
+        {
+          "info": {
+            "name": "Start website scans",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/scans",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Start website scans"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Applications",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List applications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/mobileconsent/v2/applications"
+          },
+          "docs": "List applications"
+        },
+        {
+          "info": {
+            "name": "Create application",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/mobileconsent/v2/applications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create application"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "AI Governance",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get entity information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/aigovernance/v1/entities",
+            "params": [
+              {
+                "name": "entityTypeName",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get entity information"
+        },
+        {
+          "info": {
+            "name": "Create entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/aigovernance/v1/entities",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create entity"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
