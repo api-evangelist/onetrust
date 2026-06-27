@@ -28,7 +28,7 @@ apis:
     properties:
     - type: Documentation
       url: https://developer.onetrust.com/onetrust/reference
-    - type: QuickStart
+    - type: GettingStarted
       url: https://developer.onetrust.com/onetrust/reference/quick-start-guide
   - aid: onetrust:server-side-cmp
     name: Server-Side CMP API
@@ -98,7 +98,7 @@ common:
     url: finops/onetrust-finops.yml
   - type: Integrations
     url: https://www.onetrust.com/integrations/
-  - type: LLMsTxt
+  - type: LlmsText
     url: https://developer.onetrust.com/llms.txt
 integrations:
   - name: OneTrust logo lockup, black
