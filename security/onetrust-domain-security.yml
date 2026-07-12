@@ -1,0 +1,28 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.onetrust.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  5 03:46:04 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: developer.onetrust.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 14 01:05:41 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: app.onetrust.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 25 00:56:41 2026 GMT
+  hsts: null
+domains:
+- domain: onetrust.com
+  dnssec: true
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject

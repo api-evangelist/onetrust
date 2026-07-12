@@ -82,6 +82,12 @@ apis:
     - type: Documentation
       url: https://developer.onetrust.com/onetrust/docs
 common:
+  - type: TrustCenter
+    url: security/onetrust-trust-center.yml
+  - type: DomainSecurity
+    url: security/onetrust-domain-security.yml
+  - type: Authentication
+    url: authentication/onetrust-authentication.yml
   - type: GitHubOrganization
     url: https://github.com/onetrust
   - type: LinkedIn
@@ -100,6 +106,8 @@ common:
     url: https://www.onetrust.com/integrations/
   - type: LlmsText
     url: https://developer.onetrust.com/llms.txt
+  - url: https://www.onetrust.com/blog/
+    type: Blog
 integrations:
   - name: OneTrust logo lockup, black
   - name: spinner

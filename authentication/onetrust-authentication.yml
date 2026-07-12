@@ -1,0 +1,14 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/onetrust-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: BearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: JWT bearer token issued via OAuth 2.0 client credentials.
+  sources:
+  - openapi/onetrust-openapi.yml
