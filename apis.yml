@@ -82,6 +82,8 @@ apis:
     - type: Documentation
       url: https://developer.onetrust.com/onetrust/docs
 common:
+  - type: AgenticAccess
+    url: agentic-access/onetrust-agentic-access.yml
   - type: TrustCenter
     url: security/onetrust-trust-center.yml
   - type: DomainSecurity
