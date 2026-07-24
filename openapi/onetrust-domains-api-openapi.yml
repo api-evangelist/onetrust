@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: OneTrust Platform AI Governance Domains API
+  description: 'Cross-product REST API for the OneTrust platform covering Consent and
+
+    Preference Management, Data Subjects, Privacy Notices, Cookie & Domain
+
+    Management, Application (Mobile/OTT) scanning, and AI Governance.
+
+    Authentication primarily uses OAuth 2.0 Client Credentials issuing a JWT
+
+    bearer token; some collection-point operations exchange JWT tokens via a
+
+    dedicated endpoint.
+
+    '
+  version: 1.0.0
+  contact:
+    name: OneTrust Developer Portal
+    url: https://developer.onetrust.com/onetrust/reference
+servers:
+- url: https://app.onetrust.com
+  description: OneTrust production tenant (US). Replace host for EU/other tenants.
+security:
+- BearerAuth: []
+tags:
+- name: Domains
+paths:
+  /api/cookiemanager/v2/websites:
+    post:
+      tags:
+      - Domains
+      summary: Add websites to scanner (bulk)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+      responses:
+        '202':
+          $ref: '#/components/responses/Generic'
+    get:
+      tags:
+      - Domains
+      summary: List scanned websites
+      responses:
+        '200':
+          $ref: '#/components/responses/Generic'
+  /api/cookiemanager/v2/scans:
+    post:
+      tags:
+      - Domains
+      summary: Start website scans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '202':
+          $ref: '#/components/responses/Generic'
+    get:
+      tags:
+      - Domains
+      summary: Check scan status
+      responses:
+        '200':
+          $ref: '#/components/responses/Generic'
+components:
+  responses:
+    Generic:
+      description: Generic OneTrust API response.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT bearer token issued via OAuth 2.0 client credentials.
