@@ -5,7 +5,20 @@ kind: company
 description: OneTrust is an enterprise privacy, security, ethics, and ESG platform. Its developer portal
   exposes APIs across Privacy Management, Third-Party Risk (Vendorpedia), Cookie Consent (Server-Side
   CMP), Certification Automation, GRC, AI Guard, and a broad SDK suite for mobile, OTT/CTV, and web.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: enterprise
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Enterprise · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/onetrust.png
 tags:
   - Privacy
   - GRC
@@ -16,71 +29,138 @@ created: '2026-05-08'
 modified: '2026-05-08'
 specificationVersion: '0.19'
 apis:
-  - aid: onetrust:platform-api
-    name: OneTrust Platform API
-    description: Cross-product REST API reference for the OneTrust platform covering privacy, GRC, ethics,
-      third-party risk, and consent.
-    humanURL: https://developer.onetrust.com/onetrust/reference
-    tags:
-    - Privacy
-    - GRC
-    - REST
-    properties:
-    - type: Documentation
-      url: https://developer.onetrust.com/onetrust/reference
-    - type: GettingStarted
-      url: https://developer.onetrust.com/onetrust/reference/quick-start-guide
-  - aid: onetrust:server-side-cmp
-    name: Server-Side CMP API
-    description: Server-Side Consent Management Platform API for persisting consent, retrieving banner/preference
-      center UI, and logging consent. Supports IAB TCF 2.3 and GPP.
-    humanURL: https://developer.onetrust.com/onetrust/docs
-    tags:
-    - Consent
-    - CMP
-    - Privacy
-    - TCF
-    - GPP
-    properties:
-    - type: Documentation
-      url: https://developer.onetrust.com/onetrust/docs
-  - aid: onetrust:ai-guard
-    name: OneTrust AI Guard API
-    description: REST API for AI risk classifications and metrics. Includes POST /classifications/v1, POST
-      /metric, and GET /health.
-    humanURL: https://developer.onetrust.com/onetrust/docs
-    tags:
-    - AI
-    - Risk
-    - Classification
-    properties:
-    - type: Documentation
-      url: https://developer.onetrust.com/onetrust/docs
-  - aid: onetrust:vendorpedia
-    name: OneTrust Third-Party Risk (Vendorpedia) API
-    description: Vendor risk and assessment APIs for the OneTrust Third-Party Risk Management module (formerly
-      Vendorpedia).
-    humanURL: https://developer.onetrust.com/onetrust/reference
-    tags:
-    - TPRM
-    - Vendor Risk
-    - GRC
-    properties:
-    - type: Documentation
-      url: https://developer.onetrust.com/onetrust/reference
-  - aid: onetrust:sdks
-    name: OneTrust SDK Suite
-    description: Mobile (iOS, Android), OTT/CTV (Roku, Fire TV, Apple TV, Android TV, Web OS, Tizen), and
-      Website CMP SDKs.
-    humanURL: https://developer.onetrust.com/onetrust/docs
-    tags:
-    - SDK
-    - Mobile
-    - OTT
-    - Web
-    properties:
-    - type: Documentation
-      url: https://developer.onetrust.com/onetrust/docs
+- aid: onetrust:platform-api
+  name: OneTrust Platform API
+  description: >-
+    Cross-product REST API reference for the OneTrust platform covering privacy, GRC, ethics, third-party
+    risk, and consent.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Privacy
+  - GRC
+  - REST
+  properties:
+  - type: Documentation
+    url: https://developer.onetrust.com/onetrust/reference
+  - type: GettingStarted
+    url: https://developer.onetrust.com/onetrust/reference/quick-start-guide
+- aid: onetrust:server-side-cmp
+  name: Server-Side CMP API
+  description: >-
+    Server-Side Consent Management Platform API for persisting consent, retrieving banner/preference center
+    UI, and logging consent. Supports IAB TCF 2.3 and GPP.
+  humanURL: https://developer.onetrust.com/onetrust/docs
+  tags:
+  - Consent
+  - CMP
+  - Privacy
+  - TCF
+  - GPP
+  properties:
+  - type: Documentation
+    url: https://developer.onetrust.com/onetrust/docs
+- aid: onetrust:ai-guard
+  name: OneTrust AI Guard API
+  description: >-
+    REST API for AI risk classifications and metrics. Includes POST /classifications/v1, POST /metric,
+    and GET /health.
+  humanURL: https://developer.onetrust.com/onetrust/docs
+  tags:
+  - AI
+  - Risk
+  - Classification
+  properties:
+  - type: Documentation
+    url: https://developer.onetrust.com/onetrust/docs
+- aid: onetrust:vendorpedia
+  name: OneTrust Third-Party Risk (Vendorpedia) API
+  description: >-
+    Vendor risk and assessment APIs for the OneTrust Third-Party Risk Management module (formerly Vendorpedia).
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - TPRM
+  - Vendor Risk
+  - GRC
+  properties:
+  - type: Documentation
+    url: https://developer.onetrust.com/onetrust/reference
+- aid: onetrust:sdks
+  name: OneTrust SDK Suite
+  description: >-
+    Mobile (iOS, Android), OTT/CTV (Roku, Fire TV, Apple TV, Android TV, Web OS, Tizen), and Website CMP
+    SDKs.
+  humanURL: https://developer.onetrust.com/onetrust/docs
+  tags:
+  - SDK
+  - Mobile
+  - OTT
+  - Web
+  properties:
+  - type: Documentation
+    url: https://developer.onetrust.com/onetrust/docs
+- aid: onetrust:onetrust-ai-governance-api
+  name: OneTrust AI Governance API
+  description: The AI Governance API from OneTrust — 1 operation(s) for ai governance.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - AI Governance
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-ai-governance-api-openapi.yml
+- aid: onetrust:onetrust-applications-api
+  name: OneTrust Applications API
+  description: The Applications API from OneTrust — 1 operation(s) for applications.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Applications
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-applications-api-openapi.yml
+- aid: onetrust:onetrust-consent-api
+  name: OneTrust Consent API
+  description: The Consent API from OneTrust — 4 operation(s) for consent.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Consent
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-consent-api-openapi.yml
+- aid: onetrust:onetrust-cookies-api
+  name: OneTrust Cookies API
+  description: The Cookies API from OneTrust — 3 operation(s) for cookies.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Cookies
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-cookies-api-openapi.yml
+- aid: onetrust:onetrust-data-subjects-api
+  name: OneTrust Data Subjects API
+  description: The Data Subjects API from OneTrust — 2 operation(s) for data subjects.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Data Subjects
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-data-subjects-api-openapi.yml
+- aid: onetrust:onetrust-domains-api
+  name: OneTrust Domains API
+  description: The Domains API from OneTrust — 2 operation(s) for domains.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Domains
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-domains-api-openapi.yml
+- aid: onetrust:onetrust-privacy-notices-api
+  name: OneTrust Privacy Notices API
+  description: The Privacy Notices API from OneTrust — 2 operation(s) for privacy notices.
+  humanURL: https://developer.onetrust.com/onetrust/reference
+  tags:
+  - Privacy Notices
+  properties:
+  - type: OpenAPI
+    url: openapi/onetrust-privacy-notices-api-openapi.yml
 common:
   - type: AgenticAccess
     url: agentic-access/onetrust-agentic-access.yml
