@@ -1,0 +1,26 @@
+{
+  "provider": "onetrust",
+  "sources": [
+    "onetrust-ai-governance-api-openapi.yml",
+    "onetrust-applications-api-openapi.yml",
+    "onetrust-consent-api-openapi.yml",
+    "onetrust-cookies-api-openapi.yml",
+    "onetrust-data-subjects-api-openapi.yml",
+    "onetrust-domains-api-openapi.yml",
+    "onetrust-privacy-notices-api-openapi.yml"
+  ],
+  "outputs": [
+    "onetrust-ai-governance-api-openapi.yml",
+    "onetrust-applications-api-openapi.yml",
+    "onetrust-consent-api-openapi.yml",
+    "onetrust-cookies-api-openapi.yml",
+    "onetrust-data-subjects-api-openapi.yml",
+    "onetrust-domains-api-openapi.yml",
+    "onetrust-privacy-notices-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
