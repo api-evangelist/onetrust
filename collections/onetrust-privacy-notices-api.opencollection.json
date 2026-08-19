@@ -1,0 +1,53 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance Privacy Notices API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Privacy Notices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List privacy notices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/privacynotice/v1/notices"
+          },
+          "docs": "List privacy notices"
+        },
+        {
+          "info": {
+            "name": "List privacy notice versions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/privacynotice/v1/notices/:id/versions",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List privacy notice versions"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,57 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "AI Governance",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get entity information",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/aigovernance/v1/entities",
+            "params": [
+              {
+                "name": "entityTypeName",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get entity information"
+        },
+        {
+          "info": {
+            "name": "Create entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/aigovernance/v1/entities",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create entity"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

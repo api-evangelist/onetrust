@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance Data Subjects API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Data Subjects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List data subjects (V4)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects",
+            "params": [
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List data subjects by date range."
+        },
+        {
+          "info": {
+            "name": "Create or update a data subject",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create or update a data subject"
+        },
+        {
+          "info": {
+            "name": "Retrieve data subject details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects/:identifier",
+            "params": [
+              {
+                "name": "identifier",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve data subject details"
+        },
+        {
+          "info": {
+            "name": "Delete a data subject profile (async)",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/datasubjects/:identifier",
+            "params": [
+              {
+                "name": "identifier",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a data subject profile (async)"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

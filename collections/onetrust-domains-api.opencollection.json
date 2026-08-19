@@ -1,0 +1,76 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance Domains API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Domains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List scanned websites",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/websites"
+          },
+          "docs": "List scanned websites"
+        },
+        {
+          "info": {
+            "name": "Add websites to scanner (bulk)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/websites",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add websites to scanner (bulk)"
+        },
+        {
+          "info": {
+            "name": "Check scan status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/scans"
+          },
+          "docs": "Check scan status"
+        },
+        {
+          "info": {
+            "name": "Start website scans",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/scans",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Start website scans"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

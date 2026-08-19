@@ -1,0 +1,223 @@
+{
+  "item": [
+    {
+      "id": "8ec5f3b2-84f6-4b37-983b-5303a24aff64",
+      "name": "Privacy Notices",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "2b16abe8-303b-4710-866a-65a3ee6fc437",
+          "name": "List privacy notices",
+          "request": {
+            "name": "List privacy notices",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "privacynotice",
+                "v1",
+                "notices"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2f33df3b-1cf1-41ba-9fad-e6ad8bcb52e8",
+              "name": "Generic OneTrust API response.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "privacynotice",
+                    "v1",
+                    "notices"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": true,\n  \"key_1\": 3248.612234500764,\n  \"key_2\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8ea83e10-2c17-47a5-a541-d93ad340af8e",
+          "name": "List privacy notice versions",
+          "request": {
+            "name": "List privacy notice versions",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "privacynotice",
+                "v1",
+                "notices",
+                ":id",
+                "versions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "597a67e1-c5e3-4122-902b-0dd148aa2c85",
+              "name": "Generic OneTrust API response.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "privacynotice",
+                    "v1",
+                    "notices",
+                    ":id",
+                    "versions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": true,\n  \"key_1\": 3248.612234500764,\n  \"key_2\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://app.onetrust.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "81db17e5-8827-4c2e-b83a-84f152141ab6",
+    "name": "OneTrust Platform AI Governance Privacy Notices API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Cross-product REST API for the OneTrust platform covering Consent and\nPreference Management, Data Subjects, Privacy Notices, Cookie & Domain\nManagement, Application (Mobile/OTT) scanning, and AI Governance.\nAuthentication primarily uses OAuth 2.0 Client Credentials issuing a JWT\nbearer token; some collection-point operations exchange JWT tokens via a\ndedicated endpoint.\n\n\nContact Support:\n Name: OneTrust Developer Portal",
+      "type": "text/plain"
+    }
+  }
+}

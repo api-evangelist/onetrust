@@ -1,0 +1,91 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance Consent API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Consent",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create consent receipt",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/consentreceipts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create consent receipt"
+        },
+        {
+          "info": {
+            "name": "Bulk import consent receipts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/consentreceipts/bulk",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk import consent receipts"
+        },
+        {
+          "info": {
+            "name": "List collection points",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints"
+          },
+          "docs": "List collection points"
+        },
+        {
+          "info": {
+            "name": "Create collection point",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create collection point"
+        },
+        {
+          "info": {
+            "name": "Retrieve JWT collection point token",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/consentmanager/v3/collectionpoints/token"
+          },
+          "docs": "Retrieve JWT collection point token"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

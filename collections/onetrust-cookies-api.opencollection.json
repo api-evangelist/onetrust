@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OneTrust Platform AI Governance Cookies API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cookies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create cookie",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create cookie"
+        },
+        {
+          "info": {
+            "name": "Update cookie",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update cookie"
+        },
+        {
+          "info": {
+            "name": "Bulk add cookies",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/bulk",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk add cookies"
+        },
+        {
+          "info": {
+            "name": "Bulk delete cookies",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/bulk"
+          },
+          "docs": "Bulk delete cookies"
+        },
+        {
+          "info": {
+            "name": "Get categorized cookies by domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.onetrust.com/api/cookiemanager/v2/cookies/categorized",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get categorized cookies by domain"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
