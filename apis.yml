@@ -66,6 +66,10 @@ apis:
     and GET /health.
   humanURL: https://developer.onetrust.com/onetrust/docs
   tags:
+  - Artificial Intelligence
+  - Risk
+  - Classification
+  tags_raw:
   - AI
   - Risk
   - Classification
@@ -112,6 +116,8 @@ apis:
   description: The Applications API from OneTrust — 1 operation(s) for applications.
   humanURL: https://developer.onetrust.com/onetrust/reference
   tags:
+  - Application
+  tags_raw:
   - Applications
   properties:
   - type: OpenAPI
