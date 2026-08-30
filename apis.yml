@@ -156,6 +156,14 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/applications
   baseURL: https://app.onetrust.com
   tags:
+  - Application
+  - Cookies
+  - Domains
+  - Geolocation Rules
+  - Scans
+  - Scripts
+  - Templates
+  tags_raw:
   - Applications
   - Cookies
   - Domains
@@ -296,6 +304,15 @@ apis:
   - Data Asset Attributes
   - Data Asset Management
   - Data Assets
+  - Glossary
+  - Tags
+  - Terms
+  tags_raw:
+  - Catalog Search V1
+  - Catalog Search V2
+  - Data Asset Attributes
+  - Data Asset Management
+  - Data Assets
   - Glossaries
   - Tags
   - Terms
@@ -372,6 +389,13 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/audit-records
   baseURL: https://app.onetrust.com
   tags:
+  - Audit Records
+  - OAuth Token
+  - Organization
+  - User Groups
+  - User Groups V2
+  - Users V2
+  tags_raw:
   - Audit Records
   - OAuth Token
   - Organizations
@@ -484,6 +508,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/tasks
   baseURL: https://app.onetrust.com
   tags:
+  - Task
+  tags_raw:
   - Tasks
   properties:
   - type: OpenAPI

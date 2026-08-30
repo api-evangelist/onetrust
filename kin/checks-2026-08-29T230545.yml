@@ -1,21 +1,23 @@
 ---
 kin_checks:
   slug: onetrust
-  schema_version: 0.15.1
-  scored_at: '2026-08-28'
-  run_ts: 2026-08-28T221322
+  schema_version: 0.16.0
+  scored_at: '2026-08-29'
+  run_ts: 2026-08-29T230545
   note: Actionable checks only (missed + partial). earned/na are every other check
-    in rubric/scoring-0.15.1.yml; counts below let you verify that.
+    in rubric/scoring-0.16.0.yml; counts below let you verify that.
   counts:
     total: 130
-    earned: 58
-    partial: 17
-    missed: 31
+    earned: 50
+    partial: 19
+    missed: 37
     na: 24
   checks:
   - id: maintainer_present
     status: missed
   - id: base_url_per_api
+    status: missed
+  - id: well_known_published
     status: missed
   - id: apis_json_self_hosted
     status: missed
@@ -47,6 +49,8 @@ kin_checks:
     status: missed
   - id: vocabulary_published
     status: missed
+  - id: overlay_published
+    status: missed
   - id: roadmap_present
     status: missed
   - id: examples_published
@@ -57,10 +61,22 @@ kin_checks:
     status: missed
   - id: postman_present
     status: missed
+  - id: blog_present
+    status: missed
+    detail: pointer liveness 0.0
   - id: plans_multiple
     status: missed
+  - id: pricing_link
+    status: missed
+    detail: pointer liveness 0.0
   - id: sign_up_present
     status: missed
+  - id: privacy_policy
+    status: missed
+    detail: pointer liveness 0.0
+  - id: reg_privacy_policy
+    status: missed
+    detail: pointer liveness 0.0
   - id: reversibility_documented
     status: missed
   - id: idempotency
@@ -118,9 +134,17 @@ kin_checks:
     status: partial
     earned: 1.0
     detail: pointer liveness 0.5
+  - id: portal_present
+    status: partial
+    earned: 2.0
+    detail: pointer liveness 0.5
   - id: documentation_present
     status: partial
     earned: 2.0
+    detail: pointer liveness 0.5
+  - id: api_reference_present
+    status: partial
+    earned: 1.5
     detail: pointer liveness 0.5
   - id: getting_started_present
     status: partial
