@@ -1,0 +1,46 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — Consent & Preferences - Consent Management Platform (CMP)
+  version: 1.0.0
+extends: onetrust-consent-preferences-consent-management-platform-cmp-openapi.json
+x-apievangelist:
+  generated: '2026-08-27'
+  method: generated
+  source: openapi/onetrust-consent-preferences-consent-management-platform-cmp-openapi.json
+  note: Additive only. This overlay never mutates the original contract; apply it to a copy.
+actions:
+- target: $.info
+  description: Record where this contract was harvested from and what it covers.
+  update:
+    x-apievangelist-source: https://developer.onetrust.com/onetrust/openapi/consent-preferences-consent-management-platform-cmp.json
+    x-apievangelist-harvested: '2026-08-27'
+    x-apievangelist-operation-count: 6
+    x-apievangelist-catalog: https://developer.onetrust.com/onetrust/.well-known/api-catalog
+- target: $
+  description: 'Attach the cross-cutting runtime semantics OneTrust documents on the portal but does not put in
+    the contract: rate-limit headers, the absence of idempotency, pagination styles, and the deprecation signal.'
+  update:
+    x-apievangelist-rate-limit:
+      status: 429
+      headers:
+      - Retry-After
+      - ot-ratelimit-event-id
+      - ot-requests-allowed
+      - ot-period
+      - ot-request-made
+      account_hour: 200000
+      endpoint_minute: 1000
+      docs: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+    x-apievangelist-idempotency:
+      supported: false
+      note: No idempotency key exists anywhere in the OneTrust platform. Retried writes duplicate.
+    x-apievangelist-pagination:
+      styles:
+      - offset (page/size/sort)
+      - request-continuation (keyset)
+      docs: https://developer.onetrust.com/onetrust/reference/understanding-implementing-pagination
+    x-apievangelist-deprecation:
+      policy: https://developer.onetrust.com/onetrust/reference/onetrust-api-sunsetting-deprecation-guidelines
+      signal: RFC 7234 299 Warning header during the deprecation period; RFC 8594 Deprecation/Sunset headers are
+        NOT used.
+      list: https://developer.onetrust.com/onetrust/reference/deprecated-apis-list

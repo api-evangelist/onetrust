@@ -1,0 +1,76 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — Privacy Automation - Assessment Automation
+  version: 1.0.0
+extends: onetrust-privacy-automation-assessment-automation-openapi.json
+x-apievangelist:
+  generated: '2026-08-27'
+  method: generated
+  source: openapi/onetrust-privacy-automation-assessment-automation-openapi.json
+  note: Additive only. This overlay never mutates the original contract; apply it to a copy.
+actions:
+- target: $.info
+  description: Record where this contract was harvested from and what it covers.
+  update:
+    x-apievangelist-source: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+    x-apievangelist-harvested: '2026-08-27'
+    x-apievangelist-operation-count: 36
+    x-apievangelist-catalog: https://developer.onetrust.com/onetrust/.well-known/api-catalog
+- target: $.servers[0]
+  description: Name the concrete OneTrust environment hosts the {hostname} variable resolves to. OneTrust publishes
+    them at https://developer.onetrust.com/onetrust/reference/url-variables-for-apis-sdks but the contract does
+    not enumerate them.
+  update:
+    x-apievangelist-environments:
+    - app.onetrust.com
+    - app-ae.onetrust.com
+    - app-apac.onetrust.com
+    - app-au.onetrust.com
+    - app-br.onetrust.com
+    - app-ca.onetrust.com
+    - app-ch.onetrust.com
+    - app-de.onetrust.com
+    - app-eu.onetrust.com
+    - app-fr.onetrust.com
+    - na01.onetrust.com
+    - app-in.onetrust.com
+    - app-jp.onetrust.com
+    - app-uk.onetrust.com
+    - trial.onetrust.com
+    - uat.onetrust.com
+    - uat-de.onetrust.com
+    - uat-na01.onetrust.com
+- target: $
+  description: 'Attach the cross-cutting runtime semantics OneTrust documents on the portal but does not put in
+    the contract: rate-limit headers, the absence of idempotency, pagination styles, and the deprecation signal.'
+  update:
+    x-apievangelist-rate-limit:
+      status: 429
+      headers:
+      - Retry-After
+      - ot-ratelimit-event-id
+      - ot-requests-allowed
+      - ot-period
+      - ot-request-made
+      account_hour: 200000
+      endpoint_minute: 1000
+      docs: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+    x-apievangelist-idempotency:
+      supported: false
+      note: No idempotency key exists anywhere in the OneTrust platform. Retried writes duplicate.
+    x-apievangelist-pagination:
+      styles:
+      - offset (page/size/sort)
+      - request-continuation (keyset)
+      docs: https://developer.onetrust.com/onetrust/reference/understanding-implementing-pagination
+    x-apievangelist-deprecation:
+      policy: https://developer.onetrust.com/onetrust/reference/onetrust-api-sunsetting-deprecation-guidelines
+      signal: RFC 7234 299 Warning header during the deprecation period; RFC 8594 Deprecation/Sunset headers are
+        NOT used.
+      list: https://developer.onetrust.com/onetrust/reference/deprecated-apis-list
+- target: $
+  description: Operations in this document already flagged deprecated:true in the contract, surfaced as a document-level
+    list so a consumer sees them without walking every path.
+  update:
+    x-apievangelist-deprecated-operations:
+    - approveAssessmentUsingPOST

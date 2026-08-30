@@ -1,0 +1,505 @@
+generated: '2026-08-27'
+method: searched
+source: openapi/onetrust-ai-governance-openapi.json, openapi/onetrust-audit-api-openapi.json, openapi/onetrust-consent-preferences-consent-receipts-openapi.json,
+  openapi/onetrust-consent-preferences-cookie-consent-openapi.json, openapi/onetrust-consent-preferences-cookie-consent-swagger-openapi.json,
+  openapi/onetrust-consent-preferences-policy-notice-management-openapi.json, openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json,
+  openapi/onetrust-data-use-governance-data-catalog-openapi.json, openapi/onetrust-data-use-governance-data-discovery-openapi.json,
+  openapi/onetrust-esg-program-reporting-disclosures-openapi.json, openapi/onetrust-platform-access-management-openapi.json,
+  openapi/onetrust-platform-bulk-export-openapi.json, openapi/onetrust-platform-documents-openapi.json,
+  openapi/onetrust-platform-integrations-openapi.json, openapi/onetrust-platform-inventory-openapi.json,
+  openapi/onetrust-platform-object-manager-openapi.json, openapi/onetrust-platform-task-management-openapi.json,
+  openapi/onetrust-platform-user-provisioning-openapi.json, openapi/onetrust-privacy-automation-assessment-automation-openapi.json,
+  openapi/onetrust-privacy-automation-data-mapping-automation-openapi.json, openapi/onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json,
+  openapi/onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json, openapi/onetrust-privacy-automation-incident-management-openapi.json,
+  openapi/onetrust-tech-risk-compliance-audit-management-openapi.json, openapi/onetrust-tech-risk-compliance-compliance-automation-openapi.json,
+  openapi/onetrust-tech-risk-compliance-enterprise-policy-management-openapi.json, openapi/onetrust-tech-risk-compliance-issues-management-openapi.json,
+  openapi/onetrust-tech-risk-compliance-it-risk-management-openapi.json, openapi/onetrust-tech-risk-compliance-training-openapi.json,
+  openapi/onetrust-third-party-management-third-party-risk-management-openapi.json
+schemes:
+- name: OAUTH2
+  source: openapi/onetrust-ai-governance-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-audit-api-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-consent-preferences-consent-receipts-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-consent-preferences-cookie-consent-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: oauth2
+  source: openapi/onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-consent-preferences-policy-notice-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2
+  source: openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: ConsentAPI_OAUTH2
+  source: openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DSPreferneceCache_OAUTH2
+  source: openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DataUseGovernance-DataCatalog_OAUTH2
+  source: openapi/onetrust-data-use-governance-data-catalog-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DataUseGovernance-DataAssetManagement_OAUTH2
+  source: openapi/onetrust-data-use-governance-data-catalog-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DataUseGovernance-DataCatalogMetadataExchange_OAUTH2
+  source: openapi/onetrust-data-use-governance-data-catalog-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DataUseGovernance-DataDiscovery_OAUTH2
+  source: openapi/onetrust-data-use-governance-data-discovery-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2
+  source: openapi/onetrust-data-use-governance-data-discovery-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: oauth2
+  source: openapi/onetrust-esg-program-reporting-disclosures-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: Platform-AccessManagement_OAUTH2
+  source: openapi/onetrust-platform-access-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: AuditRecords_OAUTH2
+  source: openapi/onetrust-platform-access-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-bulk-export-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-documents-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-integrations-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-inventory-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-object-manager-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-task-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-platform-user-provisioning-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: PrivacyAutomation-AssessmentAutomation_OAUTH2
+  source: openapi/onetrust-privacy-automation-assessment-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: Template_OAUTH2
+  source: openapi/onetrust-privacy-automation-assessment-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-privacy-automation-data-mapping-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: oauth2
+  source: openapi/onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+- name: PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2
+  source: openapi/onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: PrivacyAutomation-DROPManagement_OAUTH2
+  source: openapi/onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-privacy-automation-incident-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-audit-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-compliance-automation-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-enterprise-policy-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-issues-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: TechRiskCompliance-ITRiskManagement_OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-it-risk-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: TechRiskCompliance-RiskTemplate_OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-it-risk-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: TechRiskCompliance-Risk_OAUTH2
+  source: openapi/onetrust-tech-risk-compliance-it-risk-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+- name: oauth2
+  source: openapi/onetrust-tech-risk-compliance-training-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+- name: OAUTH2
+  source: openapi/onetrust-third-party-management-third-party-risk-management-openapi.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+scopes:
+- scope: ACTIVITY_LOG
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-audit-api-openapi.json
+- scope: AI_GOVERNANCE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-ai-governance-openapi.json
+- scope: AI_GOVERNANCE_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-ai-governance-openapi.json
+- scope: AI_GOVERNANCE_WRITE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-ai-governance-openapi.json
+- scope: ASSESSMENT
+  description: Read, write and delete templates and assessments.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-assessment-automation-openapi.json
+- scope: ASSESSMENT_READ
+  description: Read the template and assessment information.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-assessment-automation-openapi.json
+- scope: ATTACHMENT
+  description: Grants access to view and manage attachments.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-documents-openapi.json
+- scope: ATTACHMENT_READ
+  description: Grants access to view attachments.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-documents-openapi.json
+- scope: AUDIT_MANAGEMENT
+  description: READ, WRITE and DELETE operations used for Audit Management.
+  described_in_docs: true
+  specs:
+  - onetrust-tech-risk-compliance-audit-management-openapi.json
+- scope: BULK_EXPORT
+  description: Grants access to view and manage bulk exports.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-bulk-export-openapi.json
+- scope: COMPLIANCE_AUTOMATION_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-compliance-automation-openapi.json
+- scope: COMPLIANCE_AUTOMATION_WRITE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-compliance-automation-openapi.json
+- scope: CONSENT
+  description: Read/write/delete operations inside the Consent & Preference Management module.
+  described_in_docs: true
+  specs:
+  - onetrust-consent-preferences-consent-receipts-openapi.json
+  - onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+- scope: CONSENT_READ
+  description: Read operations inside the Consent & Preference Management module.
+  described_in_docs: true
+  specs:
+  - onetrust-consent-preferences-consent-receipts-openapi.json
+  - onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+- scope: CONTROL
+  description: Access to Control Implementation operations for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-tech-risk-compliance-it-risk-management-openapi.json
+- scope: COOKIE
+  description: Read/write operations inside the Cookie Consent module.
+  described_in_docs: true
+  specs:
+  - onetrust-consent-preferences-cookie-consent-openapi.json
+  - onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+- scope: COOKIE_FREE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+- scope: COOKIE_READ
+  description: Read-only access to the Cookie Consent module.
+  described_in_docs: true
+  specs:
+  - onetrust-consent-preferences-cookie-consent-openapi.json
+  - onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+- scope: DATA_CATALOG_READ
+  description: Grants Read access to Data Catalog operations for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-data-use-governance-data-catalog-openapi.json
+- scope: DATA_CATALOG_WRITE
+  description: Grants Write access to Data Catalog operations for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-data-use-governance-data-catalog-openapi.json
+- scope: DATA_DISCOVERY
+  description: Access Data Discovery actions for external systems operating with on-premises accounts.
+  described_in_docs: true
+  specs:
+  - onetrust-data-use-governance-data-discovery-openapi.json
+- scope: DSAR
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+- scope: DSAR_READ
+  description: Read-only access to the Data Subject Access Requests module.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+- scope: DSAR_WRITE
+  description: Object creation and edit access to the Data Subject Access Requests module.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+- scope: ESG
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-esg-program-reporting-disclosures-openapi.json
+- scope: ESG_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-esg-program-reporting-disclosures-openapi.json
+- scope: INCIDENT
+  description: View and manage incident details.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-incident-management-openapi.json
+- scope: INCIDENT_CREATE
+  description: Create an incident.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-incident-management-openapi.json
+- scope: INCIDENT_READ
+  description: View an incident and its details.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-incident-management-openapi.json
+- scope: INTEGRATION
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-it-risk-management-openapi.json
+- scope: INTEGRATIONS
+  description: Invoke the Integration service API from an external system.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-integrations-openapi.json
+- scope: INVENTORY
+  description: Read, write and delete operations on the Inventory module.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-inventory-openapi.json
+  - onetrust-privacy-automation-data-mapping-automation-openapi.json
+- scope: INVENTORY_READ
+  description: Read operations on the Inventory module.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-data-mapping-automation-openapi.json
+  - onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+- scope: INVENTORY_WRITE
+  description: Write operations on the Inventory module.
+  described_in_docs: true
+  specs:
+  - onetrust-privacy-automation-data-mapping-automation-openapi.json
+  - onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+- scope: ISSUE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-platform-task-management-openapi.json
+  - onetrust-tech-risk-compliance-issues-management-openapi.json
+- scope: ISSUE_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-platform-task-management-openapi.json
+  - onetrust-tech-risk-compliance-issues-management-openapi.json
+- scope: ITRM
+  description: Access to ITRM operations for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-tech-risk-compliance-it-risk-management-openapi.json
+- scope: OBJECT_MANAGER
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-platform-object-manager-openapi.json
+- scope: OBJECT_MANAGER_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-platform-object-manager-openapi.json
+- scope: OBJECT_MANAGER_WRITE
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-platform-object-manager-openapi.json
+- scope: ORGANIZATION
+  description: Full access to manage organizations (Create, Read, Update, Delete).
+  described_in_docs: true
+  specs:
+  - onetrust-platform-access-management-openapi.json
+- scope: POLICY
+  description: Policy scope for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-consent-preferences-policy-notice-management-openapi.json
+  - onetrust-tech-risk-compliance-enterprise-policy-management-openapi.json
+- scope: POLICY_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-enterprise-policy-management-openapi.json
+- scope: RISK
+  description: Access to RISK operations for external systems.
+  described_in_docs: true
+  specs:
+  - onetrust-tech-risk-compliance-it-risk-management-openapi.json
+- scope: RISK_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-it-risk-management-openapi.json
+- scope: SCIM
+  description: Full access to the SCIM APIs for User Provisioning — Users, Groups, Resources, Schemas
+    and Service Provider endpoints.
+  described_in_docs: true
+  specs:
+  - onetrust-platform-user-provisioning-openapi.json
+- scope: TRAINING
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-training-openapi.json
+- scope: TRAINING_READ
+  description: null
+  described_in_docs: false
+  specs:
+  - onetrust-tech-risk-compliance-training-openapi.json
+- scope: USER
+  description: Full access to manage Users, User Groups and User Group membership (Create, Read, Update,
+    Delete).
+  described_in_docs: true
+  specs:
+  - onetrust-platform-access-management-openapi.json
+- scope: VRM
+  description: Read/write operations on VRM (Third-Party Risk) components.
+  described_in_docs: true
+  specs:
+  - onetrust-third-party-management-third-party-risk-management-openapi.json
+- scope: VRM_READ
+  description: View details of VRM components.
+  described_in_docs: true
+  specs:
+  - onetrust-third-party-management-third-party-risk-management-openapi.json
+docs: https://developer.onetrust.com/onetrust/reference/oauth-20-scopes
+provider: OneTrust
+providerId: onetrust
+summary: 'OneTrust publishes a full OAuth 2.0 scope reference: an Available Areas & Scopes table per cloud
+  (Platform, Privacy & Data Governance, Tech Risk & Compliance) giving each scope a description, and a
+  Scope to API Assignments table listing the exact METHOD + PATH each scope unlocks. That second table
+  is the useful one and it is rare — most providers document scope names and leave you to guess the mapping.
+  Scopes are selected when the client credential is created in Global Settings and cannot be widened at
+  token-request time, which is why a 403 is the most common OneTrust integration failure.'
+flow: clientCredentials
+token_url: https://{hostname}/api/access/v1/oauth/token
+scope_count: 51
+granularity: module + read/write split
+notes:
+- Scope names are UPPER_SNAKE and module-scoped; a read-only variant exists for most write scopes (CONSENT/CONSENT_READ,
+  INVENTORY/INVENTORY_READ, VRM/VRM_READ).
+- DATA_CATALOG_WRITE is documented with "No API Assignments" — a scope that currently unlocks nothing.
+- 'Every scope in the docs is also declared in at least one OpenAPI securityScheme, and the spec declares
+  a few the docs table does not describe; those are flagged described_in_docs: false below.'

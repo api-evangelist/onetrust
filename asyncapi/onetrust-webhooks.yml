@@ -1,0 +1,71 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://developer.onetrust.com/onetrust/docs/integrating-with-webhooks,
+  https://developer.onetrust.com/onetrust/reference/rate-limits-overview,
+  https://www.onetrust.com/integrations/
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust has a real webhook surface and no published event catalog. Webhook triggers are configured
+  in the OneTrust Integrations module — a customer picks the event and the destination URL inside the
+  application — so the event vocabulary is tenant-configurable rather than a fixed, documented list.
+  The strongest public evidence that the surface exists and carries production volume is the rate-limit
+  table: OneTrust provisions 3,000 webhook calls per minute against /integrationmanager/api/v1/webhook/*
+  and blocks the account for a minute past that. What is missing is the thing an agent or an integrator
+  needs — the names of the events, their payload schemas, the delivery/retry semantics, and any
+  signature verification scheme.
+asyncapi:
+  published: false
+  probes:
+  - url: https://developer.onetrust.com/onetrust/asyncapi.yaml
+    status: 404
+  - url: https://developer.onetrust.com/asyncapi.json
+    status: 200
+    verdict: SPA shell, not a document
+  note: >-
+    No AsyncAPI document is published. The RFC 9727 api-catalog at
+    https://developer.onetrust.com/onetrust/.well-known/api-catalog lists 37 entries and every one is
+    type application/vnd.oai.openapi+json — no AsyncAPI, no event contract.
+webhooks:
+  supported: true
+  direction: outbound
+  configuration: OneTrust application — Integrations menu, "webhook triggers"
+  docs:
+  - name: Integrating with Webhooks (developer portal)
+    url: https://developer.onetrust.com/onetrust/docs/integrating-with-webhooks
+  - name: Integrating with Webhooks (customer community)
+    url: https://my.onetrust.com/s/article/UUID-755dc243-6f00-3a47-4e15-f2faed0ac4af
+  - name: Getting Started with Integration Workflows
+    url: https://my.onetrust.com/s/article/UUID-36040ff3-8166-1ee0-8f70-1984d69cf1ee
+  - name: Managing Custom Integration Workflows
+    url: https://my.onetrust.com/s/article/UUID-24759a6f-c3a1-4919-d0d7-caa041d68727
+  transport: HTTP POST to a customer-defined endpoint URL
+  payload_format: JSON
+  rate_limit:
+    limit: 3000
+    window: minute
+    path: /integrationmanager/api/v1/webhook/*
+    on_violation: Traffic is blocked from the account for 1 minute.
+    source: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+  related_api:
+    spec: openapi/onetrust-platform-integrations-openapi.json
+    server: https://{hostname}/api/integrationmanager
+    note: >-
+      The Integrations API manages system credentials and workflows (Workflows V2). It is the control
+      plane for the integration/webhook machinery; it does not publish the event catalog.
+  event_catalog:
+    published: false
+    note: >-
+      No enumerated event list, no payload schemas, no documented retry/backoff policy, and no
+      documented signature header for verifying that a delivery came from OneTrust. A receiver cannot
+      authenticate a OneTrust webhook from the public documentation.
+gaps:
+- No AsyncAPI or CloudEvents contract.
+- No published event name registry.
+- No published payload schemas.
+- No documented delivery guarantees, retry policy or dead-letter behavior.
+- No documented signing/verification scheme for inbound deliveries.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
