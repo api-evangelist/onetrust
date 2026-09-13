@@ -1,0 +1,85 @@
+generated: '2026-08-27'
+method: probed
+source: https://developer.onetrust.com/mcp
+docs: https://developer.onetrust.com/onetrust/reference/mcp
+provider: OneTrust
+providerId: onetrust
+name: OneTrust Developer Portal MCP Server
+description: 'OneTrust hosts a public remote MCP server on its developer portal. It is documented on a
+  dedicated "MCP Server" page in the API reference, requires no authentication headers, and answered a
+  live tools/list with six tools. The server is the ReadMe developer-hub MCP: it navigates and executes
+  against OneTrust''s 37 published OpenAPI definitions rather than exposing a bespoke OneTrust product
+  tool surface. That is still a real, reachable agent surface — an agent can list, search and call any
+  OneTrust operation through it — but the tool names are generic and the per-operation input schema is
+  reached through get-endpoint rather than declared as a tool of its own.'
+deployment:
+  mode: remote
+  endpoint: https://developer.onetrust.com/mcp
+  auth: none
+  verified: probed
+  probe_prior: (never probed)
+  probe: live
+  probe_why: live
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
+transport: streamable-http
+evidence:
+  fetched: '2026-08-27'
+  url: https://developer.onetrust.com/mcp
+  method: POST
+  body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  http_status: 200
+  content_type: text/event-stream
+  tool_count: 6
+  raw: mcp/onetrust-mcp-tools.json
+clients_documented:
+- name: Cursor
+  config: '{"mcpServers":{"OneTrust Developer Portal":{"url":"https://developer.onetrust.com/mcp"}}}'
+- name: Windsurf
+  config: '{"mcpServers":{"OneTrust Developer Portal":{"serverUrl":"https://developer.onetrust.com/mcp"}}}'
+tools:
+- name: list-endpoints
+  title: List API Endpoints
+  description: Lists all API paths and their HTTP methods with summaries, organized by path.
+  input_schema_properties:
+  - title
+- name: get-endpoint
+  title: Get Endpoint Details
+  description: Gets detailed information about a specific API endpoint, including security schemes and
+    servers.
+  input_schema_properties:
+  - path
+  - method
+  - title
+- name: search-endpoints
+  title: Search API Endpoints
+  description: Deep search through paths, operations and parameters to discover relevant API endpoints.
+  input_schema_properties:
+  - pattern
+- name: list-specs
+  title: List OpenAPI Specs
+  description: Lists all available OpenAPI specs. Use the title to select a spec.
+  input_schema_properties: []
+- name: execute-request
+  title: Execute API Request
+  description: Executes an API request with a given HAR request object.
+  input_schema_properties:
+  - harRequest
+  - title
+  consequence: write
+  note: This is the only write-capable tool. It will execute ANY method against any OneTrust operation
+    the caller supplies credentials for, so agent policy must gate it, not the server.
+- name: get-server-variables
+  title: Get Server Variables
+  description: Gets the server variables for each server within a specific OpenAPI spec.
+  input_schema_properties:
+  - title
+caveats:
+- The server is a generic OpenAPI navigator, not a curated OneTrust product MCP. Tool names do not map
+  one-to-one to OneTrust resources.
+- No authentication is required to LIST the tools or read the specs; calling a OneTrust operation through
+  execute-request still requires the caller's own OAuth 2.0 bearer token.
+- mcp.onetrust.com does not resolve to an MCP server (nginx 404); app.onetrust.com/mcp returns 401.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

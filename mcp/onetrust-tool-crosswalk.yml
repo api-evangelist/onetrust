@@ -1,0 +1,112 @@
+generated: '2026-08-27'
+method: derived
+source: >-
+  mcp/onetrust-mcp-tools.json (live tools/list, HTTP 200, 2026-08-27) bound against the 37 OpenAPI
+  definitions in openapi/
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust's MCP surface and its REST surface do NOT have a one-to-one relationship, and saying so is
+  the point of this file. The six MCP tools are the ReadMe developer-hub navigator: five are META tools
+  that operate ON the OpenAPI documents (list them, search them, read one operation, read server
+  variables) and one — execute-request — is a universal proxy that can invoke ANY of the 631 REST
+  operations by handing it a HAR request object. So coverage is simultaneously total and zero: every
+  REST operation is reachable through exactly one tool, and no REST operation has a tool of its own.
+  An agent planning against this server discovers operations at runtime; it cannot read a tool list and
+  know what OneTrust can do.
+surfaces:
+  openapi:
+    count: 37
+    location: openapi/
+    catalog: https://developer.onetrust.com/onetrust/.well-known/api-catalog
+    gated: false
+  mcp:
+    url: https://developer.onetrust.com/mcp
+    gated: false
+    tools: 6
+  graphql:
+    published: false
+    note: No GraphQL surface found on any OneTrust host.
+crosswalk:
+- tool: list-endpoints
+  category: discovery
+  rest: []
+  binding: meta
+  confidence: high
+  note: Operates on the OpenAPI documents themselves; has no backing REST operation.
+- tool: list-specs
+  category: discovery
+  rest: []
+  binding: meta
+  confidence: high
+  note: >-
+    Enumerates the same 37 definitions the provider publishes at
+    https://developer.onetrust.com/onetrust/.well-known/api-catalog.
+- tool: search-endpoints
+  category: discovery
+  rest: []
+  binding: meta
+  confidence: high
+- tool: get-endpoint
+  category: schema
+  rest: []
+  binding: meta
+  confidence: high
+  note: >-
+    This is where an agent gets the real inputSchema for a OneTrust operation — parameters, requestBody,
+    security schemes and servers are returned from the OpenAPI document rather than declared on a tool.
+- tool: get-server-variables
+  category: schema
+  rest: []
+  binding: meta
+  confidence: high
+  note: >-
+    Returns the {hostname} server variable, which every OneTrust tenant must substitute
+    (app.onetrust.com, app-eu.onetrust.com, trial.onetrust.com, ...). Without this an agent cannot build
+    a callable URL.
+- tool: execute-request
+  category: universal-proxy
+  rest: ALL
+  binding: dynamic
+  confidence: high
+  note: >-
+    Binds to all 630 operations that carry an operationId (plus the one that does not) by accepting an
+    arbitrary HAR request. Consequence class is write — the tool itself imposes no method restriction,
+    so an agent's own policy is the only guard between it and DELETE /v3/system/{id}.
+mcp_only:
+- tool: list-specs
+  reason: Spec inventory is a documentation concept, not a OneTrust API resource.
+- tool: get-endpoint
+  reason: Schema introspection; the equivalent for a REST client is reading the OpenAPI file.
+- tool: get-server-variables
+  reason: Tenant host resolution; no OneTrust operation returns it.
+rest_only:
+  count: 631
+  note: >-
+    Every OneTrust operation is rest_only in the sense that matters for planning — none has a named MCP
+    tool. Reachability is via execute-request. Highest-consequence examples an agent could invoke
+    without any tool-level signal that it is destructive.
+  examples:
+  - operationId: deleteDataSubjectProfilesUsingDELETE
+    method: DELETE
+    path: /api/consentmanager/v2/datasubjects/profiles
+    spec: onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - operationId: deleteDomain
+    method: DELETE
+    path: /api/cmp/v1/domains/{domainId}
+    spec: onetrust-consent-preferences-cookie-consent-openapi.json
+  - operationId: bulkDeleteCookies
+    method: DELETE
+    path: /api/cmp/v1/webscans/cookies
+    spec: onetrust-consent-preferences-cookie-consent-openapi.json
+coverage:
+  mcp_tools: 6
+  mcp_tools_bound_to_rest: 1
+  mcp_tools_meta: 5
+  rest_operations: 631
+  rest_operations_with_named_tool: 0
+  rest_operations_reachable_via_proxy: 631
+  operation_id_coverage: '630/631'
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
