@@ -148,6 +148,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Application
+  tags_raw:
   - Applications
   properties:
   - type: OpenAPI
@@ -403,6 +405,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Assessment
+  tags_raw:
   - Assessments
   properties:
   - type: OpenAPI
@@ -831,6 +835,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Audit
+  tags_raw:
   - Audits
   properties:
   - type: OpenAPI
@@ -2280,6 +2286,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Control
+  tags_raw:
   - Controls
   properties:
   - type: OpenAPI
@@ -4912,6 +4920,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Glossary
+  tags_raw:
   - Glossaries
   properties:
   - type: OpenAPI
@@ -5933,6 +5943,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -7122,6 +7134,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Organization
+  tags_raw:
   - Organizations
   properties:
   - type: OpenAPI
@@ -10096,6 +10110,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Task
+  tags_raw:
   - Tasks
   properties:
   - type: OpenAPI
@@ -10183,6 +10199,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Templates
+  tags_raw:
   - Template
   properties:
   - type: OpenAPI
@@ -10610,6 +10628,8 @@ apis:
   humanURL: https://developer.onetrust.com/onetrust/reference/attribute-management
   baseURL: https://app.onetrust.com
   tags:
+  - Transaction
+  tags_raw:
   - Transactions
   properties:
   - type: OpenAPI
