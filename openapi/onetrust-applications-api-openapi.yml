@@ -1,0 +1,1978 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Cookie Consent Applications API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Cookie Consent APIs are used to integrate external systems and streamline the flow of data with Cookie Consent in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Applications
+  description: The Applications APIs are used to manage application configurations and their associated consent experiences.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+paths:
+  /api/cmp/v1/application:
+    post:
+      operationId: createApplication
+      summary: Create Application
+      description: Use this API to create a new application for scan and SDK publishing.
+      tags:
+      - Applications
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationRequestPublicDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationEntityPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+  /api/cmp/v1/application/{id}/scan:
+    put:
+      operationId: scanApplication
+      summary: Scan Application
+      description: Use this API to initiate an application scan with a file upload.
+      tags:
+      - Applications
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application to create the scan for
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: 'File to upload as part of the scan request. Maximum size: 500 MB.'
+                  type: string
+                  maxLength: 524288000
+              required:
+              - file
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationScanResponsePublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+  /api/cmp/v1/applications:
+    get:
+      operationId: getApplications
+      summary: Get List of Applications
+      description: Use this API to retrieve a paginated list of applications. The search parameter can be used to optionally filter results by name.
+      tags:
+      - Applications
+      parameters:
+      - name: searchStr
+        in: query
+        description: Search string to filter applications by name
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        example: My App
+      - name: sortBy
+        in: query
+        description: Field to sort by.
+        required: false
+        schema:
+          type: string
+          default: name
+          enum:
+          - name
+          - os
+        example: name
+      - name: direction
+        in: query
+        description: Sort direction.
+        required: false
+        schema:
+          type: string
+          default: asc
+          enum:
+          - asc
+          - desc
+        example: asc
+      - name: page
+        in: query
+        description: Page number (0-based)
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Page size
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageApplicationListPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/branding-attributes:
+    get:
+      operationId: getApplicationBrandingAttributeList
+      summary: Get Branding Attributes for Application
+      description: Use this API to retrieve branding attributes for the specified application.
+      tags:
+      - Applications
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: Resource ID (Application ID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationBrandingAttributesResponseDTO'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    put:
+      operationId: updateApplicationBrandingAttributesForPublicApi
+      summary: Update Branding Attributes for Application
+      description: Use this API to update branding attributes for the specified application.
+      tags:
+      - Applications
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: Resource ID (Application ID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationBrandingAttributesRequestDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BrandingAttributesUpdateResponseDTO'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+  /api/cmp/v1/applications/{id}/scans:
+    get:
+      operationId: getScans
+      summary: Get List of Application Scans
+      description: Use this API to retrieve a paginated list of scans associated with a specific application. The response includes each scan's ID, status, and summary data for detected SDKs and permissions.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application to retrieve scans for
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: scanDate
+          enum:
+          - status
+          - scanDate
+          - engineVersion
+        example: scanDate
+      - name: direction
+        in: query
+        description: Sort direction
+        required: false
+        schema:
+          type: string
+          default: asc
+          enum:
+          - asc
+          - desc
+        example: desc
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: pageSize
+        in: query
+        description: Page size
+        required: false
+        schema:
+          type: integer
+          default: 10
+          maximum: 100
+          minimum: 1
+        example: 10
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageApplicationScanDetailDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}:
+    get:
+      operationId: getSingleScan
+      summary: Get Application Scan
+      description: Use this API to retrieve the details of a single scan for a specific application. The response includes the scan's ID, status, date, and summary data for detected SDKs and permissions.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationScanDetailDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}/permissions:
+    get:
+      operationId: getScanPermissions
+      summary: Get List of Scan Permissions
+      description: Use this API to retrieve the list of permissions detected during a specific application scan. The response includes each permission's name, category, status, description, and sensitivity.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationScanPermissionPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}/privacy-manifest:
+    get:
+      operationId: getAppPrivacyManifest
+      summary: Get Scan Privacy Manifest
+      description: Use this API to retrieve a summary of the iOS privacy manifest analysis for a specific application scan. The response includes the manifest's edit version, supported versions, total data type count, and counts broken down by alignment status. Each data type entry includes the data type identifier, the number of SDKs associated with it, declared purposes, and any detected mismatches.\\n> \ud83d\uddd2 Things to Know\\n> \\n> - This endpoint is specific to iOS applications.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: version
+        in: query
+        description: Published version string of the privacy manifest to retrieve.If omitted, the latest version is used.
+        required: false
+        schema:
+          type: string
+        example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppPrivacyManifestResponsePublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}/privacy-manifest/{dataType}:
+    get:
+      operationId: getAppPrivacyManifestDatatype
+      summary: Get Privacy Manifest Data Type
+      description: Use this API to retrieve detailed mismatch information for a specific data type within an iOS privacy manifest scan. The response includes a breakdown of mismatches by category, with each mismatch entry identifying the SDK package, SDK name, and the differing app and SDK values.\\n> \ud83d\uddd2 Things to Know\\n> \\n> - This endpoint is specific to iOS applications.\\n> - The `dataType` path parameter corresponds to a `dataType` returned in the Get Scan Privacy Manifest API response (e.g., `USER_ID`, `OTHER_DIAGNOSTIC_DATA`).\\n> - Mismatch categories with no detected issues return an empty array rather than being omitted from the response.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: dataType
+        in: path
+        description: App Privacy Manifest data type to retrieve. Must be a valid AppPrivacyManifestDataType enum name (case-insensitive).
+        required: true
+        schema:
+          type: string
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        example: DEVICE_ID
+      - name: version
+        in: query
+        description: Published version string of the privacy manifest to retrieve. If omitted, the latest version is used.
+        required: false
+        schema:
+          type: string
+        example: 2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppPrivacyManifestResponseDatatypePublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}/sdks:
+    get:
+      operationId: getScanSdks
+      summary: Get List of Scan SDKs
+      description: Use this API to retrieve a paginated list of SDKs detected during a specific application scan. The response includes each SDK's ID, name, vendor, and default category. Results can be filtered and sorted using optional query parameters for name, vendor, default category, and the package ID.\\n> \ud83d\uddd2 Things to Know\\n> \\n> - SDKs returned by this endpoint are scan-detected SDKs and are different from Tracking Technology SDKs, which have custom descriptions and categories.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: name
+          enum:
+          - pkgId
+          - name
+          - category
+          - vendor
+        example: name
+      - name: direction
+        in: query
+        description: Sort direction
+        required: false
+        schema:
+          type: string
+          default: asc
+          enum:
+          - asc
+          - desc
+        example: desc
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: pageSize
+        in: query
+        description: Page size
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      - name: nameSearch
+        in: query
+        description: Filter SDKs whose name contains this value (case-insensitive)
+        required: false
+        schema:
+          type: string
+      - name: vendorSearch
+        in: query
+        description: Filter SDKs whose vendor contains this value (case-insensitive)
+        required: false
+        schema:
+          type: string
+      - name: defaultCategorySearch
+        in: query
+        description: Filter SDKs whose default category contains this value (case-insensitive)
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageApplicationScanSdkPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+  /api/cmp/v1/applications/{id}/scans/{scanId}/sdks/{sdk}:
+    get:
+      operationId: getScanSdkDetails
+      summary: Get Scan SDK
+      description: Use this API to retrieve detailed information about a single SDK detected during a specific application scan. The response includes the SDK's package ID, name, vendor, default category, and description.\\n> \ud83d\uddd2 Things to Know\\n> \\n> - SDKs returned by this endpoint are scan-detected SDKs and are different from Tracking Technology SDKs, which have custom descriptions and categories.
+      tags:
+      - Applications
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier of the application.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: Unique identifier a scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: sdk
+        in: path
+        description: Name or Key of the SDK.
+        required: true
+        schema:
+          type: string
+        example: org.xmlpull.v1.XmlPullParser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationScanSdkPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE_READ
+components:
+  schemas:
+    PageApplicationScanSdkPublicDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/ApplicationScanSdkPublicDto'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    ApplicationBrandingAttributesRequestDTO:
+      type: object
+      properties:
+        attributes:
+          description: List of application branding attributes to update.
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
+          example:
+          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: mob_aBannerTextColor
+            value: '#000000'
+            type: STRING
+          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            name: mob_aBannerCloseButtonTextColorDark
+            value: '#FFFFFF'
+            type: STRING
+    PageApplicationScanDetailDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/ApplicationScanDetailDto'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    ApplicationRequestPublicDto:
+      type: object
+      properties:
+        name:
+          description: Application Name
+          type: string
+          example: My Application
+          maxLength: 255
+          minLength: 1
+        solutionType:
+          description: The type of solution implemented by this Application
+          type: string
+          example: ONETRUST_SDK
+          enum:
+          - API
+          - ONETRUST_SDK
+        platform:
+          description: Platform of this Application
+          type: string
+          enum:
+          - IOS
+          - ANDROID
+          - APPLETV
+          - ANDROIDTV
+          - FIRETV
+          - ROKU
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        orgId:
+          description: Organization ID
+          type: string
+          example: org-123
+          maxLength: 255
+          minLength: 1
+    PublicApplicationBrandingAttributeDTO:
+      type: object
+      properties:
+        id:
+          description: Attribute ID
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: 'Application branding attributes to update. Allowed attributes (key: description)'
+          type: string
+          enum:
+          - mob_aBannerTextColor
+          - mob_aBannerCloseButtonTextColorDark
+          - mob_testShowCFDLWarningMsg
+          - mob_aBannerTextColorDark
+          - mob_aPCSearchBarTextColorDark
+          - mob_aBannerAcceptRejectTextColorDark
+          - mob_aBannerMPButtonTextColor
+          - mob_aBannerVendorListTextColor
+          - mob_aBannerManagePrefTextColorDark
+          - mob_aBannerShowImprintLink
+          - mob_showCFDLWarningMsg
+          - mob_aBannerPolicyLinkShow
+          - mob_aPCToggleInactiveColor
+          - mob_aPCSearchBarBGColorDark
+          - mob_aPCLineBreakColorDark
+          - mob_aPCButtonColor
+          - mob_aPCLogoUrl
+          - mob_aBannerLinkColorDark
+          - mob_aBannerMPButtonColor
+          - mob_aPCPolicyLinkQRCodeUrl
+          - mob_aBannerBackgroundColor
+          - mob_aBannerLinksTextColor
+          - mob_aPCCloseButtonTextColorDark
+          - mob_aPCShowLogo
+          - mob_aPCBGColorDark
+          - mob_aPCAcceptRejectTextColorDark
+          - mob_aPCAlwaysActiveTextColorDark
+          - mob_aPCSavePrefTextColorDark
+          - mob_aPCPolicyLinkTextColor
+          - mob_aBannerCloseButtonColorDark
+          - mob_aPCPurposeListItemAlwaysActiveLabelColor
+          - mob_aBannerContinueWithoutAcceptLinkColor
+          - mob_aPCButtonTextColor
+          - mob_aPCBackgroundColor
+          - mob_aPCLinkColorDark
+          - mob_aBannerVendorListLinkTextColorDark
+          - mob_aBannerPolicyLinkUrl
+          - mob_aBannerImprintLink
+          - mob_aPCLinksTextColor
+          - mob_aPCSavePrefColorDark
+          - mob_aPCenterVendorListLinkTextColor
+          - mob_aBannerAcceptRejectColorDark
+          - mob_aPCPolicyLinkShow
+          - mob_aPCTextColor
+          - mob_aPCPurposeListItemTitleTextColorDark
+          - mob_aBannerLogoShow
+          - mob_aBannerBGColorDark
+          - mob_aBannerButtonTextColor
+          - mob_aBannerLogoUrl
+          - mob_aBannerManagePrefColorDark
+          - mob_aOverrideTemplateStyling
+          - mob_aPCToggleTrackInActiveColorDark
+          - mob_aBannerPolicyLinkQRCodeUrl
+          - mob_aPCToggleActiveColor
+          - mob_aPCenterVendorListLinkText
+          - mob_aPCPolicyLinkText
+          - mob_aBannerVendorListText
+          - mob_aPCAcceptRejectColorDark
+          - mob_aPCPolicyLinkUrl
+          - mob_aBannerButtonColor
+          - mob_aBannerImprintLinkURL
+          - mob_aPCTextColorDark
+          - mob_aBannerPolicyLinkTextColor
+          - mob_aPCContinueWithoutAcceptLinkColor
+          - ott_aPCMPButtonTextColor
+          - ott_aBannerPolicyLinkQRCodeUrl
+          - ott_aBannerMPButtonColor
+          - ott_aPCMenuColor
+          - ott_aBannerContinueWithoutAcceptLinkColor
+          - ott_aPCPolicyLinkTextColor
+          - ott_aPCButtonFocusColor
+          - ott_aPCContinueWithoutAcceptLinkColor
+          - ott_aBannerPolicyLinkShow
+          - ott_aPCMenuTextColor
+          - ott_aPCTextColor
+          - ott_aBannerMPButtonTextColor
+          - ott_aBannerPolicyLinkText
+          - ott_aPCLinksTextColor
+          - ott_aBannerButtonFocusTextColor
+          - ott_aPCMenuActiveTextColor
+          - ott_aPCButtonTextColor
+          - ott_aPCPolicyLinkUrl
+          - ott_aPCMPButtonColor
+          - ott_aPCButtonBorderShow
+          - ott_aPCPolicyLinkShow
+          - ott_aPCButtonColor
+          - ott_aPCMenuFocusColor
+          - ott_aBannerButtonTextColor
+          - ott_aPCBackgroundColor
+          - ott_aBannerButtonColor
+          - ott_aOverrideTemplateStyling
+          - ott_aPCButtonFocusTextColor
+          - ott_aBannerButtonFocusColor
+          - ott_aPCPolicyLinkText
+          - ott_aOverrideTemplateStylings
+          - ott_aBannerPolicyLinkTextColor
+          - ott_aBannerLinksTextColor
+          - ott_aPCMenuFocusTextColor
+          - ott_BannerButtonBorderShow
+          - ott_aBannerTextColor
+          - ott_aBannerPolicyLinkUrl
+          - ott_aPCPolicyLinkQRCodeUrl
+          - ott_aPCMenuActiveColor
+          - ott_aBannerBackgroundColor
+          - ott_aPCLogoUrl
+          - ott_aBannerLogoUrl
+          x-enumDescriptions:
+            mob_aBannerTextColor: Mobile banner text color
+            ott_aPCMPButtonTextColor: OTT preference center multi-purpose button text color
+            ott_aBannerPolicyLinkQRCodeUrl: OTT banner policy link QR code URL
+            ott_aBannerMPButtonColor: OTT banner multi-purpose button color
+            mob_aBannerCloseButtonTextColorDark: Mobile banner close button text color (dark theme)
+            mob_testShowCFDLWarningMsg: Mobile CFDL warning message toggle (test)
+            mob_aBannerTextColorDark: Mobile banner text color (dark theme)
+            mob_aPCSearchBarTextColorDark: Mobile preference center search bar text color (dark theme)
+            mob_aBannerAcceptRejectTextColorDark: Mobile banner accept/reject text color (dark theme)
+            ott_aPCMenuColor: OTT preference center menu color
+            mob_aBannerMPButtonTextColor: Mobile banner multi-purpose button text color
+            mob_aBannerVendorListTextColor: Mobile banner vendor list text color
+            mob_aBannerManagePrefTextColorDark: Mobile banner manage preferences text color (dark theme)
+            mob_aBannerShowImprintLink: Mobile banner show/hide imprint link
+            mob_showCFDLWarningMsg: Mobile CFDL warning message toggle
+            mob_aBannerPolicyLinkShow: Mobile banner show/hide policy link
+            mob_aPCToggleInactiveColor: Mobile preference center toggle inactive color
+            ott_aBannerContinueWithoutAcceptLinkColor: OTT banner 'continue without accepting' link color
+            ott_aPCPolicyLinkTextColor: OTT preference center policy link text color
+            mob_aPCSearchBarBGColorDark: Mobile preference center search bar background color (dark theme)
+            mob_aPCLineBreakColorDark: Mobile preference center line break color (dark theme)
+            ott_aPCButtonFocusColor: OTT preference center button focus color
+            ott_aPCContinueWithoutAcceptLinkColor: OTT preference center 'continue without accepting' link color
+            ott_aBannerPolicyLinkShow: OTT banner show/hide policy link
+            ott_aPCMenuTextColor: OTT preference center menu text color
+            mob_aPCButtonColor: Mobile preference center button color
+            ott_aPCTextColor: OTT preference center text color
+            ott_aBannerMPButtonTextColor: OTT banner multi-purpose button text color
+            ott_aBannerPolicyLinkText: OTT banner policy link text
+            mob_aPCLogoUrl: Mobile preference center logo URL
+            ott_aPCLinksTextColor: OTT preference center links text color
+            mob_aBannerLinkColorDark: Mobile banner link color (dark theme)
+            ott_aBannerButtonFocusTextColor: OTT banner button focus text color
+            mob_aBannerMPButtonColor: Mobile banner multi-purpose button color
+            mob_aPCPolicyLinkQRCodeUrl: Mobile preference center policy link QR code URL
+            mob_aBannerBackgroundColor: Mobile banner background color
+            mob_aBannerLinksTextColor: Mobile banner links text color
+            ott_aPCMenuActiveTextColor: OTT preference center active menu text color
+            mob_aPCCloseButtonTextColorDark: Mobile preference center close button text color (dark theme)
+            mob_aPCShowLogo: Mobile preference center show/hide logo
+            mob_aPCBGColorDark: Mobile preference center background color (dark theme)
+            mob_aPCAcceptRejectTextColorDark: Mobile preference center accept/reject text color (dark theme)
+            mob_aPCAlwaysActiveTextColorDark: Mobile preference center always-active text color (dark theme)
+            mob_aPCSavePrefTextColorDark: Mobile preference center save preferences text color (dark theme)
+            mob_aPCPolicyLinkTextColor: Mobile preference center policy link text color
+            ott_aPCButtonTextColor: OTT preference center button text color
+            mob_aBannerCloseButtonColorDark: Mobile banner close button color (dark theme)
+            ott_aPCPolicyLinkUrl: OTT preference center policy link URL
+            mob_aPCPurposeListItemAlwaysActiveLabelColor: Mobile preference center purpose list always-active label color
+            ott_aPCMPButtonColor: OTT preference center multi-purpose button color
+            mob_aBannerContinueWithoutAcceptLinkColor: Mobile banner 'continue without accepting' link color
+            mob_aPCButtonTextColor: Mobile preference center button text color
+            mob_aPCBackgroundColor: Mobile preference center background color
+            mob_aPCLinkColorDark: Mobile preference center link color (dark theme)
+            ott_aPCButtonBorderShow: OTT preference center show/hide button border
+            mob_aBannerVendorListLinkTextColorDark: Mobile banner vendor list link text color (dark theme)
+            ott_aPCPolicyLinkShow: OTT preference center show/hide policy link
+            ott_aPCLogoUrl: OTT preference center logo URL
+            mob_aBannerPolicyLinkUrl: Mobile banner policy link URL
+            mob_aBannerImprintLink: Mobile banner imprint link text
+            ott_aPCButtonColor: OTT preference center button color
+            ott_aPCMenuFocusColor: OTT preference center menu focus color
+            ott_aBannerButtonTextColor: OTT banner button text color
+            ott_aPCBackgroundColor: OTT preference center background color
+            ott_aBannerButtonColor: OTT banner button color
+            mob_aPCLinksTextColor: Mobile preference center links text color
+            mob_aPCSavePrefColorDark: Mobile preference center save preferences button color (dark theme)
+            ott_aOverrideTemplateStyling: OTT override template styling
+            mob_aPCenterVendorListLinkTextColor: Mobile preference center vendor list link text color
+            ott_aPCButtonFocusTextColor: OTT preference center button focus text color
+            mob_aBannerAcceptRejectColorDark: Mobile banner accept/reject button color (dark theme)
+            mob_aPCPolicyLinkShow: Mobile preference center show/hide policy link
+            mob_aPCTextColor: Mobile preference center text color
+            mob_aPCPurposeListItemTitleTextColorDark: Mobile preference center purpose list item title text color (dark theme)
+            mob_aBannerLogoShow: Mobile banner show/hide logo
+            ott_aBannerButtonFocusColor: OTT banner button focus color
+            ott_aBannerLogoUrl: OTT banner logo URL
+            mob_aBannerBGColorDark: Mobile banner background color (dark theme)
+            ott_aPCPolicyLinkText: OTT preference center policy link text
+            mob_aBannerButtonTextColor: Mobile banner button text color
+            ott_aOverrideTemplateStylings: OTT override template stylings
+            ott_aBannerPolicyLinkTextColor: OTT banner policy link text color
+            ott_aBannerLinksTextColor: OTT banner links text color
+            mob_aBannerLogoUrl: Mobile banner logo URL
+            mob_aBannerManagePrefColorDark: Mobile banner manage preferences button color (dark theme)
+            ott_aPCMenuFocusTextColor: OTT preference center menu focus text color
+            mob_aOverrideTemplateStyling: Mobile override template styling
+            mob_aPCToggleTrackInActiveColorDark: Mobile preference center tracking toggle inactive color (dark theme)
+            ott_BannerButtonBorderShow: OTT banner show/hide button border
+            mob_aBannerPolicyLinkQRCodeUrl: Mobile banner policy link QR code URL
+            mob_aPCToggleActiveColor: Mobile preference center toggle active color
+            mob_aPCenterVendorListLinkText: Mobile preference center vendor list link text
+            ott_aBannerTextColor: OTT banner text color
+            ott_aBannerPolicyLinkUrl: OTT banner policy link URL
+            mob_aPCPolicyLinkText: Mobile preference center policy link text
+            mob_aBannerVendorListText: Mobile banner vendor list text
+            mob_aPCAcceptRejectColorDark: Mobile preference center accept/reject button color (dark theme)
+            mob_aPCPolicyLinkUrl: Mobile preference center policy link URL
+            ott_aPCPolicyLinkQRCodeUrl: OTT preference center policy link QR code URL
+            ott_aPCMenuActiveColor: OTT preference center active menu color
+            ott_aBannerBackgroundColor: OTT banner background color
+            mob_aBannerButtonColor: Mobile banner button color
+            mob_aBannerImprintLinkURL: Mobile banner imprint link URL
+            mob_aPCTextColorDark: Mobile preference center text color (dark theme)
+            mob_aBannerPolicyLinkTextColor: Mobile banner policy link text color
+            mob_aPCContinueWithoutAcceptLinkColor: Mobile preference center 'continue without accepting' link color
+        value:
+          description: Attribute value
+          type: object
+          example: '#000000'
+        type:
+          description: Attribute type
+          type: string
+          example: STRING
+          enum:
+          - STRING
+          - LONG
+          - BOOLEAN
+          - UUID
+    ApplicationScanDetailDto:
+      type: object
+      properties:
+        scanId:
+          description: Unique identifier for this scan
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        status:
+          description: Status of this scan
+          type: string
+          example: COMPLETED
+          enum:
+          - PENDING
+          - PROGRESS
+          - COMPLETED
+          - FAILED
+          - INTERRUPTED
+          - UNSCANNED
+        sdkCount:
+          description: Total number of SDKs found
+          type: integer
+          format: int32
+        sdkCategories:
+          description: SDK counts grouped by category
+          type: object
+          example:
+            Strictly Necessary: 10
+            Performance: 5
+            Functionality: 3
+            Targeting: 2
+            Unknown: 1
+          additionalProperties:
+            type: integer
+            format: int32
+        permissionCount:
+          description: Total number of permissions found
+          type: integer
+          format: int32
+        permissionCountHighRisk:
+          description: Number of high-risk permissions
+          type: integer
+          format: int32
+        permissionCategories:
+          description: Permission counts grouped by category
+          type: object
+          example:
+            Device Hardware: 4
+            Accounts: 1
+            Media: 1
+            System Notifications: 3
+            Security: 1
+          additionalProperties:
+            type: integer
+            format: int32
+        scanDate:
+          description: Date and time of the scan
+          type: string
+          format: date-time
+          example: '2022-01-01T00:00:00.000Z'
+        version:
+          description: Detected version of the given application
+          type: string
+          example: 1.0.0
+        engineVersion:
+          description: OneTrust mobile scan engine version used for this scan
+          type: string
+          example: 2.0.0
+    AppPrivacyManifestResponseDataPublicDto:
+      type: object
+      properties:
+        dataType:
+          description: The Privacy Manifest data type these results relate to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        sdkCount:
+          description: Number of SDKs detected that relate to this data type
+          type: integer
+          format: int32
+          example: 3
+        purposes:
+          description: Data collection purposes declared for this data type
+          type: array
+          items:
+            type: string
+            enum:
+            - THIRD_PARTY_ADVERTISING
+            - DEVELOPER_ADVERTISING
+            - ANALYTICS
+            - PRODUCT_PERSONALIZATION
+            - APP_FUNCTIONALITY
+            - OTHER
+            - UNKNOWN
+        mismatches:
+          description: Mismatch categories detected for this data type
+          type: array
+          items:
+            type: string
+            enum:
+            - NONE
+            - DATA_TYPE
+            - DATA_PURPOSE
+            - TRACKING
+            - USERLINK
+    BrandingAttributesUpdateResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Domain ID or Application ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+    ApplicationScanSdkPublicDto:
+      type: object
+      properties:
+        packageId:
+          description: PackageId of the SDK
+          type: string
+          example: org.apache.commons.math3
+        name:
+          description: Name of the SDK
+          type: string
+          example: Apache Commons Math Library
+        vendor:
+          description: Vendor for this SDK
+          type: string
+          example: Apache Software Foundation
+        category:
+          description: Categorisation of the SDK
+          type: string
+          example: Strictly Necessary
+        description:
+          description: Description for the SDK
+          type: string
+          example: The Apache Commons Math project is a library of lightweight, self-contained mathematics and statistics components addressing the most common practical problems not immediately available in the Java programming language or commons-lang.
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
+          type: boolean
+    ApplicationEntityPublicDto:
+      type: object
+      properties:
+        applicationId:
+          description: Application ID
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Application Name
+          type: string
+          example: My Application
+          maxLength: 255
+          minLength: 1
+        platform:
+          description: Application Platform
+          type: string
+          example: ANDROID
+          enum:
+          - ANDROID
+          - IOS
+          maxLength: 50
+          minLength: 1
+        fileType:
+          description: File Type
+          type: string
+          example: apk
+          enum:
+          - apk
+          - ipa
+          - aab
+          maxLength: 10
+          minLength: 3
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+    AppPrivacyManifestResponseDatatypePublicDto:
+      type: object
+      properties:
+        dataType:
+          description: The Privacy Manifest data type these results relate to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        mismatches:
+          description: Mismatches detected for this data type, keyed by mismatch category.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AppPrivacyManifestMismatchPublicDto'
+    ApplicationListPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the application
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the application
+          type: string
+          example: My Mobile App
+          maxLength: 255
+          minLength: 1
+        os:
+          description: Operating system type
+          type: string
+          example: ANDROID
+          enum:
+          - IOS
+          - ANDROID
+          - APPLETV
+          - ANDROIDTV
+          - FIRETV
+          - ROKU
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        status:
+          description: Current scan status of the application
+          type: string
+          example: COMPLETED
+          enum:
+          - PENDING
+          - PROGRESS
+          - COMPLETED
+          - FAILED
+          - INTERRUPTED
+          - UNSCANNED
+        publishStatus:
+          description: Publish status of the application
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        consentPolicyId:
+          description: Consent policy ID assigned to this application
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        consentPolicyName:
+          description: Name of the assigned consent policy
+          type: string
+          example: GDPR Policy
+          maxLength: 255
+          minLength: 1
+        consentPolicyAssignDate:
+          description: Date when consent policy was assigned
+          type: string
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+        orgId:
+          description: Organization ID that owns this application
+          type: string
+          example: org-123
+        orgName:
+          description: Organization name
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        scriptVersion:
+          description: Script version
+          type: string
+          example: 202603.1.0
+          maxLength: 100
+        createdDate:
+          description: Date when the application was created
+          type: string
+          format: date-time
+          example: '2024-01-01T10:00:00Z'
+        modifiedDate:
+          description: Date when the application was last modified
+          type: string
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+        publishedDate:
+          description: Date when the application was last published
+          type: string
+          format: date-time
+          example: '2024-01-10T10:00:00Z'
+    AppPrivacyManifestResponsePublicDto:
+      type: object
+      properties:
+        editVersion:
+          description: The current edit version of the Privacy Manifest
+          type: string
+          example: 2
+        versions:
+          description: All available edit versions for this application's Privacy Manifest
+          type: array
+          items:
+            type: string
+          example:
+          - '1'
+          - '2'
+        countTotal:
+          description: Total number of data types present in the scan results
+          type: integer
+          format: int32
+          example: 5
+        countAligned:
+          description: Number of data types that are fully aligned with the Privacy Manifest
+          type: integer
+          format: int32
+          example: 3
+        countMismatched:
+          description: Number of data types with at least one non-DATA_TYPE mismatch
+          type: integer
+          format: int32
+          example: 1
+        countMissing:
+          description: Number of data types missing from the Privacy Manifest declaration
+          type: integer
+          format: int32
+          example: 1
+        dataTypes:
+          description: Per-data-type scan summary, keyed by data type.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AppPrivacyManifestResponseDataPublicDto'
+    PageApplicationListPublicDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/ApplicationListPublicDto'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    AppPrivacyManifestMismatchPublicDto:
+      type: object
+      properties:
+        sdkPackageId:
+          description: Package identifier of the SDK that triggered this mismatch
+          type: string
+          example: com.google.firebase
+        sdkName:
+          description: Display name of the SDK that triggered this mismatch
+          type: string
+          example: Firebase
+        dataType:
+          description: The Privacy Manifest data type this mismatch relates to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        mismatch:
+          description: The category of mismatch detected
+          type: string
+          example: DATA_PURPOSE
+          enum:
+          - NONE
+          - DATA_TYPE
+          - DATA_PURPOSE
+          - TRACKING
+          - USERLINK
+        appValue:
+          description: The value declared in the app's Privacy Manifest
+          type: string
+          example: true
+        sdkValue:
+          description: The value detected in the SDK scan
+          type: string
+          example: false
+    ApplicationScanResponsePublicDto:
+      type: object
+      properties:
+        scanId:
+          description: Identifier of the created Application Scan
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+    ApplicationBrandingAttributesResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Application ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        resourceName:
+          description: Resource name (Application/Domain name)
+          type: string
+          example: My Application
+          maxLength: 255
+          minLength: 1
+        attributes:
+          description: Map of branding attributes keyed by attribute name
+          type: object
+          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
+          additionalProperties:
+            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    ApplicationScanPermissionPublicDto:
+      type: object
+      properties:
+        name:
+          description: Name of the permission
+          type: string
+          example: Use Fingerprint
+        category:
+          description: Categorisation of the permission
+          type: string
+          example: Device Hardware
+        description:
+          description: Description of the permission
+          type: string
+          example: Deprecated in API level 28. Use USE_BIOMETRIC instead.
+        status:
+          description: Status of the permission
+          type: string
+          example: Deprecated
+        sensitivity:
+          description: Sensitivity of the permission
+          type: string
+          example: Sensitive
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

@@ -1,0 +1,2212 @@
+openapi: 3.2.0
+info:
+  title: Tech Risk & Compliance - IT Risk Management Risks API
+  description: The IT Risk Management API provides comprehensive REST endpoints for managing enterprise security controls, threats, vulnerabilities, and their implementations with OAuth2 security and extensive customization capabilities.
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Risks
+  description: APIs to manage the complete risk lifecycle including creation, updates, deletion, search, and retrieval of risk details and attributes.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+  x-displayName: Risks
+paths:
+  /api/risk/v2/entities/risks/unlink:
+    post:
+      operationId: unlinkRisksFromEntityUsingPost
+      summary: Unlink Risks
+      description: 'Use this API to disassociate one or more risks from a target entity.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This operation removes the association between the specified risks and the target entity.
+
+        > - The risks themselves are not deleted, only the linkage is removed.
+
+        > - Multiple risks can be unlinked in a single request.'
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLinkRequest'
+      responses:
+        '200':
+          description: Risks unlinked successfully
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+  /api/risk/v2/risk-categories:
+    get:
+      operationId: getActiveCategoriesUsingGET
+      summary: Get List of Risk Categories
+      description: 'Use this API to retrieve a list of all risk categories. The response will include details for each risk category along with the corresponding category ID, name, and description.
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API will return all active risk categories.
+
+        > - Each category will include its ID, name, and description.'
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TechRiskCompliance-Risk_CategoryInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+        - RISK_READ
+  /api/risk/v2/risk-settings/matrix:
+    get:
+      operationId: getMatrixScoreSettingUsingGET
+      summary: Get Risk Matrix Configuration
+      description: Use this API to retrieve the risk score matrix configuration. The response will return risk details for all impact levels, scores, and probability levels.
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_MatrixRiskScoreSettingDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+  /api/risk/v2/risk-settings/standard:
+    get:
+      operationId: getStandardScoreSettingUsingGET
+      summary: Get Standard Risk Configuration
+      description: Use this API to retrieve the standard risk score configuration. The response will return all risk levels along with the corresponding ID, name, and minimum and maximum scores.
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_StandardRiskScoreSettingDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+  /api/risk/v2/risks:
+    post:
+      operationId: createRiskUsingPOST
+      summary: Create Risk
+      description: 'Use this API to create a new risk in the Risk Register. The response will include details of the created risk.
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API will create a new risk with the specified details.
+
+        > - The risk will be created in the default state.'
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskCreateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+  /api/risk/v2/risks/pages:
+    post:
+      operationId: getRiskPageViewUsingPOST
+      summary: Get List of Risks
+      description: Use this API to retrieve a paginated list of risks based on search criteria and sorting options.
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          example: 20
+          default: 20
+          maximum: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is descending.'
+        schema:
+          type: string
+          example: createdDate,desc
+          default: createdDate,desc
+          enum:
+          - number,asc
+          - number,desc
+          - name,asc
+          - name,desc
+          - orgGroupId,asc
+          - orgGroupId,desc
+          - createdDate,asc
+          - createdDate,desc
+          - description,desc
+          - description,asc
+          - controlImplementationCount,desc
+          - controlImplementationCount,asc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSearchRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_Page'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+        - RISK_READ
+  /api/risk/v2/risks/{riskEntityType}/{entityId}/risks:
+    post:
+      operationId: getLinkedRisksInformationUsingPOST
+      summary: Get List of Linked Risks
+      description: Use this API to retrieve risks linked to a specific entity type and ID.
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          example: 20
+          default: 20
+          maximum: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is descending.'
+        schema:
+          type: string
+          example: createdDate,desc
+          default: createdDate,desc
+          enum:
+          - number,asc
+          - number,desc
+          - name,asc
+          - name,desc
+          - orgGroupId,asc
+          - orgGroupId,desc
+          - createdDate,asc
+          - createdDate,desc
+          - description,desc
+          - description,asc
+          - controlImplementationCount,desc
+          - controlImplementationCount,asc
+      - name: riskEntityType
+        in: path
+        description: Type of the risk entity
+        required: true
+        schema:
+          type: string
+        example: ASSESSMENT
+      - name: entityId
+        in: path
+        description: Unique identifier of the entity
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      - name: Pageable information
+        in: query
+        description: Pagination and sorting parameters
+        required: true
+        schema:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_Pageable'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSearchRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_Page'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+        - RISK_READ
+  /api/risk/v2/risks/{riskId}:
+    get:
+      operationId: getRiskUsingGET
+      summary: Get Risk
+      description: Use this API to retrieve details of a specific risk by its unique identifier. The response includes comprehensive information about the risk, including its status, owners, approvers, and other attributes.
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: riskId
+        in: path
+        description: Unique identifier of the risk
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+        - RISK_READ
+  /api/risk/v3/risks:
+    post:
+      operationId: createStandAloneRiskUsingPOST
+      summary: Create Risk
+      description: 'Use this API to create a new risk in the Risk Register. The response will include details of the created risk.
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API will create a new risk with the specified details.
+
+        > - The risk will be created in the default state.
+
+        > - This is a standalone risk creation endpoint.'
+      tags:
+      - Risks
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-Risk_OAUTH2:
+        - INTEGRATION
+        - RISK
+components:
+  schemas:
+    TechRiskCompliance-Risk_RiskLinkRequest:
+      type: object
+      properties:
+        riskIds:
+          description: List of risk Ids that will be linked to or unlinked from the target entity. Must contain at least one valid risk ID
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: List of risk Ids that will be linked to or unlinked from the target entity. Must contain at least one valid risk ID
+          format: uuid
+          example:
+          - 123e4567-e89b-12d3-a456-426614174001
+          - 987fcdeb-51a2-43d7-9abc-123456789013
+          maxItems: 2147483647
+          minItems: 1
+        riskSourceInformation:
+          description: source information
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSourceInformation'
+        origin:
+          description: origin of the risk
+          type: string
+          example: RISK
+          enum:
+          - ASSESSMENT
+          - RISK
+      required:
+      - riskIds
+      - riskSourceInformation
+    TechRiskCompliance-Risk_InventoryInformation:
+      type: object
+      properties:
+        inventoryId:
+          description: Unique Identifier of the Inventory
+          type: string
+          format: uuid
+          example: 57a87cd3-0a1f-4439-bd5b-917e1d23eb5c
+        inventoryName:
+          description: Name of the Inventory
+          type: string
+          example: Raw Materials Inventory
+          maxLength: 2000
+        inventoryType:
+          description: Type of the Inventory
+          type: string
+          example: VENDORS
+          enum:
+          - ASSETS
+          - PROCESSING_ACTIVITIES
+          - VENDORS
+          - ENTITIES
+          deprecated: true
+        sourceType:
+          description: Type of Inventory
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        softInherited:
+          description: Soft Inherited flag
+          type: boolean
+          example: true
+        organizationId:
+          description: Unique Identifier of the organization
+          type: string
+          format: uuid
+          example: f8583fd1-21cb-4c7c-a337-2982246418e5
+    TechRiskCompliance-Risk_ProbabilityLevelDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: integer
+          format: int64
+        position:
+          type: integer
+          format: int64
+    TechRiskCompliance-Risk_StandardRiskScoreSettingDto:
+      type: object
+      properties:
+        riskLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDto'
+    TechRiskCompliance-Risk_Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+    TechRiskCompliance-Risk_BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier for the Entity
+          type: string
+          format: uuid
+          example: e549ec16-b42a-4612-a402-3fcce7cc5f78
+        name:
+          description: Name for the Entity
+          type: string
+          example: Acme Corp, John Doe
+          maxLength: 300
+    TechRiskCompliance-Risk_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the category
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the category
+          type: string
+          example: Security
+        nameKey:
+          description: Localization key for the category name
+          type: string
+          example: RiskCategory.Security
+        seeded:
+          description: Indicates if this is a seeded (pre-defined) category
+          type: boolean
+          example: true
+        archived:
+          description: Indicates if the category is archived
+          type: boolean
+          example: false
+        description:
+          description: Detailed description of the category
+          type: string
+          example: Security related risks and controls
+        descriptionKey:
+          description: Localization key for the category description
+          type: string
+          example: RiskCategory.Security.Description
+    TechRiskCompliance-Risk_ControlRequestDto:
+      type: object
+      properties:
+        identifier:
+          description: The identifier of the control.
+          type: string
+          example: A.1.1
+          maxLength: 50
+          minLength: 1
+        name:
+          description: The name of the control.
+          type: string
+          example: Control ABC
+          maxLength: 300
+          minLength: 1
+        orgGroupId:
+          description: The identifier of the organization the master control is linked to. In general, this is top organization in the org hierarchy.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        description:
+          description: Description of the control.
+          type: string
+          example: Testing Control
+          maxLength: 3000
+          minLength: 0
+        recommendation:
+          description: The recommendation status of this control based on Athena logic.
+          type: string
+          example: Recommended
+          maxLength: 500
+          minLength: 0
+        frameworkId:
+          description: Identifier of the framework the control is tied to.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        frameworkName:
+          description: Name of the framework the control is tied to.
+          type: string
+          example: NIST
+          maxLength: 500
+          minLength: 0
+        frameworkNameKey:
+          description: Identifier used for translation of Framework Name.
+          type: string
+          example: framework.NIST
+          maxLength: 500
+          minLength: 0
+        status:
+          description: The new status of the control. This can be Active, Archived, or Pending.
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Archived
+          - Pending
+        categoryId:
+          description: The identifier of the category tied to the control. Optional if no category is needed or if category name is provided.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        categoryName:
+          description: The name of the category tied to the control. Optional if category Id is provided.
+          type: string
+          example: Access Control
+          maxLength: 500
+          minLength: 0
+        categoryNameKey:
+          description: Identifier used for translation of category name. Optional if category Id is provided.
+          type: string
+          example: category.AccessControl
+          maxLength: 500
+          minLength: 0
+        attributes:
+          description: Custom Attributes
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        implementationGuidance:
+          description: Implementation guidance of control.
+          type: string
+          example: Testing Control
+      required:
+      - identifier
+      - name
+      - orgGroupId
+    TechRiskCompliance-Risk_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    TechRiskCompliance-Risk_EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Entity Type ID. This can be Assets, Entities, PIA, Engagement, Custom Object GUID in form of String.
+          type: string
+          example: 3f99b4ac-7c66-45b6-8ff4-63a67a3ec7be
+        label:
+          description: Entity Type Name
+          type: string
+          example: Inventory
+          maxLength: 512
+        translationKey:
+          description: Translation Key of Entity Type ID
+          type: string
+          example: OBJ.Objective
+          maxLength: 255
+        seeded:
+          description: For Base Entity Type Seeded is true and false for Custom Object/Entity Types by default.
+          type: boolean
+          example: false
+        sourceType:
+          description: Indicates whether this type can be source type or not in Risk
+          type: boolean
+          example: false
+        riskType:
+          description: Indicates whether this type can be risk type or not in Risk
+          type: boolean
+          example: true
+        eligibleForEntityLink:
+          description: Indicates whether entity type is eligible for linking/relating with risk or not
+          type: boolean
+          example: false
+        enabled:
+          description: Indicates whether the entity type is enabled or not.
+          type: boolean
+          example: false
+        moduleName:
+          description: Name of the module
+          type: string
+          example: Objective
+          maxLength: 255
+      required:
+      - id
+    TechRiskCompliance-Risk_MatrixRiskScoreSettingDto:
+      type: object
+      properties:
+        probabilityLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_ProbabilityLevelDto'
+          maxItems: 10
+          minItems: 2
+        impactLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_ImpactLevelDto'
+          maxItems: 10
+          minItems: 2
+        riskLevelRange:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDto'
+          maxItems: 5
+          minItems: 4
+        matrixRiskScores:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_MatrixRiskScoreDto'
+        updatedEntities:
+          type: array
+          items:
+            type: string
+            enum:
+            - PIA
+            - ASSETS
+            - PROCESSING_ACTIVITIES
+            - VENDORS
+            - ENTITIES
+            - ENGAGEMENTS
+          uniqueItems: true
+      required:
+      - matrixRiskScores
+    TechRiskCompliance-Risk_RiskReferenceInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - ASSESSMENT
+          - INVENTORY
+          - INCIDENT
+          - ENGAGEMENT
+          - GENERIC
+          deprecated: true
+        referenceType:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        name:
+          type: string
+        additionalAttributes:
+          type: object
+          additionalProperties:
+            type: object
+    TechRiskCompliance-Risk_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    TechRiskCompliance-Risk_RiskLevelDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayName:
+          type: string
+        score:
+          type: integer
+          format: int64
+        minScore:
+          type: number
+        maxScore:
+          type: number
+    TechRiskCompliance-Risk_RiskCategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Risk Category unique identifier
+          type: string
+          format: uuid
+          example: 46c58be9-4ab9-42ca-8f49-29fec6a5fb6e
+        name:
+          description: Risk Category name
+          type: string
+          example: Financial
+          maxLength: 100
+        nameKey:
+          description: Risk Category nameKey for localization support
+          type: string
+          example: RiskCategory.Financial
+          maxLength: 100
+        seeded:
+          description: Seeded category
+          type: boolean
+          example: false
+    TechRiskCompliance-Risk_BasicStageApproverDetails:
+      type: object
+      properties:
+        id:
+          description: UUID of the user
+          type: string
+          format: uuid
+          example: 3f99b4ac-7c66-45b6-8ff4-63a67a3ec7be
+        firstName:
+          description: first Name of the user
+          type: string
+          example: John
+          maxLength: 100
+        lastName:
+          description: last name of the user
+          type: string
+          example: Doe
+          maxLength: 100
+        approvedTimeStamp:
+          description: time stamp when the stage was approved
+          type: string
+          format: date-time
+          example: 32025-07-12T14:52:30.123Z
+        status:
+          description: status of the review
+          type: string
+          example: Accepted
+    TechRiskCompliance-Risk_BasicEntityDetailTranslation:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier for the Entity
+          type: string
+          format: uuid
+          example: e549ec16-b42a-4612-a402-3fcce7cc5f78
+        name:
+          description: Name for the Entity
+          type: string
+          example: Acme Corp, John Doe
+          maxLength: 300
+        nameKey:
+          description: Name key for entity detail translation
+          type: string
+          example: entity.detail
+          maxLength: 255
+        badgeColor:
+          description: Badge Color of the Entity
+          type: string
+          example: New
+          maxLength: 50
+    TechRiskCompliance-Risk_RiskLevelDetails:
+      type: object
+      properties:
+        levelId:
+          description: Risk level identifier
+          type: integer
+          format: int64
+        level:
+          description: Risk level name
+          type: string
+        impactLevelId:
+          description: Impact level identifier
+          type: integer
+          format: int64
+        impactLevel:
+          description: Impact level name
+          type: string
+        probabilityLevelId:
+          description: Probability level identifier
+          type: integer
+          format: int64
+        probabilityLevel:
+          description: Probability level name
+          type: string
+        riskScore:
+          description: Calculated risk score
+          type: number
+        levelGuid:
+          description: Risk level unique identifier
+          type: string
+          format: uuid
+        levelKey:
+          description: Risk level key
+          type: string
+        colorCode:
+          description: Risk level color code
+          type: string
+        impactLevelGuid:
+          description: Impact level unique identifier
+          type: string
+          format: uuid
+        impactLevelKey:
+          description: Impact level key
+          type: string
+        probabilityLevelGuid:
+          description: Probability level unique identifier
+          type: string
+          format: uuid
+        probabilityLevelKey:
+          description: Probability level key
+          type: string
+    TechRiskCompliance-Risk_BasicStageDetailTranslation:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier for the Entity
+          type: string
+          format: uuid
+          example: e549ec16-b42a-4612-a402-3fcce7cc5f78
+        name:
+          description: Name for the Entity
+          type: string
+          example: Acme Corp, John Doe
+          maxLength: 300
+        currentStageApprovers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicStageApproverDetails'
+          uniqueItems: true
+        nameKey:
+          description: Name key for entity detail translation
+          type: string
+          example: entity.detail
+          maxLength: 300
+        badgeColor:
+          description: Badge Color of the Stage
+          type: string
+          example: New
+          maxLength: 50
+    TechRiskCompliance-Risk_ThreatInformation:
+      type: object
+      properties:
+        id:
+          description: Threat Id
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        name:
+          description: Threat Name
+          type: string
+          example: Malware
+        identifier:
+          description: Threat Identifier
+          type: string
+          example: THRT123456
+    TechRiskCompliance-Risk_ControlCreateParameter:
+      type: object
+      properties:
+        primaryEntityId:
+          type: string
+          format: uuid
+        separateImplementationRequired:
+          type: boolean
+    TechRiskCompliance-Risk_AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    TechRiskCompliance-Risk_RiskRequest:
+      type: object
+      properties:
+        description:
+          description: description
+          type: string
+          maxLength: 4000
+          minLength: 0
+        treatmentPlan:
+          description: treatment plan
+          type: string
+          maxLength: 4000
+          minLength: 0
+        orgGroupId:
+          description: organization group id
+          type: string
+          format: uuid
+        riskApproversId:
+          description: list of approver ids
+          type: array
+          items:
+            type: string
+            format: uuid
+        inherentRiskLevel:
+          description: inherent risk level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        residualRiskLevel:
+          description: target risk level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        categoryIds:
+          description: risk categories' Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+        threatId:
+          description: risk threat' Id
+          type: string
+          format: uuid
+        vulnerabilityIds:
+          description: risk vulnerability' Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+        attributeValues:
+          description: Custom Attributes
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        targetRiskLevel:
+          description: target risk level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        deadline:
+          description: deadline, format - YYYY-MM-DDTHH:MM:SS.FFFZ
+          type: string
+          format: date-time
+        reminderDays:
+          description: number of days before the deadline when the reminder will be sent
+          type: integer
+          format: int64
+        riskOwners:
+          description: list of risk owners
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        relatedEntities:
+          description: list of linked entities
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSourceInformation'
+          uniqueItems: true
+        entityIdToControlIds:
+          description: Map of control and related entities
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+            uniqueItems: true
+        controlIds:
+          description: Set of Control Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        controlRequestDtos:
+          description: Ad Hoc control creation requests
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_ControlRequestDto'
+        controlIdToCreateParameter:
+          description: Map of controlId to create parameter
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_ControlCreateParameter'
+        riskTemplate:
+          description: risk template
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskTemplateIdentifier'
+        name:
+          description: name
+          type: string
+          maxLength: 300
+          minLength: 0
+        ignoreControlAutoInheritanceConfiguration:
+          type: boolean
+        treatment:
+          description: AKA remediation in current workflow
+          type: string
+          maxLength: 4000
+          minLength: 0
+        riskManager:
+          description: list of manager ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+      required:
+      - orgGroupId
+    TechRiskCompliance-Risk_AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    TechRiskCompliance-Risk_MatrixRiskScoreDto:
+      type: object
+      properties:
+        impactLevelId:
+          type: integer
+          format: int64
+        impactPosition:
+          type: integer
+          format: int64
+        probabilityId:
+          type: integer
+          format: int64
+        probabilityPosition:
+          type: integer
+          format: int64
+        riskScore:
+          type: number
+    TechRiskCompliance-Risk_Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_PageableObject'
+        empty:
+          type: boolean
+    TechRiskCompliance-Risk_RiskCreateRequest:
+      type: object
+      properties:
+        type:
+          description: risk type
+          type: string
+          example: ASSETS
+        source:
+          description: source information
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSourceInformation'
+        associatedInventory:
+          description: associated inventory information
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSourceInformation'
+        description:
+          description: description
+          type: string
+          example: Ability to obtain sufficient liquidity for funding capacity
+          maxLength: 4000
+          minLength: 0
+        recommendation:
+          description: recommendation
+          type: string
+          example: 'Implement the required controls '
+          maxLength: 4000
+          minLength: 0
+        conditionGroupId:
+          description: condition Group Id for risk creation rule.
+          type: integer
+          format: int64
+        conditionGroupUuid:
+          description: condition Group uuid for risk creation rule.
+          type: string
+          format: uuid
+        riskOwnerId:
+          description: risk owner id
+          type: string
+          format: uuid
+          deprecated: true
+        riskOwner:
+          description: risk owner name
+          type: string
+          example: John Doe
+          deprecated: true
+        riskOwners:
+          description: list of risk owners
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+          example:
+          - id: 1c412288-b9fa-4fd6-98be-467b2824d33a
+            name: Maya Mohan
+        orgGroupId:
+          description: organization group id
+          type: string
+          format: uuid
+          example: b2dd4735-1347-4751-91c2-0b2d58174f9d
+        riskApproversId:
+          description: list of approver ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 1c412288-b9fa-4fd6-98be-467b2824d33a
+        deadline:
+          description: deadline, format - YYYY-MM-DDTHH:MM:SS.FFFZ
+          type: string
+          format: date-time
+          example: '2021-04-13T04:00:00.000Z'
+        reminderDays:
+          description: number of days before the deadline when the reminder will be sent
+          type: integer
+          format: int64
+          example: 2
+        probabilityLevelId:
+          description: probability level id
+          type: integer
+          format: int64
+          example: 3
+        probabilityLevel:
+          description: probability level name
+          type: string
+          example: High
+        impactLevelId:
+          description: impact level id
+          type: integer
+          format: int64
+          example: 1
+        impactLevel:
+          description: impact level name
+          type: string
+          example: Low
+        riskScore:
+          description: risk score
+          type: number
+          example: 4
+        levelId:
+          description: risk level Id
+          type: integer
+          format: int64
+          example: 2
+        systemCreated:
+          description: system created flag
+          type: boolean
+          example: false
+        categoryIds:
+          description: risk categories' Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 5d83f96b-ffb8-444e-b440-248a3103c663
+        controlIds:
+          description: risk controls' Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: []
+        threatId:
+          description: risk threat' Id
+          type: string
+          format: uuid
+          example: 1e235192-9987-4bae-b553-a3e3ca19d020
+        vulnerabilityIds:
+          description: risk vulnerability' Ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - bedb4c52-eb7c-4633-8e4d-264fe57b79a1
+        attributeValues:
+          description: Custom Attributes
+          type: object
+          example:
+            attributeSingleSelectValue.value1:
+            - id: 0d2455f5-0a3d-463c-831a-671b620f5d8c
+              value: '1'
+              valueKey: Risk.Attributes.44cc7a47-fc22-4339-a4f9-8bba492eba7f
+            attributeSingleSelectValue.value2: []
+            attributeSingleSelectValue.value11: []
+            attributeSingleSelectValue.value12: []
+            attributeSingleSelectValue.value18: []
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        ruleRootVersionId:
+          description: ruleRootVersion id
+          type: string
+          format: uuid
+          example: e0d3df1f-97c4-413d-a214-10b56d50f4bc
+        riskTemplate:
+          description: risk template
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskTemplateIdentifier'
+        targetRiskLevel:
+          description: target risk level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        name:
+          description: name for the risk
+          type: string
+          example: 'risk name for a test risk '
+          maxLength: 300
+          minLength: 0
+        treatment:
+          description: AKA remediation in current workflow
+          type: string
+          maxLength: 4000
+          minLength: 0
+        riskManager:
+          description: list of manager ids
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+      required:
+      - associatedInventory
+      - orgGroupId
+      - source
+      - type
+    TechRiskCompliance-Risk_RiskSearchRequest:
+      type: object
+      properties:
+        filters:
+          description: Map of field names to their filter values for exact matching +This will be a Map of String Key and Object value. 'fieldname' key is mandatory to be passed, followed by value, example could be like name as some riskName
+          type: object
+          additionalProperties:
+            type: object
+        predicates:
+          description: Set of attribute predicates for complex search conditions
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributePredicate'
+          uniqueItems: true
+        fullTextSearch:
+          description: Full text search term to search across risk fields
+          type: string
+          example: security breach
+        visibleColumns:
+          description: List of column names to include in the response
+          type: array
+          items:
+            type: string
+            description: List of column names to include in the response
+            example: '["name","state","sourceType"]'
+          example:
+          - name
+          - state
+          - sourceType
+        includeHierarchicalChildInventoryRisks:
+          description: Include risks associated with inventory related as children in Inventory hierarchy
+          type: boolean
+          example: false
+          default: 'false'
+    TechRiskCompliance-Risk_VulnerabilityInformation:
+      type: object
+      properties:
+        id:
+          description: Vulnerability Id
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        name:
+          description: Vulnerability Name
+          type: string
+          example: Cross-Site Scripting (XSS)
+        identifier:
+          description: Vulnerability Identifier
+          type: string
+          example: VULN123456
+    TechRiskCompliance-Risk_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    TechRiskCompliance-Risk_RiskInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the risk
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        level:
+          description: Level for the risk
+          type: string
+          example: Low
+        probabilityLevel:
+          description: Probability Level for the risk
+          type: string
+          example: Low
+        impactLevel:
+          description: Impact Level for the risk
+          type: string
+          example: Low
+        actionId:
+          description: ActionId for the Risk
+          type: integer
+          format: int64
+          example: 1
+        createdBy:
+          description: UUId of the user who created the the risk
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        state:
+          description: State of the risk
+          type: string
+          example: REDUCED
+          enum:
+          - IDENTIFIED
+          - RECOMMENDATION_ADDED
+          - RECOMMENDATION_SENT
+          - REMEDIATION_PROPOSED
+          - EXCEPTION_REQUESTED
+          - REDUCED
+          - RETAINED
+          - ARCHIVED_IN_VERSION
+          maxLength: 20
+        previousState:
+          description: Previous State of the risk
+          type: string
+          example: REDUCED
+          enum:
+          - IDENTIFIED
+          - RECOMMENDATION_ADDED
+          - RECOMMENDATION_SENT
+          - REMEDIATION_PROPOSED
+          - EXCEPTION_REQUESTED
+          - REDUCED
+          - RETAINED
+          - ARCHIVED_IN_VERSION
+        type:
+          description: Type of risk
+          type: string
+          example: ASSETS
+          enum:
+          - ASSESSMENTS
+          - ASSETS
+          - PROCESSING_ACTIVITIES
+          - VENDORS
+          - ENTITIES
+          - INCIDENTS
+          - ESG
+          - GENERAL
+          deprecated: true
+        riskType:
+          description: Type information of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        typeRefIds:
+          description: Type ref Ids for the risk
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+          - d1622fad-2186-4ed6-8133-33e3fde47759
+        sourceType:
+          description: Source Type for the risk
+          type: string
+          example: PIA
+          enum:
+          - PIA
+          - GRA
+          - INVENTORY
+          - INCIDENT
+          - ENGAGEMENT
+          - GENERIC
+          deprecated: true
+        riskSourceType:
+          description: Source type information of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        source:
+          description: Source information of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskSourceInformation'
+        description:
+          description: Description for the risk
+          type: string
+          example: Ability to obtain sufficient liquidity for funding capacity
+          maxLength: 4000
+        recommendation:
+          description: Recommendation for the risk
+          type: string
+          example: Establish a Liquidity Buffer
+          maxLength: 4000
+        remediationProposal:
+          description: Remediation Proposal for the risk
+          type: string
+          example: Develop a Liquidity Management Policy
+        riskOwnerId:
+          description: Unique identifier of the risk owner
+          type: string
+          format: uuid
+          example: 54a5730b-205b-4256-a9cf-59a7808ccb79
+          deprecated: true
+        riskOwner:
+          description: Name of the risk owner
+          type: string
+          example: John Doe
+          deprecated: true
+        riskOwnersId:
+          description: List of unique identifiers of the risk owners
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+          - d1622fad-2186-4ed6-8133-33e3fde47759
+          deprecated: true
+        riskOwnersName:
+          description: Name of the risk owner
+          type: string
+          example: John Doe
+          deprecated: true
+        orgGroup:
+          description: Org group details for the Risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        riskApproversId:
+          description: List of unique identifiers of the risk Approvers
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+          - 1622fad-2186-4ed6-8133-33e3fde47759
+          deprecated: true
+        requestedException:
+          description: Requested Exception of the risk
+          type: string
+          example: Established, undrawn committed credit facilities
+        mitigation:
+          description: Mitigation of the risk
+          type: string
+          example: 'Funding diversification efforts are ongoing '
+        justification:
+          description: Justification of the risk
+          type: string
+          example: Efforts to improve working capital management
+        deadline:
+          description: deadline for the risk
+          type: string
+          format: date-time
+          example: '2025-07-10T14:30:45.123Z'
+        mitigatedDate:
+          description: Mitigated date for the risk
+          type: string
+          format: date-time
+          example: '2025-07-10T14:30:45.123Z'
+        references:
+          description: References for the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskReferenceInformation'
+        createdUTCDateTime:
+          description: created timestamp for the risk
+          type: string
+          format: date-time
+          example: '2025-07-10T14:30:45.123Z'
+        lastModifiedUTCDateTime:
+          description: last updated timestamp for the risk
+          type: string
+          format: date-time
+          example: '2025-07-10T14:30:45.123Z'
+        updatedBy:
+          description: Details of the user who last updated the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        probabilityLevelId:
+          description: Probability Level Id of the risk
+          type: integer
+          format: int64
+          example: 2
+        impactLevelId:
+          description: Impact Level Id of the risk
+          type: integer
+          format: int64
+          example: 2
+        riskScore:
+          description: Risk score
+          type: number
+          example: 2
+        levelId:
+          description: Level Id of the risk
+          type: integer
+          format: int64
+          example: 2
+        levelDisplayName:
+          description: Level Name of the risk
+          type: string
+          example: Low
+        viewOnly:
+          type: boolean
+        number:
+          description: Number of the risk, autogenerated
+          type: integer
+          format: int64
+          example: 2
+        controlsIdentifier:
+          description: List of Controls associated with the risk
+          type: array
+          items:
+            type: string
+          example:
+          - 1.0.0
+          - '1.0'
+        creationType:
+          description: Creation Type of the risk
+          type: string
+        categories:
+          description: Categories associated with the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskCategoryInformation'
+        associatedInventories:
+          description: Inventories associated with the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_InventoryInformation'
+        riskApprovers:
+          description: Name of the risk approver
+          type: string
+          example: John Doe
+          deprecated: true
+        inherentRiskLevel:
+          description: Inherent Risk Level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        targetRiskLevel:
+          description: Target Risk Level
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_RiskLevelDetails'
+        treatment:
+          description: Treatment of the risk
+          type: string
+          example: Mitigation
+        result:
+          description: Result of the risk
+          type: string
+          example: Approved
+        treatmentStatus:
+          description: Treatment Status of the risk
+          type: string
+          example: In Progress
+        resultDetails:
+          description: Result Details of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        treatmentStatusDetails:
+          description: Treatment Status Details of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        workflow:
+          description: Details of the workflow for this risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetailTranslation'
+        stage:
+          description: Details of the stage for this risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicStageDetailTranslation'
+        deleteType:
+          description: Delete type of the risk
+          type: string
+          example: SOFT
+          enum:
+          - SOFT
+          - ARCHIVE
+          - MIGRATED
+        dateClosed:
+          description: Date closed for the risk
+          type: string
+          format: date-time
+          example: '2025-07-10T14:30:45.123Z'
+        threat:
+          description: threat for the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_ThreatInformation'
+        vulnerabilities:
+          description: list of vulnerabilities for the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_VulnerabilityInformation'
+        attributeValues:
+          description: Custom Attributes
+          type: object
+          example:
+            attributeSingleSelectValue.value1:
+            - id: 0d2455f5-0a3d-463c-831a-671b620f5d8c
+              value: '1'
+              valueKey: Risk.Attributes.44cc7a47-fc22-4339-a4f9-8bba492eba7f
+            attributeSingleSelectValue.value2: []
+            attributeSingleSelectValue.value11: []
+            attributeSingleSelectValue.value12: []
+            attributeSingleSelectValue.value18: []
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+        typeRefId:
+          description: Type ref Id for the risk, deprecated in favour of typeRefIds
+          type: string
+          format: uuid
+          example: 92b48b97-c212-4b6c-9c47-2ebdc18da455
+          deprecated: true
+        reminderDays:
+          description: Duration in days after which a reminder will be sent
+          type: integer
+          format: int64
+          example: 4
+        ruleRootVersionId:
+          description: Unique identifier for the rule root version
+          type: string
+          format: uuid
+          example: 5c91cf60-c6d1-4f7d-ba74-e4f1601b54fa
+        riskTemplate:
+          description: Risk Template details of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        owners:
+          description: Risk Owners details of the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        approvers:
+          description: Risk Approvers details of the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+        name:
+          description: Name of the risk
+          type: string
+          example: Financial Risk
+          maxLength: 300
+        closed:
+          description: Indicates if the risk is closed
+          type: boolean
+          example: true
+        currentStageApproversCount:
+          description: The count of approvers of the current stage
+          type: integer
+          format: int64
+          example: 1
+        migrationStatus:
+          description: Migration status of the risk
+          type: string
+          example: IN_PROGRESS
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - IN_COMPLETE
+          - SUCCESS
+          - FAILED
+        ownersId:
+          type: array
+          items:
+            type: string
+            format: uuid
+        riskManager:
+          description: List of Risk Managers associated with the risk
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
+    TechRiskCompliance-Risk_RiskTemplateIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    TechRiskCompliance-Risk_ImpactLevelDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: integer
+          format: int64
+        position:
+          type: integer
+          format: int64
+    TechRiskCompliance-Risk_RiskSourceInformation:
+      type: object
+      properties:
+        id:
+          description: Source Entity Id
+          type: string
+          format: uuid
+          example: d974c78a-c2f0-480a-aa27-4d40c44bb890
+        type:
+          description: Source Type for the risk
+          type: string
+          example: PIA
+          enum:
+          - PIA
+          - GRA
+          - INVENTORY
+          - INCIDENT
+          - ENGAGEMENT
+          - GENERIC
+          deprecated: true
+        sourceType:
+          description: Source type information of the risk
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        name:
+          description: Source Entity Name
+          type: string
+          example: Raw Materials and Sales Inventory
+        additionalAttributes:
+          description: Additional information about the Source Entity. This will be a Map of String Key and Object value. 'inventoryType' key is mandatory to be passed when sourceType is 'Inventory', and it can have one of the following values, 20 - Assets, 30 - Processing Activities, 50 - Vendors, 60 - Entities
+          type: object
+          additionalProperties:
+            type: object
+      required:
+      - id
+      - name
+  securitySchemes:
+    TechRiskCompliance-ITRiskManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONTROL: Access to Control Implementation operations for external systems
+            ITRM: Access to ITRM operations for external systems
+    TechRiskCompliance-RiskTemplate_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INTEGRATION: Integration Scope
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+    TechRiskCompliance-Risk_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+            INTEGRATION: Integration scope
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

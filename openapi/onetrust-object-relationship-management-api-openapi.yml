@@ -1,0 +1,718 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Object Relationship Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Object Relationship Management
+  description: The Object Relationship Management APIs are used to manage relationships between objects.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /v1/links:
+    post:
+      operationId: createLinkRecordBetweenEntitiesUsingLinkTypeIdUsingPOST
+      summary: Create Relationship Record between Objects
+      description: 'Use this API to create a new Relationship Record between objects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: The unique identifier of the relationship type.
+        required: true
+        schema:
+          description: Unique identifier of the link type to use for creating the relationship
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkRequest'
+            examples:
+              Create Project-model Relationship:
+                summary: Example of creating a relationship between a project and a department
+                description: Create Project-model Relationship
+                value:
+                  entity1:
+                    id: c37283de-c93e-4da6-a3da-0c1791da5e33
+                    entityType:
+                      name: projects
+                  entity2:
+                    id: b4c4991c-ab14-4bb2-abae-dad255a513c3
+                    entityType:
+                      name: models
+                  attributes: null
+                  context: null
+              Create model-vendor Relationship:
+                summary: Example of creating a is source from relationship between a model and a vendor
+                description: Create model-vendor Relationship
+                value:
+                  entity1:
+                    id: b4c4991c-ab14-4bb2-abae-dad255a513c3
+                    entityType:
+                      name: models
+                  entity2:
+                    id: 690c2d22-d864-4ec7-92ad-850c678a1cd3
+                    entityType:
+                      name: vendors
+                  attributes: null
+                  context: null
+      responses:
+        '201':
+          description: Created - The relationship was successfully established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkInformation'
+              examples:
+                Project-Department Relationship:
+                  summary: Example of created relationship information
+                  description: Project-Department Relationship
+                  value:
+                    id: 2e920a80-7d0a-4b9d-ac19-e04729edf3a8
+                    linkType:
+                      id: 8c2c52ff-de17-4f1c-a6fd-9f1f320598de
+                      name: project-reference
+                      nameKey: CE.Link.ProjectReference.Name
+                      idOrNamePresent: true
+                    entityType1ToEntityType2:
+                      name: references
+                      nameKey: CE.Link.ProjectReference.ForwardLabel
+                    entityType2ToEntityType1:
+                      name: is referenced in
+                      nameKey: CE.Link.ProjectReference.BackwardLabel
+                    entity1:
+                      id: c37283de-c93e-4da6-a3da-0c1791da5e33
+                      name: Project_0610
+                    entity1Type:
+                      id: ef4e5bf9-7462-43af-b74f-72b61308629b
+                      name: projects
+                      nameKey: CE.Projects.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: projects
+                    entity2:
+                      id: b4c4991c-ab14-4bb2-abae-dad255a513c3
+                      name: kyutai/mimi
+                    entity2Type:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    createdDate: '2025-06-12T08:00:32.083Z'
+                    lastModifiedDate: '2025-06-12T08:00:32.083Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+  /v1/links/{linkId}:
+    get:
+      operationId: getLinkRecordInformationUsingLinkTypeIdUsingGET
+      summary: Get Relationship Record
+      description: 'Use this API to retrieve the details of a specific Relationship Record between objects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: The unique identifier of the relationship type.
+        required: true
+        schema:
+          description: Unique identifier of the link type
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: linkId
+        in: path
+        description: The unique identifier of the relationship record.
+        required: true
+        schema:
+          description: Unique identifier of the link record to retrieve
+          type: string
+          format: uuid
+        example: 1bc71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested relationship
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkInformation'
+              examples:
+                Project-Department Relationship:
+                  summary: Example of relationship information
+                  description: Project-Department Relationship
+                  value:
+                    id: 2e920a80-7d0a-4b9d-ac19-e04729edf3a8
+                    linkType:
+                      id: 8c2c52ff-de17-4f1c-a6fd-9f1f320598de
+                      name: project-reference
+                      nameKey: CE.Link.ProjectReference.Name
+                      idOrNamePresent: true
+                    entityType1ToEntityType2:
+                      name: references
+                      nameKey: CE.Link.ProjectReference.ForwardLabel
+                    entityType2ToEntityType1:
+                      name: is referenced in
+                      nameKey: CE.Link.ProjectReference.BackwardLabel
+                    entity1:
+                      id: c37283de-c93e-4da6-a3da-0c1791da5e33
+                      name: Project_0610
+                    entity1Type:
+                      id: ef4e5bf9-7462-43af-b74f-72b61308629b
+                      name: projects
+                      nameKey: CE.Projects.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: projects
+                    entity2:
+                      id: b4c4991c-ab14-4bb2-abae-dad255a513c3
+                      name: kyutai/mimi
+                    entity2Type:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    createdDate: '2025-06-12T08:00:32.083Z'
+                    lastModifiedDate: '2025-06-12T08:00:32.083Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+    delete:
+      operationId: deleteLinkRecordByIdAndTypeUsingLinkTypeIdUsingDELETE
+      summary: Remove Relationship Record
+      description: 'Use this API to delete an existing Relationship Record between objects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: The unique identifier of the relationship type.
+        required: true
+        schema:
+          description: Unique identifier of the link type
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: linkId
+        in: path
+        description: The unique identifier of the relationship record.
+        required: true
+        schema:
+          description: Unique identifier of the link record to delete
+          type: string
+          format: uuid
+        example: 1bc71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '204':
+          description: No Content - The relationship was successfully deleted
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - INTEGRATION
+components:
+  schemas:
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: The details of the attribute.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    IdOrNameLinkType:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+        idOrNamePresent:
+          description: This flag indicates whether the ID or name of the relationship type is present.
+          type: boolean
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    BasicLinkTypeLabelInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: integer
+          format: int64
+          example: 1
+        entityType1ToEntityType2EntityLinkName:
+          description: The source object type's relationship to the target object type.
+          type: string
+          example: OneTrust provides GRC
+        entityType2ToEntityType1EntityLinkName:
+          description: The target object type's relationship to the source object type.
+          type: string
+          example: GRC belongs to OneTrust
+      required:
+      - id
+    LinkRequest:
+      type: object
+      properties:
+        attributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        entity1:
+          description: The details of the source object in the relationship.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The details of the target object in the relationship.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+      required:
+      - entity1
+      - entity2
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The name of the attribute.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The color code associated with the attribute.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: The selection value of the attribute.
+          type: string
+          example: 3.5
+        displayLabel:
+          description: The display label for the attribute.
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: This flag indicates whether the attribute is disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    LinkInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship record.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        linkType:
+          description: The details of the relationship type.
+          example:
+            name: Related
+          $ref: '#/components/schemas/IdOrNameLinkType'
+        linkTypeLabel:
+          description: The display label for the relationship type.
+          example:
+            entityType1ToEntityType2EntityLinkName: Send Data To
+            entityType2ToEntityType1EntityLinkName: Receive Data From
+          $ref: '#/components/schemas/BasicLinkTypeLabelInformation'
+        entity1:
+          description: The details of the source object in the relationship.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The details of the target object in the relationship.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        schemaId:
+          description: The unique identifier of the schema.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        linkType:
+          name: Related
+      required:
+      - entity1
+      - entity2
+      - id
+      - linkType
+      title: Link Information
+    LinkedEntityInformation:
+      type: object
+      properties:
+        linkEntityDetail:
+          description: The details of linked objects.
+          example:
+            includeCustomFields: true
+            includeStandardFields: true
+          $ref: '#/components/schemas/EntityDetailRequest'
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1024
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust DataGuidance
+          maxLength: 255
+          minLength: 1
+        detailsAccessRestricted:
+          description: This flag indicates whether the object is view-only.
+          type: boolean
+          example: false
+        redirectURL:
+          description: 'The redirect URL for the object. '
+          type: string
+          example: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The details of the object type.
+          example:
+            id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+            name: Product
+            displayName: Product
+            nameKey: entity.type.product
+            displayNameKey: entity.type.product.display
+            module: VENDOR
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        deleted:
+          description: This flag indicates whether the object is deleted.
+          type: boolean
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number: 1024
+        name: OneTrust DataGuidance
+        isDeleted: false
+        detailsAccessRestricted: false
+        redirectURL: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          name: Product
+          displayName: Product
+          nameKey: entity.type.product
+          displayNameKey: entity.type.product.display
+          module: VENDOR
+        linkEntityDetail:
+          includeCustomFields: true
+          includeStandardFields: true
+      required:
+      - entityType
+      - id
+      - number
+      title: Linked Entity Information
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

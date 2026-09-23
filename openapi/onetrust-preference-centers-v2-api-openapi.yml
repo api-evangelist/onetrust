@@ -1,0 +1,1003 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Preference Centers V2
+  description: The Preference Centers V2 APIs are used to manage preference centers using version 2 of the API.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Preference Centers V2
+paths:
+  /api/consentmanager/v2/preferencecenterpage/{preferencecenterpageid}/schema:
+    get:
+      operationId: getPreferenceCenterPageSchemaUsingGET
+      summary: Get Preference Center Page Schema
+      description: Use this API to retrieve the schema for a specific page within a Multi Page Preference Center. The response will include the structure of the specified page within the Preference Center, including the sections, Purposes, and Data Elements.
+      tags:
+      - Preference Centers V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: preferencecenterpageid
+        in: path
+        description: Unique identifier of the Preference Center Page.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 156129da-7441-498d-a0eb-a89da357d741
+      - name: state
+        in: query
+        description: The state of the Preference Center.
+        required: false
+        schema:
+          type: string
+          example: PUBLISHED
+          default: PUBLISHED
+          enum:
+          - PUBLISHED
+          - DRAFT
+      responses:
+        '200':
+          description: OK - Successfully retrieved preference center page schema.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_PagePublicAPI'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/preferencecenters:
+    get:
+      operationId: getPreferenceCentersUsingGET
+      summary: Get List of Preference Centers
+      description: Use this API to retrieve a list of all Preference Centers. The response will include details for each Preference Center along with the corresponding Preference Center ID, created date, and published date.
+      tags:
+      - Preference Centers V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: page
+        in: query
+        description: Results page you want to retrieve (0-based).
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page.
+        schema:
+          type: integer
+          example: 20
+          default: 20
+          maximum: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is descending by ID. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          example: createdDate,desc
+          enum:
+          - name,asc
+          - name,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+          - status,asc
+          - status,desc
+          - version,asc
+          - version,desc
+      - name: dataElementGuid
+        in: query
+        description: Filter preference centers by data element GUID.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 133323f3-cf99-4b9d-a103-040bd6643d3f
+      responses:
+        '200':
+          description: OK - Successfully retrieved list of preference centers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PagePreferenceCenterSummaryDtoV2'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/preferencecenters/{preferencecenterid}/schema:
+    get:
+      operationId: getRootSchemaUsingGET
+      summary: Get Preference Center Root Schema
+      description: Use this API to retrieve the root schema for a Multi Page Preference Center. The response will include the root structure of the Preference Center, including the settings, languages, and configured pages.
+      tags:
+      - Preference Centers V2
+      parameters:
+      - name: preferencecenterid
+        in: path
+        description: Unique identifier of the Preference Center.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 156129da-7441-498d-a0eb-a89da357d741
+      - name: state
+        in: query
+        description: The state of the Preference Center.
+        required: false
+        schema:
+          type: string
+          default: PUBLISHED
+          enum:
+          - PUBLISHED
+          - DRAFT
+      responses:
+        '200':
+          description: OK - Successfully retrieved preference center root schema.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AdvancedPreferenceCenterDto_RootPublicAPI'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PagePreferenceCenterSummaryDtoV2:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the element
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        order:
+          description: Display order of the element within the section
+          type: integer
+          format: int64
+          example: 1
+        languages:
+          description: Available translations for the element's content
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+        label:
+          description: Name of the purpose
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description shown for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to receive marketing communications
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        topics:
+          description: List of topics associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI'
+        customPreferences:
+          description: List of custom preferences associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI'
+        visibility:
+          description: Visibility settings for the purpose in the preference center
+          type: string
+          enum:
+          - VISIBLE_TO_ALL
+          - VISIBLE_TO_CONSENTED
+          - VISIBLE_TO_PRIOR_CONSENTED
+    ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI:
+      properties:
+        name:
+          description: Translated name of the item
+          type: string
+          example: Comunicaciones de marketing
+        description:
+          description: Translated description of the item
+          type: string
+          example: Recopilar correos electrónicos de clientes con fines de marketing
+        implicitConsentConfirmDesc:
+          description: Translated text for implicit consent confirmation
+          type: string
+          example: I can confirm
+        content:
+          description: Translated rich text content (may include HTML)
+          example: <p>bloque de texto</p>
+          type: string
+        language:
+          description: Language code for this translation (ISO 639-1)
+          type: string
+          example: es
+        isDefault:
+          description: Indicates if this is the default translation
+          type: boolean
+          example: false
+      required:
+      - language
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the custom preference
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        description:
+          description: Detailed description of the custom preference
+          type: string
+          example: Options for different frequencies to receive emails
+        selectionType:
+          description: Type of selection allowed for this preference
+          type: string
+          example: SINGLE_CHOICE
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        displayAs:
+          description: How the preference options should be displayed
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        required:
+          description: Whether a selection is required for this preference
+          type: boolean
+          example: false
+          default: false
+        languages:
+          description: List of translations for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the custom preference
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        description:
+          description: Detailed description of the custom preference
+          type: string
+          example: Options for different frequencies to receive emails
+        selectionType:
+          description: Type of selection allowed for this preference
+          type: string
+          example: SINGLE_CHOICE
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        displayAs:
+          description: How the preference options should be displayed
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        required:
+          description: Whether a selection is required for this preference
+          type: boolean
+          example: false
+          default: false
+        languages:
+          description: List of translations for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_PagePublicAPI:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the Preference Center Page
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        order:
+          description: Order of Preference Center Page
+          type: integer
+          format: int64
+          example: 1
+        isHidden:
+          description: Indicates if the Preference Center page header is hidden
+          type: boolean
+          example: false
+        navigationEnabled:
+          description: Indicates if the Preference Center page navigation is enabled
+          type: boolean
+          example: false
+        displaySubscribeSettings:
+          description: Indicates if Subscribe settings should be displayed on the page
+          type: boolean
+          example: false
+        displayUnsubscribeAll:
+          description: Indicates if the 'Unsubscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        displaySubscribeAll:
+          description: Indicates if the 'Subscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        sections:
+          description: List of sections contained within this Preference Center page
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSectionDto_PagePublicAPI'
+        languages:
+          description: List of available language translations for this page
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        label:
+          description: Display label for the option
+          type: string
+          example: Weekly
+        order:
+          description: Display order of the option (0-based index)
+          type: integer
+          format: int32
+          example: 1
+        isDefault:
+          description: Indicates if this option is selected by default
+          type: boolean
+          example: true
+        languages:
+          description: List of translations for the option label
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        label:
+          description: Display label for the option
+          type: string
+          example: Weekly
+        order:
+          description: Display order of the option (0-based index)
+          type: integer
+          format: int32
+          example: 1
+        isDefault:
+          description: Indicates if this option is selected by default
+          type: boolean
+          example: true
+        languages:
+          description: List of translations for the option label
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSectionDto_PagePublicAPI:
+      properties:
+        id:
+          description: The unique identifier of the Preference Center Section
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        identifierType:
+          description: Type of identifier used for the section (e.g., Email, Phone, CustomID)
+          type: string
+          example: Email
+        isHeaderHidden:
+          description: Indicates if the section header should be hidden
+          type: boolean
+          example: false
+        order:
+          description: The display order of the section within the page
+          type: integer
+          format: int64
+          example: 1
+        purposes:
+          description: List of purposes associated with this section
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_PagePublicAPI'
+        customDataElements:
+          description: Custom data elements associated with this section
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomDataElementDto_PagePublicAPI'
+        elements:
+          description: UI elements and components in this section
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_ElementDto_PagePublicAPI'
+        languages:
+          description: Available language translations for this section
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCSectionTranslationDto_PagePublicAPI'
+        isSubscriptionSettings:
+          description: Indicates if this is the system-managed subscription settings section
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the Preference Center
+          type: string
+          format: uuid
+          example: 09ccd1b9-84a0-4bcb-a167-f761391ebffa
+        name:
+          description: Name of the Preference Center
+          type: string
+          example: Email Communication Preferences
+        organizationName:
+          description: Name of the organization that owns the Preference Center
+          type: string
+          example: OneTrust
+        template:
+          description: Template type used for the Preference Center
+          type: string
+          enum:
+          - ORIGINAL
+          - ENHANCED
+          - MULTIPAGE
+        publishedDate:
+          description: Date and time when the Preference Center was published
+          type: string
+          format: date-time
+        status:
+          description: Current status of the Preference Center
+          type: string
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+        createdDate:
+          description: Date and time when the Preference Center was created
+          type: string
+          format: date-time
+      required:
+      - createdDate
+      - id
+      - name
+      - organizationName
+      - status
+      - template
+    ConsentPreferences-UniversalConsentPreferenceManag_ElementDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the element
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        order:
+          description: Display order of the element within the section
+          type: integer
+          format: int64
+          example: 1
+        languages:
+          description: Available translations for the element's content
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the topic-purpose relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        languages:
+          description: List of translations for the topic's name
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the topic-purpose relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        languages:
+          description: List of translations for the topic's name
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_AdvancedPreferenceCenterDto_RootPublicAPI:
+      type: object
+      properties:
+        pages:
+          description: A list of all the pages attached to the Preference center
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_RootPublicAPI'
+        defaultLanguage:
+          description: The default language of the preference center
+          type: string
+          example: en
+        languages:
+          description: A list of translations for the preference center
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+        preferenceCenterSettings:
+          description: A list of labels and their translations for the preference center
+          type: object
+          additionalProperties:
+            type: object
+            description: A list of labels and their translations for the preference center
+        enableMultipleIdentities:
+          description: Boolean flag that denotes if Multi-Identity is enabled for the Preference center
+          type: boolean
+          example: false
+        hierarchicalAccessControl:
+          description: Indicates if hierarchical access control is enabled for this preference center
+          type: boolean
+          example: false
+        displayUnsubscribeAll:
+          description: Boolean flag that denotes if Unsubscribe-All section needs to be displayed for the Preference center
+          type: boolean
+          example: false
+        displaySubscribeAll:
+          description: Boolean flag that denotes if Subscribe-All section needs to be displayed for the Preference center
+          type: boolean
+          example: false
+        displayNotificationPurpose:
+          description: Boolean flag that denotes if Notification purpose needs to be displayed on the Preference center
+          type: boolean
+          example: false
+        displaySubscribeSettings:
+          description: Boolean flag that denotes if Subscribe settings section needs to be displayed for the Preference center
+          type: boolean
+          example: false
+        notificationPurpose:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_RootPublicAPI'
+        displayPageLevelSubscribeSettings:
+          description: Boolean flag that denotes if Subscribe settings section is allowed to be configured specific to each Preference center page
+          type: boolean
+          example: false
+        autoCheckTopics:
+          description: Boolean flag that denotes if auto check topics feature is enabled for the Preference center
+          type: boolean
+          example: false
+        updateNotOptedOutToActiveStatus:
+          description: Boolean flag that denotes if 'update not opted-out' to 'active' status is enabled for the Preference center
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_RootPublicAPI:
+      properties:
+        id:
+          description: The unique identifier of the Preference Center Page
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        order:
+          description: Order of Preference Center Page
+          type: integer
+          format: int64
+          example: 1
+        navigationEnabled:
+          description: Indicates if the Preference Center page navigation is enabled
+          type: boolean
+          example: false
+        displaySubscribeSettings:
+          description: Indicates if Subscribe settings should be displayed on the page
+          type: boolean
+          example: false
+        displayUnsubscribeAll:
+          description: Indicates if the 'Unsubscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        displaySubscribeAll:
+          description: Indicates if the 'Subscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        languages:
+          description: List of available language translations for this page
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomDataElementDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the element
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        order:
+          description: Display order of the element within the section
+          type: integer
+          format: int64
+          example: 1
+        languages:
+          description: Available translations for the element's content
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+        name:
+          description: Name of the custom data element
+          type: string
+          example: Work Email
+        hidden:
+          description: Whether the element is hidden from the UI
+          type: boolean
+          example: false
+        readOnly:
+          description: Whether the element is read-only
+          type: boolean
+          example: false
+        required:
+          description: Whether the element is required
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_PCSectionTranslationDto_PagePublicAPI:
+      properties:
+        name:
+          description: Translated name of the item
+          type: string
+          example: Comunicaciones de marketing
+        description:
+          description: Translated description of the item
+          type: string
+          example: Recopilar correos electrónicos de clientes con fines de marketing
+        implicitConsentConfirmDesc:
+          description: Translated text for implicit consent confirmation
+          type: string
+          example: I can confirm
+        content:
+          description: Translated rich text content (may include HTML)
+          example: <p>bloque de texto</p>
+          type: string
+        language:
+          description: Language code for this translation (ISO 639-1)
+          type: string
+          example: es
+        isDefault:
+          description: Indicates if this is the default translation
+          type: boolean
+          example: false
+      required:
+      - language
+    ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI:
+      properties:
+        name:
+          description: Translated name of the item
+          type: string
+          example: Comunicaciones de marketing
+        description:
+          description: Translated description of the item
+          type: string
+          example: Recopilar correos electrónicos de clientes con fines de marketing
+        implicitConsentConfirmDesc:
+          description: Translated text for implicit consent confirmation
+          type: string
+          example: I can confirm
+        content:
+          description: Translated rich text content (may include HTML)
+          example: <p>bloque de texto</p>
+          type: string
+        language:
+          description: Language code for this translation (ISO 639-1)
+          type: string
+          example: es
+        isDefault:
+          description: Indicates if this is the default translation
+          type: boolean
+          example: false
+      required:
+      - language
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_RootPublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the element
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        order:
+          description: Display order of the element within the section
+          type: integer
+          format: int64
+          example: 1
+        languages:
+          description: Available translations for the element's content
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+        label:
+          description: Name of the purpose
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description shown for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to receive marketing communications
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        topics:
+          description: List of topics associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI'
+        customPreferences:
+          description: List of custom preferences associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI'
+        visibility:
+          description: Visibility settings for the purpose in the preference center
+          type: string
+          enum:
+          - VISIBLE_TO_ALL
+          - VISIBLE_TO_CONSENTED
+          - VISIBLE_TO_PRIOR_CONSENTED
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

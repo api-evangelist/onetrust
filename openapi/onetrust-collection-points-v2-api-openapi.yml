@@ -1,0 +1,1833 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Collection Points V2
+  description: The Collection Points V2 APIs are used to manage collection points using version 2 of the API.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Collection Points V2
+paths:
+  /api/consentmanager/v2/collectionpoints:
+    get:
+      operationId: getCollectionPointsUsingGET_1
+      summary: Get List of Collection Points
+      description: 'Use this API to retrieve a list of all collection points or retrieve a single collection point using the `id` query parameter. By default, the response will return details of all versions of a collection point with the active version listed first, but can be filtered using both the `version` and `status` query parameters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > #### Usage Guidelines
+
+        >
+
+        > - **Server-side caching behavior:** To improve performance and reduce database load, this endpoint uses server-side caching with a 1‑hour TTL. Cached entries are automatically refreshed when collection point data is updated, ensuring responses remain current.
+
+        > - **Pagination and response caching:** This API is pageable, and a single page may include multiple collection points. As a result:
+
+        > - End‑to‑end response caching is not always possible.
+
+        > - When data for one collection point changes, cache eviction may require re-fetching other collection points included in the same cached page.
+
+        > - Because of this, caching paginated responses is not efficient.
+
+        > - To mitigate impact, caching is applied at a component level, rather than caching the entire API response payload.
+
+        >
+
+        > Response times may vary depending on pagination and cache state.
+
+        > - **Optimized Caching Use Cases:** Server-side caching is designed to be most effective when retrieving a specific collection point, querying by status, or querying by version. Broad, paginated list queries may experience variable performance depending on cache state.
+
+        > - **Client‑Side Caching Recommendations:** Collection point metadata changes infrequently, and clients are expected to implement client-side caching to ensure optimal performance:
+
+        > - Cache metadata for 1–2 hours.
+
+        > - Avoid calling this API per user interaction or transaction.
+
+        > - Use cached metadata for downstream processing.
+
+        > - Refresh cached data on expiry.'
+      tags:
+      - Collection Points V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: organizationId
+        in: query
+        description: The unique identifier of the Organization to filter by.
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: query
+        description: Unique identifier of a specific Collection Point to retrieve.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 987b1f51-a538-122e-afc4-6b383c28eeb3
+      - name: version
+        in: query
+        description: Filter by specific version of the Collection Point.
+        required: false
+        schema:
+          type: integer
+          example: 1
+          minimum: 1
+      - name: status
+        in: query
+        description: Filter Collection Points by status.
+        required: false
+        schema:
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+      - name: page
+        in: query
+        description: The page number of the results (0-based).
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          example: 20
+          default: 20
+          maximum: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is descending. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          example: createdDate,desc
+          default: createdDate,desc
+          enum:
+          - id,asc
+          - id,desc
+          - name,asc
+          - name,desc
+          - status,asc
+          - status,desc
+          - version,asc
+          - version,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+          - activationDate,asc
+          - activationDate,desc
+          - collectionPointType,asc
+          - collectionPointType,desc
+      responses:
+        '200':
+          description: OK - List of Collection Points retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageCollectionPointDtoV2_DetailV2'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/collectionpoints/{collectionPointGuid}/version:
+    post:
+      operationId: createVersionUsingPOST
+      summary: Create New Collection Point Version
+      description: 'Use this API to create a new version of an existing Collection Point that is currently in **Active** status. A new version of the Collection Point will be created in **Draft** status while the Active version of the Collection Point will remain unchanged.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Once the Collection Point is in **Draft** status, the Update Existing Collection Point API can be used to edit the Collection Point. Changes will only be visible once the new version of the Collection Point is published.'
+      tags:
+      - Collection Points V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: collectionPointGuid
+        in: path
+        description: The unique identifier of the Collection Point to create a new version for
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Successfully created a new version of the Collection Point
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointDtoV2'
+              examples:
+                CollectionPointDtoV2:
+                  description: CollectionPointDtoV2
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426614174000
+                    name: Marketing Consent Form
+                    version: 2
+                    status: DRAFT
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementV2_DetailV2:
+      properties:
+        guid:
+          description: Unique identifier for the custom data element
+          type: string
+          format: uuid
+          example: 21e0de87-d6ef-4b39-a54b-6d877698e3f6
+        numberOfLanguages:
+          description: Number of language translations available for this data element
+          type: integer
+          format: int64
+          example: 3
+          readOnly: true
+        createdDate:
+          description: Timestamp when the data element was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:00Z'
+          readOnly: true
+        lastModifiedDate:
+          description: Timestamp when the data element was last modified
+          type: string
+          format: date-time
+          example: '2023-01-20T14:45:30Z'
+          readOnly: true
+        canEdit:
+          description: Indicates if the data element can be modified
+          type: boolean
+          example: true
+          readOnly: true
+        dataElementFields:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementField_DetailV2'
+        label:
+          description: The display name/label of the custom data element
+          type: string
+          example: Work Email
+        isIdentifier:
+          description: Indicates if this data element can be used as an identifier
+          type: boolean
+          example: false
+          default: false
+        collectionPoints:
+          description: Number of collection points where this data element is being used
+          type: integer
+          format: int64
+          example: 5
+          readOnly: true
+        languages:
+          description: List of language-specific translations for this data element
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataElementLanguageDto_DetailV2'
+      required:
+      - guid
+      - label
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_DetailV2:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDto:
+      properties:
+        Id:
+          description: Unique identifier for the custom data element option
+          type: string
+          format: uuid
+          example: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
+        Label:
+          description: Display text for the option
+          type: string
+          example: Option 1
+      required:
+      - Label
+    ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointNoticeWithVersionDto:
+      properties:
+        id:
+          description: The unique identifier of the collection point notice.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the notice as it appears in the collection point.
+          type: string
+          example: Privacy Notice (v2.0)
+        url:
+          description: The URL where the full notice content can be accessed, if applicable.
+          type: string
+          format: uri
+          example: https://example.com/privacy-notice
+        privacyNoticeGuid:
+          description: The unique identifier of the privacy notice this collection point notice is associated with.
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174001
+        type:
+          description: The type of the collection point notice, indicating its purpose or category.
+          type: string
+          enum:
+          - LINKED
+          - EMBEDDED
+        purposes:
+          description: Set of purposes associated with this notice, including their names and versions.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion'
+          uniqueItems: true
+        privacyNoticeVersion:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PrivacyNoticeVersionDtoV2'
+        collectionPoint:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion'
+        noticeType:
+          description: The type of notice, which may provide additional categorization beyond the collection point notice type.
+          type: string
+          enum:
+          - PRIVACY_NOTICE
+          - DIGITAL_POLICY
+      example:
+      - id
+      - name
+      - privacyNoticeGuid
+      required:
+      - id
+      - name
+      - privacyNoticeGuid
+      - purposes
+      - type
+    ConsentPreferences-UniversalConsentPreferenceManag_DataElementLanguageDto:
+      properties:
+        Name:
+          description: The Data Element name
+          type: string
+          example: Work Email
+        DataElementOptions:
+          description: List of options available for this data element in the specified language
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDto'
+        Language:
+          description: The Data Element translation language code
+          type: string
+          example: en-us
+    ConsentPreferences-UniversalConsentPreferenceManag_DataElementLanguageDto_DetailV2:
+      properties:
+        Name:
+          description: The Data Element name
+          type: string
+          example: Work Email
+        DataElementOptions:
+          description: List of options available for this data element in the specified language
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDto_DetailV2'
+        Language:
+          description: The Data Element translation language code
+          type: string
+          example: en-us
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDtoV2_DetailV2:
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDto_DetailV2:
+      properties:
+        Id:
+          description: Unique identifier for the custom data element option
+          type: string
+          format: uuid
+          example: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
+        Label:
+          description: Display text for the option
+          type: string
+          example: Option 1
+      required:
+      - Label
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDtoV2:
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2:
+      properties:
+        name:
+          description: The purpose name in the specified language
+          type: string
+          example: Marketing Communications
+        description:
+          description: The purpose description in the specified language
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox in the specified language
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        language:
+          description: IETF BCP 47 language tag for the content
+          type: string
+          example: en-US
+        default:
+          description: Indicates if this is the default language for the purpose
+          type: boolean
+          example: true
+        hardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - description
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDto_DetailV2:
+      properties:
+        Id:
+          description: Unique Identifier identifying the Preference Center
+          type: string
+          format: uuid
+          example: 09ccd1b9-84a0-4bcb-a167-f761391ebffa
+        Name:
+          description: The Preference Center name
+          type: string
+          example: Email Communication Preferences
+        OrganizationName:
+          description: The Organization's name
+          type: string
+          example: OneTrust
+        Template:
+          description: The Preference Center template type
+          type: string
+          example: ENHANCED
+          enum:
+          - ORIGINAL
+          - ENHANCED
+          - MULTIPAGE
+    ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion:
+      properties:
+        id:
+          description: The unique identifier of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The display name of the entity
+          type: string
+          example: Marketing Consent Form
+        version:
+          description: The version number of the entity
+          type: integer
+          format: int64
+          example: 1
+        type:
+          description: The type of the entity (optional, used for categorization)
+          type: string
+          example: CONSENT_FORM
+      required:
+      - id
+      - name
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementV2:
+      properties:
+        guid:
+          description: Unique identifier for the custom data element
+          type: string
+          format: uuid
+          example: 21e0de87-d6ef-4b39-a54b-6d877698e3f6
+        numberOfLanguages:
+          description: Number of language translations available for this data element
+          type: integer
+          format: int64
+          example: 3
+          readOnly: true
+        createdDate:
+          description: Timestamp when the data element was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:00Z'
+          readOnly: true
+        lastModifiedDate:
+          description: Timestamp when the data element was last modified
+          type: string
+          format: date-time
+          example: '2023-01-20T14:45:30Z'
+          readOnly: true
+        canEdit:
+          description: Indicates if the data element can be modified
+          type: boolean
+          example: true
+          readOnly: true
+        dataElementFields:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementField'
+        label:
+          description: The display name/label of the custom data element
+          type: string
+          example: Work Email
+        isIdentifier:
+          description: Indicates if this data element can be used as an identifier
+          type: boolean
+          example: false
+          default: false
+        collectionPoints:
+          description: Number of collection points where this data element is being used
+          type: integer
+          format: int64
+          example: 5
+          readOnly: true
+        languages:
+          description: List of language-specific translations for this data element
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataElementLanguageDto'
+      required:
+      - guid
+      - label
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2:
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointDtoV2_DetailV2:
+      properties:
+        id:
+          description: Unique identifier of the collection point
+          type: string
+          format: uuid
+          example: 25d9ccac-db88-4d34-849c-3d602a629961
+        version:
+          description: Version number of the collection point
+          type: integer
+          format: int64
+          example: 2
+          minimum: 1
+        name:
+          description: Name of the collection point
+          type: string
+          example: Web Form Collection Point
+        status:
+          description: Current status of the collection point
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+        collectionPointType:
+          description: Type of the collection point
+          type: string
+          example: WEB_FORM
+          enum:
+          - WEB_FORM
+          - MOBILE_APPLICATION
+          - BULK_IMPORT
+          - API
+          - PREFERENCE_CENTER
+          - COOKIE
+          - TRUST_CENTER
+          - NOTIFICATION_OPT_OUT
+          - ADMIN_UPDATE
+          - HOSTED_WEB_FORM
+          - EMBEDDED_WEB_FORM
+          - WEB_FORM
+          - HOSTED_WEB_FORM
+          - EMBEDDED_WEB_FORM
+          - API
+        consentType:
+          description: Type of consent mechanism used by the collection point
+          type: string
+          example: FORMSUBMIT
+          enum:
+          - FORMSUBMIT
+          - EXPLICIT
+          - UNAMBIGUOUS
+          - OPTINCHECKBOX
+          - OPTOUTCHECKBOX
+          - SINGLETRIGGER
+          - CONDITIONALTRIGGER
+          - COOKIEBANNER
+          - UNCHECKOPTOUT
+          - CHECKOPTOUT
+          - FORMSUBMIT
+          - IMPLICIT
+          - EXPLICIT
+        description:
+          description: Detailed description of the collection point's purpose
+          type: string
+          example: Collecting data for Marketing and Promotion Purposes
+        subjectIdentifier:
+          description: Identifier used to uniquely identify the data subject
+          type: string
+          example: email
+        identifierDataElement:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementV2_DetailV2'
+        createDate:
+          description: Timestamp when the collection point was created
+          type: string
+          format: date-time
+          example: '2018-03-22T20:55:40.237Z'
+        firstReceiptOn:
+          description: Timestamp when the first consent receipt was generated for this collection point
+          type: string
+          format: date-time
+          example: '2018-05-12T12:23:25.243Z'
+        receiptCount:
+          description: Total number of consent receipts generated from this collection point
+          type: integer
+          format: int64
+          example: 563
+          minimum: 0
+        hostedWebFormId:
+          description: Unique identifier of the hosted web form associated with this collection point
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        webFormUrl:
+          description: URL where the collection point is hosted
+          type: string
+          format: uri
+          example: https://www.onetrust.com/collection-point
+        privacyPolicyUrl:
+          description: URL that redirects to the Privacy Policy
+          type: string
+          format: uri
+          example: https://www.onetrust.com/privacy-notice
+        activationDate:
+          description: Timestamp when the collection point was activated
+          type: string
+          format: date-time
+          example: '2018-03-15T12:00:20.123Z'
+        organizationId:
+          description: Unique identifier of the organization that owns this collection point
+          type: string
+          format: uuid
+          example: 92cf3a3a-09a9-4d04-b69d-ea5bb1db550a
+        doubleOptIn:
+          description: Indicates if double opt-in (email confirmation) is required for this collection point
+          type: boolean
+          example: false
+        redirectUrl:
+          description: URL to redirect to after double opt-in confirmation
+          type: string
+          format: uri
+          example: https://www.onetrust.com/thank-you
+        iabVendorId:
+          description: IAB Vendor ID for mobile collection points
+          type: integer
+          format: int32
+          example: 13
+          minimum: 1
+        noConsentTransactions:
+          description: Indicates if transactions without explicit consent should be recorded
+          type: boolean
+          example: false
+        lastSdkIntegrationDate:
+          description: Timestamp when the SDK integration was last updated
+          type: string
+          format: date-time
+          example: '2020-01-08T14:25:11.112Z'
+        language:
+          description: Default language code for the collection point
+          type: string
+          example: en-us
+        hostedSDK:
+          description: Indicates if the settings are published to external storage for optimized performance
+          type: boolean
+          example: false
+        showWarning:
+          type: boolean
+        sendConsentEmail:
+          description: Indicates if a consent acknowledgement email should be sent
+          type: boolean
+          example: false
+        responsibleUserId:
+          description: Unique identifier of the user responsible for this collection point
+          type: string
+          format: uuid
+          example: bc4836e2-c117-461b-a7a2-2b268c037a97
+        responsibleGroupId:
+          description: Unique identifier of the group responsible for this collection point
+          type: string
+          format: uuid
+          example: 5466af43-ff42-4a39-8722-5a98e7981fc4
+        lastActivityDate:
+          description: Timestamp of the most recent activity on this collection point
+          type: string
+          format: date-time
+          example: '2020-01-10T18:12:13.543Z'
+        warningReasons:
+          description: Set of warning reasons associated with the collection point
+          type: array
+          items:
+            type: string
+            description: Set of warning reasons associated with the collection point
+            enum:
+            - SDK_OUT_OF_DATE
+            - NO_ACTIVITY
+        consentIntegration:
+          description: Indicates if consent events should be sent to third-party integrations
+          type: boolean
+          example: false
+        enableNewConsentIntegration:
+          description: Indicates if the new consent integration is enabled
+          type: boolean
+          example: false
+        isAuthenticationRequired:
+          description: Indicates if authentication is required to access this collection point
+          type: boolean
+          example: false
+        createdBy:
+          description: Identifier of the user who created the collection point
+          type: string
+          example: D452EC68-71C4-4935-9F17-5FD054365805
+        lastModifiedBy:
+          description: Identifier of the user who last modified the collection point
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        reconfirmActivePurpose:
+          description: Indicates if reconsent is required for active purposes
+          type: boolean
+          example: false
+        publishedBy:
+          description: Identifier of the user who last published the collection point
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        dataElements:
+          description: List of data elements associated with the collection point
+          type: array
+          items:
+            type: string
+          example:
+          - First Name
+          - Last Name
+          - Email
+        jwtToken:
+          description: JWT token data for authentication and authorization
+          type: object
+          additionalProperties:
+            type: object
+            description: JWT token data for authentication and authorization
+        noticesWithVersions:
+          description: List of notices with their version information
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointNoticeWithVersionDto_DetailV2'
+        canCreateNewVersion:
+          description: Indicates if a new version of the collection point can be created
+          type: boolean
+          example: true
+        newSdkIntegrationEnabled:
+          description: Indicates if the new SDK integration is enabled
+          type: boolean
+          example: false
+        disabled:
+          description: Indicates if the collection point is disabled
+          type: boolean
+          example: false
+        languages:
+          description: List of language codes for which translations are availablel
+          type: array
+          items:
+            type: string
+          example:
+          - en-us
+          - fr
+        preferenceCenter:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDto_DetailV2'
+        attributes:
+          description: Additional attributes associated with the collection point
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes associated with the collection point
+            items:
+              type: string
+              description: Additional attributes associated with the collection point
+        purposes:
+          description: The list of Purposes associated with the Collection Point. Each purpose contains detailed information including its status, consent model, and other relevant attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_DetailV2'
+          readOnly: true
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementField_DetailV2:
+      properties:
+        dataElementType:
+          description: The type of the custom data element (e.g., TEXT, NUMBER, DATE, etc.)
+          type: string
+          enum:
+          - USER_INPUT
+          - SELECTION
+          - EMAIL
+          - NUMBER
+          - DATE_PICKER
+          - COUNTRY
+          - STATE
+          - COUNTRY_CODE
+          - PHONE_NUMBER
+          - STATE_CODE
+        displayAs:
+          description: Specifies how the data element should be displayed in the UI (e.g., as a text field, dropdown, radio buttons, etc.)
+          type: string
+          enum:
+          - DROPDOWN
+          - NONE
+        dataElementOptions:
+          description: List of available options for this data element. Only applicable for choice-based elements like dropdowns or radio buttons.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDtoV2_DetailV2'
+      required:
+      - dataElementType
+    ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointNoticeWithVersionDto_DetailV2:
+      properties:
+        id:
+          description: The unique identifier of the collection point notice.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the notice as it appears in the collection point.
+          type: string
+          example: Privacy Notice (v2.0)
+        url:
+          description: The URL where the full notice content can be accessed, if applicable.
+          type: string
+          format: uri
+          example: https://example.com/privacy-notice
+        privacyNoticeGuid:
+          description: The unique identifier of the privacy notice this collection point notice is associated with.
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174001
+        type:
+          description: The type of the collection point notice, indicating its purpose or category.
+          type: string
+          enum:
+          - LINKED
+          - EMBEDDED
+        purposes:
+          description: Set of purposes associated with this notice, including their names and versions.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion_DetailV2'
+          uniqueItems: true
+        privacyNoticeVersion:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PrivacyNoticeVersionDtoV2_DetailV2'
+        collectionPoint:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion_DetailV2'
+        noticeType:
+          description: The type of notice, which may provide additional categorization beyond the collection point notice type.
+          type: string
+          enum:
+          - PRIVACY_NOTICE
+          - DIGITAL_POLICY
+      required:
+      - id
+      - name
+      - privacyNoticeGuid
+      - purposes
+      - type
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_DetailV2:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_DetailV2'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV3:
+      properties:
+        name:
+          description: The purpose name in the specified language
+          type: string
+          example: Marketing Communications
+        description:
+          description: The purpose description in the specified language
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox in the specified language
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        language:
+          description: IETF BCP 47 language tag for the content
+          type: string
+          example: en-US
+        default:
+          description: Indicates if this is the default language for the purpose
+          type: boolean
+          example: true
+        hardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+        purposeId:
+          description: The unique identifier of the purpose this language entry belongs to
+          type: integer
+          format: int64
+          example: 12345
+      required:
+      - description
+      - name
+      - purposeId
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        label:
+          description: Name or label of the purpose version
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose version
+          type: string
+          example: Collect customer emails for marketing purposes
+        status:
+          description: Current status of the purpose version
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        consentLifeSpan:
+          description: Lifespan of consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentLifeSpan:
+          description: Lifespan of implicit consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        purposeType:
+          description: Type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        parentPurposeId:
+          description: Unique identifier of the parent purpose, if this is a child purpose
+          type: string
+          format: uuid
+          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdBy:
+          description: ID of the user who created the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        createdDate:
+          description: Date and time when the purpose version was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastModifiedBy:
+          description: ID of the user who last modified the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        lastModifiedDate:
+          description: Date and time when the purpose version was last modified
+          type: string
+          format: date-time
+          example: '2023-01-15T15:30:45Z'
+        publishedBy:
+          description: ID of the user who published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date and time when the purpose version was published
+          type: string
+          format: date-time
+          example: '2023-01-10T10:15:30Z'
+        detail:
+          description: URL to get the detailed information of this purpose version
+          type: string
+          example: https://app-eu.onetrust.com/api/consentmanager/v2/purposes/f2229953-b4b5-4042-8cb9-b78038cc4c46?version=2
+        customPreferences:
+          description: List of custom preferences associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2'
+        topics:
+          description: List of topics associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2'
+        organizations:
+          description: List of organization IDs associated with this purpose
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: List of organization IDs associated with this purpose
+          example:
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - bc4836e2-c117-461b-a7a2-2b268c037a97
+        expiryDateType:
+          description: Type of date field used for calculating purpose lifespan/expiry
+          type: string
+          example: LAST_TRANSACTION_DATE
+          enum:
+          - LAST_TRANSACTION_DATE
+          - CONSENT_DATE
+        enableGeolocation:
+          description: Flag indicating whether to capture the data subject's geolocation when consent is provided
+          type: boolean
+          example: true
+        attributes:
+          description: Additional attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes attached to the purpose
+            items:
+              type: string
+              description: Additional attributes attached to the purpose
+        purposeLanguages:
+          description: List of language-specific purpose information
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV3'
+        LastMajorVersion:
+          type: integer
+          format: int64
+        VersionNotes:
+          type: string
+        IsMajorVersion:
+          type: boolean
+        HardOptOutDisplayFormat:
+          description: The format in which the purpose displays in a Trust Center when the consent status is Hard opt-out. Hard opt-out purposes can either be displayed but locked, or hidden.
+          type: string
+          example: HIDE
+          enum:
+          - HIDE
+          - LOCK
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+        languages:
+          description: List of languages supported by the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2'
+        receiptInclusionAttributes:
+          description: Attributes that should be included in the receipt
+          type: object
+          additionalProperties:
+            type: array
+            description: Attributes that should be included in the receipt
+            items:
+              type: string
+              description: Attributes that should be included in the receipt
+      readOnly: true
+      required:
+      - id
+      - label
+      - purposeType
+      - status
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointDtoV2:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the collection point
+          type: string
+          format: uuid
+          example: 25d9ccac-db88-4d34-849c-3d602a629961
+        version:
+          description: Version number of the collection point
+          type: integer
+          format: int64
+          example: 2
+          minimum: 1
+        name:
+          description: Name of the collection point
+          type: string
+          example: Web Form Collection Point
+        status:
+          description: Current status of the collection point
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+        collectionPointType:
+          description: Type of the collection point
+          type: string
+          example: WEB_FORM
+          enum:
+          - WEB_FORM
+          - MOBILE_APPLICATION
+          - BULK_IMPORT
+          - API
+          - PREFERENCE_CENTER
+          - COOKIE
+          - TRUST_CENTER
+          - NOTIFICATION_OPT_OUT
+          - ADMIN_UPDATE
+          - HOSTED_WEB_FORM
+          - EMBEDDED_WEB_FORM
+          - WEB_FORM
+          - HOSTED_WEB_FORM
+          - EMBEDDED_WEB_FORM
+          - API
+        consentType:
+          description: Type of consent mechanism used by the collection point
+          type: string
+          example: FORMSUBMIT
+          enum:
+          - FORMSUBMIT
+          - EXPLICIT
+          - UNAMBIGUOUS
+          - OPTINCHECKBOX
+          - OPTOUTCHECKBOX
+          - SINGLETRIGGER
+          - CONDITIONALTRIGGER
+          - COOKIEBANNER
+          - UNCHECKOPTOUT
+          - CHECKOPTOUT
+          - FORMSUBMIT
+          - IMPLICIT
+          - EXPLICIT
+        description:
+          description: Detailed description of the collection point's purpose
+          type: string
+          example: Collecting data for Marketing and Promotion Purposes
+        subjectIdentifier:
+          description: Identifier used to uniquely identify the data subject
+          type: string
+          example: email
+        identifierDataElement:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementV2'
+        createDate:
+          description: Timestamp when the collection point was created
+          type: string
+          format: date-time
+          example: '2018-03-22T20:55:40.237Z'
+        firstReceiptOn:
+          description: Timestamp when the first consent receipt was generated for this collection point
+          type: string
+          format: date-time
+          example: '2018-05-12T12:23:25.243Z'
+        receiptCount:
+          description: Total number of consent receipts generated from this collection point
+          type: integer
+          format: int64
+          example: 563
+          minimum: 0
+        hostedWebFormId:
+          description: Unique identifier of the hosted web form associated with this collection point
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        webFormUrl:
+          description: URL where the collection point is hosted
+          type: string
+          format: uri
+          example: https://www.onetrust.com/collection-point
+        privacyPolicyUrl:
+          description: URL that redirects to the Privacy Policy
+          type: string
+          format: uri
+          example: https://www.onetrust.com/privacy-notice
+        activationDate:
+          description: Timestamp when the collection point was activated
+          type: string
+          format: date-time
+          example: '2018-03-15T12:00:20.123Z'
+        organizationId:
+          description: Unique identifier of the organization that owns this collection point
+          type: string
+          format: uuid
+          example: 92cf3a3a-09a9-4d04-b69d-ea5bb1db550a
+        doubleOptIn:
+          description: Indicates if double opt-in (email confirmation) is required for this collection point
+          type: boolean
+          example: false
+        redirectUrl:
+          description: URL to redirect to after double opt-in confirmation
+          type: string
+          format: uri
+          example: https://www.onetrust.com/thank-you
+        iabVendorId:
+          description: IAB Vendor ID for mobile collection points
+          type: integer
+          format: int32
+          example: 13
+          minimum: 1
+        noConsentTransactions:
+          description: Indicates if transactions without explicit consent should be recorded
+          type: boolean
+          example: false
+        lastSdkIntegrationDate:
+          description: Timestamp when the SDK integration was last updated
+          type: string
+          format: date-time
+          example: '2020-01-08T14:25:11.112Z'
+        language:
+          description: Default language code for the collection point
+          type: string
+          example: en-us
+        hostedSDK:
+          description: Indicates if the settings are published to external storage for optimized performance
+          type: boolean
+          example: false
+        showWarning:
+          type: boolean
+        sendConsentEmail:
+          description: Indicates if a consent acknowledgement email should be sent
+          type: boolean
+          example: false
+        responsibleUserId:
+          description: Unique identifier of the user responsible for this collection point
+          type: string
+          format: uuid
+          example: bc4836e2-c117-461b-a7a2-2b268c037a97
+        responsibleGroupId:
+          description: Unique identifier of the group responsible for this collection point
+          type: string
+          format: uuid
+          example: 5466af43-ff42-4a39-8722-5a98e7981fc4
+        lastActivityDate:
+          description: Timestamp of the most recent activity on this collection point
+          type: string
+          format: date-time
+          example: '2020-01-10T18:12:13.543Z'
+        warningReasons:
+          description: Set of warning reasons associated with the collection point
+          type: array
+          items:
+            type: string
+            description: Set of warning reasons associated with the collection point
+            enum:
+            - SDK_OUT_OF_DATE
+            - NO_ACTIVITY
+        consentIntegration:
+          description: Indicates if consent events should be sent to third-party integrations
+          type: boolean
+          example: false
+        enableNewConsentIntegration:
+          description: Indicates if the new consent integration is enabled
+          type: boolean
+          example: false
+        isAuthenticationRequired:
+          description: Indicates if authentication is required to access this collection point
+          type: boolean
+          example: false
+        createdBy:
+          description: Identifier of the user who created the collection point
+          type: string
+          example: D452EC68-71C4-4935-9F17-5FD054365805
+        lastModifiedBy:
+          description: Identifier of the user who last modified the collection point
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        reconfirmActivePurpose:
+          description: Indicates if reconsent is required for active purposes
+          type: boolean
+          example: false
+        publishedBy:
+          description: Identifier of the user who last published the collection point
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        dataElements:
+          description: List of data elements associated with the collection point
+          type: array
+          items:
+            type: string
+          example:
+          - First Name
+          - Last Name
+          - Email
+        jwtToken:
+          description: JWT token data for authentication and authorization
+          type: object
+          additionalProperties:
+            type: object
+            description: JWT token data for authentication and authorization
+        noticesWithVersions:
+          description: List of notices with their version information
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointNoticeWithVersionDto'
+        canCreateNewVersion:
+          description: Indicates if a new version of the collection point can be created
+          type: boolean
+          example: true
+        newSdkIntegrationEnabled:
+          description: Indicates if the new SDK integration is enabled
+          type: boolean
+          example: false
+        disabled:
+          description: Indicates if the collection point is disabled
+          type: boolean
+          example: false
+        languages:
+          description: List of language codes for which translations are availablel
+          type: array
+          items:
+            type: string
+          example:
+          - en-us
+          - fr
+        preferenceCenter:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDto'
+        attributes:
+          description: Additional attributes associated with the collection point
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes associated with the collection point
+            items:
+              type: string
+              description: Additional attributes associated with the collection point
+        purposes:
+          description: The list of Purposes associated with the Collection Point. Each purpose contains detailed information including its status, consent model, and other relevant attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2'
+          readOnly: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_DetailV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        label:
+          description: Name or label of the purpose version
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose version
+          type: string
+          example: Collect customer emails for marketing purposes
+        status:
+          description: Current status of the purpose version
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        consentLifeSpan:
+          description: Lifespan of consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentLifeSpan:
+          description: Lifespan of implicit consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        purposeType:
+          description: Type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        parentPurposeId:
+          description: Unique identifier of the parent purpose, if this is a child purpose
+          type: string
+          format: uuid
+          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdBy:
+          description: ID of the user who created the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        createdDate:
+          description: Date and time when the purpose version was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastModifiedBy:
+          description: ID of the user who last modified the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        lastModifiedDate:
+          description: Date and time when the purpose version was last modified
+          type: string
+          format: date-time
+          example: '2023-01-15T15:30:45Z'
+        publishedBy:
+          description: ID of the user who published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date and time when the purpose version was published
+          type: string
+          format: date-time
+          example: '2023-01-10T10:15:30Z'
+        receiptInclusionAttributes:
+          description: Attributes that should be included in the receipt
+          type: object
+          additionalProperties:
+            type: array
+            description: Attributes that should be included in the receipt
+            items:
+              type: string
+              description: Attributes that should be included in the receipt
+      readOnly: true
+      required:
+      - id
+      - label
+      - purposeType
+      - status
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDto:
+      properties:
+        Id:
+          description: Unique Identifier identifying the Preference Center
+          type: string
+          format: uuid
+          example: 09ccd1b9-84a0-4bcb-a167-f761391ebffa
+        Name:
+          description: The Preference Center name
+          type: string
+          example: Email Communication Preferences
+        OrganizationName:
+          description: The Organization's name
+          type: string
+          example: OneTrust
+        Template:
+          description: The Preference Center template type
+          type: string
+          example: ENHANCED
+          enum:
+          - ORIGINAL
+          - ENHANCED
+          - MULTIPAGE
+    ConsentPreferences-UniversalConsentPreferenceManag_PrivacyNoticeVersionDtoV2_DetailV2:
+      properties:
+        id:
+          description: Unique identifier of the privacy notice version
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the privacy notice version
+          type: string
+          example: Privacy Policy v2.1
+        version:
+          description: Major version number of the privacy notice
+          type: integer
+          format: int64
+          example: 2
+          minimum: 0
+        minorVersion:
+          description: Minor version number of the privacy notice (used for patch versions)
+          type: integer
+          format: int64
+          example: 1
+          default: 0
+          minimum: 0
+    ConsentPreferences-UniversalConsentPreferenceManag_SimpleNameVersion_DetailV2:
+      properties:
+        id:
+          description: The unique identifier of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The display name of the entity
+          type: string
+          example: Marketing Consent Form
+        version:
+          description: The version number of the entity
+          type: integer
+          format: int64
+          example: 1
+        type:
+          description: The type of the entity (optional, used for categorization)
+          type: string
+          example: CONSENT_FORM
+      required:
+      - id
+      - name
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_PageCollectionPointDtoV2_DetailV2:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CollectionPointDtoV2_DetailV2'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_DetailV2'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_DetailV2'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
+    ConsentPreferences-UniversalConsentPreferenceManag_PrivacyNoticeVersionDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the privacy notice version
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the privacy notice version
+          type: string
+          example: Privacy Policy v2.1
+        version:
+          description: Major version number of the privacy notice
+          type: integer
+          format: int64
+          example: 2
+          minimum: 0
+        minorVersion:
+          description: Minor version number of the privacy notice (used for patch versions)
+          type: integer
+          format: int64
+          example: 1
+          default: 0
+          minimum: 0
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementField:
+      properties:
+        dataElementType:
+          description: The type of the custom data element (e.g., TEXT, NUMBER, DATE, etc.)
+          type: string
+          enum:
+          - USER_INPUT
+          - SELECTION
+          - EMAIL
+          - NUMBER
+          - DATE_PICKER
+          - COUNTRY
+          - STATE
+          - COUNTRY_CODE
+          - PHONE_NUMBER
+          - STATE_CODE
+        displayAs:
+          description: Specifies how the data element should be displayed in the UI (e.g., as a text field, dropdown, radio buttons, etc.)
+          type: string
+          enum:
+          - DROPDOWN
+          - NONE
+        dataElementOptions:
+          description: List of available options for this data element. Only applicable for choice-based elements like dropdowns or radio buttons.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomDataElementOptionDtoV2'
+      required:
+      - dataElementType
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

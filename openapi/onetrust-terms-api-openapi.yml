@@ -1,0 +1,1239 @@
+openapi: 3.2.0
+info:
+  title: Data Use Governance - Data Catalog Terms API
+  description: The Data Catalog APIs provide comprehensive functionality for managing data governance assets within Data Catalog, enabling users to create, retrieve, and organize business glossaries, terms, and tags for effective data classification and metadata management.
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Terms
+  description: APIs to manage glossary terms, including creating new terms with custom attributes, retrieving term lists with search and pagination capabilities, accessing individual term details, and managing term attributes and relationships.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+  x-displayName: Terms
+paths:
+  /api/glossary/v1/terms:
+    get:
+      operationId: retrieveAllTerms
+      summary: Get List of Terms
+      description: Use this API to retrieve a list of all terms or search for a specific term. The response will include details for each term along with the corresponding term ID, name, and glossary to which the term belongs.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      parameters:
+      - name: name
+        in: query
+        description: The name of the term that needs to be searched for within the list of terms.
+        required: false
+        schema:
+          type: string
+        example: URL
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N).
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page.
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 10
+      responses:
+        '200':
+          description: "OK \nTerm Details response retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustResponseOfTermResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_READ
+  /api/glossary/v1/terms/attribute-details/{name}:
+    get:
+      operationId: getTermAttributeByName
+      summary: Get Term Attribute
+      description: Use this API to retrieve the details of a specific term attribute.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      parameters:
+      - name: name
+        in: path
+        description: The name of attribute to get the term attribute details. For example, including the value for the attribute's name-Notes, matching term attribute will be retrieved.
+        required: true
+        schema:
+          type: string
+        example: Notes
+      responses:
+        '200':
+          description: "OK \nTerm Attribute response retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustResponseOfListOfAttributeInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_READ
+  /api/glossary/v1/terms/attribute-names:
+    get:
+      operationId: getAllTermAttributeNames
+      summary: Get List of Term Attributes
+      description: Use this API to retrieve a list of all term attributes created by internal and external systems.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      responses:
+        '200':
+          description: "OK \nTerm attribute names retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustResponseOfListofStringWrapper'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_READ
+  /api/glossary/v1/terms/name/{termName}:
+    get:
+      operationId: retrieveTermsByName
+      summary: Get Term
+      description: Use this API to retrieve the details for the specified term. The response will return the term ID, description, and type along with its associated tags.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      parameters:
+      - name: termName
+        in: path
+        description: The name to get the term details along with the tag details. For example, including the value for the name URL, matching term details with the associated tags will be retrieved.
+        required: true
+        schema:
+          type: string
+        example: URL
+      responses:
+        '200':
+          description: "OK \nTerm Details response retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustResponseOfExternalTermResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_READ
+  /api/glossary/v1/terms/names:
+    get:
+      operationId: retrieveTermsName
+      summary: Get List of Term Names
+      description: Use this API to retrieve a list of all term names.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      responses:
+        '200':
+          description: "OK \nTerm names retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: URL
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_READ
+  /api/glossary/v2/terms:
+    post:
+      operationId: createTermUsingPOST
+      summary: Create Term
+      description: Use this API to create a new term in the Glossary.
+      tags:
+      - Terms
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-catalog.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermCreateRequestV2'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataCatalog_OAUTH2:
+        - DATA_CATALOG_WRITE
+components:
+  schemas:
+    DataUseGovernance-DataCatalog_CustomAttibuteDto:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        value:
+          type: object
+        custom:
+          type: boolean
+    DataUseGovernance-DataCatalog_AttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Attribute name
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: Attribute name key which can be used for translation
+          type: string
+          example: IM.Name
+          maxLength: 255
+        description:
+          description: Attribute description
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: Attribute description key which can be used for translation
+          type: string
+          example: IM.Name.Description
+          maxLength: 255
+        fieldName:
+          description: Attribute field name which can be used for uniquely identifying an attribute
+          type: string
+          example: nameOfRecord
+          maxLength: 100
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: name
+          maxLength: 100
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+          example: true
+          default: 'true'
+        required:
+          description: Indicator for mandatory attribute
+          type: boolean
+          example: false
+          default: 'false'
+        readOnly:
+          description: Indicator for read only attribute
+          type: boolean
+          example: false
+          default: 'false'
+        encrypted:
+          description: Indicate whether to encrypt the field value or not. Only supported for text, single select and multi select
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: Indicator for allowing user defined options for attribute
+          type: boolean
+          example: false
+          default: 'false'
+        baseAttribute:
+          description: Indicate if attribute is part of extendable entity and which cannot be modified
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: Response type for attribute
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        formula:
+          description: Formula for attribute
+          type: string
+          example: Default:Field4 + Default:Field3 + 100 + avg(CrossSchema:Field4 + Default:Field3)
+          maxLength: 4000
+        optionType:
+          description: Attribute Options value source type
+          type: string
+          example: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+        optionAllowed:
+          description: Indicate if attribute can have static options or not
+          type: boolean
+          example: false
+          default: 'false'
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: vendors
+          maxLength: 100
+        options:
+          description: Option's for given attribute based on response type
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeOptionInformation'
+        referenceCategories:
+          description: Categories for given attribute
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_CategoryInformation'
+        responseMaxLength:
+          description: Response max length
+          type: integer
+          format: int32
+          example: 4000
+          default: '4000'
+          maximum: 4000
+          minimum: 1
+        responseSubType:
+          description: Response sub type
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeInformation:
+          description: Associated attribute information
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AssociatedAttributeInformation'
+        multiSelectMaxOptionValues:
+          description: MultiSelect max option values
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        hidden:
+          description: Hidden
+          type: boolean
+          example: false
+          default: 'false'
+        optionUrl:
+          description: OptionUrl
+          type: string
+          example: /api/risk-v2/risk-categories
+          maxLength: 255
+        intakeQuestion:
+          description: Attribute Intake Question Details
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_IntakeQuestion'
+        deleteMarker:
+          description: Indicate the status of an attribute's deletion process
+          type: string
+          example: MARKED_FOR_DELETE
+          enum:
+          - MARKED_FOR_DELETE
+          - DELETING
+          - DELETED
+        optionMetadata:
+          description: Option Metadata
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeOptionMetadataInformation'
+        validationRuleId:
+          description: Validation Rule configured for Attribute (e.g., email, URL)
+          type: string
+          example: email
+        associatedAttributeFieldName:
+          type: string
+      required:
+      - enabled
+      - fieldName
+      - name
+    DataUseGovernance-DataCatalog_customAttributes:
+      type: object
+      properties:
+        name:
+          description: Name of the custom attribute
+          type: string
+          example: Term other users
+          minLength: 1
+        value:
+          description: Value of the custom attribute
+          type: string
+          example: User of the term
+        options:
+          type: array
+          items:
+            type: string
+            description: Options of the custom attribute
+            example: alice@ot.com
+    DataUseGovernance-DataCatalog_OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
+    DataUseGovernance-DataCatalog_AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: Option Source Entity Type
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: Basic Url for the Option source Service
+          type: string
+          example: /api/location
+        optionUrl:
+          description: Api URL for the Drop Down Api
+          type: string
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: This will help to identify the view type of list
+          type: string
+    DataUseGovernance-DataCatalog_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    DataUseGovernance-DataCatalog_TermResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the entity
+          type: string
+          example: Sample Name
+        nameKey:
+          description: Key used for name localization
+          type: string
+          example: SAMPLE_NAME_KEY
+        type:
+          description: Type of the term
+          type: string
+          example: Business
+        typeKey:
+          description: Key used for type localization
+          type: string
+          example: BUSINESS_TYPE
+        shortDescription:
+          description: Brief description of the term
+          type: string
+          example: A short explanation of what this term means
+        glossary:
+          description: Glossary information containing the term
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_IdValueKeyDto'
+        numericId:
+          description: Numeric identifier for the term
+          type: integer
+          format: int64
+          example: 12345
+        example:
+          description: Example usage of the term
+          type: string
+          example: Example usage of this term in a sentence
+        businessOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Business Owner's ID
+            example: 32d50775-17c3-44f0-88da-575b8a10c9fb
+          uniqueItems: true
+        technicalOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Technical Owner's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+          uniqueItems: true
+        dataSteward:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Data Steward's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+          uniqueItems: true
+        notes:
+          description: Additional notes about the term
+          type: string
+          example: Additional information about term usage
+        source:
+          description: Source of the term
+          type: string
+          example: Internal Documentation
+        createdDate:
+          description: Creation timestamp
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastUpdatedDate:
+          description: Last update timestamp
+          type: string
+          format: date-time
+          example: '2023-01-02T00:00:00Z'
+        createdBy:
+          description: UUID of the user who created the term
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174003
+        lastUpdatedBy:
+          description: UUID of the user who last updated the term
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174004
+        status:
+          description: Current status of the term
+          type: string
+          example: ACTIVE
+        associatedTags:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Associated tag's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
+            description: Associated tag's detail
+    DataUseGovernance-DataCatalog_OneTrustPage:
+      type: object
+      properties:
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
+    DataUseGovernance-DataCatalog_OneTrustResponseOfListOfAttributeInformation:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeInformation'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_TagResponse:
+      type: object
+      properties:
+        id:
+          description: UUID of the tag
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        tagId:
+          description: Numeric identifier for the tag
+          type: integer
+          format: int64
+          example: 45
+        name:
+          description: Name of the tag
+          type: string
+          example: Resume
+        description:
+          description: Description of the tag
+          type: string
+          example: This tag is used for any information related to Resume
+        type:
+          description: Type of the tag
+          type: string
+          example: CLASSIFICATION
+        createdBy:
+          description: UUID of the user who created the tag
+          type: string
+          format: uuid
+          example: 897e4567-e89b-12d3-2345-426614174789
+        createdDate:
+          description: Tag creation timestamp
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        updatedBy:
+          description: UUID of the user who updated the tag
+          type: string
+          format: uuid
+          example: 897e4567-e89b-12d3-2345-426614174789
+        updatedDate:
+          description: Tag update timestamp
+          type: string
+          format: date-time
+          example: '2023-01-02T00:00:00Z'
+        athenaId:
+          description: Athena Id for the tag
+          type: string
+          format: uuid
+          example: 754e4567-de34-12d3-a456-ddf414174777
+    DataUseGovernance-DataCatalog_OneTrustResponseOfTermResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_TermCreateRequestV2:
+      type: object
+      properties:
+        name:
+          description: Name of the term
+          type: string
+          example: Account Number
+        type:
+          description: Type of the term
+          type: string
+          example: Data Element
+          enum:
+          - Data Element
+          - Business Term
+          - Acronym
+          - Key Performance Indicator
+          - Metric
+          - Type of Individual
+        glossaryName:
+          description: Valid glossary name
+          type: string
+          example: Business glossary
+        createAsApproved:
+          description: Create a term as approved
+          type: boolean
+          example: true
+        shortDescription:
+          description: Short description about term
+          type: string
+          example: This is the eight-digit account number which is used to uniquely identify the bank customer
+        example:
+          description: Example Value for the term
+          type: string
+          example: 123-423-45
+        notes:
+          description: Notes for the term
+          type: string
+          example: This is the term which is used for the Banking data
+        technicalOwner:
+          description: Technical owner usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        businessOwner:
+          description: Business owner usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        dataSteward:
+          description: Data steward usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        tags:
+          type: array
+          items:
+            type: string
+            description: Tags to associate to the Term
+            example: Financial
+          uniqueItems: true
+        customAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_customAttributes'
+            description: Custom Attributes of the term
+      required:
+      - glossaryName
+      - name
+      - type
+    DataUseGovernance-DataCatalog_OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
+    DataUseGovernance-DataCatalog_ExternalTermResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the entity
+          type: string
+          example: Sample Name
+        nameKey:
+          description: Key used for name localization
+          type: string
+          example: SAMPLE_NAME_KEY
+        type:
+          description: Type of the term
+          type: string
+          example: Business
+        typeKey:
+          description: Key used for type localization
+          type: string
+          example: BUSINESS_TYPE
+        shortDescription:
+          description: Brief description of the term
+          type: string
+          example: A short explanation of what this term means
+        glossary:
+          description: Glossary information containing the term
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_IdValueKeyDto'
+        numericId:
+          type: integer
+          format: int64
+        example:
+          type: string
+        businessOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        technicalOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        dataSteward:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        notes:
+          type: string
+        source:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          format: uuid
+        lastUpdatedBy:
+          type: string
+          format: uuid
+        customAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_CustomAttibuteDto'
+        status:
+          type: string
+        associatedTags:
+          type: array
+          items:
+            type: string
+            format: uuid
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
+    DataUseGovernance-DataCatalog_AssociatedAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Associated Attribute GUID
+          type: string
+          format: uuid
+        name:
+          description: Name
+          type: string
+          example: Count of members
+          minLength: 1
+        nameKey:
+          description: Name key
+          type: string
+          example: IM.CountOfMembersName
+        description:
+          description: Description
+          type: string
+          example: Provide details about count associated with this attribute
+        descriptionKey:
+          description: Description Key
+          type: string
+          example: IM.CountOfMembersDesc
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: risk
+        fieldName:
+          description: Attribute field name
+          type: string
+          example: countOfMembers
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: count
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+        responseType:
+          description: Response Type
+          type: string
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        responseSubType:
+          description: Response sub type
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          description: Formula for attribute
+          type: string
+          example: sum(1, 3)
+        options:
+          description: Attribute options
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeOptionInformation'
+      required:
+      - enabled
+      - fieldName
+      - id
+      - responseType
+    DataUseGovernance-DataCatalog_UserAndGroupNames:
+      type: object
+      properties:
+        userEmails:
+          type: array
+          items:
+            type: string
+            description: Valid user email
+            example: mallory@ot.com
+        groupNames:
+          type: array
+          items:
+            type: string
+            description: Group name
+            example: Audit group
+    DataUseGovernance-DataCatalog_OneTrustResponseOfExternalTermResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_ExternalTermResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
+    DataUseGovernance-DataCatalog_AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option Key which can be used for translation
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeOptionMetadata'
+      required:
+      - option
+    DataUseGovernance-DataCatalog_IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+    DataUseGovernance-DataCatalog_IdValueKeyDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        value:
+          description: Display value
+          type: string
+          example: Sample Value
+        key:
+          description: Key used for localization
+          type: string
+          example: SAMPLE_KEY
+    DataUseGovernance-DataCatalog_OneTrustResponseOfListofStringWrapper:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+            example: Notes
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+  securitySchemes:
+    DataUseGovernance-DataCatalog_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_CATALOG_READ: Access to Data Catalog read operations for external systems
+            DATA_CATALOG_WRITE: Access to Data Catalog write operations for external systems
+    DataUseGovernance-DataAssetManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_CATALOG_WRITE: Data Catalog Write Scope gives the user access to write operations
+            DATA_CATALOG_READ: Data Catalog Read Scope gives the user access to read operations
+    DataUseGovernance-DataCatalogMetadataExchange_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_CATALOG_READ: Access to Data Catalog read operations for external systems
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

@@ -1,0 +1,2151 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Data Subjects V4
+  description: The Data Subjects V4 APIs are used to manage data subject information, preferences, and consent records.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Data Subjects V4
+paths:
+  /rest/api/consent/v4/data-subjects:
+    delete:
+      operationId: deleteDataSubjectUsingTTL
+      summary: Delete Data Subject
+      description: Initiates a TTL-based deletion process for a data subject
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_DataSubjectDeleteRequestV4'
+      responses:
+        '200':
+          description: Deletion Request using TTL has been accepted
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Missing retainReceipts flag in the request
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+        '404':
+          description: Unable to find a datasubject with given identifier
+          content:
+            '*/*':
+              schema:
+                type: string
+        '422':
+          description: Missing identifier(or)additionalidentifier in the request
+          content:
+            '*/*':
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+  /rest/api/consent/v4/data-subjects/profiles:
+    delete:
+      operationId: deletePurposeFromDataSubjectsUsingTTL
+      summary: Delete Purposes from Data Subjects
+      description: Initiates TTL-based deletion of specific purposes from data subjects
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_DeletePurposeFromDataSubjectV4'
+      responses:
+        '200':
+          description: Accepted request to delete purposes from DataSubjects using TTL
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+        '404':
+          description: Unable to find a datasubject with given identifier
+          content:
+            application/json:
+              schema:
+                type: string
+        '422':
+          description: Missing identifier(or)additionalidentifier OR missing purposes in the request
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+  /rest/api/consent/v4/datasubjects:
+    get:
+      operationId: getDataSubjectsV4
+      summary: Get List of Data Subjects
+      description: 'Use this API to retrieve a list of data subjects that were last updated between the specified date range. The response will include basic details, such as each data subject’s identifier, created date, data elements, and last updated date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The maximum date range that can be returned is 7 days.'
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: fromDate
+        in: query
+        description: The start of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-01T00:00:00'
+      - name: toDate
+        in: query
+        description: The end of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-07T23:59:59'
+      - name: isDNCInclude
+        in: query
+        description: Indicates whether to include data subject in the response if the data subject is in the DNC list.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: requestContinuation
+        in: header
+        description: The token used to paginate a response if the number of records is more than a page.
+        required: false
+        schema:
+          type: string
+        example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          default: lastModifiedDate,desc
+          enum:
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+        example: lastModifiedDate,desc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectResponseSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/basic-details:
+    get:
+      operationId: getDataSubjectBasicDetailsV4
+      summary: Get Data Subject
+      description: Use this API to retrieve a data subject’s basic details. The response will include details such as the data subject’s created date, last transaction date, and data elements.
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: identifier
+        in: header
+        description: The data subject identifier of the data subject.
+        required: true
+        schema:
+          type: string
+        example: example@otprivacy.com
+      - name: isDNCInclude
+        in: query
+        description: Indicates whether to include data subject in the response if the data subject is in the DNC list.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Data Subject Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/details:
+    get:
+      operationId: getDataSubjectDetailsV4
+      summary: Get Data Subject Details
+      description: Use this API to retrieve complete details for a specific data subject. The response will include all of the data subject’s basic details, purpose details, and email link tokens.
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: identifier
+        in: header
+        description: The data subject identifier of the data subject.
+        required: true
+        schema:
+          type: string
+        example: example@otprivacy.com
+      - name: includeConsentGroups
+        in: query
+        description: This flag indicates whether data subject group information is included in the response.
+        required: false
+        schema:
+          type: boolean
+        example: true
+      - name: includeAttachments
+        in: query
+        description: This flag indicates whether attachment information is included in the response.
+        required: false
+        schema:
+          type: boolean
+        example: true
+      - name: includeNotices
+        in: query
+        description: This flag indicates whether collection point notice information is included in the response.
+        required: false
+        schema:
+          type: boolean
+        example: true
+      - name: includeConsentStrings
+        in: query
+        description: This flag indicates whether consent string information is included in the response.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
+      - name: isDNCInclude
+        in: query
+        description: Indicates whether to include data subject in the response if the data subject is in the DNC list.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectInformationResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/ds-profiles:
+    get:
+      operationId: getAllProfilesByDataSubjectV4
+      summary: Get List of All Purpose Details by Data Subject
+      description: Use this API to retrieve a data subject’s purpose details for all purposes. The response will include all purposes that the data subject interacted with along with details such as status, last transaction date, consent date, and purpose preferences.
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: identifier
+        in: header
+        description: The unique identifier for a data subject.
+        required: true
+        schema:
+          type: string
+        example: example@otprivacy.com
+      - name: requestContinuation
+        in: header
+        description: The token used to paginate a response if the number of records is more than a page.
+        required: false
+        schema:
+          type: string
+        example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          default: lastUpdatedDate,desc
+          enum:
+          - lastUpdatedDate,asc
+          - lastUpdatedDate,desc
+        example: lastUpdatedDate,desc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/profiles:
+    get:
+      operationId: getDataSubjectProfilesV4
+      summary: Get List of All Purpose Details for All Data Subjects
+      description: 'Use this API to retrieve a list of all purpose details last updated between a specified date range for all data subjects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The maximum date range that can be returned is 30 days.
+
+        > - Along with the mandatory date range filter parameters, this API supports the following filter combinations:
+
+        > - `collectionPointId`, `purposeId`, and `status`
+
+        > - `purposeId` and `status`
+
+        > - `collectionPointId`'
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: collectionPointId
+        in: query
+        description: The unique identifier of the collection point.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 25d9ccac-db88-4d34-849c-3d602a629961
+      - name: purposeId
+        in: query
+        description: The unique identifier of the purpose.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 25d9ccac-db88-4d34-849c-3d602a629961
+      - name: status
+        in: query
+        description: The status of the purpose for the data subject.
+        required: false
+        schema:
+          type: string
+          enum:
+          - EXPIRED
+          - WITHDRAWN
+          - NO_CONSENT
+          - PENDING
+          - ACTIVE
+          - OPT_OUT
+          - ALWAYS_ACTIVE
+          - HARD_OPT_OUT
+          - EXTEND
+          - CHANGE_PREFERENCES
+          - NOT_OPT_OUT
+          - OPT_IN
+          - IMPLICIT
+        example: ACTIVE
+      - name: updatedSince
+        in: query
+        description: The start of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-01T00:00:00'
+      - name: updatedUntil
+        in: query
+        description: The end of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-07T23:59:59'
+      - name: requestContinuation
+        in: header
+        description: The token used to paginate a response if the number of records is more than a page.
+        required: false
+        schema:
+          type: string
+        example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          default: lastUpdatedDate,desc
+          enum:
+          - lastUpdatedDate,asc
+          - lastUpdatedDate,desc
+        example: lastUpdatedDate,desc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/profiles/unordered:
+    get:
+      operationId: getDataSubjectProfilesUnorderedV4
+      summary: Get Optimized List of All Purpose Details for All Data Subjects
+      description: 'Use this API to retrieve an unordered list of all purpose details last updated between a specified date range for all data subjects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The maximum date range that can be returned is 30 days.
+
+        > - Along with the mandatory date range filter parameters, this API supports the following filter combinations:
+
+        > - `collectionPointId`, `purposeId`, and `status`
+
+        > - `purposeId` and `status`
+
+        > - `collectionPointId`
+
+        > - This API is optimized for high-performance bulk retrieval where sorting is not required. Results are not returned in a specific order and may appear random. Bookmarking is supported for consistent pagination.
+
+        > - This API has more flexible rate limits compared to the standard Get List of All Purpose Details for All Data Subjects API.'
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: collectionPointId
+        in: query
+        description: The unique identifier for a Collection Point.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 8f5f3a5b-4b32-40d3-9c43-69c5ec91f4af
+      - name: purposeId
+        in: query
+        description: The unique identifier for a Purpose.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 25d9ccac-db88-4d34-849c-3d602a629961
+      - name: status
+        in: query
+        description: The status of the Purpose for the data subject.
+        required: false
+        schema:
+          type: string
+          enum:
+          - EXPIRED
+          - WITHDRAWN
+          - NO_CONSENT
+          - PENDING
+          - ACTIVE
+          - OPT_OUT
+          - ALWAYS_ACTIVE
+          - HARD_OPT_OUT
+          - EXTEND
+          - CHANGE_PREFERENCES
+          - NOT_OPT_OUT
+          - OPT_IN
+          - IMPLICIT
+        example: ACTIVE
+      - name: updatedSince
+        in: query
+        description: The start of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-01T00:00:00'
+      - name: updatedUntil
+        in: query
+        description: The end of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-07T23:59:59'
+      - name: requestContinuation
+        in: header
+        description: The token used to paginate a response if the number of records is more than a page.
+        required: false
+        schema:
+          type: string
+        example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/profiles/{purposeGuid}:
+    get:
+      operationId: getDataSubjectProfileV4
+      summary: Get Purpose Details by Data Subject
+      description: Use this API to retrieve a data subject’s purpose details for a specific purpose. The response will include details such as the last transaction date, consent date, and purpose preferences.
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: identifier
+        in: header
+        description: The data subject identifier of the data subject.
+        required: true
+        schema:
+          type: string
+        example: example@otprivacy.com
+      - name: purposeGuid
+        in: path
+        description: The unique identifier of the purpose.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 25d9ccac-db88-4d34-849c-3d602a629961
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /rest/api/consent/v4/datasubjects/search-by-element:
+    post:
+      operationId: searchDataSubjectsByElementV4
+      summary: Search Data Subjects by Data Element
+      description: 'Use this API to search for data subjects based on a specific data element name and value.
+
+
+        > 🗒 Things to Know
+
+
+        >
+
+
+        > - This API supports pagination with continuation tokens for large result sets.'
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchByElementRequest'
+      responses:
+        '200':
+          description: Successfully retrieved data subjects matching the search criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchResponse'
+        '400':
+          description: Invalid request parameters or page size exceeds maximum limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchResponse'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchResponse'
+        '403':
+          description: Insufficient permissions to perform data element search
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchResponse'
+        '422':
+          description: Missing or invalid data element name or value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectSearchResponse'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+  /rest/api/consent/v4/datasubjects/unordered:
+    get:
+      operationId: getDataSubjectsUnorderedV4
+      summary: Get Optimized List of Data Subjects
+      description: 'Use this optimized for high-performance API to retrieve a list of unsorted data subjects that were last updated between the specified date range. The response includes key details such as each data subject’s identifier, created date, data elements, and last updated date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The maximum date range that can be returned is 7 days.
+
+        > - Results are not returned in a specific order and may appear random.
+
+        > - Supports bookmarking for consistent pagination.
+
+        > - Optimized for high-performance bulk retrieval where sorting is not required.
+
+        > - Has more flexible rate limits compared to the standard Get List of Data Subjects API.'
+      tags:
+      - Data Subjects V4
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: fromDate
+        in: query
+        description: The start of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-01T00:00:00'
+      - name: toDate
+        in: query
+        description: The end of a date and time range used to filter results.
+        required: true
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-07T23:59:59'
+      - name: requestContinuation
+        in: header
+        description: The token used to paginate a response if the number of records is more than a page.
+        required: false
+        schema:
+          type: string
+        example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          type: integer
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_DataSubjectResponseSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+components:
+  schemas:
+    ConsentAPI_DataSubjectDeleteRequestV4:
+      type: object
+      properties:
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: user-12345@ot.com
+        retainReceipts:
+          description: This flag indicates whether receipts will be retained while deleting data subjects. When set to `false`, receipts are removed from the database and no longer appear in the OneTrust Platform UI. However, these receipts are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+      required:
+      - identifier
+      - retainReceipts
+    ConsentAPI_DataSubjectElementDto:
+      type: object
+      properties:
+        name:
+          description: The name of the data element.
+          type: string
+          example: Work Email
+        value:
+          description: The value of the data element.
+          type: object
+          example: example@otprivacy.com, [Red, Blue]
+        linked:
+          description: This flag indicates whether the data element is linked to the data subject.
+          type: boolean
+      required:
+      - name
+    ConsentAPI_PurposeNoteDto:
+      type: object
+      properties:
+        noteId:
+          description: Unique identifier for the purpose note
+          type: string
+          format: uuid
+          example: d1a8f6f2-781a-4b2b-b1db-07e25f1c9a94
+        noteType:
+          description: Type of the note
+          type: string
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: Language of the purpose note
+          type: string
+          example: en-us
+        noteText:
+          description: The actual text of the note
+          type: string
+          example: 0e7ed8b7-a64d-4e38-a7ea-7c28dbdd5869
+    ConsentAPI_EmailLinkTokenResponseDto:
+      type: object
+      properties:
+        token:
+          description: The data subject link token. This token can be appended to the preference center URL to form the preference center magic link.
+          type: string
+          example: QFpXYCFOYUrFZfstplM5l1hjdLv4YlaQtkbYt7gpZUc=
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        createdDate:
+          description: The date and time that the data subject link token was created.
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000'
+        expiryDate:
+          description: The date and time that the data subject link token expires.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+    ConsentAPI_DataSubjectProfileDto:
+      type: object
+      properties:
+        language:
+          description: The language set for the data subject.
+          type: string
+          example: en-us
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        linkToken:
+          description: Token used for magic link authentication of the Data Subject
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
+        createdDate:
+          description: The date and time that the data subject record was created.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        testDataSubject:
+          description: This flag indicates whether the data subject is used for testing purposes.
+          type: boolean
+          example: true
+        id:
+          description: Unique Identifier identifying a Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        lastUpdatedDate:
+          description: The date that the Data Subject record was last updated on
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        dataElements:
+          description: The additional information about the data subject.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementDto'
+        purposes:
+          description: List of purposes associated with the Data Subject's profile
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfilePurposeDto'
+    ConsentAPI_DataSubjectProfileResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        lastReceiptId:
+          description: Unique Identifier identifying a Receipt
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        version:
+          description: Version of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        status:
+          description: The status of the purpose for the data subject.
+          type: string
+          example: ACTIVE
+        firstTransactionDate:
+          description: The date and time that the first transaction was written to the database.
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastTransactionDate:
+          description: The date and time that the last transaction was written to the database.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        withdrawalDate:
+          description: The date and time that the data subject withdrew consent for the purpose.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        reactivationDate:
+          description: Indicates the date and time on which a consent will be reactivated. This is set when a purpose is snoozed until the specified date and time. The consent remains snoozed until this date, after which it is automatically reactivated and becomes active again.
+          type: string
+          format: date-time
+          example: '2020-06-12T16:11:25.479'
+        consentDate:
+          description: The date and time that the data subject gave their last active consent.
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        expiryDate:
+          description: The explicit expiration date after which the purpose is no longer valid and no further consent is collected against it.
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        totalTransactionCount:
+          description: The total number of Transactions recorded against this Purpose
+          type: integer
+          format: int64
+          example: 3
+        topicsList:
+          description: The list of topics associated with the purpose.
+          type: array
+          items:
+            type: string
+            format: uuid
+          writeOnly: true
+        topics:
+          description: The details of the topics for which transactions were recorded.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileTopicResponseDto'
+        customPreferencesMap:
+          description: The list of purpose preferences associated with the purpose.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+          writeOnly: true
+        customPreferences:
+          description: The details of the purpose preferences for which transactions were recorded.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsProfileCustomPreferenceResponseDto'
+        lastTransactionCollectionPointId:
+          type: string
+          format: uuid
+        lastTransactionCollectionPointVersion:
+          type: integer
+          format: int64
+        purposeNote:
+          description: The details of the reason template used to explain changes to the data subject's preferences.
+          $ref: '#/components/schemas/ConsentAPI_PurposeNoteResponseDto'
+        lastUpdatedDate:
+          description: 'The date and time of the latest change to the data subject profile in the database.to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastInteractionDate:
+          description: The date and time of the data subject's last interaction with the purpose.
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        attributes:
+          description: The additional attributes associated with the purpose.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        geolocation:
+          description: The geolocation details of the consent interaction.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectGeolocationResponseDto'
+        attachments:
+          description: Documents attached to Data Subject Profile
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
+        source:
+          description: The source details of the consent interaction.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
+    ConsentAPI_PurposeNoteResponseDto:
+      type: object
+      properties:
+        noteId:
+          description: The unique identifier of the reason template.
+          type: string
+          format: uuid
+          example: f312dd9b-58b4-4f34-b5ff-10b9b464bc4f
+        noteType:
+          description: The type of reason template.
+          type: string
+          example: UNSUBSCRIBE_REASON
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The ISO code for the language of the reason template.
+          type: string
+          example: en-us
+        noteText:
+          description: The text of the reason template.
+          type: string
+          example: I did not sign up for this.
+        isValidNote:
+          description: This flag indicates whether the note is a valid reason template.
+          type: boolean
+          example: true
+    ConsentAPI_DataSubjectAttachmentResponseDto:
+      type: object
+      properties:
+        attachmentId:
+          description: The unique identifier of the file attached to the data subject record.
+          type: string
+          format: uuid
+          example: 25d9ccac-db88-4d34-849c-3d602a629961
+        fileName:
+          description: The name of the file attached to the data subject record.
+          type: string
+          example: policy.pdf
+        uploadedBy:
+          description: The name of the user who uploaded the file.
+          type: string
+          example: John Doe
+        uploadDate:
+          description: The date and time on which the file was uploaded.
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00'
+    ConsentAPI_DeletePurposeFromDataSubjectV4:
+      type: object
+      properties:
+        purposes:
+          description: The unique identifiers of the purposes.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+          - 550e8400-e29b-41d4-a716-446655440001
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: user-12345@ot.com
+        retainReceipts:
+          description: This flag indicates whether receipts will be retained while deleting purposes from data subjects. When set to `false`, receipts are removed from the database and no longer appear in the OneTrust Platform UI. However, these receipts are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+      required:
+      - identifier
+      - purposes
+    ConsentAPI_ConsentStringResponseDto:
+      type: object
+      properties:
+        type:
+          description: The type of consent string.
+          type: string
+          example: GPP
+        content:
+          description: The content of the consent string.
+          example: DBABMA~CQJ4dQAQJ4dQAPoABABGBUEAAAAAAAAAAAAAAAAAAAAA.QAAA.IAAA
+          type: string
+        receivedDate:
+          description: The date and time that the consent string was received.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+        interactionDate:
+          description: The date and time of the last interaction with the consent string.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+    ConsentAPI_DataSubjectResponseDto:
+      type: object
+      properties:
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        identifierType:
+          description: The type of data subject identifier used for the data subject's identifier.
+          type: string
+          example: Email
+        language:
+          description: The language set for the data subject.
+          type: string
+          example: en-us
+        createdDate:
+          description: The date and time that the data subject record was created.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastTransactionDate:
+          description: The date and time that the last transaction for the data subject was written to the database.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastReceiptGuid:
+          description: The unique identifier of the latest consent receipt for the data subject.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        testDataSubject:
+          description: This flag indicates whether the data subject is used for testing purposes.
+          type: boolean
+          example: true
+        dataElements:
+          description: The additional information about the data subject.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementResponseDto'
+        latestGeoLocation:
+          description: The geolocation details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectGeolocationResponseDto'
+        consentGroups:
+          description: The list of data subject group identifiers to which the data subject belongs.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: '[633ba071-61b0-485f-81a0-a2245777b432, 25d9ccac-db88-4d34-849c-3d602a629961]'
+        latestSource:
+          description: The source details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
+        id:
+          description: Unique Identifier identifying a Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        lastUpdatedDate:
+          description: The date that the Data Subject record was last updated on
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        doNotCall:
+          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list
+          type: boolean
+          example: true
+        notices:
+          description: The Data Subject notices.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_NoticeDetailResponseDto'
+        attachments:
+          description: Documents attached to Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    ConsentAPI_VersionedEntity:
+      type: object
+      properties:
+        guid:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: 15e30742-7e6c-4916-a5a1-7742a14ee284
+        name:
+          description: The name of the entity.
+          type: string
+          example: Marketing
+        version:
+          description: The version of the entity.
+          type: integer
+          format: int64
+          example: 1
+        minorVersion:
+          description: The minor version of the entity.
+          type: integer
+          format: int64
+          example: 2
+    ConsentAPI_DataSubjectSearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileDto'
+        continuationToken:
+          type: string
+    ConsentAPI_DataSubjectSearchByElementRequest:
+      type: object
+      properties:
+        dataElementName:
+          description: Name of the data element to search by
+          type: string
+          example: Email
+          minLength: 1
+        dataElementValue:
+          description: Value of the data element to search for
+          type: string
+          example: test@example.com
+          minLength: 1
+        requestContinuation:
+          description: Request continuation token for pagination
+          type: string
+    ConsentAPI_DataSubjectInformationResponseDto:
+      type: object
+      properties:
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        identifierType:
+          description: The type of data subject identifier used for the data subject's identifier.
+          type: string
+          example: Email
+        language:
+          description: The language set for the data subject.
+          type: string
+          example: en-us
+        createdDate:
+          description: The date and time that the data subject record was created.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastTransactionDate:
+          description: The date and time that the last transaction for the data subject was written to the database.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastReceiptGuid:
+          description: The unique identifier of the latest consent receipt for the data subject.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        testDataSubject:
+          description: This flag indicates whether the data subject is used for testing purposes.
+          type: boolean
+          example: true
+        dataElements:
+          description: The additional information about the data subject.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementResponseDto'
+        latestGeoLocation:
+          description: The geolocation details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectGeolocationResponseDto'
+        consentGroups:
+          description: The list of data subject group identifiers to which the data subject belongs.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: '[633ba071-61b0-485f-81a0-a2245777b432, 25d9ccac-db88-4d34-849c-3d602a629961]'
+        latestSource:
+          description: The source details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
+        linkTokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_EmailLinkTokenResponseDto'
+        consentStrings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_ConsentStringResponseDto'
+        id:
+          description: Unique Identifier identifying a Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        lastUpdatedDate:
+          description: The date that the Data Subject record was last updated on
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        doNotCall:
+          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list
+          type: boolean
+          example: true
+        notices:
+          description: The Data Subject notices.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_NoticeDetailResponseDto'
+        attachments:
+          description: Documents attached to Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
+    ConsentAPI_DataSubjectProfileResponseSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_DataSubjectSourceResponseDto:
+      type: object
+      properties:
+        dataSubjectId:
+          description: The unique identifier of the data subject.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        receiptGuid:
+          description: The unique identifier of the consent receipt for which source details were sent.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        sourceType:
+          description: The type of source that captured the consent interaction.
+          type: string
+          example: WEB
+        sourceContent:
+          description: The URL or identifier of the source where the consent interaction took place.
+          type: string
+          example: https://example.com/consent
+    ConsentAPI_NameGuidPair:
+      type: object
+      properties:
+        guid:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: 15e30742-7e6c-4916-a5a1-7742a14ee284
+        name:
+          description: The name of the entity.
+          type: string
+          example: Marketing
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentAPI_NoticeDetailResponseDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the collection point notice.
+          type: string
+          format: uuid
+          example: 05e30742-7e6c-4916-a5a1-7742a14ee984
+        name:
+          description: The name of the collection point notice.
+          type: string
+          example: Marketing Notice
+        url:
+          description: The URL where the collection point notice can be found.
+          type: string
+          example: www.onetrust.com
+        guid:
+          description: The unique identifier of a embedded privacy notice.
+          type: string
+          format: uuid
+          example: 1439b150-ef4c-444c-a20e-44622c8ccaf3
+        type:
+          description: The type of collection point notice.
+          type: string
+          example: EMBEDDED
+          enum:
+          - LINKED
+          - EMBEDDED
+        purposes:
+          description: The details of the purposes linked to the collection point notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_NameGuidPair'
+          uniqueItems: true
+        privacyNoticeVersion:
+          description: The version details of the collection point notice.
+          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
+        collectionPoint:
+          description: The details of the collection point to which the privacy notice is linked.
+          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
+    ConsentAPI_DataSubjectProfileTopicResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Purpose Topic
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: The name of the topic.
+          type: string
+          example: Car Marketing
+    ConsentAPI_DataSubjectResponseSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectResponseDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_DataSubjectProfilePurposeDto:
+      type: object
+      properties:
+        name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        version:
+          description: Version of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        status:
+          description: The status of the purpose for the data subject.
+          type: string
+          example: ACTIVE
+        firstTransactionDate:
+          description: The date and time that the first transaction was written to the database.
+          type: string
+          format: date-time
+          example: '2020-02-12T13:56:32.621Z'
+        lastTransactionDate:
+          description: The date and time that the last transaction was written to the database.
+          type: string
+          format: date-time
+          example: '2020-02-12T14:22:09.801Z'
+        withdrawalDate:
+          description: The date and time that the data subject withdrew consent for the purpose.
+          type: string
+          format: date-time
+          example: '2020-02-12T13:59:00.045Z'
+        expiryDate:
+          description: The explicit expiration date after which the purpose is no longer valid and no further consent is collected against it.
+          type: string
+          format: date-time
+          example: '2020-01-07T13:57:03.012Z'
+        purposeNote:
+          description: The details of the reason template used to explain changes to the data subject's preferences.
+          $ref: '#/components/schemas/ConsentAPI_PurposeNoteDto'
+        lastUpdatedDate:
+          description: 'The date and time of the latest change to the data subject profile in the database.to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
+          type: string
+          format: date-time
+          example: '2020-02-13T11:34:30.974Z'
+        lastInteractionDate:
+          description: The date and time of the data subject's last interaction with the purpose.
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        id:
+          description: Unique Identifier identifying a Purpose
+          type: string
+          format: uuid
+          example: 369a7e44-ac23-4b50-a6a8-91c9e4aa3007
+        lastReceiptId:
+          description: Unique Identifier identifying a Receipt
+          type: string
+          format: uuid
+          example: 057f47e6-dc7a-47da-a1d3-5b17b5c75e54
+        consentDate:
+          description: The date and time that the data subject gave their last active consent.
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        totalTransactionCount:
+          description: The total number of Transactions recorded against this Purpose
+          type: integer
+          format: int64
+          example: 3
+        lastTransactionCollectionPointId:
+          description: Unique identifier of the collection point used in the last transaction
+          type: string
+          format: uuid
+        lastTransactionCollectionPointVersion:
+          description: Version of the collection point used in the last transaction
+          type: integer
+          format: int64
+    ConsentAPI_DsProfileCustomPreferenceResponseDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the purpose preference.
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: The name of the purpose preference.
+          type: string
+          example: Email Frequency
+        options:
+          description: List containing the Custom Preference's Options
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsProfileCustomPreferenceOptionResponseDto'
+    ConsentAPI_DataSubjectGeolocationResponseDto:
+      type: object
+      properties:
+        dataSubjectId:
+          description: The unique identifier of the data subject.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        receiptGuid:
+          description: The unique identifier of the consent receipt for which geolocation details were sent.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        country:
+          description: The country where the consent interaction occurred.
+          type: string
+          example: US
+        state:
+          description: The state code where the consent interaction occurred.
+          type: string
+          example: GA
+        stateName:
+          description: The name of the state where the consent interaction occurred.
+          type: string
+          example: Georgia
+    ConsentAPI_DataSubjectElementResponseDto:
+      type: object
+      properties:
+        name:
+          description: The name of the data element.
+          type: string
+          example: Work Email
+        value:
+          description: The value of the data element.
+          type: object
+          example: example@otprivacy.com, [Red, Blue]
+        doNotCall:
+          description: This flag indicates whether the data subject's phone number is on the Federal Trade Commissions (FTC's) Do Not Call list.
+          type: boolean
+          example: true
+        linked:
+          description: This flag indicates whether the data element is linked to the data subject.
+          type: boolean
+    ConsentAPI_DsProfileCustomPreferenceOptionResponseDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifiers of the purpose preference options.
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        name:
+          description: The name of the purpose preference options.
+          type: string
+          example: Weekly
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

@@ -1,0 +1,1196 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Object Attribute Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Object Attribute Management
+  description: The Object Attribute Management APIs are used to manage object attributes.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /v1/schema-attribute-options:
+    post:
+      operationId: addOptionsUsingPOST
+      summary: Add Options to Attribute
+      description: 'Use this API to add options to an attribute.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Attribute Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: attributeId
+        in: query
+        description: The unique identifier of the attribute.
+        required: true
+        schema:
+          description: ID of the attribute to add options to
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Array of attribute options
+              type: array
+              items:
+                $ref: '#/components/schemas/AttributeOptionRequest'
+            examples:
+              Simple Options Example:
+                summary: Add basic options to an attribute
+                description: Adds three simple options to a select attribute
+                value:
+                - option: e
+                  optionKey: OneTrustApp.OM.CustomEntity.Attributes.a736fc55-7e46-49a5-9e32-c4e3e25d6684
+                - option: f
+                  optionKey: OneTrustApp.OM.CustomEntity.Attributes.46fe357c-f1e1-475d-8ee0-45359e6debbb
+                - option: g
+                  optionKey: OneTrustApp.OM.CustomEntity.Attributes.06f7fbb3-dddb-40b9-aa5f-00a7271da9e3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Attribute details with added options
+                $ref: '#/components/schemas/AttributeInformation'
+              examples:
+                Updated Attribute With Options:
+                  summary: Response showing attribute with added options
+                  description: Details of the attribute after new options were added
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426614174001
+                    name: Category_select
+                    nameKey: OneTrustApp.OM.CustomEntity.Attributes.123e4567-e89b-12d3-a456-426614174001
+                    description: Selection of available categories
+                    descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.5591a97c-3dbf-4ba9-8770-11ed6c3e9172
+                    encrypted: false
+                    enabled: true
+                    required: false
+                    responseType: SingleSelect
+                    scoreLevelName: ''
+                    options:
+                    - option: a
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.79b34d2e-1426-401e-83b2-4fb29c67ac12
+                    - option: b
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.b2a71c8e-7f80-4e87-9e6d-54f2acb93f15
+                    - option: c
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.a1fc2c44-3d8e-4376-af6c-2bdd33a4e0c9
+                    - option: d
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.5ae7d232-0489-4f9d-9645-7a56f3a0a190
+                    - option: e
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.a736fc55-7e46-49a5-9e32-c4e3e25d6684
+                    - option: f
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.46fe357c-f1e1-475d-8ee0-45359e6debbb
+                    - option: g
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.06f7fbb3-dddb-40b9-aa5f-00a7271da9e3
+                    optionType: none
+                    referenceCategoryIds: []
+                    responseSubType: null
+                    maxMultiSelectAllowedOptionValues: null
+                    metadata: ''
+                    formula: null
+                    createdBy: admin@example.com
+                    createdTime: '2025-06-18T10:30:15.123Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedTime: '2025-06-18T10:59:44.987Z'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+  /v1/schema-attributes:
+    post:
+      operationId: addAttributeUsingPOST
+      summary: Add Attribute to Schema
+      description: 'Use this API to add an attribute to a specific schema.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Attribute Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: schemaName
+        in: query
+        description: The name of the attribute schema.
+        required: true
+        schema:
+          description: Name of the schema to add attribute to
+          type: string
+          example: projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeCreateRequest'
+            examples:
+              Text Attribute Example:
+                summary: Create a simple text attribute
+                description: Creates a basic text attribute for the specified schema
+                value:
+                  nameKey: OneTrustApp.OM.CustomEntity.Attributes.8068bceb-51c3-4ba1-b6e4-90534d81901b
+                  name: Text_attribute
+                  scoreLevelName: ''
+                  descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.3144914a-7c2b-4250-84e8-f8d6fce0e3ad
+                  description: desc
+                  responseType: Text
+                  required: false
+                  encrypted: false
+                  allowOther: false
+                  options: []
+                  optionType: none
+                  referenceCategoryIds: []
+                  formula: null
+                  context:
+                    parameters:
+                      RecomputeFormulaEntities: false
+                  responseSubType: null
+                  maxMultiSelectAllowedOptionValues: null
+                  metadata: ''
+              Single Select Attribute Example:
+                summary: Create a single select attribute with options
+                description: Creates a single select attribute with predefined options
+                value:
+                  nameKey: OneTrustApp.OM.CustomEntity.Attributes.266289b5-4508-48c5-b0d3-893e87fd7fa4
+                  name: Single_select_01
+                  scoreLevelName: ''
+                  descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.3cd5fa5d-1030-4653-aca6-35b9d6905655
+                  description: desc single select
+                  responseType: SingleSelect
+                  required: false
+                  encrypted: false
+                  allowOther: false
+                  options:
+                  - option: '1'
+                    optionKey: OneTrustApp.OM.CustomEntity.Attributes.6edee2e0-149e-4c9f-bf80-2d1fa405c620
+                  - option: '2'
+                    optionKey: OneTrustApp.OM.CustomEntity.Attributes.9b52d0b7-4480-4ab2-9081-622904b4d2e8
+                  optionType: none
+                  referenceCategoryIds: []
+                  formula: null
+                  context:
+                    parameters:
+                      RecomputeFormulaEntities: false
+                  responseSubType: null
+                  maxMultiSelectAllowedOptionValues: 1
+                  metadata: ''
+              Date Attribute Example:
+                summary: Create a date attribute
+                description: Creates a date attribute for tracking deadlines or important dates
+                value:
+                  nameKey: OneTrustApp.OM.CustomEntity.Attributes.8c0f2378-522a-45a6-a0be-adbd3baef209
+                  name: Date_time_01
+                  scoreLevelName: ''
+                  descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.89872421-7ad9-4ff3-92df-b54efb1f2551
+                  description: date and time desc
+                  responseType: DateTime
+                  required: false
+                  encrypted: false
+                  allowOther: false
+                  options: []
+                  optionType: none
+                  referenceCategoryIds: []
+                  formula: null
+                  context:
+                    parameters:
+                      RecomputeFormulaEntities: false
+                  responseSubType: null
+                  maxMultiSelectAllowedOptionValues: null
+                  metadata: ''
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                description: Created attribute details
+                $ref: '#/components/schemas/AttributeInformation'
+              examples:
+                Text Attribute Response:
+                  summary: Response for created text attribute
+                  description: Details of the created text attribute
+                  value:
+                    id: 8068bceb-51c3-4ba1-b6e4-90534d81901b
+                    name: Text_attribute
+                    nameKey: OneTrustApp.OM.CustomEntity.Attributes.8068bceb-51c3-4ba1-b6e4-90534d81901b
+                    description: desc
+                    descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.3144914a-7c2b-4250-84e8-f8d6fce0e3ad
+                    encrypted: false
+                    enabled: true
+                    required: false
+                    responseType: Text
+                    scoreLevelName: ''
+                    options: []
+                    optionType: none
+                    referenceCategoryIds: []
+                    responseSubType: null
+                    metadata: ''
+                    formula: null
+                    createdBy: admin@example.com
+                    createdTime: '2025-06-18T10:28:19.001Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedTime: '2025-06-18T10:28:19.001Z'
+                Single Select Attribute Response:
+                  summary: Response for created single select attribute
+                  description: Details of the created single select attribute with options
+                  value:
+                    id: 266289b5-4508-48c5-b0d3-893e87fd7fa4
+                    name: Single_select_01
+                    nameKey: OneTrustApp.OM.CustomEntity.Attributes.266289b5-4508-48c5-b0d3-893e87fd7fa4
+                    description: desc single select
+                    descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.3cd5fa5d-1030-4653-aca6-35b9d6905655
+                    encrypted: false
+                    enabled: true
+                    required: false
+                    responseType: SingleSelect
+                    scoreLevelName: ''
+                    options:
+                    - option: '1'
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.6edee2e0-149e-4c9f-bf80-2d1fa405c620
+                    - option: '2'
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.9b52d0b7-4480-4ab2-9081-622904b4d2e8
+                    optionType: none
+                    referenceCategoryIds: []
+                    responseSubType: null
+                    maxMultiSelectAllowedOptionValues: 1
+                    metadata: ''
+                    formula: null
+                    createdBy: admin@example.com
+                    createdTime: '2025-06-18T10:28:19.001Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedTime: '2025-06-18T10:28:19.001Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+  /v1/schema-attributes/{attributeId}/disable:
+    put:
+      operationId: disableAttributeUsingPUT
+      summary: Disable Attribute
+      description: 'Use this API to disable an attribute.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Attribute Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: schemaId
+        in: query
+        description: The unique identifier of the attribute schema.
+        required: true
+        schema:
+          description: ID of the schema containing the attribute
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      - name: attributeId
+        in: path
+        description: The unique identifier of the attribute.
+        required: true
+        schema:
+          description: ID of the attribute to disable
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Disabled attribute details
+                $ref: '#/components/schemas/AttributeInformation'
+              examples:
+                Disabled Attribute Response:
+                  summary: Response after disabling an attribute
+                  description: Details of the attribute after it has been disabled
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426614174001
+                    name: Priority_level
+                    nameKey: OneTrustApp.OM.CustomEntity.Attributes.123e4567-e89b-12d3-a456-426614174001
+                    description: Project priority level indicator
+                    descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.7cb31dd8-8b90-4831-a5e2-9df76b0cc523
+                    encrypted: false
+                    enabled: false
+                    required: false
+                    responseType: SingleSelect
+                    scoreLevelName: Priority
+                    options:
+                    - option: High
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.bf72e584-02cf-49c7-b36e-fb38aed29bf2
+                    - option: Medium
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.e5a9d624-2c9f-4486-952a-66251c7c4639
+                    - option: Low
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.83c48273-7568-4b74-9eb8-c8f98f5c4621
+                    optionType: none
+                    referenceCategoryIds: []
+                    responseSubType: null
+                    maxMultiSelectAllowedOptionValues: null
+                    metadata: ''
+                    formula: null
+                    createdBy: admin@example.com
+                    createdTime: '2025-06-17T12:20:34.567Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedTime: '2025-06-18T11:04:57.123Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+  /v1/schema-attributes/{attributeId}/enable:
+    put:
+      operationId: enableAttributeUsingPUT
+      summary: Enable Attribute
+      description: 'Use this API to enable an attribute.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Attribute Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: schemaId
+        in: query
+        description: The unique identifier of the attribute schema.
+        required: true
+        schema:
+          description: ID of the schema containing the attribute
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      - name: attributeId
+        in: path
+        description: The unique identifier of the attribute.
+        required: true
+        schema:
+          description: ID of the attribute to enable
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Enabled attribute details
+                $ref: '#/components/schemas/AttributeInformation'
+              examples:
+                Enabled Attribute Response:
+                  summary: Response after enabling an attribute
+                  description: Details of the attribute after it has been enabled
+                  value:
+                    id: 123e4567-e89b-12d3-a456-426614174001
+                    name: Priority_level
+                    nameKey: OneTrustApp.OM.CustomEntity.Attributes.123e4567-e89b-12d3-a456-426614174001
+                    description: Project priority level indicator
+                    descriptionKey: OneTrustApp.OM.CustomEntity.Attributes.7cb31dd8-8b90-4831-a5e2-9df76b0cc523
+                    encrypted: false
+                    enabled: true
+                    required: false
+                    responseType: SingleSelect
+                    scoreLevelName: Priority
+                    options:
+                    - option: High
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.bf72e584-02cf-49c7-b36e-fb38aed29bf2
+                    - option: Medium
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.e5a9d624-2c9f-4486-952a-66251c7c4639
+                    - option: Low
+                      optionKey: OneTrustApp.OM.CustomEntity.Attributes.83c48273-7568-4b74-9eb8-c8f98f5c4621
+                    optionType: none
+                    referenceCategoryIds: []
+                    responseSubType: null
+                    maxMultiSelectAllowedOptionValues: null
+                    metadata: ''
+                    formula: null
+                    createdBy: admin@example.com
+                    createdTime: '2025-06-17T12:20:34.567Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedTime: '2025-06-18T11:04:57.123Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+components:
+  schemas:
+    AttributeCreateRequest:
+      type: object
+      properties:
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+          example: nameOfRecord
+          maxLength: 100
+        name:
+          description: The name of the attribute.
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name
+          maxLength: 255
+        description:
+          description: The description of the attribute.
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name.Description
+          maxLength: 255
+        required:
+          description: This flag indicates whether the attribute is required.
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: This flag indicates whether Other can be selected as an option for the attribute value.
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: The type of response associated with the attribute value.
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        optionType:
+          description: The type of system list used to source the attribute options.
+          type: string
+          example: None
+          default: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+          maxLength: 50
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+        referenceCategoryIds:
+          description: The list of category identifiers of the attribute.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+        formula:
+          description: The mathematical formula containing functions and other numerical attributes that is used to calculate the attribute value.
+          type: string
+          example: Default:Field4 + Default:Field3 + 100
+          maxLength: 4000
+        context:
+          description: The contextual details of the attribute.
+          $ref: '#/components/schemas/AttributeContext'
+        source:
+          description: The source of the attribute.
+          type: string
+          example: system
+          maxLength: 50
+        responseSubType:
+          description: The type of scoring method associated with the attribute value.
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeRequest:
+          description: The attributes to add to the schema.
+          $ref: '#/components/schemas/AssociatedAttributeRequest'
+        maxMultiSelectAllowedOptionValues:
+          description: The maximum number of options that can be selected for the attribute.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        encrypted:
+          description: This flag indicates whether the attribute is encrypted.
+          type: boolean
+          example: false
+          default: 'false'
+        metadata:
+          description: The metadata details of the attribute option.
+          type: string
+          example:
+            sortable: true
+            filterOperators:
+            - EQUAL_TO
+            - NOT_EQUAL_TO
+        intakeQuestion:
+          description: The details of the attribute intake question.
+          $ref: '#/components/schemas/IntakeQuestion'
+        validationRuleId:
+          description: The validation rule configured for the attribute.
+          type: string
+          example: email
+          maxLength: 255
+      required:
+      - fieldName
+      - name
+      - responseType
+    AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: The hint of the attribute option.
+          type: string
+        hintKey:
+          description: The hint key of the attribute option used for translation purposes.
+          type: string
+    AttributeOptionRequest:
+      type: object
+      properties:
+        option:
+          description: The name of the attribute option.
+          type: string
+          example: Example Option
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: The name key of the attribute option used for translation purposes.
+          type: string
+          example: example_option
+          maxLength: 255
+        optionSelectionValue:
+          description: The selection value of an option for the attribute.
+          type: string
+          example: value1
+          maxLength: 255
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: '#FFFFFF'
+          enum:
+          - '#000000'
+          - '#FFFFFF'
+          - '#FF0000'
+          - '#00FF00'
+          - '#0000FF'
+          maxLength: 7
+          minLength: 4
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+        metadata:
+          description: The metadata details of the attribute option.
+          example:
+            hint: This option provides additional information about the attribute
+            hintKey: attribute.option.hint.key
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      example:
+        option: Example Option
+        optionKey: example_option
+        optionSelectionValue: value1
+        colorCode: '#FFFFFF'
+      required:
+      - option
+      title: Attribute Option Request
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: The details of the associated attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+      required:
+      - associatedAttributes
+    AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: The type of system list used to source the attribute option.
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: The base path of the API URL used to source the attribute option.
+          type: string
+          example: /api/location
+        optionUrl:
+          description: The API URL path used to source the attribute option.
+          type: string
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: The display format of the attribute option.
+          type: string
+    AttributeContext:
+      type: object
+      properties:
+        parameters:
+          description: This parameter can be used to store attribute details in key value pairs.
+          additionalProperties:
+            type: object
+          type: object
+    AttributeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: The name of the attribute.
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name
+          maxLength: 255
+        description:
+          description: The description of the attribute.
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name.Description
+          maxLength: 255
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+          example: nameOfRecord
+          maxLength: 100
+          minLength: 1
+        mappedFieldName:
+          description: The mapped attribute field name.
+          type: string
+          example: name
+          maxLength: 100
+        enabled:
+          description: This flag indicates whether the attribute is enabled.
+          type: boolean
+          example: true
+          default: 'true'
+        required:
+          description: This flag indicates whether the attribute is required.
+          type: boolean
+          example: false
+          default: 'false'
+        readOnly:
+          description: This flag indicates whether the attribute is read-only.
+          type: boolean
+          example: false
+          default: 'false'
+        encrypted:
+          description: This flag indicates whether the attribute is encrypted.
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: This flag indicates whether Other can be selected as an option for the attribute value.
+          type: boolean
+          example: false
+          default: 'false'
+        baseAttribute:
+          description: This flag indicates whether the attribute is a system attribute.
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: The type of response associated with the attribute value.
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        formula:
+          description: The mathematical formula containing functions and other numerical attributes that is used to calculate the attribute value.
+          type: string
+          example: Default:Field4 + Default:Field3 + 100 + avg(CrossSchema:Field4 + Default:Field3)
+          maxLength: 4000
+        optionType:
+          description: The type of system list used to source the attribute options.
+          type: string
+          example: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+        optionAllowed:
+          description: This flag indicates whether options were configured for the attribute.
+          type: boolean
+          example: false
+          default: 'false'
+        schemaId:
+          description: The unique identifier of the attribute schema.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        schemaName:
+          description: The name of the attribute schema.
+          type: string
+          example: vendors
+          maxLength: 100
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionInformation'
+        referenceCategories:
+          description: The category details of the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryInformation'
+        responseMaxLength:
+          description: The maximum number of characters that can be entered for the attribute value.
+          type: integer
+          format: int32
+          example: 4000
+          default: '4000'
+          maximum: 4000
+          minimum: 1
+        responseSubType:
+          description: The type of scoring method associated with the attribute value.
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeInformation:
+          description: The details of the associated attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeInformation'
+        multiSelectMaxOptionValues:
+          description: The maximum number of options that can be selected for the attribute.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        hidden:
+          description: This flag indicates whether the attribute is hidden.
+          type: boolean
+          example: false
+          default: 'false'
+        optionUrl:
+          description: The URL of the attribute option.
+          type: string
+          example: /api/risk-v2/risk-categories
+          maxLength: 255
+        intakeQuestion:
+          description: The details of the attribute intake question.
+          $ref: '#/components/schemas/IntakeQuestion'
+        deleteMarker:
+          description: The deletion status of the attribute.
+          type: string
+          example: MARKED_FOR_DELETE
+          enum:
+          - MARKED_FOR_DELETE
+          - DELETING
+          - DELETED
+        optionMetadata:
+          description: The additional metadata details of the attribute option.
+          $ref: '#/components/schemas/AttributeOptionMetadataInformation'
+        validationRuleId:
+          description: The validation rule configured for the attribute.
+          type: string
+          example: email
+        associatedAttributeFieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+      required:
+      - enabled
+      - fieldName
+      - name
+    AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute option.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: The name of the attribute option.
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: The name key of the attribute option used for translation purposes.
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: The sequential order in which the attribute option displays.
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: This flag indicates whether the attribute option is enabled.
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: The metadata details of the attribute option.
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      required:
+      - option
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: The name key of the attribute intake question used for translation purposes.
+          type: string
+        name:
+          description: The name of the attribute intake question.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute intake question used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute intake question.
+          type: string
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+        name:
+          description: The name of the attribute.
+          type: string
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+      required:
+      - name
+      - options
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the category.
+          type: string
+          format: uuid
+        name:
+          description: The name of the category.
+          type: string
+          example: Financial Category
+        nameKey:
+          description: The name key of the category used for translation purposes.
+          type: string
+          example: IM.FinancialCategoryName
+    AssociatedAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+        name:
+          description: The name of the attribute.
+          type: string
+          example: Count of members
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: IM.CountOfMembersName
+        description:
+          description: The description of the attribute.
+          type: string
+          example: Provide details about count associated with this attribute
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+          example: IM.CountOfMembersDesc
+        schemaId:
+          description: The unique identifier of the attribute schema.
+          type: string
+          format: uuid
+        schemaName:
+          description: The name of the attribute schema.
+          type: string
+          example: risk
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+          example: countOfMembers
+        mappedFieldName:
+          description: The mapped attribute field name.
+          type: string
+          example: count
+        enabled:
+          description: This flag indicates if the attribute is enabled.
+          type: boolean
+        responseType:
+          description: The type of response associated with the attribute.
+          type: string
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        responseSubType:
+          description: The type of scoring method associated with the attribute.
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          description: The mathematical formula containing functions and other numerical attributes that is used to calculate the attribute value.
+          type: string
+          example: sum(1, 3)
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionInformation'
+      required:
+      - enabled
+      - fieldName
+      - id
+      - name
+      - responseType
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

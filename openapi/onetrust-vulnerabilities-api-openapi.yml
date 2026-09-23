@@ -1,0 +1,848 @@
+openapi: 3.2.0
+info:
+  title: Tech Risk & Compliance - IT Risk Management Vulnerabilities…
+  description: The IT Risk Management API provides comprehensive REST endpoints for managing enterprise security controls, threats, vulnerabilities, and their implementations with OAuth2 security and extensive customization capabilities.
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Vulnerabilities
+  description: APIs to manage vulnerabilities in the vulnerability library including creation, updates, deletion, and retrieval with support for bulk operations and custom attributes.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+  x-displayName: Vulnerabilities
+paths:
+  /api/controls/v1/vulnerabilities:
+    post:
+      operationId: addVulnerabilityUsingPOST_1
+      summary: Create Vulnerability
+      description: Use this API to create a new vulnerability in the Vulnerability Library.
+      tags:
+      - Vulnerabilities
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_VulnerabilityCreateRequestDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_IdResponseUUID'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - ITRM
+  /api/controls/v1/vulnerabilities/pages:
+    post:
+      operationId: findVulnerabilitiesByCriteriaUsingPOST
+      summary: Get List of Vulnerabilities
+      description: Use this API to retrieve a list of all vulnerabilities by key terms and filters. The response will include details for each vulnerability along with the associated category and framework details and its corresponding status.
+      tags:
+      - Vulnerabilities
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - identifier,asc
+          - identifier,desc
+          - name,asc
+          - name,desc
+          - frameworkName,asc
+          - frameworkName,desc
+          - categoryName,asc
+          - categoryName,desc
+          - status,asc
+          - status,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_PageVulnerabilityDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - ITRM
+  /api/controls/v1/vulnerabilities/{vulnerabilityId}:
+    delete:
+      operationId: removeVulnerabilityUsingDELETE
+      summary: Delete Vulnerability
+      description: Use this API to delete an existing vulnerability from the Vulnerability Library.
+      tags:
+      - Vulnerabilities
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: vulnerabilityId
+        in: path
+        description: ID of the vulnerability. The value can be obtained using the [Get List of Vulnerabilities](/onetrust/reference/findvulnerabilitiesbycriteriausingpost) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - ITRM
+  /api/controls/v2/vulnerabilities:
+    put:
+      operationId: updateVulnerabilitiesUsingPUT
+      summary: Update Vulnerabilities
+      description: 'Use this API to update the attributes of vulnerabilities in the Vulnerability Library.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The Get List of Vulnerabilities API can be used to retrieve a list of all existing vulnerabilities.'
+      tags:
+      - Vulnerabilities
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Post request containing a list of vulnerabilities and attributes to be updated within the vulnerabilities library.
+              type: array
+              items:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_VulnerabilityUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_VulnerabilityDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - ITRM
+    post:
+      operationId: addVulnerabilitiesUsingPOST
+      summary: Create Multiple Vulnerabilities
+      description: Use this API to create multiple new vulnerabilities in the Vulnerability Library.
+      tags:
+      - Vulnerabilities
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Post request containing a list of vulnerabilities to be added to the vulnerabilities library.
+              type: array
+              items:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_VulnerabilityCreateRequestDto'
+      responses:
+        '201':
+          description: 'Created
+
+
+            Returns a list of added vulnerability identifiers (guid).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_IdResponseListUUID'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - ITRM
+components:
+  schemas:
+    TechRiskCompliance-ITRiskManagement_FilterInformation:
+      type: object
+      properties:
+        field:
+          description: Field to search on.
+          type: string
+          example: lastCollected
+        operator:
+          description: Operator for search.
+          type: string
+          example: GREATER_THAN
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          example: '2020-11-10'
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+      - value
+    TechRiskCompliance-ITRiskManagement_IdResponseListUUID:
+      type: object
+      properties:
+        id:
+          description: Primary identifier of the created or updated entity, typically a UUID
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 123e4567-e89b-12d3-a456-426614174000
+          - 456a4567-e89b-12d3-123e-426614174001
+      required:
+      - id
+    TechRiskCompliance-ITRiskManagement_VulnerabilityUpdateRequest:
+      type: object
+      properties:
+        orgGroupId:
+          description: Organization group identifier that this vulnerability belongs to.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        identifier:
+          description: Unique business identifier for the vulnerability - must be unique within the organization.
+          type: string
+          example: VULN-2025-001
+          maxLength: 50
+          minLength: 1
+        name:
+          description: Name of the vulnerability.
+          type: string
+          example: Cross-Site Scripting (XSS) in Web Application
+          maxLength: 500
+          minLength: 1
+        description:
+          description: Detailed description of the vulnerability.
+          type: string
+          example: This vulnerability allows attackers to inject malicious client-side scripts into web pages viewed by other users. The vulnerability arises from inadequate validation and sanitization of user input that is subsequently displayed in web pages.
+          maxLength: 4000
+          minLength: 0
+        framework:
+          description: Framework information associated with this vulnerability.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FrameworkInformation'
+        category:
+          description: Category information for classifying this vulnerability.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_CategoryInformation'
+        status:
+          description: Current status of the vulnerability.
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Pending
+          - Archived
+        id:
+          description: Unique system identifier (UUID) of the vulnerability to update.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        attributes:
+          description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+          type: object
+          additionalProperties:
+            type: array
+            description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeValueInformation'
+      required:
+      - id
+      - identifier
+      - name
+      - orgGroupId
+    TechRiskCompliance-ITRiskManagement_FrameworkInformation:
+      type: object
+      properties:
+        id:
+          description: Primary Identifier.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Framework Name of Control.
+          type: string
+          example: ISO 27001
+        nameKey:
+          description: Framework Name key for Translation.
+          type: string
+          example: framework.key.iso
+    TechRiskCompliance-ITRiskManagement_VulnerabilityDto:
+      type: object
+      properties:
+        id:
+          description: Unique system identifier (UUID) for the vulnerability.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        identifier:
+          description: Business identifier for the vulnerability - unique within the organization.
+          type: string
+          example: VULN-2025-001
+        name:
+          description: Display name of the vulnerability.
+          type: string
+          example: Cross-Site Scripting (XSS) in Web Application
+        description:
+          description: Detailed description of the vulnerability, including potential impact and affected components.
+          type: string
+          example: This vulnerability allows attackers to inject malicious client-side scripts into web pages viewed by other users. The vulnerability arises from inadequate validation and sanitization of user input that is subsequently displayed in web pages.
+        framework:
+          description: Framework information associated with this vulnerability, including framework identifier and name.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FrameworkInformation'
+        category:
+          description: Category information for classifying this vulnerability, including category identifier and name.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_CategoryInformation'
+        orgGroup:
+          description: Organization group information that this vulnerability belongs to.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_OrganizationInformation'
+        status:
+          description: Current status of the vulnerability (e.g., Active, Pending, Archived).
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Pending
+          - Archived
+        attributes:
+          description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+          type: object
+          additionalProperties:
+            type: array
+            description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeValueInformation'
+        displayLabel:
+          type: string
+      required:
+      - id
+      - identifier
+      - name
+      - orgGroup
+    TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    TechRiskCompliance-ITRiskManagement_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    TechRiskCompliance-ITRiskManagement_VulnerabilityCreateRequestDto:
+      type: object
+      properties:
+        orgGroupId:
+          description: Organization group identifier that this vulnerability belongs to.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        identifier:
+          description: Unique business identifier for the vulnerability - must be unique within the organization.
+          type: string
+          example: VULN-2025-001
+          maxLength: 50
+          minLength: 1
+        name:
+          description: Name of the vulnerability.
+          type: string
+          example: Cross-Site Scripting (XSS) in Web Application
+          maxLength: 500
+          minLength: 1
+        description:
+          description: Detailed description of the vulnerability.
+          type: string
+          example: This vulnerability allows attackers to inject malicious client-side scripts into web pages viewed by other users. The vulnerability arises from inadequate validation and sanitization of user input that is subsequently displayed in web pages.
+          maxLength: 4000
+          minLength: 0
+        framework:
+          description: Framework information associated with this vulnerability.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FrameworkInformation'
+        category:
+          description: Category information for classifying this vulnerability.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_CategoryInformation'
+        status:
+          description: Current status of the vulnerability.
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Pending
+          - Archived
+        attributes:
+          description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+          type: object
+          additionalProperties:
+            type: array
+            description: Custom attributes associated with this vulnerability, organized as a map of attribute names to their values.
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeValueInformation'
+      required:
+      - identifier
+      - name
+      - orgGroupId
+    TechRiskCompliance-ITRiskManagement_Pageable:
+      type: object
+      properties:
+        offset:
+          description: The page offset.
+          type: integer
+          format: int64
+          example: 0
+        pageNumber:
+          description: Page number of the results list (0….N).
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: Number of records per page (0…N).
+          type: integer
+          format: int32
+          example: 20
+        paged:
+          description: The flag to check if the result is paged or not.
+          type: boolean
+          example: true
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        unpaged:
+          description: The flag to check if the result is unpaged or not.
+          type: boolean
+          example: false
+      title: Pageable
+    TechRiskCompliance-ITRiskManagement_IdResponseUUID:
+      type: object
+      properties:
+        id:
+          description: Primary identifier of the created or updated entity, typically a UUID.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      required:
+      - id
+    TechRiskCompliance-ITRiskManagement_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    TechRiskCompliance-ITRiskManagement_Sort:
+      type: object
+      properties:
+        empty:
+          description: The flag to check if the result is empty or not.
+          type: boolean
+          example: false
+        sorted:
+          description: The flag to check if the result is sorted or not.
+          type: boolean
+          example: true
+        unsorted:
+          description: The flag to check if the result is unsorted or not.
+          type: boolean
+          example: false
+      title: Sort
+    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
+      type: object
+      properties:
+        filters:
+          description: Filters used in search.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
+          uniqueItems: true
+        fullText:
+          description: Full text search terms.
+          type: string
+          example: firewall
+        excludeTotalRecordsCount:
+          type: boolean
+    TechRiskCompliance-ITRiskManagement_PageVulnerabilityDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_VulnerabilityDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    TechRiskCompliance-ITRiskManagement_OrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: Primary Identifier.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Organization Name.
+          type: string
+          example: ABC Corp
+  securitySchemes:
+    TechRiskCompliance-ITRiskManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONTROL: Access to Control Implementation operations for external systems
+            ITRM: Access to ITRM operations for external systems
+    TechRiskCompliance-RiskTemplate_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INTEGRATION: Integration Scope
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+    TechRiskCompliance-Risk_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+            INTEGRATION: Integration scope
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

@@ -1,0 +1,53 @@
+generated: '2026-08-27'
+method: generated
+source: >-
+  Generated from the harvested OneTrust OpenAPI definitions in openapi/ plus the developer-portal
+  convention pages (quick start, OAuth scopes, environment URLs, pagination, rate limits, sunset &
+  deprecation). Every operationId referenced in these skills was verified against the contract; none
+  was invented.
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  Four packaged Agent Skills covering OneTrust's marquee flows. Each one carries the same three things
+  an agent needs and that the OneTrust contract does not supply on its own: how to resolve {hostname}
+  (there is no global API host), which OAuth scope the credential must already carry (scopes cannot be
+  widened at token time, which is why 403 is the common failure), and what is and is not reversible
+  (OneTrust publishes reversal paths for several operations and a retention window for none).
+provider_published_skills:
+  found: false
+  probes:
+  - url: https://developer.onetrust.com/onetrust/AGENTS.md
+    status: 200
+    verdict: soft-404
+    detail: >-
+      Returns 942 bytes whose body is the ReadMe "Oops! Page Not Found" template rendered as markdown,
+      prefixed with the hub's standard agent header pointing at
+      https://developer.onetrust.com/onetrust/llms.txt. Not an Agent Skills manifest.
+  note: >-
+    OneTrust publishes an llms.txt, a remote MCP server, and a markdown twin of every docs page (append
+    .md to any documentation URL) — but no Agent Skills / AGENTS.md. These four skills are API
+    Evangelist-authored, grounded entirely in the provider's own contract.
+skills:
+- file: onetrust-fulfill-dsr-request.md
+  name: onetrust-fulfill-dsr-request
+  api: onetrust:privacy-automation-data-subject-request-dsr-automation
+  scopes: [DSAR_READ, DSAR_WRITE]
+  operations: 17
+- file: onetrust-record-consent.md
+  name: onetrust-record-consent
+  api: onetrust:consent-and-preferences-universal-consent-and-preference-management-oas
+  scopes: [CONSENT, CONSENT_READ]
+  operations: 16
+- file: onetrust-provision-users-scim.md
+  name: onetrust-provision-users-scim
+  api: onetrust:platform-user-provisioning
+  scopes: [SCIM, USER, ORGANIZATION]
+  operations: 20
+- file: onetrust-scan-and-publish-cookie-consent.md
+  name: onetrust-scan-and-publish-cookie-consent
+  api: onetrust:consent-and-preferences-cookie-consent
+  scopes: [COOKIE, COOKIE_READ]
+  operations: 19
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

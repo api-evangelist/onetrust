@@ -1,0 +1,417 @@
+openapi: 3.2.0
+info:
+  title: Privacy Automation - Data Subject Request (DSR) Automation…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Privacy Rights Automation are used to manage, process, and fulfill data subject access requests (DSARs), including request creation, subtask management, resolution codes, verification methods, and audit history.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: DROP Management
+  description: APIs for managing DROP records and privacy requests
+  x-displayName: DROP Management
+paths:
+  /api/drop-manager/v1/drop/{dropId}:
+    put:
+      tags:
+      - DROP Management
+      summary: Update DROP Record
+      description: Use this API to update the status and/or data subject access request ID of an existing DROP record.
+      operationId: updateDropUsingPUT
+      parameters:
+      - name: dropId
+        in: path
+        description: DROP record identifier
+        required: true
+        schema:
+          type: integer
+          format: int32
+        example: 12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_DropUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                format: int32
+                description: The number of seconds after which requests will be allowed again.
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                format: uuid
+                description: The unique identifier for the rate-limiting event.
+            ot-request-made:
+              schema:
+                format: int32
+                description: The number of requests made within the specified period.
+            ot-requests-allowed:
+              schema:
+                format: int32
+                description: The number of requests allowed within the specified period.
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-DROPManagement_OAUTH2:
+        - DSAR_WRITE
+  /api/drop-manager/v2/drop/{dropId}/request:
+    post:
+      tags:
+      - DROP Management
+      summary: Create Data Subject Request for DROP Record
+      description: Use this API to create a data subject request for a DROP record.
+      operationId: createDropRequestUsingPOST
+      parameters:
+      - name: dropId
+        in: path
+        description: DROP record identifier
+        required: true
+        schema:
+          type: integer
+          format: int32
+        example: 12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_CreateRequestQueue'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_RequestQueueV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                format: int32
+                description: The number of seconds after which requests will be allowed again.
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                format: uuid
+                description: The unique identifier for the rate-limiting event.
+            ot-request-made:
+              schema:
+                format: int32
+                description: The number of requests made within the specified period.
+            ot-requests-allowed:
+              schema:
+                format: int32
+                description: The number of requests allowed within the specified period.
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-DROPManagement_OAUTH2:
+        - DSAR_WRITE
+components:
+  schemas:
+    PrivacyAutomation-DROPManagement_AttachmentV2Dto:
+      type: object
+      properties:
+        statusId:
+          type: integer
+          format: int64
+          description: Status ID of the attachment
+          example: 10
+        resourcePath:
+          type: string
+          description: Resource path of the attachment
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+        fileName:
+          type: string
+          description: Attached file name
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          type: string
+          format: uuid
+          description: ID of attached file
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+      required:
+      - fileId
+      - fileName
+    PrivacyAutomation-DROPManagement_RequestQueueV2Dto:
+      type: object
+      properties:
+        requestQueueRefId:
+          type: string
+          description: Reference ID of the request. This is a 10-character ID that is unique to each request.
+          example: SL244HWD6D
+        requestQueueId:
+          type: string
+          format: uuid
+          description: The request GUID
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        firstName:
+          type: string
+          description: First name of the data subject.
+          example: Jonny
+        lastName:
+          type: string
+          description: Last name of the data subject.
+          example: Sardar
+        organization:
+          type: string
+          description: Organization to which this request is assigned.
+          example: my own org
+        status:
+          type: string
+          description: 'Current stage of the request. Various stages in the order of progression are: New, Verifying identity, In progress, Rejected, Complete.'
+          example: NEW
+        requestTypes:
+          type: array
+          description: Request types selected while submitting the request.
+          example:
+          - Data Portability, Update Data
+          items:
+            type: string
+        deadline:
+          type: string
+          format: date-time
+          description: Deadline for the request.
+          example: '2019-09-08T12:49:47.920Z'
+        isExtended:
+          type: boolean
+          description: Returns true if the request complete time is being extended.
+          example: false
+        dateCreated:
+          type: string
+          format: date-time
+          description: Date on which request is submitted.
+          example: '2019-08-09T12:49:47.983Z'
+        dateUpdated:
+          type: string
+          format: date-time
+          description: Last activity date on the request.
+          example: '2019-09-25T06:50:15.470Z'
+        subjectTypes:
+          type: array
+          description: 'Subject types selected while submitting the request. Subject type can be: Prospective Employee, Student, Customer, Contractor, Employee, Patient.'
+          example:
+          - Student
+          items:
+            type: string
+        approver:
+          type: string
+          description: Approver or assignee for the request.
+          example: Jonny Sardar Sadmin
+        language:
+          type: string
+          description: Language in which the request is created.
+          example: en-us
+        countryCode:
+          type: string
+          description: The code for the country as per ISO 3166. e.g. US for the United States, DE for Germany.
+          example: DZ
+        countryName:
+          type: string
+          description: Name of the country.
+          example: Algeria
+        email:
+          type: string
+          description: Email provided while submitting the request.
+          example: abcd@gmail.com
+        workflow:
+          type: string
+          description: Name of the request workflow.
+          example: Default Workflow
+        webform:
+          type: string
+          description: Name of the webform.
+          example: '!! Nikki'
+        dateCompleted:
+          type: string
+          format: date-time
+          description: Date on which the request is completed.
+          example: '2019-05-31T12:43:24.173Z'
+        resolution:
+          type: string
+          description: Resolution selected if the request is rejected.
+          example: Not a privacy-related request
+        remainingDaysForMaxDeadline:
+          type: integer
+          format: int32
+          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
+          example: 30
+        maxDeadlineExtensionDate:
+          type: string
+          format: date-time
+          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
+          example: '2023-09-08T12:49:47.920Z'
+        assignedToGroup:
+          type: boolean
+          description: Indicates if the request reviewer is assigned to a usergroup or not.
+          example: false
+        additionalStatuses:
+          type: string
+          description: Status of the request timer, such as PAUSED or ACTIVE.
+          enum:
+          - '0'
+          - '10'
+          example: PAUSED
+    PrivacyAutomation-DROPManagement_CreateRequestQueue:
+      type: object
+      properties:
+        dropRequestType:
+          type: string
+          description: Drop Request Type
+          enum:
+          - DataDeletion
+          - OptOut
+          example: DataDeletion
+        firstName:
+          type: string
+          description: First name of the respondent.
+          example: Test
+        lastName:
+          type: string
+          description: Last name of the respondent.
+          example: User
+        email:
+          type: string
+          description: Email address of the respondent.
+          example: testuser@onetrust.com
+        language:
+          type: string
+          description: 'The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc.'
+          example: en-us
+          minLength: 1
+        additionalData:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional fields in key value format, required for request processing. These could be webform or non webform fields
+          example:
+            key: value
+        requestTypes:
+          type: array
+          description: Respondents privacy request type. This should match with the webform request type.
+          example:
+          - opt-out
+          - Get My Data
+          items:
+            type: string
+        subjectTypes:
+          type: array
+          description: Respondents subject type or relation ship with tenant. This should match with the webform subject type.
+          example:
+          - Customer
+          - Authorized Agent
+          items:
+            type: string
+        multiselectFields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Multi-select fields in key-value format where values are lists of selected options
+          example:
+            interests:
+            - marketing
+            - newsletters
+        requestTraceId:
+          type: string
+          format: uuid
+          description: Unique trace id for request
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        templateId:
+          type: string
+          format: uuid
+          description: Template ID for request creation
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attachments:
+          type: array
+          description: File attachment details for request.
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_AttachmentV2Dto'
+      required:
+      - dropRequestType
+      - language
+      - templateId
+    PrivacyAutomation-DROPManagement_DropUpdateRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 'DROP status to update. Valid values: PENDING, EXEMPTED, DELETED, OPTED_OUT, NOT_FOUND. The status must be different from the current status.'
+          enum:
+          - PENDING
+          - EXEMPTED
+          - DELETED
+          - OPTED_OUT
+          - NOT_FOUND
+          example: DELETED
+        dsarRequestId:
+          type: string
+          format: uuid
+          description: DSAR request ID to link with the DROP record. Used to associate the DROP with a DSAR request.
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+  securitySchemes:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DSAR_READ: Read-only access to DSAR objects scope for external systems
+            DSAR_WRITE: Access to DSAR objects scope for external systems
+            DSAR: Access to DSAR objects scope for external systems
+    PrivacyAutomation-DROPManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DSAR_WRITE: Access to DROP objects scope for external systems
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

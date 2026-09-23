@@ -1,0 +1,226 @@
+openapi: 3.2.0
+info:
+  title: ESG Program Reporting & Disclosures Metric Details API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: APIs to manage Metric related Information.
+servers:
+- url: https://{hostname}/api/esg-management
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Metric Details
+  description: APIs to manage Metric related Information.
+  externalDocs:
+    description: OpenAPI 3.0.1 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/esg-program-reporting-disclosures.json
+paths:
+  /v1/metrics/metric-details:
+    post:
+      operationId: fetchMetricsDetails
+      summary: Get Metric Details
+      description: 'Retrieve the latest details of ESG metrics based on Reporting Period.
+
+
+        ### Example Request
+
+
+        `POST https://{hostname}/api/esg-management/v1/metrics/metric-details`
+
+
+        `POST https://trial.onetrust.com/api/esg-management/v1/metrics/metric-details`
+
+
+        Below are the examples of request body to retrieve Metric Details.
+
+
+        ```json Example 1
+
+        {
+
+        "startDate": "2019-01-01",
+
+        "endDate": "2019-12-31"
+
+        }
+
+        ```
+
+        ```json Example 2
+
+        {
+
+        "allTimeOption": "ESG.Metric.MetricData.AllTimeReportingPeriodOption"
+
+        }
+
+        ```'
+      tags:
+      - Metric Details
+      x-onetrust:
+        release-status: Deprecated
+        spec-label: https://developer.onetrust.com/onetrust/openapi/esg-program-reporting-disclosures.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportingPeriodDateOption'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneTrustResponseListMetricDataAggregateResponseDetails'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+      deprecated: true
+      security:
+      - oauth2:
+        - ESG_READ
+components:
+  schemas:
+    ReportingPeriodDateOption:
+      type: object
+      properties:
+        allTimeOption:
+          description: The reporting period option that includes all metric data from the beginning.
+          type: string
+          example: ESG.Metric.MetricData.AllTimeReportingPeriodOption
+          default: ESG.Metric.MetricData.AllTimeReportingPeriodOption
+        startDate:
+          description: The start date of the reporting period. If a value is entered for both the `allTimeOption` and `startDate` parameters, the API will default to the `allTimeOption` and return metric data from the beginning.
+          type: string
+          format: date
+          example: '2019-01-01'
+        endDate:
+          description: The end date of the reporting period. If a value is entered for both the `allTimeOption` and `endDate` parameters, the API will default to the `allTimeOption` and return metric data from the beginning.
+          type: string
+          format: date
+          example: '2019-12-31'
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
+    OneTrustResponseListMetricDataAggregateResponseDetails:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricDataAggregateResponseDetails'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
+    MetricDataAggregateResponseDetails:
+      type: object
+      properties:
+        frameworkName:
+          description: The name of the framework.
+          type: string
+          example: 2020 World Economic Forum (WEF) ESG Metrics and Disclosures - People
+        metricName:
+          description: The name of the metric.
+          type: string
+          example: Current wages against the living wage for employees and contractors in states and localities where the company is operating
+        metricId:
+          description: The unique identifier of the metric.
+          type: string
+          example: 3.11.1
+        aggregatedTotalValue:
+          description: The aggregated total value of the metric.
+          type: string
+          example: 50.00 %
+        uom:
+          description: The unit of measure of the metric.
+          type: string
+          example: 'null'
+        category:
+          description: The category of the metric.
+          type: string
+          example: SOCIAL
+      required:
+      - frameworkName
+      - metricName
+    OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage'
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ESG: ESG read and write scope for external systems
+            ESG_READ: ESG read scope for external systems
+x-onetrust:
+  spec-label: OpenAPI 3.0.1
+  links:
+  - ESG Program Reporting & Disclosures Knowledge Base: https://my.onetrust.com/s/topic/0TO3q000000JP7TGAW/esg-program-reporting-disclosures
+  - '{''ESG Program Reporting & Disclosures Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO3q000000JP7TGAW/esg-program-reporting-disclosures''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

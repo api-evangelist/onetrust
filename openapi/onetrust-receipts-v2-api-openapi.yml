@@ -1,0 +1,847 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Receipts V2
+  description: APIs for managing consent receipts (V2).
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Receipts V2
+paths:
+  /api/consent/v2/receipts:
+    post:
+      operationId: getReceiptListDetailsUsingPOST
+      summary: Get List of Receipts
+      description: 'Use this API to retrieve a list of all receipts. Depending on the query or header parameter values passed in the request, the response will return specific details about receipts, including relevant information about collection point interactions, purposes, and the associated purpose preferences and attributes.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > #### Usage Guidelines
+
+        > - **Date & Time Range:**
+
+        > - The timespan between the `fromDate` and `toDate` values must be 24 hours or less.
+
+        > - To ensure accurate and complete data retrieval across the intended date range, include full timestamps (e.g., `fromDate=2026-03-24T00:00:00` and `toDate=2026-03-25T23:59:59`). Omitting the time may result in partial or unexpected data results.
+
+        > - The `fromDate` and `toDate` are evaluated against the consent creation date (i.e. when the receipt was sent), not when the receipt was saved. The saved date may occur slightly later due to processing delays. As a result, short time windows may temporarily show different totals across the OneTrust Platform, APIs, and dashboards.
+
+        > - **Data Scope & includeArchived Behavior:**
+
+        > - By default, only receipts created within the last 90 days are returned. To retrieve receipts stored for more than 90 days, the `includeArchived` parameter must be used. Setting the `includeArchived` parameter to `true` or `false` returns all receipts. The pagination behavior differs based on this value.
+
+        > - When `includeArchived=true`: Page size is customizable. When retrieving historic receipts, you can provide either the `receiptId` in the request parameters or the `identifier` in the request headers. Optional parameters such as `includeDataElements`, `includeConsentStrings`, `page`, and `nextMarker` can also be used. If `includeArchived=true` is set and additional parameters such as `fromDate` or `toDate` are included, this API will instead search only receipts stored within the last 90 days.
+
+        > - When `includeArchived=false`: Page size is fixed at 20 records per page. For refined results, use the purpose and collection point filters.
+
+        > - **Filtering:**
+
+        > - You must choose one querying approach and cannot use both simultaneously to ensure predictable results. You can either:
+
+        > - Search by identifier, which disables all other filters
+
+        > - OR use the purpose and collection point filters.
+
+        > - **Pagination:**
+
+        > - If the number of records exceeds a single page:
+
+        > - The response returns a `requestContinuation` value, which must be included in the next request body to continue pagination.
+
+        > - When retrieving archived receipts, `nextMarker` must also be included in subsequent request bodies to paginate through results.
+
+        > - **Additional Information:**
+
+        > - Purpose descriptions in the API response are returned inside `
+
+        ` and `
+
+        ` HTML tags. These tags can be sanitized based on your formatting needs.'
+      tags:
+      - Receipts V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: identifier
+        in: header
+        description: Data Subject Identifier filter. `identifier` can be obtained using the [Get list of datasubjects](/onetrust/reference/getdatasubjectsusingget) endpoint.
+        required: false
+        schema:
+          type: string
+          example: 8f5f3a5b-4b32-40d3-9c43-69c5ec91f4af
+      - name: dataElementName
+        in: header
+        description: Filter receipts by data element name. Note that this request header must be used in conjunction with dataElementValue.
+        required: false
+        schema:
+          type: string
+          example: FirstName
+      - name: dataElementValue
+        in: header
+        description: Filter receipts by data element value. Note that this request header must be used in conjunction with dataElementName.
+        required: false
+        schema:
+          type: string
+          example: Alice
+      - name: collectionPointGuid
+        in: query
+        description: UUID of the Collection Point.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 3d9a67f4-d9f2-4f07-8d21-89cf6712e878
+      - name: receiptId
+        in: query
+        description: UUID of the receipt.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: d2c29f4d-fbd9-44d3-9a37-54d85c8aebc7
+      - name: purposeGuid
+        in: query
+        description: UUID of the Purpose. `purposeGuid` can be obtained using the [Get A Paged List Of Purposes](/onetrust/reference/getgroupedpurposesusingget) endpoint.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: b7d17fc8-889f-472e-8c74-f1169821e7e7
+      - name: organizationId
+        in: query
+        description: UUID of the Organization. `organizationId` can be obtained using the [Retrieve Organization Structure](/onetrust/reference/organizationtreestructureusingget) endpoint.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 0b3b36a0-2a63-4f8b-a7e3-37b31fbfcd72
+      - name: fromDate
+        in: query
+        description: Date from which to return records. Formats accepted are yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.
+        required: false
+        schema:
+          type: string
+          format: date-time
+          example: '2022-07-25T14:00:10'
+      - name: toDate
+        in: query
+        description: To date to return records. Formats accepted are yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.
+        required: false
+        schema:
+          type: string
+          format: date-time
+          example: '2022-07-26T13:20:45'
+      - name: includeDataElements
+        in: query
+        description: When set to true will include data subject data elements on the receipt payload.
+        required: false
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: includeArchived
+        in: query
+        description: This parameter will fetch up to 1000 historical receipts per API call that are not yet stored in the Azure Cosmos DB or those that have reached their time-to-live (TTL) expiration of 90 days.
+        required: false
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: isAnonymous
+        in: query
+        description: The `isAnonymous` parameter will be ignored. Anonymous receipts can only be returned by using the `identifier` or `receiptId` parameter.
+        required: false
+        schema:
+          type: boolean
+        deprecated: true
+      - name: includeConsentStrings
+        in: query
+        description: This parameter will return consent strings stored in receipts. Note that it must be used in conjunction with an identifier or receiptId filter.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N).
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page (1..50).
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,direction (where direction is asc or desc). Supported properties: consentCreationDate, interactionDate, id.'
+        schema:
+          type: string
+          example: consentCreationDate,asc
+          default: consentCreationDate,desc
+          enum:
+          - consentCreationDate,asc
+          - consentCreationDate,desc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_ContinuationToken'
+      responses:
+        '200':
+          description: Successfully retrieved list of receipts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentAPI_ReceiptInformationDetailSliceDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+components:
+  schemas:
+    ConsentAPI_RuleActionResult:
+      type: object
+      properties:
+        ruleAction:
+          type: string
+        ruleActionParameter:
+          type: string
+        ruleActionStatus:
+          type: string
+          enum:
+          - COMPLETED
+          - PARTIALLY_COMPLETED
+          - NOT_INITIATED
+          - FAILED
+        downStreamRuleActions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DownStreamRuleAction'
+    ConsentAPI_PurposeNoteDtoV2:
+      type: object
+      properties:
+        noteId:
+          description: The unique identifier of the reason template.
+          type: string
+          format: uuid
+        noteType:
+          description: The type of the note.
+          type: string
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The language of the note.
+          type: string
+        noteText:
+          description: The actual text of the note.
+          type: string
+        isValidNote:
+          description: The flag that indicates if the purpose note is valid.
+          type: boolean
+    ConsentAPI_ReceiptInformationDetailSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_ReceiptInformationDetailDto'
+          type: array
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObjectWithContinuationToken'
+        first:
+          type: boolean
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    ConsentAPI_PurposeTopicDtoV2:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the purpose and topic relation.
+          type: string
+          format: uuid
+        transactionType:
+          type: string
+        name:
+          description: The name of the purpose topic.
+          type: string
+        integrationKey:
+          description: The topic integration key (combination of purpose and topic names).
+          type: string
+        languages:
+          description: A list of languages for a topic.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_TopicLanguageDtoV2'
+    ConsentAPI_CustomPreferenceOptionDtoV2:
+      type: object
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          description: The Option label
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentAPI_PurposeCustomPreferenceDtoV2:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the Purpose and Custom Preference relation.
+          type: string
+        name:
+          description: The name of the custom preference.
+          type: string
+        displayAs:
+          description: The display type of the Custom Preference.
+          type: string
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: The custom preference options.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceOptionDtoV2'
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceLanguageDtoV2'
+    ConsentAPI_DsPurposeScope:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ConsentAPI_TopicLanguageDtoV2:
+      type: object
+      properties:
+        name:
+          description: The Topic name
+          type: string
+        language:
+          description: The Topic content language code
+          type: string
+        default:
+          description: Whether this language is the default one for the Topic
+          type: boolean
+    ConsentAPI_ContinuationToken:
+      type: object
+      properties:
+        requestContinuation:
+          description: Request continuation token used to paginate. If the number of records in the response is more than a page, it returns a `requestContinuation` token in the response. This `requestContinuation` token should be passed to the next request's body to paginate.
+          type: string
+          example:
+            compositeToken:
+              token: +RID:iNFkAI-ei-4uLDsAAAAAAA==#RT:2#SRC:1#TRC:40#RTD:0Idx9i7ua9Rq4VL3LfZOBTMxMzMuMjMuMjpVMjY7NTo7MjIvMzE5Nzo1AA==#ISV:2#IEO:65567#QCF:8#FPC:AgHq7OoGADE1APzASusCAABA7GoAIVt//sFH5/+hQP9/EUD/f/JAn8/9/xFAv/9DQP/7v//f/yJA//f/+2FC//sxQf9/IUD/O1FA/38RQP7/IUD7/5VA/7/t/93u93+2/xFA/58hQH/6MUB/+xhAv2//99v//f+//ev//+EfAA==
+              range:
+                min: ''
+                max: FF
+            orderByItems:
+            - item: '2022-12-19T15:49:11.236953'
+            rid: iNFkAI-ei-4FKjsAAAAAAA==
+            inclusive: true
+        nextMarker:
+          description: Request continuation token used to paginate over historical receipts
+          type: string
+          example: TGp8AqS3Gfnzwc5srJKeaA==
+    ConsentAPI_RuleEvaluationResult:
+      type: object
+      properties:
+        ruleId:
+          description: The unique identifier of the consent rule.
+          type: string
+          format: uuid
+          example: a1a623ad-23f6-40c7-b079-46cc3adba518
+        ruleGroupId:
+          description: The unique identifier of the consent rule group.
+          type: string
+          format: uuid
+          example: 7751ec78-2d98-4aea-9bc5-09f78a57eaa6
+        consentRuleType:
+          description: The type of consent rule.
+          type: string
+          enum:
+          - CONSENT_INGEST
+        evaluationResult:
+          description: The consent rule's result.
+          type: boolean
+        actionResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_RuleActionResult'
+        resultData:
+          type: array
+          items:
+            type: object
+        additionalParams:
+          type: object
+          additionalProperties:
+            type: object
+    ConsentAPI_PurposeInformationDtoV2:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the purpose.
+          type: string
+          format: uuid
+          example: ba8cab6d-a581-464b-8a6a-2a8de65f6d54
+        name:
+          description: The name of the purpose.
+          type: string
+          example: Marketing Purpose
+        description:
+          description: A brief description of the purpose.
+          type: string
+          example: Obtain consent for receiving promotional emails and product updates
+        status:
+          description: The status of the purpose.
+          type: string
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: The version number of the purpose.
+          type: integer
+          format: int64
+        purposeType:
+          description: The type of purpose.
+          type: string
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        consentLifeSpan:
+          description: The lifespan of the consent for this purpose.
+          type: integer
+          format: int64
+          example: 31536000
+        transactionType:
+          description: The type of consent transaction.
+          type: string
+          enum:
+          - PENDING
+          - CONFIRMED
+          - WITHDRAWN
+          - EXPIRED
+          - NOTGIVEN
+          - OPT_OUT
+          - NO_CHOICE
+          - HARD_OPT_OUT
+          - EXTEND
+          - CHANGE_PREFERENCES
+          - CANCEL
+          - NO_OPT_OUT
+          - OPT_IN
+          - IMPLICIT
+        topics:
+          description: An array of topics associated with the purpose.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_PurposeTopicDtoV2'
+        purposeScopes:
+          description: The list of purpose scopes associated with this data subject.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsPurposeScope'
+        customPreferences:
+          description: The custom preferences related to the purpose.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_PurposeCustomPreferenceDtoV2'
+        purposeNote:
+          $ref: '#/components/schemas/ConsentAPI_PurposeNoteDtoV2'
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        transactionId:
+          type: string
+          format: uuid
+        expiryDate:
+          type: string
+          format: date-time
+        reactivationDate:
+          description: Indicates the date and time on which a consent will be reactivated. This is set when a purpose is snoozed until the specified date and time. The consent remains snoozed until this date, after which it is automatically reactivated and becomes active again.
+          type: string
+          format: date-time
+          example: '2023-10-08T12:00:00'
+        purposeAttachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsAttachments'
+    ConsentAPI_DsAttachments:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    ConsentAPI_DsGeolocation:
+      type: object
+      properties:
+        country:
+          description: The country of the captured consent.
+          type: string
+          example: US
+        state:
+          description: The abbreviated state of the captured consent.
+          type: string
+          example: CA
+        stateName:
+          description: The state of the captured consent.
+          type: string
+          example: California
+        purposeIds:
+          description: A list of unique identifiers of the Purpose for which Geolocation parameters are sent.
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+    ConsentAPI_CustomPreferenceLanguageDtoV2:
+      type: object
+      properties:
+        name:
+          description: The name identifying the Custom Preference
+          type: string
+        description:
+          description: Whether this language is the default one for the Custom Preference
+          type: string
+        language:
+          description: The Custom Preference content language code
+          type: string
+        default:
+          description: Whether this language is the default one for the Custom Preference
+          type: boolean
+        options:
+          description: Options associated with a Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceOptionDtoV2'
+    ConsentAPI_ConsentString:
+      type: object
+      properties:
+        type:
+          description: The type of the consent string.
+          type: string
+        content:
+          description: The content of the consent string.
+          type: string
+    ConsentAPI_DownStreamRuleAction:
+      type: object
+      properties:
+        actionType:
+          type: string
+          enum:
+          - SEND_EMAIL
+          - DATA_SUBJECT_UPDATE
+          - DATA_SUBJECT_PROFILE_UPDATE
+          - PUBLISH_INTEGRATION_EVENT
+        ruleAction:
+          type: string
+        ruleActionParameter:
+          type: string
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentAPI_PageableObjectWithContinuationToken:
+      type: object
+      properties:
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+    ConsentAPI_ReceiptInformationDetailDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the receipt.
+          type: string
+          format: uuid
+          example: 5a2c2d8f-fd08-41c9-b912-6fcd073f8d4f
+        otJwtVersion:
+          description: The version of the JWT used, if applicable.
+          type: integer
+          format: int64
+          example: 1
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 70a28a5f-9b46-481c-914c-b958d6a01d0c
+        dataSubjectIdentifierHash:
+          description: A hashed version of the data subject's identifier for secure reference.
+          type: string
+          example: 28fe918b697f3f9b550bc485e6b61abd8f6890cd3b9c78337327d825f69af10ccd1f320102f32a22a6d921cfa8c8bb50bba2c620c3860340619f26246d8677c2
+        dataSubjectIdentifier:
+          description: The original data subject identifier.
+          type: string
+          example: example@otprovacy.com
+        collectionPointUUID:
+          description: The unique identifier of the collection point where the consent was captured.
+          type: string
+          format: uuid
+          example: ec82c013-0d46-400c-b03c-f2ec239d3d36
+        collectionPointVersion:
+          description: The version of the collection point configuration.
+          type: integer
+          format: int64
+          example: 1
+        collectionPointName:
+          description: The name of the collection point.
+          type: string
+          example: API Collection Point
+        consentCreationDate:
+          description: The date and time when the consent was created.
+          type: string
+          format: date-time
+          example: '2025-09-11T14:32:45.123Z'
+        customPayload:
+          description: A custom payload associated with the receipt (if applicable).
+          type: string
+          example:
+            payload1: value1
+            payload2: value2
+        purposes:
+          description: An array of purposes for which the consent was provided.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_PurposeInformationDtoV2'
+        test:
+          description: The flag that indicates if the receipt is part of a test.
+          type: boolean
+          example: true
+        origin:
+          description: The origin of the receipt, if specified.
+          type: string
+          enum:
+          - IMPORT
+          - API
+          - SDK
+          - ONETRUST
+          - PREFERENCE_CENTER
+          - EMAIL_CLIENT_ONE_CLICK
+          - HISTORIC_IMPORT
+        doubleOptIn:
+          description: The flag that indicates if the consent was a double opt-in.
+          type: boolean
+          example: true
+        language:
+          description: The language in which the consent was recorded, if applicable.
+          type: string
+          example: en-us
+        collectionPointType:
+          description: The type of collection point.
+          type: string
+          example: API
+        isAnonymous:
+          description: The flag that indicates if the data subject is anonymous.
+          type: boolean
+          example: true
+        attributes:
+          description: Additional attributes related to the receipt.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+        interactionDate:
+          description: The date and time of the interaction.
+          type: string
+          format: date-time
+          example: '2025-09-18T10:15:30.000Z'
+        dataElements:
+          description: The data elements tied to the receipt.
+          type: object
+          additionalProperties:
+            type: object
+        unsubscribeAll:
+          description: The flag that indicates if the data subject has unsubscribed from all communications.
+          type: boolean
+          example: true
+        geolocation:
+          description: The geolocation data associated with the consent, if available.
+          $ref: '#/components/schemas/ConsentAPI_DsGeolocation'
+        ruleEvaluationResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_RuleEvaluationResult'
+        attachments:
+          description: The attachments tied to the receipt.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsAttachments'
+        consentString:
+          $ref: '#/components/schemas/ConsentAPI_ConsentString'
+        source:
+          description: The source details of the consent interaction.
+          $ref: '#/components/schemas/ConsentAPI_Source'
+    ConsentAPI_Source:
+      type: object
+      properties:
+        type:
+          description: The type of source that captured the consent interaction.
+          type: string
+        content:
+          description: The URL or identifier of the source where the consent interaction took place.
+          type: string
+        purposeIds:
+          description: The unique identifiers of the purposes that the data subject must consent to in order for the source to be captured, such as the purpose ID for Advanced analytics or similar.
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

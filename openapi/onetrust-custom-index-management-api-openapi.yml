@@ -1,0 +1,265 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Custom Index Management
+  x-displayName: Custom Index Management
+paths:
+  /api/consentmanager/v1/custom-indexes:
+    post:
+      operationId: createIndex
+      summary: Create Custom Index
+      description: 'Use this API to trigger the creation of a custom search index for data elements. The response will include the `runId` that can be used to query the current creation status using the Get Index Creation Status API.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Each account is limited to only one custom search index.'
+      tags:
+      - Custom Index Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerRequest'
+      responses:
+        '200':
+          description: Index creation successfully triggered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse'
+        '401':
+          description: Unauthorized access
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse'
+        '403':
+          description: Insufficient permissions to create custom indexes
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+  /api/consentmanager/v1/custom-indexes/{runId}/status:
+    get:
+      operationId: getIndexCreationStatus
+      summary: Get Index Creation Status
+      description: Use this API to retrieve the current creation status of the custom search index. The response will include details such as the current status, start and end time, and error details if applicable.
+      tags:
+      - Custom Index Management
+      parameters:
+      - name: runId
+        in: path
+        description: Unique identifier of a custom index creation
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Successfully retrieved pipeline run status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun'
+        '400':
+          description: Invalid run ID provided
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun'
+        '401':
+          description: Unauthorized access
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun'
+        '403':
+          description: Insufficient permissions to view index status
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun'
+        '404':
+          description: Pipeline run not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse:
+      type: object
+      properties:
+        runId:
+          description: Unique identifier for the pipeline run
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        status:
+          description: Status of the pipeline trigger
+          type: string
+          example: InProgress
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun:
+      type: object
+      properties:
+        status:
+          description: Current status of the custom index creation
+          type: string
+          example: InProgress
+          enum:
+          - Submitted
+          - InProgress
+          - Success
+          - Failed
+          - Cancelled
+          - Pending
+        startTime:
+          description: Timestamp when the of the custom index creation started
+          type: string
+          format: date-time
+        endTime:
+          description: Timestamp when the the custom index creation ended.
+          type: string
+          format: date-time
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerRequest:
+      type: object
+      properties:
+        operationName:
+          description: The parameter representing the operation to be performed. Supported value is CREATE_DATA_ELEMENT_SEARCH_INDEX.
+          type: string
+          enum:
+          - CREATE_DATA_ELEMENT_SEARCH_INDEX
+        parameters:
+          description: 'Map of parameters required for the index creation. dataElementName parameter is mandatory for operation CREATE_DATA_ELEMENT_SEARCH_INDEX '
+          additionalProperties:
+            type: object
+            description: 'Map of parameters required for the index creation. dataElementName parameter is mandatory for operation CREATE_DATA_ELEMENT_SEARCH_INDEX '
+            example:
+              dataElementName: City
+          example:
+            dataElementName: City
+          type: object
+      example:
+        operationName: CREATE_DATA_ELEMENT_SEARCH_INDEX
+        parameters:
+          dataElementName: City
+      required:
+      - operationName
+      - parameters
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

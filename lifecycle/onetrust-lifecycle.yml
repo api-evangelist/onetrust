@@ -1,0 +1,193 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://developer.onetrust.com/onetrust/reference/onetrust-api-sunsetting-deprecation-guidelines,
+  https://developer.onetrust.com/onetrust/reference/deprecated-apis-list,
+  https://developer.onetrust.com/onetrust/reference/system-status
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust publishes a written two-phase sunset/deprecation policy, a dated list of every API currently
+  in each phase, a release changelog, and a status page. It is one of the more complete lifecycle
+  postures in the privacy/GRC cohort. The notable gap: the policy commits to an RFC 7234 `299` warning
+  header during the deprecation period, NOT to RFC 8594 `Deprecation` / `Sunset` headers — so a client
+  gets a cache-warning class signal rather than the standard machine-readable one, and none of the 37
+  OpenAPI definitions carries `deprecated: true` on the operations the docs list as deprecated.
+versioning:
+  scheme: path
+  pattern: /api/{microservice}/{version}/{endpoint}
+  observed_versions: [v1, v2, v3, v4]
+  platform_release_scheme: CalVer
+  platform_release_example: 202608.1.0
+  docs: https://developer.onetrust.com/onetrust/reference/quick-start-guide
+deprecation_policy:
+  published: true
+  url: https://developer.onetrust.com/onetrust/reference/onetrust-api-sunsetting-deprecation-guidelines
+  phases:
+  - name: Sunsetting Period
+    duration: 3-6 months after the deprecation announcement
+    behavior: >-
+      API continues to be supported; no new features and no non-critical fixes. OneTrust monitors usage
+      of the deprecated API and proactively notifies customers still calling it.
+  - name: Deprecation Period
+    duration: typically 12 months after the sunsetting period ends
+    behavior: >-
+      Critical support only. OneTrust implements an RFC 7234 §5.5.7 `299` warning on the API backend.
+  signal_headers:
+    implemented:
+    - name: Warning
+      code: 299
+      standard: RFC 7234 §5.5
+      note: Applied during the Deprecation Period.
+    not_implemented:
+    - name: Deprecation
+      standard: RFC 8594
+    - name: Sunset
+      standard: RFC 8594
+  exceptions: Handled case by case and communicated in the initial deprecation notice.
+deprecated_operations:
+  source: https://developer.onetrust.com/onetrust/reference/deprecated-apis-list
+  derived_from_openapi: 16
+  in_spec:
+  - operationId: getDataSubjectPurposesByIdentifierUsingGET
+    method: GET
+    path: /api/consentmanager/v1/datasubjects/purposes
+    spec: onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - operationId: getPurposesUsingGET
+    method: GET
+    path: /api/consentmanager/v1/purposes
+    spec: onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - operationId: withdrawTransactionBehalfOfDatasubjectUsingPUT
+    method: PUT
+    path: /api/consentmanager/v1/transactions/withdraw/fordatasubject
+    spec: onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - operationId: withdrawTransactionByPurposeAndIdentifierUsingGET
+    method: GET
+    path: /api/consentmanager/v1/transactions/withdraw/purpose/{purposeId}
+    spec: onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - operationId: getAllEmissionFactorsBasicEntityDetails
+    method: GET
+    path: /v1/emission-factors
+    spec: onetrust-esg-program-reporting-disclosures-openapi.json
+  - operationId: addEmissionFactor
+    method: POST
+    path: /v1/entity-types/emission-factors/entities
+    spec: onetrust-esg-program-reporting-disclosures-openapi.json
+  - operationId: addEmissionTransaction
+    method: POST
+    path: /v1/entity-types/emission-transactions/entities
+    spec: onetrust-esg-program-reporting-disclosures-openapi.json
+  - operationId: findAllByTypeAndCriteria
+    method: POST
+    path: /v1/entity-types/names/{entityTypeName}/entities/pages
+    spec: onetrust-esg-program-reporting-disclosures-openapi.json
+  - operationId: fetchMetricsDetails
+    method: POST
+    path: /v1/metrics/metric-details
+    spec: onetrust-esg-program-reporting-disclosures-openapi.json
+  - operationId: approveAssessmentUsingPOST
+    method: POST
+    path: /api/assessment/v3/assessments/{assessmentId}/approve
+    spec: onetrust-privacy-automation-assessment-automation-openapi.json
+  - operationId: createRequestQueueFromMessageUsingPOST
+    method: POST
+    path: /api/datasubject/v2/requestqueues
+    spec: onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+  - operationId: listOfCoursesUsingGet
+    method: GET
+    path: /v1/courses
+    spec: onetrust-tech-risk-compliance-training-openapi.json
+  - operationId: enrollUsersToCourseUsingPost
+    method: POST
+    path: /v2/enrollments
+    spec: onetrust-tech-risk-compliance-training-openapi.json
+  - operationId: getStatusOfEnrollmentUsingGET
+    method: GET
+    path: /v1/enrollment-assignees/{enrollmentAssigneeId}/enrollment-progress
+    spec: onetrust-tech-risk-compliance-training-openapi.json
+  - operationId: unEnrollUserUsingDELETE
+    method: DELETE
+    path: /v1/enrollments/enrollment-assignees/{enrollmentAssigneeId}
+    spec: onetrust-tech-risk-compliance-training-openapi.json
+  - operationId: getEnrollmentDetailsUsingPOST
+    method: POST
+    path: /v1/enrollments/assignments
+    spec: onetrust-tech-risk-compliance-training-openapi.json
+  note: >-
+    16 of the 631 operations carry `deprecated: true` in the contract, and they line up with the
+    docs list — the five Training operations, the five ESG/emissions operations, and the V1 consent
+    purposes/transactions operations. The gap is smaller than the docs page alone suggests, but it is
+    not closed: "Perform Risk Action", "Get List of Receipts by Data Subject", "Get Receipt" and
+    "Get List of Subtasks" are named as deprecated in the docs and are NOT flagged in the spec.
+  sunset_period: []
+  deprecation_period:
+  - api: Get List of Subtasks
+    period: 2026-01-01 to 2026-12-31
+    replacement: Get List of Subtasks by Criteria
+    replacement_url: https://developer.onetrust.com/onetrust/reference/getallsubtasksv3usingpost
+  - api: Get List of Courses
+    period: 2025-12-05 to 2026-12-31
+    replacement: null
+  - api: Get User's Enrollment Status
+    period: 2025-12-05 to 2026-12-31
+    replacement: null
+  - api: Get Enrollment Details
+    period: 2025-12-05 to 2026-12-31
+    replacement: null
+  - api: Unenroll User from Course
+    period: 2025-12-05 to 2026-12-31
+    replacement: null
+  - api: Enroll Users to Course
+    period: 2025-12-05 to 2026-12-31
+    replacement: null
+  - api: Get Data Subject's Preferences V1
+    period: 2025-11-23 to 2026-11-23
+    replacement: Get Data Subject's Preferences V2
+    replacement_url: https://developer.onetrust.com/onetrust/reference/getrealtimepreferences
+  deprecated:
+  - api: Get Metric Details
+  - api: Get List of Emission Details
+  - api: Create Emission Transaction
+  - api: Create Emission Factor
+  - api: Get List of Emission Factors
+  - api: Perform Risk Action
+  - api: Get List of Receipts by Data Subject
+    replacement: Get List of Receipts
+  - api: Get List of Receipt Details by Data Subject
+    replacement: Get List of Receipts
+  - api: Get Receipt
+    replacement: Get List of Receipts
+  - api: Get List of Purposes for a Data Subject
+    replacement: Get List of Data Subjects
+  - api: Get List of Purposes
+    replacement: Get List of Purpose Versions
+status_page:
+  published: true
+  url: https://my.onetrust.com/s/system-status
+  docs: https://developer.onetrust.com/onetrust/reference/system-status
+  subscribable: true
+  components: OneTrust core platform components and APIs; environment hosting locations, maintenance
+    history, performance metrics and availability reports.
+  note: >-
+    status.onetrust.com resolves (302) to https://my.onetrust.com/s/system-status. The page is a
+    Salesforce Experience Cloud surface rendered client-side, so it has no machine-readable
+    /api/v2/status.json the way a Statuspage.io host would. The developer portal itself is hosted on
+    ReadMe and has a separate status feed at https://www.readmestatus.com.
+sla:
+  published: partial
+  documents:
+  - name: CMP API Service Level Objectives
+    url: https://developer.onetrust.com/onetrust/reference/cmp-api-service-level-objectives
+  - name: Consent & Preference Management API Service Level Objectives
+    url: https://developer.onetrust.com/onetrust/reference/consent-preference-management-api-service-level-objectives
+  note: >-
+    SLOs are published per module rather than as one platform-wide SLA, and exceeding a module rate
+    limit is explicitly stated to forfeit the SLO for that endpoint.
+maintenance:
+  url: https://my.onetrust.com/s/article/Scheduled-Maintenance
+release_notes:
+  developer_portal: https://developer.onetrust.com/onetrust/changelog
+  platform: https://my.onetrust.com/s/release-notes
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

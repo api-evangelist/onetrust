@@ -1,0 +1,144 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  Derived from the 37 OpenAPI definitions in openapi/ and confirmed against
+  https://developer.onetrust.com/onetrust/reference/oauth-20-scopes,
+  https://developer.onetrust.com/onetrust/reference/quick-start-guide,
+  https://developer.onetrust.com/onetrust/reference/rate-limits-overview,
+  https://www.onetrust.com/trust/ and https://developer.onetrust.com/onetrust/.well-known/api-catalog
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust's contracts declare three domain standards for its own markets — IAB TCF (EU v2.2 and
+  Canada) and IAB GPP in the consent surface, and SCIM 2.0 in user provisioning, complete with the
+  registered schema URNs. Those are signature-level declarations inside the spec, not marketing claims,
+  and they are exactly what a buyer who already speaks the standard needs to see. Cross-cutting web
+  standards are a weaker story: OAuth 2.0 client credentials yes, OIDC no, RFC 9457 no, RFC 8594 no.
+conformance:
+- id: oauth2
+  conforms: true
+  standard: RFC 6749 — OAuth 2.0 Client Credentials grant
+  evidence:
+    spec: 40 securitySchemes of type oauth2 with a clientCredentials flow across the 37 definitions
+    token_url: https://{hostname}/api/access/v1/oauth/token
+    scopes_declared: 51
+    docs: https://developer.onetrust.com/onetrust/reference/oauth-20-scopes
+- id: oidc
+  conforms: false
+  evidence: >-
+    No OpenID Connect discovery for the platform API. my.onetrust.com serves an
+    /.well-known/openid-configuration, but it belongs to the Salesforce Experience Cloud community
+    login, not to the OneTrust API — its scopes_supported are Salesforce's (cdp_ingest_api, pardot_api).
+- id: scim
+  conforms: true
+  standard: SCIM 2.0 — RFC 7643 / RFC 7644
+  domain_standard: true
+  market: Identity governance / enterprise user provisioning
+  evidence:
+    spec: onetrust-platform-user-provisioning-openapi.json
+    paths:
+    - /api/scim/v2/Users
+    - /api/scim/v2/Users/{id}
+    - /api/scim/v2/Groups
+    - /api/scim/v2/Groups/{groupId}
+    - /api/scim/v3/Users
+    - /api/scim/v3/Users/{id}
+    - /api/scim/v3/Groups
+    - /api/scim/v3/Groups/{groupId}
+    - /api/scim/v3/Schemas
+    - /api/scim/v3/Schemas/{schemaName}
+    - /api/scim/v3/ResourceTypes
+    - /api/scim/v3/ResourceTypes/{resourceName}
+    - /api/scim/v3/ServiceProviderConfig
+    schema_urns:
+    - urn:ietf:params:scim:schemas:core:2.0:User
+    - urn:ietf:params:scim:schemas:core:2.0:Group
+    - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
+    - urn:ietf:params:scim:schemas:extension:enterprise:2.0:User
+    - 'urn:ietf:params:scim:schemas:onetrust:Group (vendor extension)'
+    scope: SCIM
+    note: >-
+      ServiceProviderConfig, Schemas and ResourceTypes are all served, which is what separates a real
+      SCIM implementation from a /Users endpoint that borrows the name. An IdP (Okta, Entra, JumpCloud)
+      can provision into OneTrust with no bespoke connector.
+- id: iab-tcf
+  conforms: true
+  standard: IAB Europe Transparency & Consent Framework (TCF) v2.2, plus TCF Canada
+  domain_standard: true
+  market: Digital advertising consent
+  evidence:
+    spec: onetrust-consent-preferences-consent-management-platform-cmp-openapi.json
+    header: OT-Tcf-Eu2v2-Consent-String — 'The IAB TCF string that contains information on consent preferences.'
+    enum: 'consent string type enum ["GPP","TCF_EU","TCF_CANADA"]'
+    schema_fields:
+    - IABGPP_TCFEU2_CmpSdkID
+    - TCF_DisclosedVendors
+- id: iab-gpp
+  conforms: true
+  standard: IAB Global Privacy Platform (GPP)
+  domain_standard: true
+  market: Multi-jurisdiction privacy signalling
+  evidence:
+    spec: onetrust-consent-preferences-consent-management-platform-cmp-openapi.json
+    schema_fields:
+    - IABGPP_2_String
+    enum: 'consent string type enum ["GPP","TCF_EU","TCF_CANADA"]'
+- id: rfc9727
+  conforms: true
+  standard: RFC 9727 — API Catalog (/.well-known/api-catalog linkset)
+  evidence:
+    url: https://developer.onetrust.com/.well-known/api-catalog
+    status: 200
+    nested: https://developer.onetrust.com/onetrust/.well-known/api-catalog
+    content_type: application/linkset+json
+    entries: 37
+    file: well-known/onetrust-api-catalog.json
+- id: rfc9116
+  conforms: false
+  standard: security.txt
+  evidence: No /.well-known/security.txt served on any OneTrust host. See security/onetrust-vulnerability-disclosure.yml.
+- id: rfc9457
+  conforms: false
+  standard: Problem Details for HTTP APIs
+  evidence: Zero application/problem+json responses across all 37 definitions.
+- id: rfc8594
+  conforms: false
+  standard: Deprecation / Sunset HTTP headers
+  evidence: >-
+    The published deprecation policy commits to an RFC 7234 §5.5.7 `299` Warning header instead. 16
+    operations carry `deprecated: true` in the contract.
+- id: pagination
+  conforms: true
+  evidence: >-
+    Two documented styles — page/size/sort offset paging with a Spring-style envelope
+    (content/pageable/totalPages/totalElements), and request-continuation keyset paging. Documented at
+    https://developer.onetrust.com/onetrust/reference/understanding-implementing-pagination
+- id: idempotency
+  conforms: false
+  evidence: No idempotency key header, parameter or documentation anywhere in the platform.
+- id: json-api
+  conforms: false
+  evidence: Vendor JSON, not JSON:API.
+- id: odata
+  conforms: false
+- id: fhir
+  conforms: false
+- id: fapi
+  conforms: false
+- id: psd2
+  conforms: false
+compliance_program:
+  published: true
+  source: https://www.onetrust.com/trust/
+  certifications:
+  - SOC 2
+  - ISO 27001
+  - GDPR
+  detail: security/onetrust-trust-center.yml
+  note: >-
+    Certifications are asserted on the public trust page. The regulatory subject matter of the product
+    (GDPR, CCPA, LGPD, DPDP, EU AI Act) is what the APIs administer; it is not itself a certification of
+    OneTrust, and is deliberately not listed as one here.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

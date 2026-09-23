@@ -1,0 +1,1634 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Object Type Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Object Type Management
+  description: The Object Type Management APIs are used to manage custom object types.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /v1/entity-types/names/{entityTypeName}:
+    get:
+      operationId: getEntityTypeInformationUsingGET_1
+      summary: Get Object Type by Name
+      description: 'Use this API to retrieve details for the object type by its name. The response will return the user who created the object type, created date, and description.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeName
+        in: path
+        description: The name of the object type.
+        required: true
+        schema:
+          description: Name of the object type to retrieve. Can be used instead of entityTypeId.
+          type: string
+        example: projects
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested object type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeInformation'
+              examples:
+                Project Object Type:
+                  summary: Example of project object type details
+                  description: Project Object Type
+                  value:
+                    id: ef4e5bf9-7462-43af-b74f-72b61308629b
+                    name: projects
+                    nameKey: CE.Projects.Name
+                    seeded: true
+                    moduleName: CustomEntityManagement
+                    schemaName: projects
+                    description: A collaborative object set up to achieve one or more unique and specific business outcomes.
+                    descriptionKey: CE.Projects.Description
+                    workflowType: ef4e5bf9-7462-43af-b74f-72b61308629b
+                    enabled: true
+                    moduleScopes:
+                    - AA
+                    - AIG
+                    - DM
+                    settings:
+                      enableWorkflow: true
+                      enableWorkflowStageTracking: true
+                      enableAudit: true
+                      assessable: true
+                      enableTask: true
+                      enableRisk: true
+                      enableDocument: true
+                      enableControl: true
+                      enableWebForm: false
+                      enableComment: true
+                    auditFields:
+                      createdDate: '2023-02-03T14:59:44.487Z'
+                      lastUpdatedDate: '2025-02-03T09:21:20.040Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+    patch:
+      operationId: updateCustomEntityTypeUsingPATCH_1
+      summary: Modify Custom Object Type by Name
+      description: 'Use this API to partially update an existing object type by its name.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeName
+        in: path
+        description: The name of the object type.
+        required: true
+        schema:
+          description: Name of the object type to update. Can be used instead of entityTypeId.
+          type: string
+        example: custom-entity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityTypeUpdateRequest'
+            examples:
+              Update Object Type Display Name:
+                summary: Example of updating a custom object type's display name and description
+                description: Update Object Type Display Name
+                value:
+                  name: GR1_updated_01
+                  description: ''
+                  moduleScopes:
+                  - DM
+                  - ITRM
+                  settings:
+                    enableWorkflow: true
+                    enableAudit: true
+                    assessable: true
+                    enableWorkflowStageTracking: true
+                    enableTask: true
+                    enableRisk: true
+                    enableDocument: true
+                    enableControl: true
+                    enableWebForm: false
+                    enableComment: false
+      responses:
+        '200':
+          description: OK - The object type was successfully updated
+          content:
+            application/json:
+              schema:
+                description: Updated object type information
+                $ref: '#/components/schemas/EntityTypeInformation'
+              examples:
+                Updated Object Type:
+                  summary: Example of an updated object type
+                  description: Updated Object Type
+                  value:
+                    id: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    name: GR1_updated_01
+                    nameKey: 36ce5b96-000e-454d-84cd-ffa92f0b35c8
+                    seeded: false
+                    moduleName: CustomEntityManagement
+                    schemaName: c248b17a-93ea-47e6-bd85-eecd71ce84a7
+                    description: ''
+                    descriptionKey: f6d7977a-84d3-448d-9440-540fc5710b2f
+                    workflowType: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    enabled: true
+                    moduleScopes:
+                    - DM
+                    - ITRM
+                    settings:
+                      enableWorkflow: true
+                      enableWorkflowStageTracking: true
+                      enableAudit: true
+                      assessable: true
+                      enableTask: true
+                      enableRisk: true
+                      enableDocument: true
+                      enableControl: true
+                      enableWebForm: false
+                      enableComment: false
+                    auditFields:
+                      createdDate: '2023-02-20T17:32:03.770Z'
+                      lastUpdatedDate: '2025-06-09T07:04:42.840Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+  /v1/entity-types/names/{entityTypeName}/enable:
+    put:
+      operationId: enabledCustomEntityTypeUsingPUT_1
+      summary: Enable Custom Object Type by Name
+      description: 'Use this API to enable the object type by its name.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeName
+        in: path
+        description: The name of the object type.
+        required: true
+        schema:
+          description: Name of the object type to enable. Can be used instead of entityTypeId.
+          type: string
+        example: custom-entity
+      responses:
+        '204':
+          description: No Content - The object type was successfully enabled
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+  /v1/entity-types/search:
+    post:
+      operationId: findAllByTypeAndCriteriaUsingPOST
+      summary: Get List of Object Types
+      description: 'Use this API to retrieve a list of all object types by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeQueryCriteria'
+            examples:
+              Search System and Active Object Types:
+                summary: Example of searching for system and active object types containing 'project' in name
+                description: Search System and Active Object Types
+                value:
+                  fullText: Projects
+                  filters:
+                  - field: moduleScopes.module
+                    value:
+                    - AIG
+                    operator: EQUAL_TO
+                  - field: enabled
+                    value:
+                    - true
+                    operator: EQUAL_TO
+                  - field: seeded
+                    value:
+                    - true
+                    operator: EQUAL_TO
+              Search Custom and Active Object Types:
+                summary: Example of searching for custom and active object types containing 'project' in name
+                description: Search Custom and Active Object Types
+                value:
+                  fullText: GR1
+                  filters:
+                  - field: moduleScopes.module
+                    value:
+                    - DM
+                    operator: EQUAL_TO
+                  - field: enabled
+                    value:
+                    - true
+                    operator: EQUAL_TO
+                  - field: seeded
+                    value:
+                    - false
+                    operator: EQUAL_TO
+      responses:
+        '200':
+          description: OK - Returns a paginated list of object types matching the criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEntityTypeInformation'
+              examples:
+                Page of Object Types:
+                  summary: Example of a page containing custom object types
+                  description: Page of Object Types
+                  value:
+                    content:
+                    - auditFields:
+                        createdDate: '2023-02-20T17:32:03.770Z'
+                        lastUpdatedDate: '2023-02-24T14:45:10.230Z'
+                      description: ''
+                      descriptionKey: f6d7977a-84d3-448d-9440-540fc5710b2f
+                      enabled: true
+                      id: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                      moduleName: CustomEntityManagement
+                      moduleScopes:
+                      - DM
+                      - ITRM
+                      name: GR1
+                      nameKey: 36ce5b96-000e-454d-84cd-ffa92f0b35c8
+                      schemaName: c248b17a-93ea-47e6-bd85-eecd71ce84a7
+                      seeded: false
+                      settings:
+                        enableWorkflow: true
+                        enableWorkflowStageTracking: true
+                        enableAudit: true
+                        assessable: true
+                        enableTask: true
+                        enableRisk: true
+                        enableDocument: true
+                        enableControl: true
+                        enableWebForm: false
+                        enableComment: false
+                      workflowType: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    pageable:
+                      pageNumber: 0
+                      pageSize: 20
+                      sort:
+                        empty: false
+                        sorted: true
+                        unsorted: false
+                      offset: 0
+                      paged: true
+                      unpaged: false
+                    last: true
+                    totalPages: 1
+                    totalElements: 1
+                    size: 20
+                    number: 0
+                    sort:
+                      empty: false
+                      sorted: true
+                      unsorted: false
+                    first: true
+                    numberOfElements: 1
+                    empty: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+  /v1/entity-types/{entityTypeId}:
+    get:
+      operationId: getEntityTypeInformationUsingGET
+      summary: Get Object Type by ID
+      description: 'Use this API to retrieve details for the object type by its unique identifier. The response will return the user who created the object type, created date, and description.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeId
+        in: path
+        description: The unique identifier of the object type.
+        required: true
+        schema:
+          description: Unique identifier (UUID) of the object type to retrieve
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested object type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeInformation'
+              examples:
+                Project Object Type:
+                  summary: Example of project object type details
+                  description: Project Object Type
+                  value:
+                    id: ef4e5bf9-7462-43af-b74f-72b61308629b
+                    name: projects
+                    nameKey: CE.Projects.Name
+                    seeded: true
+                    moduleName: CustomEntityManagement
+                    schemaName: projects
+                    description: A collaborative object set up to achieve one or more unique and specific business outcomes.
+                    descriptionKey: CE.Projects.Description
+                    workflowType: ef4e5bf9-7462-43af-b74f-72b61308629b
+                    enabled: true
+                    moduleScopes:
+                    - AA
+                    - AIG
+                    - DM
+                    settings:
+                      enableWorkflow: true
+                      enableWorkflowStageTracking: true
+                      enableAudit: true
+                      assessable: true
+                      enableTask: true
+                      enableRisk: true
+                      enableDocument: true
+                      enableControl: true
+                      enableWebForm: false
+                      enableComment: true
+                    auditFields:
+                      createdDate: '2023-02-03T14:59:44.487Z'
+                      lastUpdatedDate: '2025-02-03T09:21:20.040Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+    patch:
+      operationId: updateCustomEntityTypeUsingPATCH
+      summary: Modify Custom Object Type by ID
+      description: 'Use this API to partially update an existing object type by its unique identifier.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeId
+        in: path
+        description: The unique identifier of the object type.
+        required: true
+        schema:
+          description: Unique identifier (UUID) of the object type to update
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityTypeUpdateRequest'
+            examples:
+              Update Object Type Display Name:
+                summary: Example of updating a custom object type's display name and description
+                description: Update Object Type Display Name
+                value:
+                  name: GR1_updated_01
+                  description: ''
+                  moduleScopes:
+                  - DM
+                  - ITRM
+                  settings:
+                    enableWorkflow: true
+                    enableAudit: true
+                    assessable: true
+                    enableWorkflowStageTracking: true
+                    enableTask: true
+                    enableRisk: true
+                    enableDocument: true
+                    enableControl: true
+                    enableWebForm: false
+                    enableComment: false
+      responses:
+        '200':
+          description: OK - The object type was successfully updated
+          content:
+            application/json:
+              schema:
+                description: Updated object type information
+                $ref: '#/components/schemas/EntityTypeInformation'
+              examples:
+                Updated Object Type:
+                  summary: Example of an updated object type
+                  description: Updated Object Type
+                  value:
+                    id: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    name: GR1_updated_01
+                    nameKey: 36ce5b96-000e-454d-84cd-ffa92f0b35c8
+                    seeded: false
+                    moduleName: CustomEntityManagement
+                    schemaName: c248b17a-93ea-47e6-bd85-eecd71ce84a7
+                    description: ''
+                    descriptionKey: f6d7977a-84d3-448d-9440-540fc5710b2f
+                    workflowType: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    enabled: true
+                    moduleScopes:
+                    - DM
+                    - ITRM
+                    settings:
+                      enableWorkflow: true
+                      enableWorkflowStageTracking: true
+                      enableAudit: true
+                      assessable: true
+                      enableTask: true
+                      enableRisk: true
+                      enableDocument: true
+                      enableControl: true
+                      enableWebForm: false
+                      enableComment: false
+                    auditFields:
+                      createdDate: '2023-02-20T17:32:03.770Z'
+                      lastUpdatedDate: '2025-06-09T07:04:42.840Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+  /v1/entity-types/{entityTypeId}/enable:
+    put:
+      operationId: enabledCustomEntityTypeUsingPUT
+      summary: Enable Custom Object Type by ID
+      description: 'Use this API to enable the object type by its unique identifier.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityTypeId
+        in: path
+        description: The unique identifier of the object type.
+        required: true
+        schema:
+          description: Unique identifier (UUID) of the object type to enable
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '204':
+          description: No Content - The object type was successfully enabled
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+components:
+  schemas:
+    EntityTypeUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        description:
+          description: The description of the object type.
+          type: string
+          example: Module.VendorsNameKey
+        moduleScopes:
+          description: The product scopes of the object type.
+          type: array
+          items:
+            type: string
+          example:
+          - Inventory
+          - VRM
+          - Assessments
+          - IssueManagement
+          enum:
+          - Inventory
+          - VRM
+          - Assessments
+          - IssueManagement
+          - CustomEntityManagement
+          - Control
+          uniqueItems: true
+        settings:
+          description: The settings details of the object type.
+          example:
+            enableWorkflow: true
+            assessable: true
+          $ref: '#/components/schemas/EntityTypeSettingRequest'
+        workflow:
+          description: The details of the workflow.
+          example:
+            name: Vendor On-Boarding Workflow
+            description: Vendor On-Boarding Workflow
+            stages:
+            - name: Start
+            - name: End
+          $ref: '#/components/schemas/EntityDefaultWorkflowRequest'
+    Sort:
+      type: object
+      properties:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+          example: true
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
+          type: boolean
+          example: false
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
+          type: boolean
+          example: false
+    PageEntityTypeInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: Customer
+            nameKey: EntityType.Customer
+          items:
+            $ref: '#/components/schemas/EntityTypeInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 75
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 8
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 20
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        pageable:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/Pageable'
+      example:
+        content:
+        - id: 123e4567-e89b-12d3-a456-426614174000
+          name: Customer
+          nameKey: EntityType.Customer
+          description: Customer entity type
+          seeded: true
+          moduleName: EntityManagement
+          schemaName: customer
+        totalElements: 75
+        totalPages: 8
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    EntityTypeSettingInformation:
+      type: object
+      properties:
+        enableWorkflow:
+          description: This flag indicates whether the workflow is enabled.
+          type: boolean
+          example: true
+        enableWorkflowStageTracking:
+          description: This flag indicates whether workflow stage tracking is enabled.
+          type: boolean
+          example: true
+        assessable:
+          description: This flag indicates whether the object type is assessable.
+          type: boolean
+          example: false
+        enableTask:
+          description: This flag indicates whether tasks are enabled.
+          type: boolean
+          example: false
+        enableRisk:
+          description: This flag indicates whether risks are enabled.
+          type: boolean
+          example: false
+        enableDocument:
+          description: This flag indicates whether documents are enabled.
+          type: boolean
+          example: false
+        enableControl:
+          description: This flag indicates whether controls are enabled.
+          type: boolean
+          example: false
+        enableWebForm:
+          description: This flag indicates whether web forms are enabled.
+          type: boolean
+          example: false
+        enableComment:
+          description: This flag indicates whether comments are enabled.
+          type: boolean
+          example: false
+      required:
+      - assessable
+      - enableComment
+      - enableControl
+      - enableDocument
+      - enableRisk
+      - enableTask
+      - enableWebForm
+      - enableWorkflow
+      - enableWorkflowStageTracking
+    EntityDefaultWorkflowRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Default Vendor On-Boarding
+        description:
+          description: The description of the workflow.
+          type: string
+          example: Default Vendor On-Boarding For New Vendors
+        status:
+          description: The status of the workflow.
+          type: string
+          enum:
+          - PUBLISHED
+          - DRAFT
+          - ARCHIVED
+        stages:
+          description: The stages of the workflow.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageCreateRequest'
+      required:
+      - name
+    WorkflowStageCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the workflow stage.
+          type: string
+          example: Document Review Stage
+        nameKey:
+          description: The name key of the workflow stage used for translation purposes.
+          type: string
+          example: Workflow.DocumentReview.Stage.Review
+        description:
+          description: The description of the workflow stage.
+          type: string
+          example: Stage for reviewing and approving documents before final submission
+        descriptionKey:
+          description: The description key of the workflow stage used for translation purposes.
+          type: string
+          example: Workflow.DocumentReview.Stage.Review.Description
+        allowDeletion:
+          description: This flag indicates whether the workflow stage can be deleted.
+          type: boolean
+          example: true
+          default: 'true'
+        badgeColor:
+          description: The badge color of the workflow stage.
+          type: string
+          example: '#4287f5'
+          pattern: ^#[0-9A-Fa-f]{6}$
+        approvalStage:
+          description: This flag indicates whether the workflow stage is the approval stage.
+          type: boolean
+          example: true
+          default: 'false'
+        exceptionStage:
+          description: This flag indicates whether the workflow stage is the exception stage.
+          type: boolean
+          example: false
+          default: 'false'
+        autoAdvanceOnApproval:
+          description: This flag indicates whether the workflow stage will advance upon approval.
+          type: boolean
+          example: true
+          default: 'false'
+        subTasks:
+          description: The details of the workflow stage subtasks.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageSubTaskCreateRequest'
+          example:
+          - name: Initial Review
+            description: Perform initial document review
+            required: true
+          - name: Legal Compliance Check
+            description: Verify legal compliance requirements
+            required: true
+        stageApprovers:
+          description: The details of the workflow stage approvers.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverRequest'
+          examples:
+          - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
+          - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
+          - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
+        stageExceptionConfiguration:
+          description: The details of the workflow stage exception configuration.
+          example:
+            exceptionGrantedTargetStageId: 345e6789-e89b-12d3-a456-426614174000
+            stageExceptionApprovers:
+            - id: 345e6789-e89b-12d3-a456-426614174000
+              approverType: SYSTEM_USER
+              approverUserGroupId: 789e0123-e89b-12d3-a456-426614174000
+            workflowExceptionApprovalRequiredFromAll: true
+          $ref: '#/components/schemas/StageExceptionConfiguration'
+        additionalFields:
+          description: The additional fields associated with the workflow stage.
+          type: object
+          example:
+            priority: HIGH
+            department: Legal
+            estimatedDuration: 48
+            costCenter: CC-001
+            tags:
+            - compliance
+            - review
+            metadata:
+              createdBy: system
+              version: '1.0'
+          additionalProperties:
+            type: object
+        advanceStageActionEnabled:
+          description: This flag indicates whether advance stage actions are enabled.
+          type: boolean
+          example: true
+          default: 'false'
+        advanceStageActions:
+          description: The details of the advanced stage actions.
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvanceStageActionRequest'
+          example:
+          - actionType: ATTRIBUTES
+            actionMetadata:
+              fieldName: value
+        approvers:
+          description: The details of the workflow stage approvers.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverRequest'
+      example:
+        name: Document Review Stage
+        nameKey: Workflow.DocumentReview.Stage.Review
+        description: Stage for reviewing and approving documents
+        descriptionKey: Workflow.DocumentReview.Stage.Review.Description
+        allowDeletion: true
+        badgeColor: '#4287f5'
+        approvalStage: true
+        exceptionStage: false
+        autoAdvanceOnApproval: true
+        subTasks:
+        - name: Initial Review
+          description: Perform initial document review
+          required: true
+        stageApprovers:
+        - approverId: 123e4567-e89b-12d3-a456-426614174000
+          approverType: USER
+          required: true
+        stageExceptionConfiguration:
+          allowExceptions: true
+          exceptionApprovers:
+          - 456e7890-e89b-12d3-a456-426614174000
+        additionalFields:
+          priority: HIGH
+          department: Legal
+          estimatedDuration: 48
+        advanceStageActionEnabled: true
+        advanceStageActions:
+        - actionType: ATTRIBUTES
+          actionMetadata:
+            fieldName: value
+      required:
+      - name
+    StageExceptionConfiguration:
+      type: object
+      properties:
+        stageExceptionApprovers:
+          description: The details of the workflow stage exception approvers.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverRequest'
+          examples:
+          - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
+          - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
+          - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
+        exceptionGrantedTargetStageId:
+          description: The unique identifier of the workflow stage for exception approval.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        workflowExceptionApprovalRequiredFromAll:
+          description: This flag indicates whether approval is required from all workflow stage exception approvers.
+          type: boolean
+          example: true
+          default: 'false'
+    AdvanceStageActionRequest:
+      type: object
+      properties:
+        actionType:
+          description: Advance Stage Action Type
+          type: string
+          enum:
+          - ATTRIBUTES, ATTACHMENT
+        actionMetadata:
+          description: Advance Stage Action Metadata
+          type: object
+          example:
+            fieldName: value
+          additionalProperties:
+            type: object
+      example:
+      - actionType: ATTRIBUTES
+        actionMetadata:
+          fieldName: value
+      required:
+      - actionType
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+        offset:
+          description: The number of results to exclude from the start of the list.
+          type: integer
+          format: int64
+          example: 0
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        paged:
+          description: This flag indicates whether the list is paged.
+          type: boolean
+          example: true
+        unpaged:
+          description: This flag indicates whether the list is not paged.
+          type: boolean
+          example: false
+    EntityTypeSettingRequest:
+      type: object
+      properties:
+        enableWorkflow:
+          description: This flag indicates whether the workflow is enabled.
+          type: boolean
+          example: true
+        assessable:
+          description: This flag indicates whether the object type is assessable.
+          type: boolean
+          example: false
+        enableTask:
+          description: This flag indicates whether tasks are enabled.
+          type: boolean
+          example: false
+        enableRisk:
+          description: This flag indicates whether risks are enabled.
+          type: boolean
+          example: false
+        enableDocument:
+          description: This flag indicates whether documents are enabled.
+          type: boolean
+          example: false
+        enableControl:
+          description: This flag indicates whether controls are enabled.
+          type: boolean
+          example: false
+        enableWebForm:
+          description: This flag indicates whether web forms are enabled.
+          type: boolean
+          example: false
+        enableComment:
+          description: This flag indicates whether comments are enabled.
+          type: boolean
+          example: false
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+    WorkflowStageSubTaskCreateRequest:
+      type: object
+      properties:
+        id:
+          description: Workflow Stage Sub-task Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Workflow Stage Sub-task Name
+          type: string
+          example: Approval Sub-task
+        nameKey:
+          description: Workflow Stage Sub-task Name Key. Used for Translation
+          type: string
+          example: Workflow.SubTask.Approval
+        description:
+          description: Workflow Stage Sub-task Description
+          type: string
+          example: Review and validate all contract terms and conditions before approval
+        descriptionKey:
+          description: Workflow Stage Sub-task Description Key. Used for Translation
+          type: string
+          example: Workflow.SubTask.Approval.Description
+        required:
+          description: Indicate if Workflow Stage Sub-task is mandatory or not
+          type: boolean
+          example: true
+          default: 'false'
+        assigneeId:
+          description: Indicate if Workflow Stage Sub-task Assignee Id
+          type: string
+          format: uuid
+          example: 456e7890-e89b-12d3-a456-426614174000
+        assigneeName:
+          description: Indicate if Workflow Stage Sub-task Assignee Name
+          type: string
+          example: John Doe
+        actionType:
+          description: Workflow action type
+          type: string
+          example: Review
+        actionParameters:
+          description: Workflow action parameters
+          type: string
+          example:
+            reviewType: legal
+            priority: high
+            deadline: '2024-01-30'
+      examples:
+      - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"name\": \"Document Review Sub-task\",\n \"nameKey\": \"Workflow.SubTask.ReviewContractTerms\",\n \"description\": \"Review and validate all Document Review Sub-task\",\n \"descriptionKey\": \"Workflow.SubTask.ReviewContractTerms.Description\",\n \"required\": true,\n \"assigneeId\": \"456e7890-e89b-12d3-a456-426614174000\",\n \"assigneeName\": \"John Doe\",\n \"actionType\": \"REVIEW\",\n \"actionParameters\": \"{\\\"reviewType\\\": \\\"legal\\\", \\\"priority\\\": \\\"high\\\"}\"\n}\n"
+      - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"name\": \"Approval Sub-task\",\n \"nameKey\": \"Workflow.SubTask.ManagerApproval\",\n \"description\": \"Requires Approval Sub-task before proceeding\",\n \"descriptionKey\": \"Workflow.SubTask.ManagerApproval.Description\",\n \"required\": true,\n \"assigneeId\": \"567e8901-e89b-12d3-a456-426614174000\",\n \"assigneeName\": \"Jane Smith\",\n \"actionType\": \"APPROVE\",\n \"actionParameters\": \"{\\\"approvalLevel\\\": \\\"manager\\\", \\\"timeout\\\": 48}\"\n}\n"
+      required:
+      - id
+      - name
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    WorkflowStageApproverRequest:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow stage exception approver.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        approverType:
+          description: The user type of the workflow stage exception approver.
+          type: string
+          example: SYSTEM_USER
+          enum:
+          - SYSTEM_USER
+          - USER_ATTRIBUTE
+        approverUserId:
+          description: The unique identifier of the user assigned as the workflow stage exception approver.
+          type: string
+          format: uuid
+          example: 456e7890-e89b-12d3-a456-426614174000
+        referenceApproverUserSourceId:
+          description: The reference identifier for the approver's source, e.g. fieldName from Attribute Manager.
+          type: string
+          example: manager_id
+        referenceApproverUserSourceOwner:
+          description: The reference source owner, e.g. schemaName from Attribute Manager.
+          type: string
+          example: employee_schema
+        approverUserGroupId:
+          description: The unique identifier of the user group assigned as the workflow stage exception approver.
+          type: string
+          format: uuid
+          example: 789e0123-e89b-12d3-a456-426614174000
+        approverIdPresent:
+          description: This flag indicates whether the unique identifier of the workflow stage exception approver is present.
+          type: boolean
+      examples:
+      - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
+      - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
+      - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
+      required:
+      - approverType
+      - id
+    EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: This flag indicates whether the object type is seeded.
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+        description:
+          description: The description of the object type.
+          type: string
+          example: A third-party organization that provides goods or services to the company
+        descriptionKey:
+          description: The description key of the object type used for translation purposes.
+          type: string
+          example: entity.type.vendor.description
+        workflowType:
+          description: The type of workflow.
+          type: string
+          example: vendor_assessment
+        enabled:
+          description: 'This flag indicates whether the object type is enabled. '
+          type: boolean
+          example: true
+          default: 'true'
+        moduleScopes:
+          description: The product scopes of the object type.
+          type: array
+          items:
+            type: string
+          example:
+          - Inventory
+          - VRM
+          - Assessments
+          - IssueManagement
+          enum:
+          - Inventory
+          - VRM
+          - Assessments
+          - IssueManagement
+          - CustomEntityManagement
+          - Control
+        settings:
+          description: The settings details of the object type.
+          example:
+            enableSearch: true
+            enableQuickCreate: true
+            enableExtendedAttributes: true
+            enableDuplicateDetection: true
+            workflowEnabled: true
+            auditEnabled: true
+          $ref: '#/components/schemas/EntityTypeSettingInformation'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+      example:
+        id: 789e4567-e89b-12d3-a456-426614174123
+        name: Vendor
+        nameKey: entity.type.vendor
+        displayName: Vendor
+        displayNameKey: entity.type.vendor.display
+        module: VENDOR
+        description: A third-party organization that provides goods or services to the company
+        descriptionKey: entity.type.vendor.description
+        workflowType: vendor_assessment
+        enabled: true
+        moduleScopes:
+        - Inventory
+        - VRM
+        - Security
+        settings:
+          enableSearch: true
+          enableQuickCreate: true
+          enableExtendedAttributes: true
+          enableDuplicateDetection: true
+          workflowEnabled: true
+          auditEnabled: true
+        auditFields:
+          createdBy: admin@example.com
+          createdTimestamp: '2023-01-15T10:30:45Z'
+          lastModifiedBy: system@example.com
+          lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+      required:
+      - id
+      - name
+      - settings
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

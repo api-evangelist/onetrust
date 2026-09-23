@@ -1,0 +1,970 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Purposes V2
+  description: The Purposes V2 APIs are used to manage purposes using version 2 of the API.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Purposes V2
+paths:
+  /api/consentmanager/v2/purposes:
+    get:
+      operationId: getGroupedPurposesV2
+      summary: Get List of Purpose Versions
+      description: 'Use this API to retrieve a list of Purpose versions. The response will include details for each Purpose version along with the corresponding Purpose ID, created date, and published date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API returns Purpose descriptions inside `
+
+        ` and `
+
+        `HTML tags. These can be sanitized depending on your formatting needs.'
+      tags:
+      - Purposes V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: latestVersion
+        in: query
+        description: In order to retrieve only the latest version of each Purpose this property should be set to true.
+        required: false
+        schema:
+          type: boolean
+          example: false
+          default: false
+      - name: includeRetired
+        in: query
+        description: In order to include retired versions for each Purpose this property should be set to true.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: organization
+        in: query
+        description: Organization ID to filter purposes by.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
+      - name: includeCustomPreferences
+        in: query
+        description: In order to retrieve custom preferences for each version of Purposes this property should be set to true.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: includeTopics
+        in: query
+        description: In order to retrieve topics for each version of Purposes this property should be set to true.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: fromLastModifiedDate
+        in: query
+        description: 'Filter purposes modified after this date (format: yyyy-MM-dd''T''HH:mm:ss).'
+        required: false
+        schema:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00'
+      - name: toLastModifiedDate
+        in: query
+        description: 'Filter purposes modified before this date (format: yyyy-MM-dd''T''HH:mm:ss).'
+        required: false
+        schema:
+          type: string
+          format: date-time
+          example: '2023-12-31T23:59:59'
+      - name: page
+        in: query
+        description: Results page you want to retrieve (0-based).
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page.
+        schema:
+          type: integer
+          example: 20
+          default: 20
+          maximum: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          example: lastModifiedDate,asc
+          enum:
+          - guid,asc
+          - guid,desc
+          - name,asc
+          - name,desc
+          - description,asc
+          - description,desc
+          - version,asc
+          - version,desc
+          - purposeStatus,asc
+          - purposeStatus,desc
+          - purposeType,asc
+          - purposeType,desc
+          - consentLifeSpan,asc
+          - consentLifeSpan,desc
+          - implicitConsentLifeSpan,asc
+          - implicitConsentLifeSpan,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+          - createdBy,asc
+          - createdBy,desc
+          - lastModifiedBy,asc
+          - lastModifiedBy,desc
+          - publishedDate,asc
+          - publishedDate,desc
+          - retireOnDate,asc
+          - retireOnDate,desc
+          - publishedBy,asc
+          - publishedBy,desc
+          - externalReference,asc
+          - externalReference,desc
+          - defaultConsentStatus,asc
+          - defaultConsentStatus,desc
+      responses:
+        '200':
+          description: OK - Successfully retrieved purpose versions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeVersionsGroupedByGuid_Simple'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/purposes/{purposeId}:
+    get:
+      operationId: getPurposeDetailUsingGET
+      summary: Get Purpose
+      description: 'Use this API to retrieve a single Purpose by its unique identifier along with the associated attributes, Purpose Preferences, and created date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API returns Purpose descriptions inside `
+
+        ` and `
+
+        `HTML tags. These can be sanitized depending on your formatting needs.'
+      tags:
+      - Purposes V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: purposeId
+        in: path
+        description: Unique identifier of the Purpose
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      - name: status
+        in: query
+        description: The status of the Purpose to be retrieved (ACTIVE or DRAFT). By default, ACTIVE is returned.
+        required: false
+        schema:
+          type: string
+          default: ACTIVE
+          enum:
+          - ACTIVE
+          - DRAFT
+      - name: version
+        in: query
+        description: Version number of the Purpose to be retrieved
+        required: false
+        schema:
+          type: integer
+          example: 2
+          minimum: 1
+      responses:
+        '200':
+          description: OK - Successfully retrieved purpose
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_Detail'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found - Purpose not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_Detail'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple:
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple:
+      properties:
+        label:
+          description: Name or label of the purpose version
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose version
+          type: string
+          example: Collect customer emails for marketing purposes
+        status:
+          description: Current status of the purpose version
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        consentLifeSpan:
+          description: Lifespan of consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentLifeSpan:
+          description: Lifespan of implicit consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        purposeType:
+          description: Type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        parentPurposeId:
+          description: Unique identifier of the parent purpose, if this is a child purpose
+          type: string
+          format: uuid
+          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdBy:
+          description: ID of the user who created the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        createdDate:
+          description: Date and time when the purpose version was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastModifiedBy:
+          description: ID of the user who last modified the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        lastModifiedDate:
+          description: Date and time when the purpose version was last modified
+          type: string
+          format: date-time
+          example: '2023-01-15T15:30:45Z'
+        publishedBy:
+          description: ID of the user who published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date and time when the purpose version was published
+          type: string
+          format: date-time
+          example: '2023-01-10T10:15:30Z'
+        detail:
+          description: URL to get the detailed information of this purpose version
+          type: string
+          example: https://app-eu.onetrust.com/api/consentmanager/v2/purposes/f2229953-b4b5-4042-8cb9-b78038cc4c46?version=2
+        customPreferences:
+          description: List of custom preferences associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Simple'
+        topics:
+          description: List of topics associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple'
+        organizations:
+          description: List of organization IDs associated with this purpose
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: List of organization IDs associated with this purpose
+          example:
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - bc4836e2-c117-461b-a7a2-2b268c037a97
+        expiryDateType:
+          description: Type of date field used for calculating purpose lifespan/expiry
+          type: string
+          example: LAST_TRANSACTION_DATE
+          enum:
+          - LAST_TRANSACTION_DATE
+          - CONSENT_DATE
+        enableGeolocation:
+          description: Flag indicating whether to capture the data subject's geolocation when consent is provided
+          type: boolean
+          example: true
+        LastMajorVersion:
+          type: integer
+          format: int64
+        VersionNotes:
+          type: string
+        IsMajorVersion:
+          type: boolean
+        HardOptOutDisplayFormat:
+          description: The format in which the purpose displays in a Trust Center when the consent status is Hard opt-out. Hard opt-out purposes can either be displayed but locked, or hidden.
+          type: string
+          example: HIDE
+          enum:
+          - HIDE
+          - LOCK
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - label
+      - purposeType
+      - status
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2_Detail:
+      properties:
+        name:
+          description: The purpose name in the specified language
+          type: string
+          example: Marketing Communications
+        description:
+          description: The purpose description in the specified language
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox in the specified language
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        language:
+          description: IETF BCP 47 language tag for the content
+          type: string
+          example: en-US
+        default:
+          description: Indicates if this is the default language for the purpose
+          type: boolean
+          example: true
+        hardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - description
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Simple:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple:
+      properties:
+        purposeId:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdDate:
+          description: Date when the purpose was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        publishedBy:
+          description: ID of the user who last published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date when the purpose was last published
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:00Z'
+        lastModifiedDate:
+          description: Date when the purpose was last modified
+          type: string
+          format: date-time
+          example: '2023-01-10T15:45:30Z'
+        versions:
+          description: List of all versions of the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple'
+        attributes:
+          description: Additional attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes attached to the purpose
+            items:
+              type: string
+              description: Additional attributes attached to the purpose
+      required:
+      - createdDate
+      - purposeId
+      - versions
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeVersionsGroupedByGuid_Simple:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail:
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_Detail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        label:
+          description: Name or label of the purpose version
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose version
+          type: string
+          example: Collect customer emails for marketing purposes
+        status:
+          description: Current status of the purpose version
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        consentLifeSpan:
+          description: Lifespan of consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentLifeSpan:
+          description: Lifespan of implicit consents recorded against this purpose version in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        purposeType:
+          description: Type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        parentPurposeId:
+          description: Unique identifier of the parent purpose, if this is a child purpose
+          type: string
+          format: uuid
+          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdBy:
+          description: ID of the user who created the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        createdDate:
+          description: Date and time when the purpose version was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastModifiedBy:
+          description: ID of the user who last modified the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        lastModifiedDate:
+          description: Date and time when the purpose version was last modified
+          type: string
+          format: date-time
+          example: '2023-01-15T15:30:45Z'
+        publishedBy:
+          description: ID of the user who published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date and time when the purpose version was published
+          type: string
+          format: date-time
+          example: '2023-01-10T10:15:30Z'
+        customPreferences:
+          description: List of custom preferences associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail'
+        topics:
+          description: List of topics associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail'
+        expiryDateType:
+          description: Type of date field used for calculating purpose lifespan/expiry
+          type: string
+          example: LAST_TRANSACTION_DATE
+          enum:
+          - LAST_TRANSACTION_DATE
+          - CONSENT_DATE
+        enableGeolocation:
+          description: Flag indicating whether to capture the data subject's geolocation when consent is provided
+          type: boolean
+          example: true
+        attributes:
+          description: Additional attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes attached to the purpose
+            items:
+              type: string
+              description: Additional attributes attached to the purpose
+        LastMajorVersion:
+          type: integer
+          format: int64
+        VersionNotes:
+          type: string
+        IsMajorVersion:
+          type: boolean
+        HardOptOutDisplayFormat:
+          description: The format in which the purpose displays in a Trust Center when the consent status is Hard opt-out. Hard opt-out purposes can either be displayed but locked, or hidden.
+          type: string
+          example: HIDE
+          enum:
+          - HIDE
+          - LOCK
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+        languages:
+          description: List of languages supported by the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2_Detail'
+        receiptInclusionAttributes:
+          description: Attributes that should be included in the receipt
+          type: object
+          additionalProperties:
+            type: array
+            description: Attributes that should be included in the receipt
+            items:
+              type: string
+              description: Attributes that should be included in the receipt
+      required:
+      - id
+      - label
+      - purposeType
+      - status
+      - version
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

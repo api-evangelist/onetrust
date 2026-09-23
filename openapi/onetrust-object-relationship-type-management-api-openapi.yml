@@ -1,0 +1,925 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Object Relationship Type…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Object Relationship Type Management
+  description: The Object Relationship Type Management APIs are used to manage the types of relationships that can exist between objects.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /v1/entity-link-types:
+    post:
+      operationId: createCustomLinkTypeUsingPOST
+      summary: Create Relationship Type between Objects
+      description: 'Use this API to create a new Relationship Type between two object types.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomLinkTypeCreateRequest'
+            examples:
+              Create model dataset Relationship:
+                summary: Example of creating a model dataset relationship type
+                description: Creates a relationship type that allows connecting Business Units to objects they own
+                value:
+                  name: relationship_01
+                  description: desc
+                  entityType1ToEntityType2EntityLinkName: model
+                  entityType2ToEntityType1EntityLinkName: dataset
+                  linkAssociations:
+                  - entityType1:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    entityType2:
+                      id: b821e04e-73f9-4bc8-b925-bfe72a599633
+                      name: datasets
+                      nameKey: CE.Datasets.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: datasets
+      responses:
+        '201':
+          description: Created - The relationship type has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkTypeDetailedInformation'
+              examples:
+                Business Ownership Response:
+                  summary: Example of created relationship type details
+                  description: Business Ownership Response
+                  value:
+                    id: bea0115d-27ae-4b6e-bc52-bed53c4abcf1
+                    name: relationship_01
+                    nameKey: 5596a8d1-be57-46a3-9993-f0eb0b94a1dd
+                    schemaName: bb89c78b-7be5-4b2a-b91c-f5c1d1a239e2
+                    seeded: false
+                    moduleName: CustomEntityManagement
+                    description: desc
+                    descriptionKey: 7803bc48-d046-4c02-b230-36247e7e1a77
+                    entityType1ToEntityType2EntityLinkName: model
+                    entityType1ToEntityType2EntityLinkNameKey: c2e0fade-62d5-4728-84bd-13a02bc888f2
+                    entityType2ToEntityType1EntityLinkName: dataset
+                    entityType2ToEntityType1EntityLinkNameKey: d346be41-2e24-4704-bb56-4537217a331a
+                    enableAudit: true
+                    allowNewCustomLinkAssociation: true
+                    auditFields:
+                      createdDate: '2025-06-12T08:52:58.307Z'
+                      lastUpdatedDate: '2025-06-12T08:52:58.307Z'
+                    linkAssociations:
+                    - id: 28
+                      entityType1:
+                        id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                        name: models
+                        nameKey: CE.Models.Name
+                        seeded: true
+                        moduleName: CustomEntityManagement
+                        schemaName: models
+                      entityType2:
+                        id: b821e04e-73f9-4bc8-b925-bfe72a599633
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: CustomEntityManagement
+                        schemaName: datasets
+                      enabled: true
+                      seeded: false
+                      auditFields:
+                        createdDate: '2025-06-12T08:52:58.308Z'
+                        lastUpdatedDate: null
+                        createdBy:
+                          id: 41955b71-e581-4187-ab6c-d00d1403350c
+                          name: null
+                          email: null
+                          initials: null
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_WRITE
+        - INTEGRATION
+  /v1/entity-link-types/search:
+    post:
+      operationId: findAllByLinkTypeAndCriteriaUsingPOST
+      summary: Get List of Relationship Link Types
+      description: 'Use this API to retrieve a list of all Relationship Types by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeQueryCriteria'
+            examples:
+              Search Relationship Types by name and target type:
+                summary: Example of searching for Relationship Types by name and target type
+                description: Search Relationship Types by name and target type
+                value:
+                  fullText: ''
+                  filters:
+                  - field: name
+                    value: relationship_01
+                    operator: EQUAL_TO
+                  - field: domainEntityType2Id
+                    value: b38df610-68a4-4db5-949d-92976463abab
+                    operator: EQUAL_TO
+      responses:
+        '200':
+          description: OK - Returns a paginated list of relationship types matching the criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageLinkTypeDetailedInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+  /v1/entity-link-types/{entityLinkTypeId}:
+    get:
+      operationId: getLinkTypeUsingGET
+      summary: Get Relationship Type
+      description: 'Use this API to retrieve the details of a single Relationship Type by its unique identifier.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports objects created via Object Manager, including Projects, Models, and Datasets.'
+      tags:
+      - Object Relationship Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityLinkTypeId
+        in: path
+        description: 'This flag indicates whether the object type is seeded. '
+        required: true
+        schema:
+          description: Unique identifier (UUID) of the relationship type to retrieve
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested relationship type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkTypeInformation'
+              examples:
+                model dataset Response:
+                  summary: Example of relationship type details
+                  description: model dataset Response
+                  value:
+                    id: bea0115d-27ae-4b6e-bc52-bed53c4abcf1
+                    name: relationship_01
+                    nameKey: 5596a8d1-be57-46a3-9993-f0eb0b94a1dd
+                    schemaName: bb89c78b-7be5-4b2a-b91c-f5c1d1a239e2
+                    seeded: false
+                    moduleName: CustomEntityManagement
+                    description: desc
+                    descriptionKey: 7803bc48-d046-4c02-b230-36247e7e1a77
+                    entityType1ToEntityType2EntityLinkName: model
+                    entityType1ToEntityType2EntityLinkNameKey: c2e0fade-62d5-4728-84bd-13a02bc888f2
+                    entityType2ToEntityType1EntityLinkName: dataset
+                    entityType2ToEntityType1EntityLinkNameKey: d346be41-2e24-4704-bb56-4537217a331a
+                    enableAudit: true
+                    allowNewCustomLinkAssociation: true
+                    auditFields:
+                      createdDate: '2025-06-12T08:52:58.307Z'
+                      lastUpdatedDate: '2025-06-12T08:52:58.307Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - OBJECT_MANAGER
+        - OBJECT_MANAGER_READ
+        - OBJECT_MANAGER_WRITE
+components:
+  schemas:
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    Sort:
+      type: object
+      properties:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+          example: true
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
+          type: boolean
+          example: false
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
+          type: boolean
+          example: false
+    CustomLinkTypeCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Defined link between Vendor and Product/Service
+        linkAssociations:
+          description: The details of linked relationships.
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkTypeAssociationRequest'
+          example:
+          - entityType1:
+              name: Vendors
+            entityType2:
+              name: Assets
+          - entityType1:
+              name: Vendors
+            entityType2:
+              name: Vendors
+          uniqueItems: true
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: OneTrust provides GRC
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: GRC belongs to OneTrust
+      required:
+      - linkAssociations
+      - name
+    PageLinkTypeDetailedInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: Data Transfer Link
+          items:
+            $ref: '#/components/schemas/LinkTypeDetailedInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 150
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 15
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 20
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          example:
+            sorted: true
+            unsorted: false
+            empty: false
+          $ref: '#/components/schemas/Sort'
+        pageable:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/Pageable'
+      example:
+        content:
+        - id: 123e4567-e89b-12d3-a456-426614174000
+          name: Data Transfer Link
+          description: Link type for data transfer relationships
+        totalElements: 150
+        totalPages: 15
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    LinkTypeDetailedInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: 'The name of the relationship type. '
+          type: string
+          example: Product/Service
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the relationship type used for translation purposes.
+          type: string
+          example: link.type.productservice.name
+        seeded:
+          description: This flag indicates whether the relationship type is seeded.
+          type: boolean
+          example: true
+          default: 'false'
+        moduleName:
+          description: The name of the product where the relationship type exists.
+          type: string
+          example: CustomEntityManagement
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Links between vendors and their products
+        descriptionKey:
+          description: The description key of the relationship type used for translation purposes.
+          type: string
+          example: entity.link.vendor_product.description
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey:
+          description: The name key of the source object type's relationship to the target object type used for translation purposes.
+          type: string
+          example: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey:
+          description: The name key of the target object types's relationship to the source object type.
+          type: string
+          example: entity.link.product_to_vendor
+        enableAudit:
+          description: This flag indicates whether audit activity is enabled.
+          type: boolean
+          example: true
+          default: 'false'
+        allowNewCustomLinkAssociation:
+          description: This flag indicates whether new relationship links are allowed.
+          type: boolean
+          example: false
+          default: 'true'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+        linkAssociations:
+          description: The details of linked relationships.
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkTypeAssociationInformation'
+          example: '[{"moduleName": "Inventory" ,"entityTypePair": {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Assets"}}, {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Vendors"}}}]'
+      required:
+      - id
+      - linkAssociations
+      - name
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+        offset:
+          description: The number of results to exclude from the start of the list.
+          type: integer
+          format: int64
+          example: 0
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        paged:
+          description: This flag indicates whether the list is paged.
+          type: boolean
+          example: true
+        unpaged:
+          description: This flag indicates whether the list is not paged.
+          type: boolean
+          example: false
+    LinkTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the relationship type used for translation purposes.
+          type: string
+          example: link.type.productservice.name
+        seeded:
+          description: This flag indicates whether the relationship type is seeded.
+          type: boolean
+          example: true
+          default: 'false'
+        moduleName:
+          description: The name of the product where the relationship type exists.
+          type: string
+          example: CustomEntityManagement
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Links between vendors and their products
+        descriptionKey:
+          description: The description key of the relationship type used for translation purposes.
+          type: string
+          example: entity.link.vendor_product.description
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey:
+          description: The name key of the source object type's relationship to the target object type used for translation purposes.
+          type: string
+          example: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey:
+          description: The name key of the target object type's relationship to the source object type used for translation purposes.
+          type: string
+          example: entity.link.product_to_vendor
+        enableAudit:
+          description: This flag indicates whether audit activity is enabled.
+          type: boolean
+          example: true
+          default: 'false'
+        allowNewCustomLinkAssociation:
+          description: This flag indicates whether new custom relationship links are allowed.
+          type: boolean
+          example: false
+          default: 'true'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Vendor-Product
+        nameKey: entity.link.vendor_product
+        description: Links between vendors and their products
+        descriptionKey: entity.link.vendor_product.description
+        displayName: Vendor Product Relationship
+        displayNameKey: entity.link.vendor_product.display
+        entityType1Id: 789e4567-e89b-12d3-a456-426614174123
+        entityType1Name: Vendor
+        entityType2Id: 456e4567-e89b-12d3-a456-426614174789
+        entityType2Name: Product
+        entityType1ToEntityType2EntityLinkName: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey: entity.link.product_to_vendor
+        enableAudit: true
+        allowNewCustomLinkAssociation: false
+        auditFields:
+          createdBy: john.doe@example.com
+          createdTimestamp: '2025-01-15T10:30:45Z'
+          lastModifiedBy: jane.smith@example.com
+          lastModifiedTimestamp: '2025-06-10T14:15:22Z'
+      required:
+      - id
+      - name
+    LinkTypeAssociationRequest:
+      type: object
+      properties:
+        entityType1:
+          description: The details of the source object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        entityType2:
+          description: The details of the target object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        entityTypePairKey:
+          description: The pair key of the linked object types.
+          type: string
+      required:
+      - entityType1
+      - entityType2
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+    LinkTypeAssociationInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: integer
+          format: int64
+          example: 999
+        entityType1:
+          description: The details of the source object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        entityType2:
+          description: The details of the target object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        enabled:
+          description: This flag indicates whether relationship links are enabled.
+          type: boolean
+          example: true
+        seeded:
+          description: This flag indicates whether the relationship type is seeded.
+          type: boolean
+          example: true
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdDate: '2021-11-20T13:06:49.853803'
+            lastUpdatedDate: '2021-12-01T13:06:49.853803'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+      required:
+      - enabled
+      - entityType1
+      - entityType2
+      - id
+      - seeded
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

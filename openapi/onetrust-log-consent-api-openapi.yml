@@ -1,0 +1,1200 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Consent Management Platform (CMP)…
+  description: These are server-based APIs that will act as a medium between the OT hosted server that owns business logic and the client-side SDK, which will take the responsibility to render elements on UI based on the response sent via APIs.
+  version: 202608.1.0
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://mobile-data.onetrust.io
+  description: The OneTrust Consent Management Platform endpoint.
+tags:
+- name: Log Consent
+  description: APIs to record and retrieve user consent transactions and preferences.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-consent-management-platform-cmp.json
+paths:
+  /cfw/cmp/v1/save-log-consent:
+    post:
+      operationId: post_LogConsent
+      summary: Log Consent
+      description: Use this API to log consent when a user interacts with a Banner or Preference Center.
+      tags:
+      - Log Consent
+      x-onetrust:
+        release-status: Public Preview
+        release-status-link: https://developer.onetrust.com/onetrust/changelog/onetrust-20240520-released
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-consent-management-platform-cmp.json
+      parameters:
+      - name: OT-CDN-Location
+        in: header
+        description: The location of the CDN.
+        required: true
+        schema:
+          description: The location of the CDN.
+          type: string
+          enum:
+          - cdn.cookielaw.org
+          - cdn-apac.onetrust.com
+          - cdn.au.onetrust.com
+          - cdn-ukwest.onetrust.com
+          - cookie-cdn.cookiepro.com
+          - otcc-demo.otprivacy.com
+          - otcc-training.onetrust.com
+      - name: OT-App-Id
+        in: header
+        description: The unique identifier for the app or domain.
+        required: true
+        schema:
+          description: The unique identifier for the app or domain.
+          type: string
+          example: 95c1b37a-c271-44e8-9dd3-1742d82ec948-test
+          pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(-test)?$
+      - name: OT-Device-Type
+        in: header
+        description: The type of device.
+        required: true
+        schema:
+          description: The type of device.
+          type: string
+          enum:
+          - mobile
+          - ctv
+      - name: OT-SDK-Version
+        in: header
+        description: The published version of the app or domain.
+        required: true
+        schema:
+          description: The published version of the app or domain.
+          type: string
+          example: 202403.2.0
+          pattern: ^\d{6}\.\d+\.\d+$
+      - name: OT-SDK-Identification
+        in: header
+        description: The OT SDK identification.
+        required: false
+        schema:
+          description: The OT SDK identification.
+          type:
+          - string
+          - 'null'
+          example: iOS/17.0/202411.1.0
+      - name: OT-Language
+        in: header
+        description: The language in which the user interface should be displayed.
+        required: false
+        schema:
+          description: The language in which the user interface should be displayed.
+          type:
+          - string
+          - 'null'
+          example: en
+      - name: OT-Country-Code
+        in: header
+        description: The country code from which the user is accessing the app or website.
+        required: false
+        schema:
+          description: The country code from which the user is accessing the app or website.
+          type:
+          - string
+          - 'null'
+          example: US
+      - name: OT-Region-Code
+        in: header
+        description: The region code from which the user is accessing the app or website.
+        required: false
+        schema:
+          description: The region code from which the user is accessing the app or website.
+          type:
+          - string
+          - 'null'
+          example: GA
+      - name: OT-Fetch-Type
+        in: header
+        description: The type of data to download.
+        required: false
+        schema:
+          description: The type of data to download.
+          type:
+          - string
+          - 'null'
+          enum:
+          - APP_DATA_ONLY
+          - APP_DATA_AND_PROFILE
+          - APP_DATA_AND_SYNC_PROFILE
+      - name: OT-Consent-String
+        in: header
+        description: The encoded consent string that contains the interface's metadata.
+        required: false
+        schema:
+          description: The encoded consent string that contains the interface's metadata.
+          type:
+          - string
+          - 'null'
+          example: eyJsYXN0TGF1bmNoRGF0ZSI6MTcxMjMzMDgyOTEwMywic2hvdWxkU2hvd0Jhbm5lciI6MSwiZHNJZCI6IjljZDFjZGM1LTMwNmUtNGQ0Yi05MWFiLTg2MzdjODQ3ZjA3NyIsImFwcElkIjoiOTVjMWIzN2EtYzI3MS00NGU4LTlkZDMtMTc0MmQ4MmVjOTQ4LXRlc3QiLCJjZG4iOiJjZG4uY29va2llbGF3Lm9yZyIsImlzQW5vbnltb3VzIjoxLCJleHBpcnlEYXRlIjpudWxsfQ==
+      - name: OT-Identifier
+        in: header
+        description: The unique identifier for the data subject.
+        required: false
+        schema:
+          description: The unique identifier for the data subject.
+          type:
+          - string
+          - 'null'
+          examples:
+          - 9cd1cdc5-306e-4d4b-91ab-8637c847f077
+          - gpburdell@onetrust.com
+      - name: OT-Identifier-Type
+        in: header
+        description: The identifier type associated with the unique identifier in OT-Identifier header
+        required: false
+        schema:
+          description: The identifier type associated with the unique identifier in OT-Identifier header
+          type:
+          - string
+          - 'null'
+          example: Email
+      - name: OT-Identifier-UpdateType
+        in: header
+        description: The update type for the identifier. This header is used to specify how the identifier should be updated.
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          enum:
+          - Rename-Identifier
+      - name: OT-Sync-Profile-Auth
+        in: header
+        description: The JSON Web Token (JWT) generated using Public Keys within the OneTrust application.
+        required: false
+        schema:
+          description: The JSON Web Token (JWT) generated using Public Keys within the OneTrust application.
+          type:
+          - string
+          - 'null'
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJncGJ1cmRlbGxAb25ldHJ1c3QuY29tIiwibmFtZSI6Ikdlb3JnZSBQLiBCdXJkZWxsIiwiaWF0IjoxNTE2MjM5MDIyfQ.qisq7xmfAqXkkSckWpeJKs86JlXuKmClEgMaooSaih0
+      - name: OT-Platform
+        in: header
+        description: To handle platform-specific features like ATT (App Tracking Transparency for Apple) or GoogleAdId (for Android) in a structured way, you can send the platform type in the parameters of an API or request.
+        required: false
+        schema:
+          description: To handle platform-specific features like ATT (App Tracking Transparency for Apple) or GoogleAdId (for Android) in a structured way, you can send the platform type in the parameters of an API or request.
+          type:
+          - string
+          - 'null'
+          enum:
+          - Apple
+          - Android
+      - name: OT-Exclude-Html-Tags
+        in: header
+        description: This is specifically to unbold the vendor numbers only.
+        required: false
+        schema:
+          description: This is specifically to unbold the vendor numbers only.
+          type:
+          - boolean
+          - 'null'
+      - name: OT-Tcf-Eu2v2-Consent-String
+        in: header
+        description: The IAB TCF string that contains information on consent preferences.
+        required: false
+        schema:
+          description: The IAB TCF string that contains information on consent preferences.
+          type:
+          - string
+          - 'null'
+          example: CP68pYAP68pYAAcABBENAKEsAP_gAEPgAChQg1NX_H__bW9j8Xr1aft0eY1P99j7ruQxBhfJE-4FyLvW_JwXx2ExNA36pqIKmRIEu3bBIQFlHIHUTUigaogVryHMakWMhTNKJ6BkiFMRM2dYCF5vmYlD-QKY5_p9d3dx2D-t_dv83dzyz81Hn3f5_2e0eLCdQ58tDfv9bROb-9INd_78v4AAAAAAAAAAAAAAAAAAAAAAAAAAABU-9_fff78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQaoWoACIAFAAXAA4AD4AKAAqABcADgAHgAQAAkABdADAAMoAaABqADwAH4ARAAjgBMAChAFIAUwAqwBbAF0AMQAZgA0ABvAD0AHwAPwAhABDQCIAIkARwAlgBNACjAFKAMAAYcAygDLAGaANEAbIA5ABzwDuAO8AewA-IB9gH7AP8BAICDgIQAREAikBFgEYAI1ARwBHQCRAElAJSATQAn4BQYCoAKiAVcAsQBcwC6wF5AXoAvoBigDRAGvANoAbgA4gBxwDpAHUAO2Ae0A-wB_QD_gIQARMAi8BHsCRAJFASsAmKBMgEygJtATsAoeBR4FIgKTgU0BTYCnwFSAKsAVyArsBYUCxALFAWUAtEBakC2ALZAW4AuABcgC6AF2gLvgXkBeYC-gF_gMEAYMAw0BiADFgGPAMhgZGBkkDJgMnAZUAywBmYDOQGeANEgaMBo4DTQGpgNVgauBrIDXgG0ANsgbcBt8DcgN1AcEA4sBx4Dk4HLAcuA50Bz4DrAHigPHgeSB5QD2gHxQPkA-UB9cD7QPugfsB-4D-wH_AQBAgIBAwCB4EEQIJgQYAg3BMwEzgJqATYgm2CbkE3gTfAnDBOUE5gJ0gTrgnaCdwE8AJ5hBqAEEAAQBlDgAQCdAG2EAAQAuQDTlAAICdA.f_wACHwAAAAA
+      - name: OT-GPP-String
+        in: header
+        description: The GPP string that contains information on consent preferences.
+        required: false
+        schema:
+          description: The GPP string that contains information on consent preferences.
+          type:
+          - string
+          - 'null'
+      - name: OT-Explicit-Consent
+        in: header
+        required: false
+        schema:
+          description: If true, only the consent explicitly provided in the request body will be submitted.
+          type:
+          - boolean
+          - 'null'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Request body cannot be empty
+              type: object
+              properties:
+                interactionType:
+                  description: The type of interactions users can have with the interface.
+                  type: string
+                  example: BANNER_ALLOW_ALL
+                  enum:
+                  - BANNER_ALLOW_ALL
+                  - BANNER_REJECT_ALL
+                  - BANNER_CLOSE
+                  - BANNER_CONTINUE_WITHOUT_ACCEPTING
+                  - PREFERENCE_CENTER_ALLOW_ALL
+                  - PREFERENCE_CENTER_REJECT_ALL
+                  - PREFERENCE_CENTER_CONFIRM
+                  - PREFERENCE_CENTER_CLOSE
+                  - PREFERENCE_CENTER_CONTINUE_WITHOUT_ACCEPTING
+                  - UC_PREFERENCE_CENTER_CONFIRM
+                  - VENDOR_LIST_ALLOW_ALL
+                  - VENDOR_LIST_REJECT_ALL
+                  - VENDOR_LIST_CONFIRM
+                  - VENDOR_LIST_CONTINUE_WITHOUT_ACCEPTING
+                  - VENDOR_LIST_CLOSE
+                  - SDK_LIST_ALLOW_ALL
+                  - SDK_LIST_REJECT_ALL
+                  - SDK_LIST_CONFIRM
+                  - SDK_LIST_CONTINUE_WITHOUT_ACCEPTING
+                  - SDK_LIST_CLOSE
+                  - ATT_CONFIRM
+                  - ATT_OPTOUT
+                  - ATT_NOTGIVEN
+                  - AGEGATE_RANGE
+                  - SYNC_PROFILE
+                  - TRUST_CENTER_PREFERENCE_CONSENT
+                  - GOOGLE_ADS_CONFIRM
+                  - GOOGLE_ADS_OPTOUT
+                consent:
+                  description: The consent statuses for Purposes, IAB Vendors, Google Vendors, and SDKs.
+                  type: object
+                  properties:
+                    purposesStatus:
+                      description: The consent status details for a Purpose.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          groupId:
+                            description: The unique identifier for a Purpose.
+                            type: string
+                            example: IAB2V2_1
+                          status:
+                            description: The consent status for a Purpose.
+                            type: boolean
+                            example: true
+                          liStatus:
+                            description: The Legitimate Interest status for a Purpose.
+                            type: boolean
+                            example: false
+                        required:
+                        - groupId
+                        - status
+                    iabVendorsStatus:
+                      description: The consent status details for an IAB Vendor.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          vId:
+                            description: The identifier for the IAB Vendor.
+                            type: string
+                            example: '1'
+                          status:
+                            description: The consent status for the IAB Vendor.
+                            type: boolean
+                            example: true
+                          liStatus:
+                            description: The Legitimate Interest status for an IAB Vendor.
+                            type: boolean
+                            example: false
+                        required:
+                        - vId
+                    googleVendorsStatus:
+                      description: The consent status details for a Google Vendor.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          vId:
+                            description: The identifier for the Google Vendor.
+                            type: string
+                            example: '1'
+                          status:
+                            description: The consent status for the Google Vendor.
+                            type: boolean
+                            example: true
+                          liStatus:
+                            description: The Legitimate Interest status for a Google Vendor.
+                            type: boolean
+                            example: false
+                        required:
+                        - vId
+                        - status
+                    generalVendorsStatus:
+                      description: The consent status details for a General Vendor.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          vId:
+                            description: The identifier for the General Vendor.
+                            type: string
+                            example: '1'
+                          status:
+                            description: The consent status for the General Vendor.
+                            type: boolean
+                            example: true
+                        required:
+                        - vId
+                        - status
+                    sdkStatus:
+                      description: The consent status details for an SDK.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          sdkId:
+                            description: The unique identifier for the SDK.
+                            type: string
+                            example: 3405edf9-a92f-464a-a850-27d34901b5ab
+                          status:
+                            description: The consent status for an SDK.
+                            type: boolean
+                            example: true
+                        required:
+                        - sdkId
+                        - status
+                    ucPurposesStatus:
+                      description: The consent status details for a UC Purpose.
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            description: The identifier for the UC Purpose.
+                            type: string
+                          status:
+                            description: The consent status for the UC Purpose.
+                            type: boolean
+                          customPreferences:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  description: The identifier for the Custom Preference.
+                                  type: string
+                                options:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        description: The identifier for the Option.
+                                        type: string
+                                      status:
+                                        description: The consent status for the Option
+                                        type: boolean
+                                    required:
+                                    - id
+                                    - status
+                              required:
+                              - id
+                              - options
+                        required:
+                        - id
+                        - status
+                        example:
+                          id: 645537c5-f90f-45ec-9aaf-53f0ffbef1bd
+                          status: true
+                          customPreferences:
+                          - id: bc2ea789-2a28-4686-bae1-35bc791fd47a
+                            options:
+                            - id: 32f058a9-3fde-485e-98ef-77310b0ecd8d
+                              status: true
+                    bulkOperation:
+                      type: object
+                      properties:
+                        purposes:
+                          type: boolean
+                        sdks:
+                          type: boolean
+                        iabVendorsConsent:
+                          type: boolean
+                        iabVendorsLegInt:
+                          type: boolean
+                        googleVendors:
+                          type: boolean
+                        generalVendors:
+                          type: boolean
+                        ucp:
+                          type: boolean
+                userAgent:
+                  description: The browser details of the user that is accessing the app or website.
+                  type: string
+                  example: Chrome/122.0.0.0
+                ageGate:
+                  description: The age range information for AgeGate consent. Required when interactionType is AGEGATE_RANGE.
+                  type: object
+                  properties:
+                    lowerBound:
+                      description: The lower bound of the age range (optional).
+                      type: number
+                      example: 13
+                    upperBound:
+                      description: The upper bound of the age range (optional).
+                      type: number
+                      example: 17
+                customDataElements:
+                  description: The additional information about the user provided during their consent interaction.
+                  type: object
+                  example:
+                    dss_country_code: US
+                  additionalProperties: {}
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - allOf:
+                  - type: object
+                    properties:
+                      errors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                              enum:
+                              - SUCCESS
+                              - ERROR_CODE_TEXT_RESOURCE_NOT_FOUND
+                              - ERROR_CODE_NO_CONTENT
+                              - ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                              - ERROR_CODE_INVALID_LOCATION
+                              - ERROR_CODE_INVALID_COUNTRY_OR_REGION
+                              - ERROR_CODE_INVALID_DEVICE_TYPE
+                              - ERROR_CODE_INVALID_FETCH_TYPE
+                              - ERROR_CODE_INVALID_CONSENT_REQUEST
+                              - ERROR_CODE_HTTP_IF_NONE_MATCHED
+                              - ERROR_CODE_SYNC_GROUP
+                              - ERROR_CODE_FAILURE
+                              - ERROR_CODE_DEFAULT_PURPOSE_STATUS
+                              - ERROR_CODE_INVALID_OT_CONSENT_STRING
+                              - ERROR_CODE_GENERIC_ERROR
+                              - ERROR_CODE_MISSING_REQUIRED_HEADER
+                              - ERROR_CODE_NO_ACCESS
+                              - ERROR_CODE_INVALID_INTERACTION_TYPE
+                              - ERROR_CODE_INVALID_CONTENT_TYPE_HEADER
+                              - ERROR_IDENTIFIER_MISMATCH
+                              - ERROR_UCP_NOT_CONFIGURED
+                              - ERROR_CODE_INVALID_TC_STRING
+                              - ERROR_GOOGLE_ADS_DISABLED
+                              - ERROR_CODE_CONSENT_LOGGING
+                              - ERROR_CODE_INVALID_REQUEST_BODY
+                              - ERROR_CODE_UNSUPPORTED_VERSION
+                              - ERROR_CODE_INVALID_AGE_RANGE
+                              - ERROR_CODE_EMPTY_CONSENT
+                              - ERROR_CODE_GLOBAL_OPT_OUT_NOT_CONFIGURED
+                              - ERROR_CODE_GLOBAL_OPT_OUT_DISABLED
+                              - ERROR_CODE_DSAR
+                            message:
+                              type: string
+                              example: Unable to fetch data for the specified Application ID. Please check your configurations.
+                              enum:
+                              - Not Found
+                              - No content
+                              - success
+                              - Unable to fetch data for the specified Application ID. Please check your configurations.
+                              - Invalid location
+                              - Invalid country code or region code. If you want to skip validation, please set the header 'OT-Geolocation-Skip-Validation' to true.
+                              - Invalid Device Type
+                              - Invalid Fetch type
+                              - Missing either or all of TenantId or Identifier or Authorization
+                              - If-None-Match
+                              - syncGroup
+                              - failure
+                              - NO_CONSENT
+                              - Invalid OT consent string
+                              - Something went wrong
+                              - No access to this resource
+                              - Invalid Interaction Type
+                              - Content-Type header should be application/json
+                              - Input Identifier does not match with one in consent string
+                              - The UC Purposes API call was successful, but no data is available for display.
+                              - UC Purposes is disabled.
+                              - Error decoding TC string, default consent is returned.
+                              - Google Ads is disabled.
+                              - Consent Logging has failed, please retry in sometime and if issue still persists please reach out to support team.
+                              - Error parsing request body
+                              - The published version is not supported. Please publish a newer version.
+                              - The upper bound of the age range must be greater than lower bound.
+                              - At least one purpose consent is required.
+                              - Global Opt-Out is not configured.
+                              - Global Opt-Out is disabled.
+                          required:
+                          - code
+                          - message
+                      warnings:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: WARNING_CODE_PUBLISHED_VERSION_MISMATCH
+                              enum:
+                              - WARNING_CODE_PUBLISHED_VERSION_MISMATCH
+                            message:
+                              type: string
+                              example: Requested data for the OT-SDK-Version does not match the published version on the OneTrust server. The latest published version will be returned instead.
+                              enum:
+                              - Requested data for the OT-SDK-Version does not match the published version on the OneTrust server. The latest published version will be returned instead.
+                          required:
+                          - code
+                          - message
+                  - type: object
+                    properties:
+                      appConfig:
+                        type: object
+                        properties:
+                          showBanner:
+                            type: boolean
+                            example: true
+                          bannerReason:
+                            type: string
+                            example: Geo rule Banner is enabled and is first launch.
+                            enum:
+                            - Geo rule Banner is not enabled.
+                            - Geo rule Banner is enabled and is first launch.
+                            - Sdk's Automatic reconsent has expired.
+                            - Reconsent triggered for an authenticated user.
+                            - The TC String has expired.
+                            - Hundred percent sync is not completed for cross device sync enabled scenario.
+                            - The template type is updated to IAB.
+                            - Sdk has been published with reconsent.
+                            - Banner will not be shown as consent validity holds true.
+                            - Banner will not be shown as cross device sync is hundred percent complete.
+                          templateType:
+                            type: string
+                            example: IAB2V2
+                            enum:
+                            - GDPR
+                            - CCPA
+                            - IAB2
+                            - IAB2V2
+                            - GENERIC
+                            - LGPD
+                            - GENERIC_PROMPT
+                            - CPRA
+                            - CDPA
+                            - USNATIONAL
+                            - CUSTOM
+                            - COLORADO
+                            - CTDPA
+                            - UCPA
+                            - OREGON
+                            - FLORIDA
+                            - DELAWARE
+                            - IOWA
+                            - MONTANA
+                            - NEBRASKA
+                            - TENNESSEE
+                            - TEXAS
+                            - NEW_JERSEY
+                            - NEW_HAMPSHIRE
+                          bannerReasonCode:
+                            type: integer
+                            example: 101
+                            enum:
+                            - 101
+                            - 102
+                            - 103
+                            - 104
+                            - 105
+                            - 107
+                            - 109
+                            - 150
+                            - 151
+                            - 152
+                          multiProfileConsent:
+                            type: object
+                            properties:
+                              downloadDataAfterSwitch:
+                                type: boolean
+                              maxProfilesLimit:
+                                type: number
+                            required:
+                            - downloadDataAfterSwitch
+                            - maxProfilesLimit
+                          gcmInfo:
+                            type: object
+                            properties:
+                              userConsented:
+                                type: boolean
+                              gcmConsents:
+                                type: object
+                                properties:
+                                  adPersonalization:
+                                    type: string
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  adStorage:
+                                    type: string
+                                    example: DENIED
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  adUserData:
+                                    type: string
+                                    example: GRANTED
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  analyticsStorage:
+                                    type: string
+                                    example: UNDEFINED
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  functionalityStorage:
+                                    type: string
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  personalizationStorage:
+                                    type: string
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                  securityStorage:
+                                    type: string
+                                    enum:
+                                    - UNASSIGNED
+                                    - UNDEFINED
+                                    - DENIED
+                                    - GRANTED
+                                required:
+                                - adPersonalization
+                                - adStorage
+                                - adUserData
+                                - analyticsStorage
+                                - functionalityStorage
+                                - personalizationStorage
+                                - securityStorage
+                            required:
+                            - userConsented
+                            - gcmConsents
+                          countryCode:
+                            type: string
+                            example: US
+                          regionCode:
+                            type: string
+                            example: CA
+                          shouldResetLocalState:
+                            description: This flag indicates, if any local changes are there at client side, to notify clients to just discard them as we have to collect the consents freshly in certain scenarios like on reconsent triggers etc.
+                            type: boolean
+                            default: false
+                          lastReconsentDate:
+                            type: number
+                            example: 1733147973220
+                          rejectAllButtonBehavior:
+                            type: string
+                            example: LIActiveIfLegalBasis
+                          globalOptOutData:
+                            type: object
+                            properties:
+                              linkedCategories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                      example: C0003
+                                    groupName:
+                                      type: string
+                                      example: Social Media Cookies
+                                  required:
+                                  - id
+                                  - groupName
+                              confirmationMessage:
+                                type: string
+                                example: You've opted out across all your devices and services.
+                              instructionalMessage:
+                                type: string
+                                example: To opt out across all your devices, please provide your email or phone number below.
+                              communicationMedium:
+                                type: string
+                                example: EMAIL
+                              submitButtonText:
+                                type: string
+                                example: Submit Opt-Out
+                              closeButtonText:
+                                type: string
+                                example: Close
+                              cancelButtonText:
+                                type: string
+                                example: Cancel
+                              inputValidationError:
+                                type: string
+                                example: Please enter a valid input
+                              submissionError:
+                                type: string
+                                example: Submission error, we will retry automatically.
+                              knownUserError:
+                                type: string
+                                example: Local opt-out is applied, but there was an error with the global opt-out. We will retry automatically.
+                              mobileSectionHeader:
+                                type: string
+                                example: Opt out across devices
+                              emailFieldPlaceholderText:
+                                type: string
+                                example: Enter your email address
+                            required:
+                            - confirmationMessage
+                            - instructionalMessage
+                            - communicationMedium
+                            - submitButtonText
+                            - closeButtonText
+                            - cancelButtonText
+                            - inputValidationError
+                            - submissionError
+                            - knownUserError
+                            - mobileSectionHeader
+                            - emailFieldPlaceholderText
+                        required:
+                        - showBanner
+                        - bannerReason
+                        - templateType
+                        - bannerReasonCode
+                    required:
+                    - appConfig
+                  - type: object
+                    properties:
+                      receipt:
+                        type: string
+                        example: eyJraWQiOiJobUxKWjJmbDBvc2VDMXk5REIvRDJLaUFBaXlaQzF4d2pldzJ5ekxUSmFORFFTbjFVdENWclRLbkhLbnUzNFZENXVnQ1RHNjAvSXVodkpOVTNGTW0vdz09IiwiYWxnIjoiSFM1MTIifQ.eyJtb2MiOiJDT09LSUUiLCJzdWIiOiIiLCJhdHRhY2htZW50cyI6bnVsbCwibm90ZXMiOm51bGwsInN5bmNHcm91cCI6IjIzODViZjg1LTdkNGMtNDAwMy05Y2I3LTdkNGQxNTE3YWZhOSIsImlzcyI6bnVsbCwiY29uc2VudFN0cmluZyI6eyJ0eXBlIjoidGNmIiwiY29udGVudCI6IkNQNjhwWUFQNjhwWUFBY0FCQkVOQUtFc0FQX2dBRVBnQUNoUWcxTlhfSF9fYlc5ajhYcjFhZnQwZVkxUDk5ajdydVF4QmhmSkUtNEZ5THZXX0p3WHgyRXhOQTM2cHFJS21SSUV1M2JCSVFGbEhJSFVUVWlnYW9nVnJ5SE1ha1dNaFROS0o2QmtpRk1STTJkWUNGNXZtWWxELVFLWTVfcDlkM2R4MkQtdF9kdjgzZHp5ejgxSG4zZjVfMmUwZUxDZFE1OHREZnY5YlJPYi05SU5kXzc4djRBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCVS05X2ZmZjc4QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUVRYW9Xb0FDSUFGQUFYQUE0QUQ0QUtBQXFBQmNBRGdBSGdBUUFBa0FCZEFEQUFNb0FhQUJxQUR3QUg0QVJBQWpnQk1BQ2hBRklBVXdBcXdCYkFGMEFNUUFaZ0EwQUJ2QUQwQUh3QVB3QWhBQkRRQ0lBSWtBUndBbGdCTkFDakFGS0FNQUFZY0F5Z0RMQUdhQU5FQWJJQTVBQnp3RHVBTzhBZXdBLUlCOWdIN0FQOEJBSUNEZ0lRQVJFQWlrQkZnRVlBSTFBUndCSFFDUkFFbEFKU0FUUUFuNEJRWUNvQUtpQVZjQXNRQmN3QzZ3RjVBWG9Bdm9CaWdEUkFHdkFOb0FiZ0E0Z0J4d0RwQUhVQU8yQWUwQS13Ql9RRF9nSVFBUk1BaThCSHNDUkFKRkFTc0FtS0JNZ0V5Z0p0QVRzQW9lQlI0RklnS1RnVTBCVFlDbndGU0FLc0FWeUFyc0JZVUN4QUxGQVdVQXRFQmFrQzJBTFpBVzRBdUFCY2dDNkFGMmdMdmdYa0JlWUMtZ0ZfZ01FQVlNQXcwQmlBREZnR1BBTWhnWkdCa2tESmdNbkFaVUF5d0JtWURPUUdlQU5FZ2FNQm80RFRRR3BnTlZnYXVCcklEWGdHMEFOc2diY0J0OERjZ04xQWNFQTRzQng0RGs0SExBY3VBNTBCejREckFIaWdQSGdlU0I1UUQyZ0h4UVBrQS1VQjljRDdRUHVnZnNCLTRELXdIX0FRQkFnSUJBd0NCNEVFUUlKZ1FZQWczQk13RXpnSnFBVFlnbTJDYmtFM2dUZkFuREJPVUU1Z0owZ1RyZ25hQ2R3RThBSjVoQnFBRUVBQVFCbERnQVFDZEFHMkVBQVFBdVFEVGxBQUlDZEEuZl93QUNId0FBQUFBIiwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA0VDEzOjIwOjMwLjU2NDM5MTE0NFoiLCJ1cGRhdGVEYXRlIjoiMjAyNC0wMy0wNFQxMzoyMDozMC41NjQzOTEyMjRaIn0sImxhbmd1YWdlIjpudWxsLCJwcm9jZXNzVmVyc2lvbiI6MTcsImVuYWJsZVBhcmVudFByaW1hcnlJZGVudGlmaWVycyI6ZmFsc2UsImF1dGhlbnRpY2F0aW9uUmVxdWlyZWQiOmZhbHNlLCJkeW5hbWljQ29sbGVjdGlvblBvaW50IjpmYWxzZSwicHJvY2Vzc0lkIjoiNjBiMWU1YjAtZmY0Yy00ZjY5LWFlNTEtNDI5MmY1MmVmZTlkIiwiZHNEYXRhRWxlbWVudHMiOlsiSW50ZXJhY3Rpb25UeXBlIiwiVXNlckFnZW50IiwiQ291bnRyeSJdLCJkb3VibGVPcHRJbiI6ZmFsc2UsImNvbnNlbnRUeXBlIjoiQ09PS0lFQkFOTkVSIiwiYWRkaXRpb25hbElkZW50aWZpZXJzIjp7fSwiaWF0IjoiMjAyNC0wMy0wNFQxMzoyMDozMC41NjQ0MDEwMjQiLCJjdXN0b21QYXlsb2FkIjpudWxsLCJqdGkiOiJiYWFkNjUwMS1jNWM5LTQ5ZjctYWI0Yy00Njg0ZWNiOGE1OGIiLCJwb2xpY3lfdXJpIjoiU3VwLW5vdi0yMDIxIiwiaWRlbnRpZmllciI6IjAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqZCIsImFkZGl0aW9uYWxQYXJlbnRJZGVudGlmaWVyVHlwZXMiOltdLCJwYXJlbnRQcmltYXJ5SWRlbnRpZmllcnNUeXBlIjpudWxsLCJnYWNTdHJpbmciOm51bGwsInRjU3RyaW5nVjIiOiJDUDY4cFlBUDY4cFlBQWNBQkJFTkFLRXNBUF9nQUVQZ0FDaFFnMU5YX0hfX2JXOWo4WHIxYWZ0MGVZMVA5OWo3cnVReEJoZkpFLTRGeUx2V19Kd1h4MkV4TkEzNnBxSUttUklFdTNiQklRRmxISUhVVFVpZ2FvZ1ZyeUhNYWtXTWhUTktKNkJraUZNUk0yZFlDRjV2bVlsRC1RS1k1X3A5ZDNkeDJELXRfZHY4M2R6eXo4MUhuM2Y1XzJlMGVMQ2RRNTh0RGZ2OWJST2ItOUlOZF83OHY0QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQlUtOV9mZmY3OEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFFUWFvV29BQ0lBRkFBWEFBNEFENEFLQUFxQUJjQURnQUhnQVFBQWtBQmRBREFBTW9BYUFCcUFEd0FINEFSQUFqZ0JNQUNoQUZJQVV3QXF3QmJBRjBBTVFBWmdBMEFCdkFEMEFId0FQd0FoQUJEUUNJQUlrQVJ3QWxnQk5BQ2pBRktBTUFBWWNBeWdETEFHYUFORUFiSUE1QUJ6d0R1QU84QWV3QS1JQjlnSDdBUDhCQUlDRGdJUUFSRUFpa0JGZ0VZQUkxQVJ3QkhRQ1JBRWxBSlNBVFFBbjRCUVlDb0FLaUFWY0FzUUJjd0M2d0Y1QVhvQXZvQmlnRFJBR3ZBTm9BYmdBNGdCeHdEcEFIVUFPMkFlMEEtd0JfUURfZ0lRQVJNQWk4QkhzQ1JBSkZBU3NBbUtCTWdFeWdKdEFUc0FvZUJSNEZJZ0tUZ1UwQlRZQ253RlNBS3NBVnlBcnNCWVVDeEFMRkFXVUF0RUJha0MyQUxaQVc0QXVBQmNnQzZBRjJnTHZnWGtCZVlDLWdGX2dNRUFZTUF3MEJpQURGZ0dQQU1oZ1pHQmtrREpnTW5BWlVBeXdCbVlET1FHZUFORWdhTUJvNERUUUdwZ05WZ2F1QnJJRFhnRzBBTnNnYmNCdDhEY2dOMUFjRUE0c0J4NERrNEhMQWN1QTUwQno0RHJBSGlnUEhnZVNCNVFEMmdIeFFQa0EtVUI5Y0Q3UVB1Z2ZzQi00RC13SF9BUUJBZ0lCQXdDQjRFRVFJSmdRWUFnM0JNd0V6Z0pxQVRZZ20yQ2JrRTNnVGZBbkRCT1VFNWdKMGdUcmduYUNkd0U4QUo1aEJxQUVFQUFRQmxEZ0FRQ2RBRzJFQUFRQXVRRFRsQUFJQ2RBLmZfd0FDSHdBQUFBQSIsInJlY29uZmlybUFjdGl2ZVB1cnBvc2UiOmZhbHNlLCJhbGxvd05vdEdpdmVuQ29uc2VudHMiOmZhbHNlLCJub3RpY2VzIjpbXSwiaXNBbm9ueW1vdXMiOnRydWUsIm11bHRpcGxlSWRlbnRpZmllclR5cGVzIjpmYWxzZSwicHVycG9zZXMiOlt7IklkIjoiZWUxODI2NmUtMzYzZS00YWZkLWI1N2MtZTY0MmRiNDMyMDhkIiwiVmVyc2lvbiI6NywiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYzA0YTAzZDQtYWNjNy00MDA3LWJjMGUtODczNTE0NmY5MTU0IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMjYyYmIyMzgtYTI5Ni00Mzk1LTg0MGYtZjA3ZWRiMDFlM2YyIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMTEzOGM5MTAtMjRhMS00NTNiLWI1NDAtZTU5Mzk3Y2M4OWU2IiwiVmVyc2lvbiI6MiwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiZjQxMzQxYzEtZTlhOC00ZDcwLWJkNTEtY2M4NzM2NmY4MmE0IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNmIzYmE1NDAtZjFkZi00ZWFmLTg0MWItMTY5YzE0ZjY1MGQ0IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiOTBlOGE4NDEtMTIxZC00ZmE1LWJhMDEtZGU2ODFiZDA1NTIwIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiODg5ZDYzYmEtZWM0YS00YTUyLThkNDgtNzhjZGZjN2U4ZjJiIiwiVmVyc2lvbiI6MiwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNGNhMzRjZjItZDQ0ZS00M2QxLTk2NjktODA5ZjI1MjIxNjNhIiwiVmVyc2lvbiI6MywiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYTJmNWRkODYtOTM5MC00ZTc1LWJlNzAtMTEzN2U5M2JlZTI2IiwiVmVyc2lvbiI6OSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMTg1NGNhMzEtYmQ5ZS00NWY5LTlkYjgtNzZkMjhiMTA2YjlkIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNDZlZTVlNDYtOGJhMS00NzczLWI0MWUtYmFiM2RiMjgxZTAzIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNjJhZjQ1ZWItMDNjYy00NGY3LThjNWMtZjcyMjBhYjNiYWZjIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiZGRkNjY5ODItYjRmMC00MTU4LTg5MmUtOGQ4ODYxYmVlOGVjIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNmQ4YjU5MjYtMzZiNS00MmQ4LWJiOGMtOTU5NjM2Zjk4N2NiIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYWNmMmE4ZDUtMDhmMy00Y2Q1LWFhMWUtZjljMzdjYzY1ZjYyIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMmVkMTUwN2MtNTNkMS00ZDdkLWJiYjktZjkzMjhmMzFlMWVhIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiODM4NjA5ZjktMmExMi00ZGVlLWE2ZjgtYTU4YjMyZWJkOTgzIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYTIzY2U4Y2EtMzI1OS00NzI0LTg1YzctMmI5OTI5NTE2ODM0IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMmQ5MjhlOTgtNzE5YS00NGFjLTliMjAtNjg5YjBlNjM1MzU3IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYTlkYjMxYmUtODEyYS00YmExLTgwYWQtMzhlODM1MmUwMjA5IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiQ09ORklSTUVEIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiNTFhZDk3YjYtZWI1Yy00MGMwLTk1YjYtY2FiMGEzM2RlYzJjIiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiMzUwZWYxMmQtN2UyYi00YjQyLWI2M2QtZWVkNGZjYzJlOWQ4IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fSx7IklkIjoiYjg4OTZlODYtMzU3Yi00Zjg5LWJjMmMtOTdkN2EwZDdkYTM3IiwiVmVyc2lvbiI6MSwiUHJlZmVyZW5jZXMiOltdLCJDdXN0b21QcmVmZXJlbmNlcyI6W10sIlByaXZhY3lOb3RpY2VzIjpbXSwiVHJhbnNhY3Rpb25UeXBlIjoiTk9fQ0hPSUNFIiwiUHVycG9zZUF0dGFjaG1lbnRzIjpbXSwiUHVycG9zZU5vdGUiOm51bGwsImF0dHJpYnV0ZXMiOnt9fV0sInRlbmFudElkIjoiZTBkMzI4MGYtZDQ5NC00MDQ3LTlmNzUtMjNjY2U1NzI5OTYyIiwib3ZlcnJpZGVBY3RpdmVQdXJwb3NlIjp0cnVlLCJvdEp3dFZlcnNpb24iOjEsImVuYWJsZUdlb2xvY2F0aW9uIjpmYWxzZX0.4DtjRg-IFAA0mpIVak5IvzQU89Y-kY8JinRLH6IZK3RX9XH_GZJdA4R4_UdBOHHEEiINsB_yCsloVO5DZ_w7Tg
+                      message:
+                        type: string
+                        example: Required request body is missing
+                    required:
+                    - receipt
+                  - type: object
+                    properties:
+                      storageKeys:
+                        type: object
+                        properties:
+                          IABUSPrivacy_String:
+                            type: string
+                            example: 1YNY
+                          IABTCF_AddtlConsent:
+                            type: string
+                            example: 1~1584.2292.2392.3100.24431.25731.25931.26031
+                          IABTCF_TCString:
+                            description: Full encoded TC string
+                            type: string
+                            example: CP68pYAP68pYAAcABBENAKEsAP_gAEPgAChQg1NX_H__bW9j8Xr1aft0eY1P99j7ruQxBhfJE-4FyLvW_JwXx2ExNA36pqIKmRIEu3bBIQFlHIHUTUigaogVryHMakWMhTNKJ6BkiFMRM2dYCF5vmYlD-QKY5_p9d3dx2D-t_dv83dzyz81Hn3f5_2e0eLCdQ58tDfv9bROb-9INd_78v4AAAAAAAAAAAAAAAAAAAAAAAAAAABU-9_fff78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQaoWoACIAFAAXAA4AD4AKAAqABcADgAHgAQAAkABdADAAMoAaABqADwAH4ARAAjgBMAChAFIAUwAqwBbAF0AMQAZgA0ABvAD0AHwAPwAhABDQCIAIkARwAlgBNACjAFKAMAAYcAygDLAGaANEAbIA5ABzwDuAO8AewA-IB9gH7AP8BAICDgIQAREAikBFgEYAI1ARwBHQCRAElAJSATQAn4BQYCoAKiAVcAsQBcwC6wF5AXoAvoBigDRAGvANoAbgA4gBxwDpAHUAO2Ae0A-wB_QD_gIQARMAi8BHsCRAJFASsAmKBMgEygJtATsAoeBR4FIgKTgU0BTYCnwFSAKsAVyArsBYUCxALFAWUAtEBakC2ALZAW4AuABcgC6AF2gLvgXkBeYC-gF_gMEAYMAw0BiADFgGPAMhgZGBkkDJgMnAZUAywBmYDOQGeANEgaMBo4DTQGpgNVgauBrIDXgG0ANsgbcBt8DcgN1AcEA4sBx4Dk4HLAcuA50Bz4DrAHigPHgeSB5QD2gHxQPkA-UB9cD7QPugfsB-4D-wH_AQBAgIBAwCB4EEQIJgQYAg3BMwEzgJqATYgm2CbkE3gTfAnDBOUE5gJ0gTrgnaCdwE8AJ5hBqAEEAAQBlDgAQCdAG2EAAQAuQDTlAAICdA.f_wACHwAAAAA
+                          IABTCF_CmpSdkID:
+                            description: The unsigned integer ID of CMP SDK
+                            type: number
+                            example: 28
+                          IABTCF_CmpSdkVersion:
+                            description: The unsigned integer version number of CMP SDK
+                            type: number
+                            example: 1
+                          IABTCF_PolicyVersion:
+                            description: The unsigned integer representing the version of the TCF that these consents adhere to
+                            type: number
+                            example: 4
+                          IABTCF_gdprApplies:
+                            description: "1 - GDPR applies in current context, \n\t\t\t0 - GDPR does not apply in current context"
+                            type: number
+                            example: 1
+                          IABTCF_PublisherCC:
+                            description: 'Two-letter ISO 3166-1 alpha-2 code - Default: AA (unknown)'
+                            type: string
+                            example: UK
+                          IABTCF_PurposeOneTreatment:
+                            description: "0 - no special treatment of purpose one, \n\t\t\t1 - purpose one not disclosed.\n\t\t\tVendors can use this value to determine whether consent for purpose one is required."
+                            type: number
+                            example: 0
+                          IABTCF_UseNonStandardTexts:
+                            description: "1 - CMP uses customized stack descriptions and/or modified or supplemented standard Illustrations,\n\t0 - CMP did not use a non-standard stack desc. and/or modified or supplemented Illustrations"
+                            type: number
+                            example: 0
+                          IABTCF_UseNonStandardStacks:
+                            type: number
+                          IABTCF_VendorConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the consent status for Vendor ID n+1; false and true respectively. eg. ''1'' at index 0 is consent true for vendor ID 1'
+                            type: string
+                            example: '11010101111111110001111111111111110110110101101111011000111111000101111010111101010110100111111011011101000111100110001101010011111111011111011000111110111010111011100100001100010000011000010111110010010001001111101110000001011100100010111011110101101111110010011100000101111100011101100001001100010011010000001101111110101010011010100010000010101001100100010010000001001011101101110110110000010010000100000001011001010001110010000001110101000100110101001000101000000110101010001000000101011010111100100001110011000110101001000101100011001000010100110011010010100010011110100000011001001000100001010011000100010011001101100111010110000000100001011110011011111001100110001001010000111111100100000010100110001110011111111010011111010111011101110111011100011101100000111111101011011111110111011011111111001101110111011100111100101100111111001101010001111001111101110111111110011111111101100111101101000111100010110000100111010100001110011111001011010000110111111011111111010110110100010011100110111111101111010010000011010111011111111110111111001011111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010101001111101111011111110111110111110111111110111111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001'
+                          IABTCF_VendorLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the legitimate interest status for Vendor ID n+1; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for vendor ID 1'
+                            type: string
+                            example: '00000001011001100001101000010101000100000000010111011000000100100001001000010001011010000011100001000101000000100000000001010100000101011000010000000100010000000010100000000000000000000000000100100000011010001000000010000000000100100000011000000101001110110000001100000000100101110101100001001000100000000001000000000010100000000000000110000010000000000100000000000000001010001100100000000000010000000000000000000000010000000000001000010001000000000001001000000000010100000010000000000000000010000000010000001010000000000000000100000000000000000000010000000010000000000000100000011000000000000000010000000000010110000000100000000100000000000000001000000011101000000110001000010000000100000000000010100000010110000100000010010001100100010001000100001010011000000100001000010100000010010000010000000100101101100101000000100000100100000001011000001000001010111000010000000001000101100111100000000000010000000010001000100110000010100000000000010000000000000000000000001010110000000000000001000000010110000010110000000110001001001001000000010010101000010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100000100010011011010001100101011010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001'
+                          IABTCF_PurposeConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the consent status for purpose ID n+1; false and true respectively. eg. ''1'' at index 0 is consent true for purpose ID 1'
+                            type: string
+                            example: '11111111111'
+                          IABTCF_PurposeLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the legitimate interest status for purpose ID n+1; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for purpose ID 1'
+                            type: string
+                            example: '01000011111'
+                          IABTCF_SpecialFeaturesOptIns:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the opt-in status for special feature ID n+1; false and true respectively. eg. ''1'' at index 0 is opt-in true for special feature ID 1'
+                            type: string
+                            example: '11'
+                          IABTCF_PublisherRestrictions:
+                            description: The value at position n - where n's indexing begins at 0 - indicates the publisher restriction type (0-2) for vendor n+1; (see Publisher Restrictions Types). eg. '2' at index 0 is restrictionType 2 for vendor ID 1. {ID} refers to the purpose ID.
+                            type: object
+                            additionalProperties:
+                              type: string
+                              example: _________________________________________________________________________________________________________________________________________________________________________________________________________0__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+                          IABTCF_PublisherConsent:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose consent status for purpose ID n+1 for the publisher as they correspond to the Global Vendor List Purposes; false and true respectively. eg. ''1'' at index 0 is consent true for purpose ID 1'
+                            type: string
+                            example: '11111111111'
+                          IABTCF_PublisherLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose legitimate interest status for purpose ID n+1 for the publisher as they correspond to the Global Vendor List Purposes; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for purpose ID 1'
+                            type: string
+                            example: '01000011111'
+                          IABTCF_PublisherCustomPurposesConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose consent status for the publisher''s custom purpose ID n+1 for the publisher; false and true respectively. eg. ''1'' at index 0 is consent true for custom purpose ID 1'
+                            type:
+                            - string
+                            - 'null'
+                          IABTCF_PublisherCustomPurposesLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose legitimate interest status for the publisher''s custom purpose ID n+1 for the publisher; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for custom purpose ID 1'
+                            type:
+                            - string
+                            - 'null'
+                          IABTCF_EnableAdvertiserConsentMode:
+                            type: number
+                          IABTCF_DisclosedVendors:
+                            type: string
+                            example: '1101'
+                          IABGPP_2_String:
+                            type: string
+                            example: CP68pYAP68pYAAcABBENAKEsAP_gAEPgAChQg1NX_H__bW9j8Xr1aft0eY1P99j7ruQxBhfJE-4FyLvW_JwXx2ExNA36pqIKmRIEu3bBIQFlHIHUTUigaogVryHMakWMhTNKJ6BkiFMRM2dYCF5vmYlD-QKY5_p9d3dx2D-t_dv83dzyz81Hn3f5_2e0eLCdQ58tDfv9bROb-9INd_78v4AAAAAAAAAAAAAAAAAAAAAAAAAAABU-9_fff78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQaoWoACIAFAAXAA4AD4AKAAqABcADgAHgAQAAkABdADAAMoAaABqADwAH4ARAAjgBMAChAFIAUwAqwBbAF0AMQAZgA0ABvAD0AHwAPwAhABDQCIAIkARwAlgBNACjAFKAMAAYcAygDLAGaANEAbIA5ABzwDuAO8AewA-IB9gH7AP8BAICDgIQAREAikBFgEYAI1ARwBHQCRAElAJSATQAn4BQYCoAKiAVcAsQBcwC6wF5AXoAvoBigDRAGvANoAbgA4gBxwDpAHUAO2Ae0A-wB_QD_gIQARMAi8BHsCRAJFASsAmKBMgEygJtATsAoeBR4FIgKTgU0BTYCnwFSAKsAVyArsBYUCxALFAWUAtEBakC2ALZAW4AuABcgC6AF2gLvgXkBeYC-gF_gMEAYMAw0BiADFgGPAMhgZGBkkDJgMnAZUAywBmYDOQGeANEgaMBo4DTQGpgNVgauBrIDXgG0ANsgbcBt8DcgN1AcEA4sBx4Dk4HLAcuA50Bz4DrAHigPHgeSB5QD2gHxQPkA-UB9cD7QPugfsB-4D-wH_AQBAgIBAwCB4EEQIJgQYAg3BMwEzgJqATYgm2CbkE3gTfAnDBOUE5gJ0gTrgnaCdwE8AJ5hBqAEEAAQBlDgAQCdAG2EAAQAuQDTlAAICdA.f_wACHwAAAAA
+                          IABGPP_TCFEU2_CmpSdkID:
+                            description: The unsigned integer ID of CMP SDK
+                            type: number
+                            example: 28
+                          IABGPP_TCFEU2_CmpSdkVersion:
+                            description: The unsigned integer version number of CMP SDK
+                            type: number
+                            example: 1
+                          IABGPP_TCFEU2_PolicyVersion:
+                            description: The unsigned integer representing the version of the TCF that these consents adhere to
+                            type: number
+                            example: 4
+                          IABGPP_TCFEU2_gdprApplies:
+                            description: "1 - GDPR applies in current context, \n\t\t\t0 - GDPR does not apply in current context"
+                            type: number
+                          IABGPP_TCFEU2_PublisherCC:
+                            description: 'Two-letter ISO 3166-1 alpha-2 code - Default: AA (unknown)'
+                            type: string
+                            example: UK
+                          IABGPP_TCFEU2_PurposeOneTreatment:
+                            description: "0 - no special treatment of purpose one, \n\t\t\t1 - purpose one not disclosed.\n\t\t\tVendors can use this value to determine whether consent for purpose one is required."
+                            type: number
+                          IABGPP_TCFEU2_UseNonStandardTexts:
+                            description: "1 - CMP uses customized stack descriptions and/or modified or supplemented standard Illustrations,\n\t0 - CMP did not use a non-standard stack desc. and/or modified or supplemented Illustrations"
+                            type: number
+                          IABGPP_TCFEU2_UseNonStandardStacks:
+                            type: number
+                          IABGPP_TCFEU2_VendorConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the consent status for Vendor ID n+1; false and true respectively. eg. ''1'' at index 0 is consent true for vendor ID 1'
+                            type: string
+                            example: '11010101111111110001111111111111110110110101101111011000111111000101111010111101010110100111111011011101000111100110001101010011111111011111011000111110111010111011100100001100010000011000010111110010010001001111101110000001011100100010111011110101101111110010011100000101111100011101100001001100010011010000001101111110101010011010100010000010101001100100010010000001001011101101110110110000010010000100000001011001010001110010000001110101000100110101001000101000000110101010001000000101011010111100100001110011000110101001000101100011001000010100110011010010100010011110100000011001001000100001010011000100010011001101100111010110000000100001011110011011111001100110001001010000111111100100000010100110001110011111111010011111010111011101110111011100011101100000111111101011011111110111011011111111001101110111011100111100101100111111001101010001111001111101110111111110011111111101100111101101000111100010110000100111010100001110011111001011010000110111111011111111010110110100010011100110111111101111010010000011010111011111111110111111001011111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010101001111101111011111110111110111110111111110111111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001'
+                          IABGPP_TCFEU2_VendorLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the legitimate interest status for Vendor ID n+1; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for vendor ID 1'
+                            type: string
+                            example: '00000001011001100001101000010101000100000000010111011000000100100001001000010001011010000011100001000101000000100000000001010100000101011000010000000100010000000010100000000000000000000000000100100000011010001000000010000000000100100000011000000101001110110000001100000000100101110101100001001000100000000001000000000010100000000000000110000010000000000100000000000000001010001100100000000000010000000000000000000000010000000000001000010001000000000001001000000000010100000010000000000000000010000000010000001010000000000000000100000000000000000000010000000010000000000000100000011000000000000000010000000000010110000000100000000100000000000000001000000011101000000110001000010000000100000000000010100000010110000100000010010001100100010001000100001010011000000100001000010100000010010000010000000100101101100101000000100000100100000001011000001000001010111000010000000001000101100111100000000000010000000010001000100110000010100000000000010000000000000000000000001010110000000000000001000000010110000010110000000110001001001001000000010010101000010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100000100010011011010001100101011010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001'
+                          IABGPP_TCFEU2_PurposeConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the consent status for purpose ID n+1; false and true respectively. eg. ''1'' at index 0 is consent true for purpose ID 1'
+                            type: string
+                            example: '01100011111'
+                          IABGPP_TCFEU2_PurposeLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the legitimate interest status for purpose ID n+1; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for purpose ID 1'
+                            type: string
+                            example: '01000011111'
+                          IABGPP_TCFEU2_SpecialFeaturesOptIns:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the opt-in status for special feature ID n+1; false and true respectively. eg. ''1'' at index 0 is opt-in true for special feature ID 1'
+                            type: string
+                            example: '11'
+                          IABGPP_TCFEU2_PublisherRestrictions:
+                            description: The value at position n - where n's indexing begins at 0 - indicates the publisher restriction type (0-2) for vendor n+1; (see Publisher Restrictions Types). eg. '2' at index 0 is restrictionType 2 for vendor ID 1. {ID} refers to the purpose ID.
+                            type: object
+                            additionalProperties:
+                              type: string
+                              example: _________________________________________________________________________________________________________________________________________________________________________________________________________0__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+                          IABGPP_TCFEU2_PublisherConsent:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose consent status for purpose ID n+1 for the publisher as they correspond to the Global Vendor List Purposes; false and true respectively. eg. ''1'' at index 0 is consent true for purpose ID 1'
+                            type: string
+                            example: '01100011111'
+                          IABGPP_TCFEU2_PublisherLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose legitimate interest status for purpose ID n+1 for the publisher as they correspond to the Global Vendor List Purposes; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for purpose ID 1'
+                            type: string
+                            example: '01000011111'
+                          IABGPP_TCFEU2_PublisherCustomPurposesConsents:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose consent status for the publisher''s custom purpose ID n+1 for the publisher; false and true respectively. eg. ''1'' at index 0 is consent true for custom purpose ID 1'
+                            type:
+                            - string
+                            - 'null'
+                          IABGPP_TCFEU2_PublisherCustomPurposesLegitimateInterests:
+                            description: 'Binary String: The ''0'' or ''1'' at position n - where n''s indexing begins at 0 - indicates the purpose legitimate interest status for the publisher''s custom purpose ID n+1 for the publisher; false and true respectively. eg. ''1'' at index 0 is legitimate interest established true for custom purpose ID 1'
+                            type:
+                            - string
+                            - 'null'
+                          IABGPP_TCFEU2_DisclosedVendors:
+                            type: string
+                            example: '1101'
+                          OT_GroupConsents:
+                            type: object
+                            example:
+                              C0001: 1
+                            additionalProperties:
+                              type: integer
+                              enum:
+                              - 0
+                              - 1
+                          OT_GroupLIConsents:
+                            type: object
+                            example:
+                              IAB2V2_1: 1
+                            additionalProperties:
+                              type: integer
+                              enum:
+                              - 0
+                              - 1
+                          OT_SdkConsents:
+                            type: object
+                            example:
+                              d5fe3c22-2266-40c0-91b7-35844fde37a1: 1
+                            additionalProperties:
+                              type: integer
+                              enum:
+                              - 0
+                              - 1
+                          OT_UCPConsents:
+                            type: object
+                            example:
+                              6c105523-9b73-4ef0-8908-c99d8d63ecea:
+                                consentStatus: 0
+                                options:
+                                  638f54bd-6fc5-455d-aa87-8fe0c3a6eb47: 0
+                            additionalProperties:
+                              type: object
+                              properties:
+                                consentStatus:
+                                  type: number
+                                options:
+                                  type: object
+                                  additionalProperties:
+                                    type: number
+                              required:
+                              - consentStatus
+                              - options
+                          OT_GeneralVendorsConsents:
+                            type: object
+                            example:
+                              V34: 1
+                            additionalProperties:
+                              type: integer
+                              enum:
+                              - 0
+                              - 1
+                          OT_LastConsentedDate:
+                            type: string
+                            example: '2024-11-19T04:59:48.059Z'
+                          OT_Identifier:
+                            description: The unique identifier for the data subject.
+                            type: string
+                            example: user-1
+                          OT_AlwaysActiveIds:
+                            type: object
+                            example:
+                              groups:
+                              - C0001
+                              sdks:
+                              - e0cad307-e07b-45e7-b081-0563251d5560
+                            properties:
+                              groups:
+                                type: array
+                                items:
+                                  type: string
+                              sdks:
+                                type: array
+                                items:
+                                  type: string
+                          OT_AgeGate:
+                            type: object
+                            example:
+                              lastUpdated: 1777323272761
+                              lowerBound: 18
+                              upperBound: 65
+                            properties:
+                              lastUpdated:
+                                type: number
+                              lowerBound:
+                                type: number
+                              upperBound:
+                                type: number
+                            required:
+                            - lastUpdated
+                - type: object
+                  properties:
+                    otConsentString:
+                      type: string
+                      example: eyJMYXN0TGF1bmNoRGF0ZSI6MTcwNDczNzM3OTY1MSwiU2hvdWxkU2hvd0Jhbm5lciI6MSwiRFNJRCI6InN1cC1uZXdsa2diIn0=
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                        message:
+                          type: string
+                          example: Unable to fetch data for the specified Application ID. Please check your configurations.
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_NO_ACCESS
+                        message:
+                          type: string
+                          example: No access to this resource
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_TEXT_RESOURCE_NOT_FOUND
+                        message:
+                          type: string
+                          example: Not Found
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '429':
+          description: Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_GENERIC_ERROR
+                        message:
+                          type: string
+                          example: Something went wrong
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+externalDocs:
+  url: https://developer.onetrust.com/onetrust/docs/implementation-guidance
+  description: Implementation Guidance
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - Consent & Preference Management Knowledge Base: https://my.onetrust.com/s/topic/0TO3q000000kIWOGA2/consent-management
+    Implementation Guidance: https://developer.onetrust.com/onetrust/docs/implementation-guidance
+  - '{''Consent & Preference Management Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO3q000000kIWOGA2/consent-management'', ''Implementation Guidance'': ''https://developer.onetrust.com/onetrust/docs/implementation-guidance''}'
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+  metrics-enabled: false

@@ -1,0 +1,1993 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Cookie Consent Scans API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Cookie Consent APIs are used to integrate external systems and streamline the flow of data with Cookie Consent in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Scans
+  description: The Scans APIs are used to manage website cookie scanning operations and results.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+paths:
+  /api/cmp/v1/webscans:
+    get:
+      operationId: getDomainsScannedBySort
+      summary: Get List of Websites
+      description: Use this API to retrieve a list of websites in the scanner. The response will return websites in Pending and Completed status for the organization and related child organizations.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: searchStr
+        in: query
+        description: The search term used to filter results.
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        example: domain.com
+      - name: externalOrgId
+        in: query
+        description: The external organization identifier.
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+        example: orgnameid
+      - name: page
+        in: query
+        description: The page number for pagination results, starting from 0.
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The number of items to return per page.
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      - name: sortBy
+        in: query
+        description: The field by which to sort the results.
+        required: false
+        schema:
+          type: string
+          enum:
+          - Url
+          - PagesScanned
+          - TotalCookieCount
+          - LastScannedDate
+          - ConsentPolicyName
+          - ScheduledNextScanDate
+          - MaxPagesScanned
+        example: Url
+      - name: direction
+        in: query
+        description: The sort order for results, either ascending or descending.
+        required: false
+        schema:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        example: DESC
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExposedScanWebsitePageResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    post:
+      operationId: addScans
+      summary: Scan Websites
+      description: Use this API to start scans for the specified domains.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: externalOrgId
+        in: query
+        description: The external organization identifier.
+        required: false
+        schema:
+          type: string
+          maxLength: 100
+        example: orgnameid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ScanWebsiteRequest'
+              uniqueItems: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+  /api/cmp/v1/webscans/archive:
+    post:
+      operationId: archiveScans
+      summary: Archive Scans
+      description: Use this API to archive the specified scans.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+  /api/cmp/v1/webscans/domains/{domainId}/scans:
+    get:
+      operationId: getDomainScans
+      summary: Get List of Scans by Domain
+      description: Use this API to retrieve a list of scans for a specific domain and the specified filter criteria.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: status
+        in: query
+        description: The current state or condition of the item.
+        required: false
+        schema:
+          type: string
+          enum:
+          - QUEUED
+          - PENDING
+          - INPROGRESS
+          - MIGRATION_STARTED
+          - MIGRATION_COMPLETED
+          - CATEGORIZATION_STARTED
+          - CATEGORIZATION_FAILED
+          - COMPLETED
+          - ERROR
+          - CANCELLED
+          - SCANNING
+          - DATA_MOVE
+          - RETRY_BY_AUTO_CORRECT
+          - MS_IOS_SCAN_SUCCESS
+          - MS_IOS_SCAN_FAILED
+          - MS_EXPORT_XLS_STARTED
+          - MS_EXPORT_PDF_STARTED
+          - SCHEDULED
+      - name: archiveStatus
+        in: query
+        description: The archival state of the scan.
+        required: false
+        schema:
+          type: string
+          enum:
+          - NONE
+          - PENDING_UI
+          - PENDING_SCHEDULED
+          - ARCHIVE_STARTED
+          - ARCHIVE_COMPLETED
+          - ARCHIVE_QUEUED
+          - ERROR
+          - NO_DATA_TO_EXPORT
+      - name: startDate
+        in: query
+        description: The beginning date for filtering or date range operations.
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2025-04-25'
+      - name: endDate
+        in: query
+        description: The ending date for filtering or date range operations.
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2025-04-25'
+      - name: page
+        in: query
+        description: The page number for pagination results, starting from 0.
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The number of items to return per page.
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageScanInformationResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+  /api/cmp/v1/webscans/domains/{domainId}/scans/{scanId}/scandelta:
+    get:
+      operationId: getScanDeltaDetails
+      summary: Get List of Added or Removed Cookies
+      description: Use this API to retrieve a list of added or removed cookies between the current and previous scan for the specified domain.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: The unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: language
+        in: query
+        description: The language code for localized content.
+        required: false
+        schema:
+          type: string
+          maxLength: 5
+          minLength: 2
+        example: en
+      - name: countryCode
+        in: query
+        description: The country code for regional settings.
+        required: false
+        schema:
+          type: string
+          maxLength: 2
+          minLength: 2
+        example: us
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanDeltaDetails'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+  /api/cmp/v1/webscans/domains/{domainId}/scans/{scanId}/scanresults:
+    get:
+      operationId: getDetailedScanResultInformation
+      summary: Get Scan Results
+      description: Use this API to retrieve results for a specific scan, including details such as cookies, tags, forms, etc.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: The unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: language
+        in: query
+        description: The language code for localized content.
+        required: false
+        schema:
+          type: string
+          maxLength: 5
+          minLength: 2
+        example: en
+      - name: countryCode
+        in: query
+        description: The country code for regional settings.
+        required: false
+        schema:
+          type: string
+          maxLength: 2
+          minLength: 2
+        example: us
+      - name: entityType
+        in: query
+        description: The type of entity such as cookie, tag, page, form, service, or storage.
+        required: true
+        schema:
+          type: string
+          enum:
+          - COOKIE
+          - TAG
+          - PAGE
+          - FORM
+          - SERVICE
+          - STORAGE
+        example: COOKIE
+      - name: page
+        in: query
+        description: The page number for pagination results, starting from 0.
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The number of items to return per page.
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          description: Returns detailed scan results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResultEntityPageResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+  /api/cmp/v1/webscans/domains/{domainId}/scans/{scanId}/summary:
+    get:
+      operationId: getScanResultSummary
+      summary: Get Scan Result Summary
+      description: Use this API to retrieve summary information for a scan, including counts of cookies, tags, forms, and other entities found.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scanId
+        in: path
+        description: The unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: language
+        in: query
+        description: The language code for localized content.
+        required: false
+        schema:
+          type: string
+          maxLength: 5
+          minLength: 2
+        example: en
+      - name: countryCode
+        in: query
+        description: The country code for regional settings.
+        required: false
+        schema:
+          type: string
+          maxLength: 2
+          minLength: 2
+        example: us
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ScanResultSummaryDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+  /api/cmp/v1/webscans/status:
+    post:
+      operationId: checkScansStatus
+      summary: Get Scan Statuses
+      description: Use this API to retrieve the status of the specified scans.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScanStatusResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+  /api/cmp/v1/webscans/{scanId}/cancel:
+    put:
+      operationId: cancelScan
+      summary: Cancel Scan
+      description: Use this API to cancel a specific scan.
+      tags:
+      - Scans
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: scanId
+        in: path
+        description: The unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+components:
+  schemas:
+    ScanDeltaDetails:
+      type: object
+      properties:
+        addedCookies:
+          description: The cookies that were newly added.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieInformation'
+          example:
+          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            cookieName: session_id
+            host: example.com
+          maxItems: 1000
+          minItems: 0
+        removedCookies:
+          description: The cookies that were removed or deleted.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieInformation'
+          example:
+          - cookieId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            cookieName: old_cookie
+            host: test.com
+          maxItems: 1000
+          minItems: 0
+        scanDeltaMetadata:
+          description: The metadata information about changes between scans.
+          $ref: '#/components/schemas/ScanDeltaMetadataDto'
+    StorageEntriesDto:
+      type: object
+      properties:
+        host:
+          description: Storage entry host
+          type: string
+          example: https://abcnews.go.com
+        key:
+          description: Storage entry key
+          type: string
+          example: abcnews314-volume
+        value:
+          description: Storage entry value
+          type: string
+        type:
+          description: Storage entry type. Can be 1 or 2 (local or session)
+          type: integer
+          format: int32
+          example: abcnews314-volume
+    TagDto:
+      type: object
+      properties:
+        id:
+          description: Tag identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        host:
+          description: Tag host
+          type: string
+          example: abcnews.com
+        tagType:
+          description: Tag type
+          type: string
+          example: Script
+        src:
+          description: Tag source url
+          type: string
+          example: Script
+        params:
+          description: Tag parameters.
+          type: string
+          example: (720px 893px)
+        createdDate:
+          description: Date when the tag was created.
+          type: string
+          format: date-time
+          example: '2025-04-25T12:34:32Z'
+        status:
+          description: Tag status. Can be 1 or 2 (new or not found)
+          type: integer
+          format: int32
+          example: Script
+        age:
+          description: How many days the tag is old.
+          type: integer
+          format: int32
+          example: 133
+        parent:
+          description: Tag parent url.
+          type: string
+          example: amazon.com
+        children:
+          description: Tag child url.
+          type: string
+          example: amazon.com
+        firstParty:
+          description: Whether tag is first party
+          type: boolean
+          example: true
+        added:
+          description: Whether the tag was added since previous scan
+          type: boolean
+          example: true
+        removed:
+          description: Whether the tag was removed since previous scan
+          type: boolean
+          example: false
+        changeSincePreviousScan:
+          description: Changes in comparison to previous successful scan.
+          type: string
+          example: Added since previous scan (Feb 24, 2025 08:11 AM)
+    CookieInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name or title of the item.
+          type: string
+          example: snn_id
+          maxLength: 255
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        expiryDate:
+          description: The date and time when the cookie expires.
+          type: integer
+          format: int32
+          example: 30
+        expiryUnit:
+          description: The time unit used for cookie expiration.
+          type: integer
+          format: int32
+          example: 7
+        urlDomain:
+          description: The domain portion extracted from a URL.
+          type: string
+          example: domain.com
+          maxLength: 255
+          minLength: 1
+        path:
+          description: The URL path where the cookie is active.
+          type: string
+          example: /
+          maxLength: 500
+          minLength: 1
+        isSecure:
+          description: This flag indicates whether the cookie requires HTTPS.
+          type: boolean
+          example: true
+        isHttpOnly:
+          description: This flag indicates whether the cookie is accessible only via HTTP.
+          type: boolean
+          example: true
+        isSession:
+          description: This flag indicates whether the cookie is a session cookie.
+          type: boolean
+          example: true
+        isBehindLogin:
+          description: This flag indicates whether the cookie is found behind authentication.
+          type: boolean
+          example: true
+        hostDescription:
+          description: The description of the host domain.
+          type: string
+          example: domain.com is a website
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        purpose:
+          description: The intended use or function of the cookie.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        cookiepediaCategory:
+          description: The category assigned by Cookiepedia classification system.
+          type: string
+          example: Functionality
+          maxLength: 255
+          minLength: 1
+        firstParty:
+          description: This flag indicates whether the cookie is set by the visited website.
+          type: boolean
+          example: true
+        status:
+          description: The current state or condition of the item.
+          type: integer
+          format: int32
+          example: 1
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+        color:
+          description: The color code used for visual identification.
+          type: string
+          example: red
+          maxLength: 50
+          minLength: 1
+        isNewFound:
+          description: This flag indicates whether the cookie was newly discovered.
+          type: boolean
+          example: true
+        isNewlyAdded:
+          description: This flag indicates whether the item was recently added.
+          type: boolean
+          example: true
+        categoryId:
+          description: The unique identifier of the category.
+          type: string
+          example: C0001
+          maxLength: 100
+          minLength: 1
+        customCategoryId:
+          description: Custom category Id for cookie
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+    ScanResultEntityPageResponse:
+      type: object
+      properties:
+        content:
+          description: The main content or data payload of the response.
+          example:
+          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            cookieName: session_id
+            host: example.com
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CookieInformationDetailed'
+            - $ref: '#/components/schemas/PageDto'
+            - $ref: '#/components/schemas/TagDto'
+            - $ref: '#/components/schemas/FormDataGroupDto'
+            - $ref: '#/components/schemas/StorageEntriesDto'
+            - $ref: '#/components/schemas/ServiceProviderBasicDetails'
+          maxItems: 2000
+          minItems: 0
+          type: array
+        scanId:
+          description: Scan ID
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+          example: 100
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+          example: 99
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+          example: 5
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+          example: 1
+        numberOfElements:
+          description: The number of items in the current page.
+          type: integer
+          format: int32
+          example: 5
+    FormDataDto:
+      type: object
+      properties:
+        fieldName:
+          description: Field name
+          type: string
+          example: username
+        formName:
+          description: Name of the form to which this field belongs
+          type: string
+          example: loginForm
+        type:
+          description: Type of data field. For example email/text/hidden.
+          type: string
+          example: text
+        title:
+          description: Field title
+          type: string
+          example: Username
+        label:
+          description: Field lable
+          type: string
+          example: E-mail
+        value:
+          description: Value of the field. Mostly this value is empty since the fields expect some input.
+          type: string
+          example: value123
+        personalData:
+          type: boolean
+    EntityActionResponseDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          description: The main content or data payload of the response.
+          type: object
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    CookieInformationDetailed:
+      type: object
+      properties:
+        id:
+          description: Cookie identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Cookie name
+          type: string
+          example: snn_id
+        host:
+          description: Host associated with the cookie
+          type: string
+          example: amazon.com
+        expiryDate:
+          description: Expiry date of the cookie
+          type: integer
+          format: int32
+        expiryUnit:
+          description: Expiry unit of the cookie.
+          type: string
+          example: WEEK
+          enum:
+          - DAY
+          - WEEK
+          - MONTH
+          - YEAR
+        urlDomain:
+          description: Domain url
+          type: string
+          example: amazon.com
+        path:
+          description: Cookie path
+          type: string
+          example: /
+        isSecure:
+          description: Whether cookie is secure
+          type: boolean
+          example: true
+        isHttpOnly:
+          description: Whether cookie is http only
+          type: boolean
+          example: true
+        isSession:
+          description: Whether cookie is a session cookie
+          type: boolean
+          example: true
+        isBehindLogin:
+          description: Whether cookie is behind login
+          type: boolean
+          example: true
+        hostDescription:
+          description: Host description
+          type: string
+          example: Amazon is a website
+        thirdPartyDescription:
+          description: Third party description
+          type: string
+          example: This cookie is used for advertising
+        description:
+          description: Cookie description
+          type: string
+          example: This cookie is used for advertising
+        purpose:
+          description: Cookie purpose
+          type: string
+          example: This cookie is used for advertising
+        cookiepediaCategory:
+          description: Cookie category name
+          type: string
+          example: Targeting
+        firstParty:
+          description: Whether cookies is first party
+          type: boolean
+          example: true
+        status:
+          description: Cookie status.
+          type: string
+          example: NOT_FOUND
+          enum:
+          - NEW
+          - REVIEWED
+          - NOT_FOUND
+          - DELETED
+          - REVIEWED_NOT_FOUND
+          - ARCHIVED
+        color:
+          description: Cookie color related to the category.
+          type: string
+          example: red
+        isNewFound:
+          description: Whether cookie is new found from this scan.
+          type: boolean
+          example: true
+        isNewlyAdded:
+          description: Whether cookie is newly added from this scan.
+          type: boolean
+          example: true
+        categoryId:
+          description: Cookie category identifier.
+          type: string
+          example: C0001
+    ScanWebsiteRequest:
+      type: object
+      properties:
+        domain:
+          description: The website domain being managed.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        numberOfPages:
+          description: The total number of web pages found during scanning.
+          type: integer
+          format: int32
+          example: 100
+          default: '1000'
+        independentPaths:
+          description: The unique URL paths discovered during the scanning process.
+          type: boolean
+          example: false
+          default: 'false'
+        includedQueryParams:
+          description: The query parameters that are included in the scan.
+          type: string
+          example: _vercel_share=Hcj4MQ8SLN8pxXPrw7wbrCfxXBuZnPa6
+          maxLength: 1000
+          minLength: 1
+        siteMapsUris:
+          description: The URLs of sitemaps used for the scanning process.
+          type: string
+          example: 'https://preprod.johnniewalker.com/sitemap.xml '
+          maxLength: 3000
+          minLength: 0
+        geoLocation:
+          description: The geographic location settings for the scan.
+          type: string
+          example: northeurope
+          maxLength: 100
+          minLength: 1
+        limitScanToSitemap:
+          description: This flag indicates whether to restrict scanning to sitemap URLs only.
+          type: boolean
+          example: false
+          default: 'false'
+        googleLoginState:
+          description: The login state for Google-authenticated scanning.
+          type: boolean
+          example: false
+          default: 'false'
+        captureDelayedCookies:
+          description: This flag indicates whether to capture cookies that load after the initial page load.
+          type: boolean
+          example: true
+          default: 'false'
+        delayTimeInSeconds:
+          description: The time duration in seconds to wait before capturing delayed cookies.
+          type: integer
+          format: int32
+          example: 3
+          default: '1'
+        targetPageInputs:
+          description: The input parameters for specific pages to be scanned.
+          type: array
+          items:
+            $ref: '#/components/schemas/TargetPagesScanEntityDto'
+          example:
+          - pageListName: page list 1
+            targetType: Target
+            urlType: Page
+            pageUrls: https://service.braun.com/hr/en/products/6032
+          maxItems: 1000
+          minItems: 0
+      required:
+      - numberOfPages
+    ExposedScanWebsitePageResponseDto:
+      type: object
+      properties:
+        content:
+          description: The main content or data payload of the response.
+          example:
+          - domainName: amazon.com
+            domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            status: SCANNING
+            lastScannedDate: '2025-04-01T12:34:32Z'
+            lastScannedTotalCookies: 15
+            uniqueCookiesFound: 10
+            lastScannedTotalPages: 400
+            maxPagesScanned: 123
+            scheduledDateOfNextScan: '2025-04-01T12:34:32Z'
+            consentPolicyName: as_georules
+            scanError: ABRUPT_SCAN_TERMINATION
+            orgName: org name
+            externalOrgId: orgnameid
+            overPageLimit: true
+          items:
+            $ref: '#/components/schemas/ExposedWebsiteDetailsDto'
+          maxItems: 2000
+          minItems: 0
+          type: array
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+          example: 344
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+          example: 35
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+          example: 10
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+          example: 3
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          description: The number of items in the current page.
+          type: integer
+          format: int32
+          example: 115
+    PageDto:
+      type: object
+      properties:
+        id:
+          description: Page identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        auditUrl:
+          description: Page url
+          type: string
+          example: https://abcnews.go.com/
+        cookieCount:
+          description: Number of cookies found on page
+          type: integer
+          format: int64
+          example: 33
+        errorMessage:
+          description: Error message if something went wrong when scanning page.
+          type: string
+          example: 33
+        sourceUrl:
+          description: Source url.
+          type: string
+          example: https://abcnews.go.com/
+        scanOrder:
+          description: Source url.
+          type: integer
+          format: int32
+          example: https://abcnews.go.com/
+        isCookiePolicy:
+          type: number
+          format: double
+        isPrivacyPolicy:
+          type: number
+          format: double
+        isLoginForm:
+          description: Whether page has login form.
+          type: boolean
+          example: false
+        isBehindLogin:
+          description: Whether page is behind login.
+          type: boolean
+          example: false
+        hasVideo:
+          description: 'Whether the page has video content '
+          type: boolean
+          example: false
+    ScanDeltaMetadataDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        sourceScanId:
+          description: The unique identifier of the original scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        targetScanId:
+          description: The unique identifier of the comparison scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        targetScanDate:
+          description: The date and time when the comparison scan was performed.
+          type: string
+          format: date-time
+          example: '2025-04-25T10:15:30Z'
+        targetScanDeleted:
+          description: This flag indicates whether the comparison scan was deleted.
+          type: boolean
+    FormDataGroupDto:
+      type: object
+      properties:
+        id:
+          description: Form identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Form name
+          type: string
+          example: formdatagroupname
+        numberOfPagesFound:
+          description: Number of pages where this form was found
+          type: integer
+          format: int64
+          example: 3
+        formDataFields:
+          description: List of data field information contained in the form
+          type: array
+          items:
+            $ref: '#/components/schemas/FormDataDto'
+    ScanInformationResponse:
+      type: object
+      properties:
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        startingUrl:
+          description: The initial URL where the scanning process begins.
+          type: string
+          example: amazon.com
+          maxLength: 500
+          minLength: 1
+        sequence:
+          description: The order or position in a sequential series.
+          type: integer
+          format: int32
+          example: 3
+        crawlStartDt:
+          description: The date and time when the crawling process started.
+          type: string
+          format: date-time
+          example: '2025-04-01T12:34:32Z'
+        crawlEndDt:
+          description: The date and time when the crawling process ended.
+          type: string
+          format: date-time
+          example: '2025-04-01T12:34:32Z'
+        usedQueryParameters:
+          description: The query parameters that were used during the scanning process.
+          type: string
+          example: language=en,region=on
+          maxLength: 1000
+          minLength: 1
+        scanPageLimit:
+          description: The maximum number of pages allowed per scan operation.
+          type: integer
+          format: int32
+          example: 1000
+        pagesScanned:
+          description: The number of pages that were actually scanned.
+          type: integer
+          format: int32
+          example: 155
+        errorDescription:
+          description: The description of any error that occurred.
+          type: string
+          example: ABRUPT_SCAN_TERMINATION
+          maxLength: 500
+          minLength: 1
+        cookieNotice:
+          description: The notice or information about cookie usage.
+          type: boolean
+          example: true
+        retryCount:
+          description: The number of times the operation was retried.
+          type: integer
+          format: int32
+          example: 0
+        totalPagesFound:
+          description: The total number of pages discovered during scanning.
+          type: integer
+          format: int32
+          example: 255
+        cookiesFound:
+          description: The number of cookies discovered during scanning.
+          type: integer
+          format: int32
+          example: 132
+        geoLocation:
+          description: The geographic location settings for the scan.
+          type: string
+          example: northeurope
+          maxLength: 100
+          minLength: 1
+        limitScanToSitemap:
+          description: This flag indicates whether to restrict scanning to sitemap URLs only.
+          type: boolean
+          example: false
+        status:
+          description: The current state or condition of the item.
+          type: string
+          example: INPROGRESS
+          enum:
+          - QUEUED
+          - PENDING
+          - INPROGRESS
+          - MIGRATION_STARTED
+          - MIGRATION_COMPLETED
+          - CATEGORIZATION_STARTED
+          - CATEGORIZATION_FAILED
+          - COMPLETED
+          - ERROR
+          - CANCELLED
+          - SCANNING
+          - DATA_MOVE
+          - RETRY_BY_AUTO_CORRECT
+          - MS_IOS_SCAN_SUCCESS
+          - MS_IOS_SCAN_FAILED
+          - MS_EXPORT_XLS_STARTED
+          - MS_EXPORT_PDF_STARTED
+          - SCHEDULED
+        scanType:
+          description: The type or method of scanning being performed.
+          type: string
+          example: UI_SCAN
+          enum:
+          - UI_SCAN
+          - SCHEDULE_SCAN
+        archiveStatus:
+          description: The archival state of the scan.
+          type: string
+          example: ARCHIVE_COMPLETED
+          enum:
+          - NONE
+          - PENDING_UI
+          - PENDING_SCHEDULED
+          - ARCHIVE_STARTED
+          - ARCHIVE_COMPLETED
+          - ARCHIVE_QUEUED
+          - ERROR
+          - NO_DATA_TO_EXPORT
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
+          type: boolean
+    ServiceProviderBasicDetails:
+      type: object
+      properties:
+        serviceName:
+          description: Service name
+          type: string
+          example: Adobe Marketing Cloud
+        vendor:
+          description: Vendor name
+          type: string
+          example: Adobe
+        category:
+          description: Category
+          type: string
+          example: Performance Cookies
+        description:
+          description: Service description
+          type: string
+          example: Adobe Marketing Cloud gives customers the most complete set of integrated digital marketing solutions available.
+        location:
+          description: Address
+          type: string
+          example: 345
+        privacyPolicy:
+          description: Privacy policy url
+          type: string
+          example: https://www.adobe.com/privacy/policy.html
+        added:
+          description: Whether the service was added since previous scan
+          type: boolean
+          example: true
+        removed:
+          description: Whether the service was removed since previous scan
+          type: boolean
+          example: false
+        changeSincePreviousScan:
+          description: Changes in comparison to previous successful scan.
+          type: string
+          example: Added since previous scan (Feb 24, 2025 08:11 AM)
+    TargetPagesScanEntityDto:
+      type: object
+      properties:
+        pageListName:
+          description: The name of the page list configuration.
+          type: string
+          example: page list 1
+          maxLength: 255
+          minLength: 1
+        targetType:
+          description: The type of target being scanned.
+          type: string
+          example: Target
+          enum:
+          - IncludeOnly
+          - Exclude
+          - Target
+          maxLength: 50
+          minLength: 1
+        urlType:
+          description: The category or type of URL.
+          type: string
+          example: Page
+          enum:
+          - Page
+          - Path
+          - Subdomain
+          maxLength: 50
+          minLength: 1
+        pageUrls:
+          description: The list of specific page URLs to be scanned.
+          type: string
+          example: https://service.braun.com/hr/en/products/6032
+          maxLength: 5000
+          minLength: 1
+    ExposedWebsiteDetailsDto:
+      type: object
+      properties:
+        domainName:
+          description: The name of the website domain.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        status:
+          description: The current state or condition of the item.
+          type: string
+          example: SCANNING
+          maxLength: 50
+          minLength: 1
+        lastScannedDate:
+          description: The date and time when the domain was last scanned for cookies.
+          type: string
+          format: date-time
+          example: '2025-04-01T12:34:32Z'
+        lastScannedTotalCookies:
+          description: The total number of cookies found during the last scan.
+          type: integer
+          format: int32
+          example: 15
+        uniqueCookiesFound:
+          description: The number of unique cookies discovered during scanning.
+          type: integer
+          format: int32
+          example: 10
+        lastScannedTotalPages:
+          description: The total number of pages scanned during the last scan.
+          type: integer
+          format: int32
+          example: 400
+        maxPagesScanned:
+          description: The maximum number of pages that can be scanned.
+          type: integer
+          format: int32
+          example: 123
+        scheduledDateOfNextScan:
+          description: The date and time when the next scan is scheduled to run.
+          type: string
+          format: date-time
+          example: '2025-04-01T12:34:32Z'
+        consentPolicyName:
+          description: The name of the consent policy that is applied.
+          type: string
+          example: as_georules
+          maxLength: 255
+          minLength: 1
+        scanError:
+          description: The error message if the scan operation failed.
+          type: string
+          example: ABRUPT_SCAN_TERMINATION
+          maxLength: 500
+          minLength: 1
+        orgName:
+          description: The name of the organization.
+          type: string
+          example: org name
+          maxLength: 255
+          minLength: 1
+        externalOrgId:
+          description: The external organization identifier.
+          type: string
+          example: orgnameid
+          maxLength: 255
+          minLength: 1
+        overPageLimit:
+          description: This flag indicates whether the scan exceeded the maximum page limit.
+          type: boolean
+          example: true
+    PageScanInformationResponse:
+      type: object
+      properties:
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+        size:
+          description: The number of items to return per page.
+          type: integer
+          format: int32
+        content:
+          description: The main content or data payload of the response.
+          items:
+            $ref: '#/components/schemas/ScanInformationResponse'
+          type: array
+        number:
+          description: The numeric value or identifier.
+          type: integer
+          format: int32
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          description: The pagination configuration settings.
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          description: This flag indicates whether this is the first item in a sequence.
+          type: boolean
+        last:
+          description: This flag indicates whether this is the last item in a sequence.
+          type: boolean
+        numberOfElements:
+          description: The number of items in the current page.
+          type: integer
+          format: int32
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+    ServiceResponseDto:
+      type: object
+      properties:
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan initiated successfully.
+          maxLength: 500
+          minLength: 1
+        consentPolicyId:
+          description: The unique identifier of the consent policy.
+          type: string
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          maxLength: 100
+          minLength: 1
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        scanType:
+          description: The type or method of scanning being performed.
+          type: integer
+          format: int32
+          example: 1
+        ok:
+          description: This flag indicates whether the operation was successful.
+          type: boolean
+        rescan:
+          description: This flag indicates whether to perform the scan operation again.
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    ScanStatusResponse:
+      type: object
+      properties:
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        status:
+          description: The current state or condition of the item.
+          type: string
+          example: INPROGRESS
+          enum:
+          - QUEUED
+          - PENDING
+          - INPROGRESS
+          - MIGRATION_STARTED
+          - MIGRATION_COMPLETED
+          - CATEGORIZATION_STARTED
+          - CATEGORIZATION_FAILED
+          - COMPLETED
+          - ERROR
+          - CANCELLED
+          - SCANNING
+          - DATA_MOVE
+          - RETRY_BY_AUTO_CORRECT
+          - MS_IOS_SCAN_SUCCESS
+          - MS_IOS_SCAN_FAILED
+          - MS_EXPORT_XLS_STARTED
+          - MS_EXPORT_PDF_STARTED
+          - SCHEDULED
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan status found
+          maxLength: 500
+          minLength: 1
+    ScanResultSummaryDto:
+      type: object
+      properties:
+        scannedPageUrls:
+          description: URL of all the pages scanned
+          type: array
+          items:
+            type: string
+          example:
+          - onetrust.com
+          - onetrust.com/robots.txt
+          maxItems: 1000
+          minItems: 0
+        numTags:
+          description: Number of tags associated with this scan.
+          type: integer
+          format: int32
+          example: 25
+        numCookies:
+          description: Number of cookies associated with this scan.
+          type: integer
+          format: int32
+          example: 150
+        numCookiesByCategory:
+          description: Number of cookies associated with this scan, grouped by cookiepedia category.
+          type: object
+          example: '{''Strictly Necessary'': 3, ''Functional'': 5, ...}'
+          additionalProperties:
+            type: integer
+            format: int64
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

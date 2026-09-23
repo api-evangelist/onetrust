@@ -4,10 +4,8 @@ schema: https://www.finops.org/framework/
 provider: OneTrust
 providerId: onetrust
 created: '2026-05-08'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-08, not harvested from the provider. See roadmap#35.
 method: generated
-modified: '2026-05-08'
+modified: '2026-08-27'
 reconciled: false
 tags:
 - Privacy
@@ -67,3 +65,20 @@ principles:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+metered_units:
+- name: Bulk Export credits
+  api: openapi/onetrust-platform-bulk-export-openapi.json
+  operationId: getCreditsInformationGET
+  path: GET /api/ot-insights/v1/bulk-export-jobs/credits
+  summary: Get Bulk Export Credit Details
+  discovered: '2026-08-27'
+  note: The only consumption balance OneTrust exposes programmatically. Everything else on the OneTrust
+    bill is a negotiated module subscription with no API-readable meter.
+api_rate_entitlements:
+  source: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+  account_hour: 200000
+  endpoint_minute: 1000
+  sandbox_hour: 50000
+  sandbox_endpoint_minute: 250
+  note: Published, quantified entitlements — the closest thing to a usage allowance OneTrust states publicly.
+    Overrides are negotiated case by case, not purchased.

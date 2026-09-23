@@ -1,0 +1,3981 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Inventory Schema API
+  version: '1.0'
+  description: 'Operations tagged Inventory Schema across 2 of this provider''s published API definitions: onetrust-privacy-automation-data-mapping-automation-openapi.json, onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api
+tags:
+- name: Inventory Schema
+  description: APIs used to define and maintain schema attributes that shape inventory data collection and validation.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+paths:
+  /api/inventory/v2/schemas:
+    get:
+      operationId: getAllSchemasUsingGET
+      summary: Get List of Inventory Schemas
+      description: Use this API to retrieve the list of schemas.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaSummaryDto'
+              example:
+              - id: data-elements
+                name: DataElements
+                description: DataElementsInventory
+                nameKey: DataElements
+                uri: /api/inventory/v2/data-elements
+              - id: processing-activities
+                name: ProcessingActivities
+                description: ProcessingActivitiesInventory
+                nameKey: ProcessingActivities
+                uri: /api/inventory/v2/inventories/processing-activities
+              - id: assets
+                name: Assets
+                description: AssetsInventory
+                nameKey: Assets
+                uri: /api/inventory/v2/inventories/assets
+              - id: vendors
+                name: Vendors
+                description: VendorInventory
+                nameKey: Vendors
+                uri: /api/inventory/v2/inventories/vendors
+              - id: entities
+                name: Entities
+                description: LegalEntitiesInventory
+                nameKey: Entities
+                uri: /api/inventory/v2/inventories/entities
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/attributes/{attributeId}/values/bulk/:
+    post:
+      operationId: createAttributeValuesForAnAttribute
+      summary: Create Attribute Values
+      description: 'Use this API to create attribute values for an attribute.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports the creation of attribute options for the attributes with single/multi select response type and non user/location/date attribute type.'
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: attributeId
+        in: path
+        description: ID of an attribute. The value is obtained using Get Inventory Schema API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AttributeValueCreateRequest'
+            example:
+            - value: Option 1
+              description: First option
+              enabled: true
+            - value: Option 2
+              description: Second option
+              enabled: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttributeValueResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/attributes/{attributeId}/values/{valueId}:
+    put:
+      operationId: manageAttributeOptions
+      summary: Manage Attribute Options
+      description: 'Use this API to manage attribute options in the assessment questions and inventories.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API supports deactivating/activating attribute options.
+
+        > - This API can also be used for editing option names.'
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: attributeId
+        in: path
+        description: ID of an attribute. The value is obtained using Get Inventory Schema API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: bcb8c972-cd10-4c2a-9289-44f8cc78ac03
+      - name: valueId
+        in: path
+        description: ID of the attribute value to update
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 91e37a36-ca61-499b-b3c3-7d556aef5cde
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeValueUpdateRequest'
+            example:
+              value: Updated Option
+              description: Updated description
+              enabled: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeValueResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/{schemaName}:
+    get:
+      operationId: getSchemaBySchemaTypeUsingGET
+      summary: Get Inventory Schema
+      description: Use this API to retrieve the details of a specific schema.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema. The value can be obtained using the [Get Schemas](/onetrust/reference/getSchemas) API.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+      - name: showAll
+        in: query
+        description: If `showAll` is included in the query, non-hidden attributes will be returned regardless of their enabled state.
+        required: false
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+      - name: includeHidden
+        in: query
+        description: Determines if hidden attributes are returned or omitted.
+        required: false
+        schema:
+          type: boolean
+          default: false
+          enum:
+          - 'true'
+          - 'false'
+      - name: includePersonalData
+        in: query
+        description: Determines if personal data for attribute rules will be returned or omitted.
+        required: false
+        schema:
+          type: boolean
+          default: false
+          enum:
+          - 'true'
+          - 'false'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttributeResponse'
+              examples:
+                VendorSchema:
+                  description: VendorSchema
+                  value:
+                  - id: ae715b26-0726-44d6-b169-651950854e36
+                    name: Name
+                    fieldName: name
+                    nameKey: VendorsName
+                    description: Nameofthevendor
+                    descriptionKey: VendorsNameDesc
+                    required: true
+                    status: enabled
+                    attributeType: vendors
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 6d47b820-1cb6-4c57-9483-2ef1d4a682c2
+                    name: Organization
+                    fieldName: organization
+                    nameKey: VendorsOrganization
+                    description: OneTrustOrganizationGroup
+                    descriptionKey: VendorsOrganizationDesc
+                    required: true
+                    status: enabled
+                    attributeType: organizations
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 952c7964-133e-45e2-bbba-659ce03c7c4b
+                    name: Type
+                    fieldName: type
+                    nameKey: VendorsType
+                    description: Thetypeofproductorservicethatthevendorprovides
+                    descriptionKey: VendorsTypeDesc
+                    required: true
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 23688be2-98f4-4f02-b88e-7c8d8444ee2f
+                    name: VendorID
+                    fieldName: vendorId
+                    nameKey: VendorsVendorId
+                    description: IDofvendorformatchingwithexternalsystems
+                    descriptionKey: VendorsVendorIdDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: f48b0955-cf25-4651-bf3d-88992272d473
+                    name: Classification
+                    fieldName: vendorClassification
+                    nameKey: VendorsVendorClassification
+                    description: Howavendorisclassified
+                    descriptionKey: VendorsVendorClassificationDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 382513b7-2a41-4376-931c-574a4de7520d
+                    name: Criticality
+                    fieldName: vendorCriticality
+                    nameKey: VendorsVendorCriticality
+                    description: Howcriticalthevendoristothebusiness
+                    descriptionKey: VendorsVendorCriticalityDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 6976bda2-f4c7-48ff-9bdf-6d234c3d2766
+                    name: VendorRating
+                    fieldName: vendorRating
+                    nameKey: VendorsVendorRating
+                    description: Scoreofvendor
+                    descriptionKey: VendorsVendorRatingDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 16e75884-02ea-4da0-a1a6-62603ccd2486
+                    name: PrimaryVendorContact
+                    fieldName: primaryContact
+                    nameKey: VendorsPrimaryContact
+                    description: Nameofthevendorsprimarycontact
+                    descriptionKey: VendorsPrimaryContactDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 80c2f394-aa34-49ff-8ad8-84037431a51e
+                    name: Location
+                    fieldName: location
+                    nameKey: VendorsLocation
+                    description: Countrywherethevendorisheadquartered
+                    descriptionKey: VendorsLocationDesc
+                    required: false
+                    status: enabled
+                    attributeType: locations
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 137beb57-c099-4e2b-b4e3-4dd3d48d2dcb
+                    name: BusinessOwner
+                    fieldName: owner
+                    nameKey: VendorsOwner
+                    description: Nameoftheinternalownersponsoringthevendor
+                    descriptionKey: VendorsOwnerDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: df80a5a2-b144-45ec-9e46-95861bad211e
+                    name: Description
+                    fieldName: description
+                    nameKey: VendorsDescription
+                    description: Descriptionofthevendor
+                    descriptionKey: VendorsDescriptionDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 0d6ae546-8e4c-4374-bdf3-5a842ceca5cd
+                    name: AggregateRiskLevel
+                    fieldName: riskLevel
+                    nameKey: VendorsRiskLevel
+                    description: Overallrisklevelassociatedwithvendor
+                    descriptionKey: VendorsRiskLevelDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 16640061-3463-44a7-b0e2-807b2b652281
+                    name: EU-U.S.PrivacyShieldStatus
+                    fieldName: euUsPrivacyShieldStatus
+                    nameKey: VendorsEuUsPrivacyShieldStatus
+                    description: EU-U.S.PrivacyShieldStatus
+                    descriptionKey: VendorsEuUsPrivacyShieldStatusDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 37890754-49e7-49de-951b-588e10262925
+                    name: OriginalEU-U.S.CertificationDate
+                    fieldName: originalEuUsCertificationDate
+                    nameKey: VendorsOriginalEuUsCertificationDate
+                    description: OriginalEU-U.S.CertificationDate
+                    descriptionKey: VendorsOriginalEuUsCertificationDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: b378a091-8899-4754-b2c0-97f304a0cf40
+                    name: NextEU-U.S.CertificationDate
+                    fieldName: nextEuUsCertificationDate
+                    nameKey: VendorsNextEuUsCertificationDate
+                    description: NextEU-U.S.CertificationDate
+                    descriptionKey: VendorsNextEuUsCertificationDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: b2f0a65c-a9ca-4b03-afca-aa36c0f70e8e
+                    name: PrivacyShieldNoticeLink
+                    fieldName: privacyShieldNoticeLink
+                    nameKey: VendorsPrivacyShieldNoticeLink
+                    description: PrivacyShieldNoticeLink
+                    descriptionKey: VendorsPrivacyShieldNoticeLinkDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: fb040921-74e1-469f-92f1-8c3133882e4c
+                    name: PurposeofDataCollection
+                    fieldName: purposeOfDataCollection
+                    nameKey: VendorsPurposeOfDataCollection
+                    description: PurposeofDataCollection
+                    descriptionKey: VendorsPurposeOfDataCollectionDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 89cf9267-cbc9-49fe-8bc1-e06d49608e37
+                    name: PrivacyShield-CoveredEntities
+                    fieldName: privacyShieldCoveredEntities
+                    nameKey: VendorsPrivacyShieldCoveredEntities
+                    description: PrivacyShield-CoveredEntities
+                    descriptionKey: VendorsPrivacyShieldCoveredEntitiesDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 1d90dc25-670f-4c6a-a999-a9a5c0b21f4b
+                    name: ContactPhoneNumber
+                    fieldName: contactPhoneNumber
+                    nameKey: VendorsContactPhoneNumber
+                    description: ContactPhoneNumber
+                    descriptionKey: VendorsContactPhoneNumberDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 8ad08e3c-4b55-47a6-aac1-69ef0d3a84af
+                    name: DataCollected
+                    fieldName: dataCollected
+                    nameKey: VendorsDataCollected
+                    description: DataCollectedundertheEU-U.S.PrivacyShield
+                    descriptionKey: VendorsDataCollectedDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 7f2d23d7-0763-4f6a-a082-ca566674e6d7
+                    name: VendorContact
+                    fieldName: vendorContact
+                    nameKey: VendorsVendorContact
+                    description: PrivacyShieldVendorContact
+                    descriptionKey: VendorsVendorContactDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 30d7779b-53d8-4443-86b3-e673b0815136
+                    name: ExternalID
+                    fieldName: externalId
+                    nameKey: VendorsExternalId
+                    description: ThisfieldcontainsauniqueidentifierfortherecordfromasystemoutsideofOneTrust
+                    descriptionKey: VendorsExternalIdDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 6104508b-3f75-4bc4-bbee-649becf76faf
+                    name: CreatedDate
+                    fieldName: createdDate
+                    nameKey: VendorsCreatedDate
+                    description: Datewhentherecordwascreated
+                    descriptionKey: VendorsCreatedDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: c3220e71-4276-4ebe-b891-5d7c0e04399a
+                    name: Status
+                    fieldName: status
+                    nameKey: VendorsStatus
+                    description: StatusofVendor
+                    descriptionKey: VendorsStatusDesc
+                    required: false
+                    status: enabled
+                    attributeType: statuses
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: d59afacc-5e38-42b2-b48b-3c038b5361d1
+                    name: AggregateRiskScore
+                    fieldName: riskScore
+                    nameKey: VendorsRiskScore
+                    description: OverallriskscoreassociatedwithVendor
+                    descriptionKey: VendorsRiskScoreDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 3486d277-bcf7-4d7d-ae3d-626c11354426
+                    name: ID
+                    fieldName: number
+                    nameKey: VendorsNumber
+                    description: Thisfieldcontainsauniqueidentifierfortherecordofaparticularinventorytype
+                    descriptionKey: VendorsNumberDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 0c5b7169-d347-4a30-bae7-aaf999113b94
+                    name: CreatedBy
+                    fieldName: createdBy
+                    nameKey: VendorsCreatedBy
+                    description: Nameoftheuserwhocreatedtherecord
+                    descriptionKey: VendorsCreatedByDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: e66419f4-22dc-4a2c-aa14-dece09d27051
+                    name: LastUpdatedDate
+                    fieldName: updatedDate
+                    nameKey: VendorsLastUpdatedDate
+                    description: Datewhentherecordwaslastupdated
+                    descriptionKey: VendorsLastUpdatedDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: d3ebbcf6-e5f8-44e1-b6c6-30eecaf07551
+                    name: LastUpdatedBy
+                    fieldName: updatedBy
+                    nameKey: VendorsLastUpdatedBy
+                    description: Nameoftheuserwholastupdatedtherecord
+                    descriptionKey: VendorsLastUpdatedByDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 12c494f4-a713-42fd-b9ed-93306d82e455
+                    name: VendorWorkflow
+                    fieldName: workflow
+                    nameKey: VendorsWorkflow
+                    description: VendorWorkflow
+                    descriptionKey: VendorsWorkflowDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 26642d0f-66e2-40e3-ba57-d5f2d7ddbd67
+                    name: VendorWorkflowStage
+                    fieldName: workflowStage
+                    nameKey: VendorsWorkflowStage
+                    description: VendorWorkflowStage
+                    descriptionKey: VendorsWorkflowStageDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: a72c062f-a2e4-4ad7-b097-b340134bc64c
+                    name: AggregatedInherentRiskScore
+                    fieldName: inherentRiskScore
+                    nameKey: VendorsInherentRiskScore
+                    description: OverallinherentriskscoreassociatedwithVendor
+                    descriptionKey: VendorsInherentRiskScoreDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: db7d6d7f-f43e-47a0-9afa-0f5da1502bc0
+                    name: AggregatedInherentRiskLevel
+                    fieldName: inherentRiskLevel
+                    nameKey: VendorsInherentRiskLevel
+                    description: OverallinherentrisklevelassociatedwithVendor
+                    descriptionKey: VendorsInherentRiskLevelDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: dd7939f1-2f96-490e-84be-79e5f16399a4
+                    name: CriticalInformationInfrastructureOperator
+                    fieldName: criticalInformationInfrastructureOperator
+                    nameKey: VendorsCriticalInformationInfrastructureOperator
+                    description: IsthevendoraCriticalInformationInfrastructureOperator?
+                    descriptionKey: VendorsCriticalInformationInfrastructureOperatorDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 615c69b5-88e4-4d3a-bcaf-b4d6fe52701b
+                    name: ModelContractSigned
+                    fieldName: customField1000
+                    nameKey: VendorsCustomField1000
+                    description: Ifamodelcontractisrequiredithasbeensigned
+                    descriptionKey: VendorsCustomField1000Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: b7f4c31d-93bf-4c80-9160-ae4430586798
+                    name: ScoreTest
+                    fieldName: customField1001
+                    nameKey: VendorsCustomField1001
+                    description: ScoreTest
+                    descriptionKey: VendorsCustomField1001Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: score
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: Standard
+                  - id: b632930f-0354-49ea-ba4a-d600d502df49
+                    name: Website
+                    fieldName: overviewWebsite
+                    nameKey: overviewWebsite
+                    description: Website
+                    descriptionKey: overviewWebsite.description
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Vendorpedia
+                    dataSource:
+                      dataSourceKey: overview
+                      name: Overview
+                      nameKey: DataSource.Overview
+                    formula: null
+                    schemaName: Vendors
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 61491499-ea8b-4964-b92b-0b4cb7150535
+                    name: Name
+                    fieldName: name
+                    nameKey: AssetsName
+                    description: Name
+                    descriptionKey: AssetsNameDesc
+                    required: true
+                    status: enabled
+                    attributeType: assets
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 2cebe170-b5c3-4520-9567-b77f30c3db4d
+                    name: ManagingOrganization
+                    fieldName: organization
+                    nameKey: AssetsOrganization
+                    description: Organizationthatownstheasset
+                    descriptionKey: AssetsOrganizationDesc
+                    required: true
+                    status: enabled
+                    attributeType: organizations
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 3c81db90-1725-4188-89e2-471bf5e76021
+                    name: HostingLocation
+                    fieldName: location
+                    nameKey: AssetsLocation
+                    description: PhysicalorhostinglocationoftheAsset
+                    descriptionKey: AssetsLocationDesc
+                    required: true
+                    status: enabled
+                    attributeType: locations
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 69118ad2-e219-4bd7-a08e-3af93d707fce
+                    name: Type
+                    fieldName: type
+                    nameKey: AssetsType
+                    description: AssetType
+                    descriptionKey: AssetsTypeDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: ac698d52-0c15-40f1-a358-95744800985e
+                    name: Description
+                    fieldName: description
+                    nameKey: AssetsDescription
+                    description: Description
+                    descriptionKey: AssetsDescriptionDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 7fac38bb-ab63-4fad-ba59-084e3f8141fb
+                    name: ITOwner
+                    fieldName: technicalOwner
+                    nameKey: AssetsTechnicalOwner
+                    description: TechnicalindividualresponsiblefortheAsset
+                    descriptionKey: AssetsTechnicalOwnerDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: a9789d25-615d-46c9-83c7-69eaf19344c3
+                    name: Internalor3rdParty
+                    fieldName: internalOrThirdParty
+                    nameKey: AssetsInternalOrThirdParty
+                    description: Isthisaninternalor3rdpartyAsset?
+                    descriptionKey: AssetsInternalOrThirdPartyDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 47821483-00f3-46ac-a604-a91939ccf4db
+                    name: StorageFormat
+                    fieldName: storageFormat
+                    nameKey: AssetsStorageFormat
+                    description: Inwhatformatispersonaldatastoredinthisasset?
+                    descriptionKey: AssetsStorageFormatDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 14f760b3-d93e-4080-bdf6-a5f4880af348
+                    name: HostingType
+                    fieldName: hostingType
+                    nameKey: AssetsHostingType
+                    description: IsthisAssethostedon-premiseorexternallyoncloud?
+                    descriptionKey: AssetsHostingTypeDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 55e351e8-da96-4a32-871f-6be01c0945e2
+                    name: HostingProvider
+                    fieldName: hostingProvider
+                    nameKey: AssetsHostingProvider
+                    description: Whoisthehostingprovider?
+                    descriptionKey: AssetsHostingProviderDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 09724cbf-19ae-4529-bbfa-449fb8eb9bb9
+                    name: TechnicalSecurityMeasures
+                    fieldName: technicalSecurityMeasures
+                    nameKey: AssetsTechnicalSecurityMeasures
+                    description: Technicalsecuritymeasuresinplacetoprotectpersonaldata
+                    descriptionKey: AssetsTechnicalSecurityMeasuresDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 5cad32ef-49d1-4174-bf9f-85922df05658
+                    name: OrganizationalSecurityMeasures
+                    fieldName: organizationalSecurityMeasures
+                    nameKey: AssetsOrganizationalSecurityMeasures
+                    description: Organizationalsecuritymeasuresinplacetoprotectpersonaldata
+                    descriptionKey: AssetsOrganizationalSecurityMeasuresDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 98e23b3d-aea4-46d9-94e3-0bff964b9fbe
+                    name: OtherSecurityMeasures
+                    fieldName: otherSecurityMeasures
+                    nameKey: AssetsOtherSecurityMeasures
+                    description: Descriptionofanyadditionalsecuritymeasuresinplacetoprotectpersonaldata
+                    descriptionKey: AssetsOtherSecurityMeasuresDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 608651a1-68ae-4955-8786-aa4ec05f4ad0
+                    name: DataRetention
+                    fieldName: dataRetention
+                    nameKey: AssetsDataRetention
+                    description: Dataretentiontimeperiod
+                    descriptionKey: AssetsDataRetentionDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 709985e0-dc61-475e-a297-8712b24bd890
+                    name: DataDisposal
+                    fieldName: dataDisposal
+                    nameKey: AssetsDataDisposal
+                    description: Howisthedatadestroyedorarchived?
+                    descriptionKey: AssetsDataDisposalDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 6a3521d8-84be-47ac-bb75-20d9ecaa8cec
+                    name: Status
+                    fieldName: status
+                    nameKey: AssetsStatus
+                    description: StatusofAsset
+                    descriptionKey: AssetsStatusDesc
+                    required: false
+                    status: enabled
+                    attributeType: statuses
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: f26e1982-4cc6-4371-bbe8-7536f457e636
+                    name: ExternalID
+                    fieldName: externalId
+                    nameKey: AssetsExternalId
+                    description: ThisfieldcontainsauniqueidentifierfortherecordfromasystemoutsideofOneTrust
+                    descriptionKey: AssetsExternalIdDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 86501449-3e8f-4861-8b2e-73c5860dfa22
+                    name: CreatedDate
+                    fieldName: createdDate
+                    nameKey: AssetsCreatedDate
+                    description: Datewhentherecordwascreated
+                    descriptionKey: AssetsCreatedDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 8dc21cc0-6ea5-4826-afdc-5271a67ff28f
+                    name: ID
+                    fieldName: number
+                    nameKey: AssetsNumber
+                    description: Thisfieldcontainsauniqueidentifierfortherecordofaparticularinventorytype
+                    descriptionKey: AssetsNumberDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 5af33564-33e4-404d-a19a-016fdc82d02b
+                    name: AggregateRiskScore
+                    fieldName: riskScore
+                    nameKey: AssetsRiskScore
+                    description: OverallriskscoreassociatedwithAsset
+                    descriptionKey: AssetsRiskScoreDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 15d1e522-ef7f-40f3-9dec-a623d981045e
+                    name: AggregateRiskLevel
+                    fieldName: riskLevel
+                    nameKey: AssetsRiskLevel
+                    description: Howlikelyisitthatthisassetcouldexposepersonalinformation?
+                    descriptionKey: AssetsRiskLevelDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: 0ec6ab93-9114-41cd-b86b-401f904ca367
+                    name: CreatedBy
+                    fieldName: createdBy
+                    nameKey: AssetsCreatedBy
+                    description: Nameoftheuserwhocreatedtherecord
+                    descriptionKey: AssetsCreatedByDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: eef14a95-1129-4693-81bd-81d9bb2edb21
+                    name: LastUpdatedDate
+                    fieldName: updatedDate
+                    nameKey: AssetsLastUpdatedDate
+                    description: Datewhentherecordwaslastupdated
+                    descriptionKey: AssetsLastUpdatedDateDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: a146d577-16b0-46d7-ae80-39dc6bf74d5c
+                    name: LastUpdatedBy
+                    fieldName: updatedBy
+                    nameKey: AssetsLastUpdatedBy
+                    description: Nameoftheuserwholastupdatedtherecord
+                    descriptionKey: AssetsLastUpdatedByDesc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: true
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: f5a249b3-3c70-4e3f-9ea6-e35a35815718
+                    name: Criticality
+                    fieldName: criticality
+                    nameKey: AssetsCriticality
+                    description: Howcriticaltheassetistothebusiness
+                    descriptionKey: AssetsCriticalityDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: a2a3f969-3c11-4b46-9ca7-a0113b668110
+                    name: SecurityClassification
+                    fieldName: securityClassification
+                    nameKey: AssetsSecurityClassification
+                    description: Thesecurityclassificationoftheassetforthebusiness
+                    descriptionKey: AssetsSecurityClassificationDesc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: true
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: System
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    allowLabels: false
+                    responseSubType: null
+                  - id: b45cc72e-5106-45ef-969c-945afa331174
+                    name: 'CurrentlyanInventoryexportfailswhenthereisacustomattributewhoselengthismorethan255
+
+                      charactersThisshouldbehandledinthecodeandthecolumnheadertextshouldbewrappedinstead
+
+                      ofthrowinganexceptiontestforlongcolumnlengthgreaterthan255'
+                    fieldName: customField1000
+                    nameKey: AssetsCustomField1000
+                    description: textAttribute
+                    descriptionKey: AssetsCustomField1000Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 8d334ce1-3e64-4da7-ba97-46d00527889f
+                    name: isLinkAttributeUpdated?
+                    fieldName: customField1005
+                    nameKey: AssetsCustomField1005
+                    description: isLinkAttribute
+                    descriptionKey: AssetsCustomField1005Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: f0196349-07c3-4d1b-9aa4-335f48495d48
+                    name: TextAttribute2
+                    fieldName: customField1006
+                    nameKey: AssetsCustomField1006
+                    description: textAttribute
+                    descriptionKey: AssetsCustomField1006Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: bcb18f05-c1c7-495c-9381-3b3c9ff9a45f
+                    name: Date_New
+                    fieldName: customField1010
+                    nameKey: AssetsCustomField1010
+                    description: DateNew
+                    descriptionKey: AssetsCustomField1010Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: c7b38446-49a7-4ded-8323-78936175774c
+                    name: AssetCustomDate
+                    fieldName: customField1011
+                    nameKey: AssetsCustomField1011
+                    description: AssetDate
+                    descriptionKey: AssetsCustomField1011Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 16af64a7-8a58-49b4-96dd-d6395ab2c81e
+                    name: NewAttribute_OT
+                    fieldName: customField1013
+                    nameKey: AssetsCustomField1013
+                    description: NewAttribute
+                    descriptionKey: AssetsCustomField1013Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 09ecf823-be43-4c8e-8d63-b756fa1f60bd
+                    name: Attribute_2304
+                    fieldName: customField1014
+                    nameKey: AssetsCustomField1014
+                    description: Attribute_2304desc
+                    descriptionKey: AssetsCustomField1014Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 08338c32-fbc8-499e-9a3c-94e0946e133b
+                    name: Text_Attribute8
+                    fieldName: customField1016
+                    nameKey: AssetsCustomField1016
+                    description: Text_Attribute8Desc
+                    descriptionKey: AssetsCustomField1016Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 26da7ad3-1eeb-41a5-ba36-51871d246594
+                    name: DM24329
+                    fieldName: customField1017
+                    nameKey: AssetsCustomField1017
+                    description: DM24329Test
+                    descriptionKey: AssetsCustomField1017Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: numerical-text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 340da3ac-e06d-48c0-a6c7-1de083f2349c
+                    name: OptionTestAttr
+                    fieldName: customField1018
+                    nameKey: AssetsCustomField1018
+                    description: OptionTestAttring
+                    descriptionKey: AssetsCustomField1018Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 5d42796a-157b-41df-97c5-594f09d92561
+                    name: OptionSingleTest
+                    fieldName: customField1019
+                    nameKey: AssetsCustomField1019
+                    description: Optiontestingsingleselecttest
+                    descriptionKey: AssetsCustomField1019Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: a68f1298-6c53-4e27-82f5-ec6fe72d4c6d
+                    name: OptionMulTest
+                    fieldName: customField1020
+                    nameKey: AssetsCustomField1020
+                    description: OptionMultiselectTest
+                    descriptionKey: AssetsCustomField1020Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 362009da-1833-4b75-a23c-f199ad2ac8f7
+                    name: OptionUserSingle
+                    fieldName: customField1021
+                    nameKey: AssetsCustomField1021
+                    description: OptionUserSingleselect
+                    descriptionKey: AssetsCustomField1021Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 3e9aebe5-6036-433c-9e74-5fe9fe250bd2
+                    name: OptionUserMultiSelect
+                    fieldName: customField1022
+                    nameKey: AssetsCustomField1022
+                    description: OptionUserMultiSelect
+                    descriptionKey: AssetsCustomField1022Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 57f13ee3-8121-4407-afd1-350136434099
+                    name: NewAttribute
+                    fieldName: customField1023
+                    nameKey: AssetsCustomField1023
+                    description: NewAttributeDesc
+                    descriptionKey: AssetsCustomField1023Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: c69758e2-a28b-49ff-baad-c6b2a5f6a435
+                    name: Test_Attribute11
+                    fieldName: customField1025
+                    nameKey: AssetsCustomField1025
+                    description: Test_Attribute11Desc
+                    descriptionKey: AssetsCustomField1025Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: d0e694b6-f54f-4757-9176-3925c0e6cddb
+                    name: Test_Attribute12
+                    fieldName: customField1026
+                    nameKey: AssetsCustomField1026
+                    description: Test_Attribute12Desc
+                    descriptionKey: AssetsCustomField1026Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: d94da6de-0147-4ee4-9f34-744f10ec5f29
+                    name: UserBulk1
+                    fieldName: customField1027
+                    nameKey: AssetsCustomField1027
+                    description: UserBulk1
+                    descriptionKey: AssetsCustomField1027Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 40e83e42-0616-4778-b378-3a8e79e02765
+                    name: UserBulk2
+                    fieldName: customField1028
+                    nameKey: AssetsCustomField1028
+                    description: UserBulk2
+                    descriptionKey: AssetsCustomField1028Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 222c0cc6-ed14-451a-98a6-0dc5b5ccacb7
+                    name: UserBulk3
+                    fieldName: customField1029
+                    nameKey: AssetsCustomField1029
+                    description: UserBulk3
+                    descriptionKey: AssetsCustomField1029Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: f17a7794-565b-484a-8b70-7f8f84506bbc
+                    name: UserBulk4
+                    fieldName: customField1030
+                    nameKey: AssetsCustomField1030
+                    description: UserBulk4
+                    descriptionKey: AssetsCustomField1030Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 5c0e2cdc-0a9f-4d20-adbb-3d7efec57da3
+                    name: UserBulk5
+                    fieldName: customField1031
+                    nameKey: AssetsCustomField1031
+                    description: UserBulk5
+                    descriptionKey: AssetsCustomField1031Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 599609e3-5c4b-4f8d-90e6-5902dbae2074
+                    name: UserBulk6
+                    fieldName: customField1032
+                    nameKey: AssetsCustomField1032
+                    description: UserBulk6
+                    descriptionKey: AssetsCustomField1032Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 8df87712-4e4a-4ead-98f0-998708f37f5a
+                    name: UserBulk7
+                    fieldName: customField1033
+                    nameKey: AssetsCustomField1033
+                    description: UserBulk7
+                    descriptionKey: AssetsCustomField1033Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 1817b1b3-a094-4fb1-a21d-725a243f8a74
+                    name: UserBulk8
+                    fieldName: customField1034
+                    nameKey: AssetsCustomField1034
+                    description: UserBulk8
+                    descriptionKey: AssetsCustomField1034Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: f01516b1-260b-4ce9-bda5-c2a3e04a5002
+                    name: UserBulk9
+                    fieldName: customField1035
+                    nameKey: AssetsCustomField1035
+                    description: UserBulk9
+                    descriptionKey: AssetsCustomField1035Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 68cbb75d-e9b4-46f0-a110-073bdcd0606b
+                    name: UserBulk10
+                    fieldName: customField1036
+                    nameKey: AssetsCustomField1036
+                    description: UserBulk10
+                    descriptionKey: AssetsCustomField1036Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: db4158d7-b48d-48e1-b5bf-14c9c3e28508
+                    name: AttrDelTest
+                    fieldName: customField1037
+                    nameKey: AssetsCustomField1037
+                    description: AttrDelTest
+                    descriptionKey: AssetsCustomField1037Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: aa82967c-4836-4b57-93c6-30b21c606f07
+                    name: AttrAsset15Dec
+                    fieldName: customField1038
+                    nameKey: AssetsCustomField1038
+                    description: AttrAsset15Dec
+                    descriptionKey: AssetsCustomField1038Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: f156a243-258f-4571-bf89-583ddcdcf817
+                    name: AssetAttrDec15
+                    fieldName: customField1039
+                    nameKey: AssetsCustomField1039
+                    description: AssetAttrDec15
+                    descriptionKey: AssetsCustomField1039Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: e4235da8-ad30-4890-8f2e-21014a0d1321
+                    name: AssetMSUserAttribute
+                    fieldName: customField1040
+                    nameKey: AssetsCustomField1040
+                    description: test
+                    descriptionKey: AssetsCustomField1040Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 1e16accd-7be4-4e65-92df-edf830908507
+                    name: AssetSSUserW/oAO
+                    fieldName: customField1041
+                    nameKey: AssetsCustomField1041
+                    description: test
+                    descriptionKey: AssetsCustomField1041Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 3811f406-ba4f-4cb9-a175-d8810809cc17
+                    name: AssetDateAttri
+                    fieldName: customField1042
+                    nameKey: AssetsCustomField1042
+                    description: test
+                    descriptionKey: AssetsCustomField1042Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: date
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 929de721-1b30-4ac3-bf01-82b000c5a182
+                    name: AssetNumtext
+                    fieldName: customField1043
+                    nameKey: AssetsCustomField1043
+                    description: test
+                    descriptionKey: AssetsCustomField1043Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: numerical-text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 83943eac-5de5-41d4-a134-47badc440b7e
+                    name: AsssetNumSS
+                    fieldName: customField1044
+                    nameKey: AssetsCustomField1044
+                    description: test
+                    descriptionKey: AssetsCustomField1044Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: numerical-single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 6f6a108a-b152-4f62-84f5-77d378956b52
+                    name: AssetFormula
+                    fieldName: customField1045
+                    nameKey: AssetsCustomField1045
+                    description: test
+                    descriptionKey: AssetsCustomField1045Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: formula
+                    readOnly: true
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: sum(Assets:customField1044,Entities:customField1001)
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: b3faa565-ab8d-44a7-ad73-9730085e6a94
+                    name: MultiAllowUserTest
+                    fieldName: customField1047
+                    nameKey: AssetsCustomField1047
+                    description: MultiAllowUser
+                    descriptionKey: AssetsCustomField1047Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: a9e5bf55-dc37-4fd7-be0a-a0b21fdc19ac
+                    name: AssetTest_OT
+                    fieldName: customField1048
+                    nameKey: AssetsCustomField1048
+                    description: AssetTestDesc
+                    descriptionKey: AssetsCustomField1048Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 255bf0c1-0138-4d00-8a28-c9ba7cef0261
+                    name: Asset_SS
+                    fieldName: customField1049
+                    nameKey: AssetsCustomField1049
+                    description: AssetSingleselectattribute
+                    descriptionKey: AssetsCustomField1049Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 84169a26-d341-4eaf-97dc-22792912fce1
+                    name: NSS-1
+                    fieldName: customField1050
+                    nameKey: AssetsCustomField1050
+                    description: NSS-1
+                    descriptionKey: AssetsCustomField1050Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: numerical-single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 55d0ef61-c4b8-4acc-a79b-6ae22927dcb9
+                    name: SSUserTest
+                    fieldName: customField1051
+                    nameKey: AssetsCustomField1051
+                    description: SSUserTest
+                    descriptionKey: AssetsCustomField1051Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: b28cca0f-7aba-4b8e-8fba-e5b57a8a7b9d
+                    name: Score123
+                    fieldName: customField1052
+                    nameKey: AssetsCustomField1052
+                    description: Score123
+                    descriptionKey: AssetsCustomField1052Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: score
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: Standard
+                  - id: d2dd32ab-d995-4ed0-8eeb-38cee3c6f2d4
+                    name: SS_User01
+                    fieldName: customField1054
+                    nameKey: AssetsCustomField1054
+                    description: UserAttribute
+                    descriptionKey: AssetsCustomField1054Desc
+                    required: false
+                    status: enabled
+                    attributeType: users
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: e896b98c-e4e6-4d65-81b1-d9935171bc47
+                    name: MultiSSAttribute
+                    fieldName: customField1056
+                    nameKey: AssetsCustomField1056
+                    description: MultiSSAttributeDescription2
+                    descriptionKey: AssetsCustomField1056Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: multi-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 7065546c-e02b-474a-9e64-a6bce46169c2
+                    name: SSatttest
+                    fieldName: customField1057
+                    nameKey: AssetsCustomField1057
+                    description: SSatttest
+                    descriptionKey: AssetsCustomField1057Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 43f4b90d-ada8-4c60-8401-6e184dc25cee
+                    name: TestAttGlobal
+                    fieldName: customField1058
+                    nameKey: AssetsCustomField1058
+                    description: TestAttGlobal
+                    descriptionKey: AssetsCustomField1058Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: text
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: 0dd49036-b4df-4c8d-82a0-b8415bbd83a3
+                    name: TestPRODNSS
+                    fieldName: customField1059
+                    nameKey: AssetsCustomField1059
+                    description: TestPRODNSS
+                    descriptionKey: AssetsCustomField1059Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: numerical-single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+                  - id: c14363d6-e34e-4638-ab20-17884418440a
+                    name: 29379-Test
+                    fieldName: customField1060
+                    nameKey: AssetsCustomField1060
+                    description: 29379-Test
+                    descriptionKey: AssetsCustomField1060Desc
+                    required: false
+                    status: enabled
+                    attributeType: none
+                    responseType: single-select
+                    readOnly: false
+                    seeded: false
+                    hiddenAtInventory: false
+                    trackedAtRelatedInventoryType: null
+                    source: Custom
+                    dataSource: null
+                    formula: null
+                    schemaName: Assets
+                    hidden: false
+                    responseSubType: null
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/{schemaName}/attributes/:
+    post:
+      operationId: createAttributeForTheInventorySchema
+      summary: Create Attribute
+      description: Use this API to create an attribute for the inventory schema.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: Type of the inventory or schema. The supporting types are 'processing-activities', 'vendors', 'assets', and 'entities'.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeCreateRequest'
+            example:
+              responseType: text
+              attributeType: none
+              name: vendor_attribute_3007_9603614
+              description: desc_3007_9603614
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeResponse'
+              example:
+                id: f17a3b03-62da-4448-b3bb-e56d4a2291c2
+                name: vendor_attribute_3007_9603614
+                fieldName: customField1104
+                nameKey: VendorsCustomField1104
+                description: desc_3007_9603614
+                descriptionKey: VendorsCustomField1104Desc
+                required: false
+                status: enabled
+                attributeType: none
+                responseType: text
+                readOnly: false
+                seeded: false
+                hiddenAtInventory: false
+                trackedAtRelatedInventoryType: null
+                source: Custom
+                dataSource: null
+                formula: null
+                schemaName: Vendors
+                hidden: false
+                allowLabels: false
+                responseSubType: null
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/{schemaName}/attributes/activate:
+    put:
+      operationId: activateAttributesByFieldNames
+      summary: Activate Attribute Values
+      description: Use this API to activate attributes by field names.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: Type of the inventory or schema. The supporting types are 'processing-activities', 'vendors', 'assets', and 'entities'.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              anyOf:
+              - $ref: '#/components/schemas/BulkAttributeStatusUpdateRequest'
+            example:
+              fieldNames:
+              - status
+              - category
+              - owner
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/{schemaName}/attributes/deactivate:
+    put:
+      operationId: deactivateAttributesByFieldNames
+      summary: Deactivate Attribute Values
+      description: Use this API to deactivate attributes by field names.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: Type of the inventory or schema. The supporting types are 'processing-activities', 'vendors', 'assets', and 'entities'.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              anyOf:
+              - $ref: '#/components/schemas/BulkAttributeStatusUpdateRequest'
+            example:
+              fieldNames:
+              - status
+              - category
+              - owner
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/schemas/{schemaName}/attributes/{fieldName}:
+    get:
+      operationId: getSchemaDetailsUsingFieldName
+      summary: Get Inventory Schema Details
+      description: Use this API to retrieve the schema details by field name.
+      tags:
+      - Inventory Schema
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: Type of the inventory or schema. The supporting types are 'processing-activities', 'vendors', 'assets', and 'entities'.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: fieldName
+        in: path
+        description: Field name of the attribute to retrieve details for
+        required: true
+        schema:
+          type: string
+        example: name
+      - name: showAll
+        in: query
+        description: Flag to show all attribute values including inactive ones
+        required: false
+        schema:
+          type: boolean
+          enum:
+          - 'true'
+          - 'false'
+        example: true
+      - name: optionsSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeDetailResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /inventory/v2/schemas/{type}:
+    get:
+      tags:
+      - Inventory Schema
+      summary: Get Inventory Schema
+      description: 'Use this API to retrieve the schema (attribute definitions) for a specific inventory type. The schema defines all available attributes, their types, and validation rules for the specified inventory category.
+
+
+        This is useful for understanding the structure of inventory records before creating or updating them, or for dynamically building forms and validation logic.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/schemas/{type}`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/schemas/processing-activities`'
+      operationId: getSchemaUsingGET_1
+      parameters:
+      - $ref: '#/components/parameters/inventoryType'
+      - name: showAll
+        in: query
+        description: When set to `true`, returns the complete schema including all attribute details such as allowed values, validation rules, and metadata. When `false` or omitted, returns only basic attribute information.
+        required: false
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+        example: 'true'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttributeResponse_2'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      security:
+      - oauth2: []
+    servers:
+    - url: https://customer.my.onetrust.com/api
+components:
+  schemas:
+    AbacAssignmentAssociation:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbacBasicAssignmentInfo'
+        objectType:
+          type: string
+    BulkAttributeStatusUpdateRequest:
+      type: object
+      properties:
+        fieldNames:
+          description: List of attribute field names to be updated.
+          type: array
+          items:
+            type: string
+          example:
+          - status
+          - category
+          - owner
+          minItems: 1
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: Field Name
+          type: string
+          maxLength: 200
+          minLength: 0
+        name:
+          description: Attribute Name
+          type: string
+          minLength: 1
+        nameKey:
+          description: Attribute Name Key. Used for Translation
+          type: string
+          maxLength: 200
+          minLength: 0
+        description:
+          description: Attribute Description
+          type: string
+        descriptionKey:
+          description: Attribute Description Key
+          type: string
+          maxLength: 200
+          minLength: 0
+        options:
+          description: Attribute Options
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+          minItems: 1
+      required:
+      - name
+    AttributeValueUpdateRequest:
+      type: object
+      properties:
+        AttributeId:
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        Value:
+          description: Value of the attribute option
+          type: string
+          example: Option 1
+        Status:
+          description: Status of the attribute value
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        hint:
+          description: Hint text for the attribute value
+          type: string
+          example: Select this option if...
+        colorCode:
+          description: Color code for visual representation
+          type: string
+          example: '#FF5733'
+        selectionValue:
+          description: Selection value for numerical attributes
+          type: string
+          example: 5
+        context:
+          $ref: '#/components/schemas/AttributeContext'
+      required:
+      - AttributeId
+      - Value
+    AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
+      example:
+        hint: This option provides additional information about the attribute
+        hintKey: attribute.option.hint.key
+    AttributeDetailResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        fieldName:
+          type: string
+          maxLength: 100
+          minLength: 0
+        nameKey:
+          description: Key used for name translation
+          type: string
+          example: VendorsName
+        description:
+          description: Description of the attribute
+          type: string
+          example: Name of the vendor
+        descriptionKey:
+          description: Key used for description translation
+          type: string
+          example: VendorsNameDesc
+        required:
+          description: Flag indicating if the attribute is required
+          type: boolean
+          example: true
+        status:
+          description: Status of the attribute
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        attributeType:
+          description: Type of the attribute
+          type: string
+          example: none
+          enum:
+          - none
+          - users
+          - locations
+          - organizations
+          - vendors
+          - assets
+          - entities
+          - processing-activities
+          - statuses
+        responseType:
+          description: Response type of the attribute
+          type: string
+          example: single-select
+          enum:
+          - text
+          - date
+          - single-select
+          - multi-select
+          - numerical-text
+          - numerical-single-select
+          - score
+          - formula
+        readOnly:
+          description: Flag indicating if the attribute is read-only
+          type: boolean
+          example: false
+        seeded:
+          description: Flag indicating if the attribute is seeded (system-provided)
+          type: boolean
+          example: true
+        hiddenAtInventory:
+          description: Flag indicating if the attribute is hidden at inventory detail view
+          type: boolean
+          example: false
+        trackedAtRelatedInventoryType:
+          description: Related inventory type where this attribute is tracked
+          type: string
+          example: vendors
+        source:
+          description: Source of the attribute
+          type: string
+          example: System
+          enum:
+          - System
+          - Custom
+          - Vendorpedia
+        dataSource:
+          description: Data source information for the attribute
+          $ref: '#/components/schemas/AttributeDataSourceDto'
+        formula:
+          description: Formula expression for formula-type attributes
+          type: string
+          example: sum(Assets:customField1044,Entities:customField1001)
+        schemaName:
+          description: Name of the schema this attribute belongs to
+          type: string
+          example: Vendors
+        hidden:
+          description: Flag indicating if the attribute is hidden
+          type: boolean
+          example: false
+        allowLabels:
+          description: Flag indicating if the attribute allows labels
+          type: boolean
+          example: false
+        intakeQuestionKey:
+          description: Key for the intake question
+          type: string
+          example: VendorsIntakeQuestion1
+        intakeQuestion:
+          description: Intake question details
+          $ref: '#/components/schemas/IntakeQuestion'
+        validationRuleId:
+          description: ID of the validation rule applied to this attribute
+          type: string
+          example: f17a3b03-62da-4448-b3bb-e56d4a2291c2
+        abacBasicAssignmentInfo:
+          description: Assignments for the Attribute
+          $ref: '#/components/schemas/AbacAssignmentAssociation'
+        systemManaged:
+          description: Flag indicating if the attribute is system-managed and cannot be modified
+          type: boolean
+          example: false
+        allowOther:
+          type: boolean
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeValueResponse'
+        autoUpdate:
+          type: boolean
+        attributeLaws:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyNameDto'
+        responseSubType:
+          description: Sub-type of the response
+          type: string
+          example: Standard
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        associatedAttributes:
+          description: List of associated attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeResponse'
+    AbacBasicAssignmentInfo:
+      type: object
+      properties:
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+        policyStatus:
+          description: Policy status of the linked assignment
+          type: string
+          example: ACTIVE
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - PROCESSING
+          - FAILED
+    KeyNameDto:
+      type: object
+      properties:
+        key:
+          description: The key identifier
+          type: string
+          example: active
+        name:
+          description: The display name associated with the key
+          type: string
+          example: Active
+      required:
+      - key
+    AttributeDataSourceDto:
+      type: object
+      properties:
+        Attribute Data Source Key:
+          type: string
+          maxLength: 256
+          minLength: 0
+        Attribute Data Source Name:
+          type: string
+          maxLength: 256
+          minLength: 0
+        Attribute Data Source Name Key for translation:
+          type: string
+          maxLength: 128
+          minLength: 0
+      required:
+      - Attribute Data Source Key
+      - Attribute Data Source Name
+      - Attribute Data Source Name Key for translation
+    AssociatedAttributeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        fieldName:
+          type: string
+          maxLength: 100
+          minLength: 0
+        nameKey:
+          type: string
+          maxLength: 400
+          minLength: 0
+        description:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 400
+          minLength: 0
+        status:
+          type: string
+          maxLength: 50
+          minLength: 0
+        responseType:
+          type: string
+          maxLength: 2147483647
+          minLength: 0
+        responseSubType:
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          type: string
+        schemaName:
+          type: string
+          maxLength: 50
+          minLength: 0
+        hidden:
+          type: boolean
+        readOnly:
+          type: boolean
+        Attribute options:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeValueResponse'
+      required:
+      - hidden
+    AttributeValueCreateRequest:
+      type: object
+      properties:
+        value:
+          description: Value of the attribute option
+          type: string
+          example: Option 1
+        hint:
+          description: Hint text for the attribute value
+          type: string
+          example: Select this option if...
+        defaultValue:
+          description: Default value for the attribute
+          type: string
+          example: true
+        colorCode:
+          description: Color code for visual representation
+          type: string
+          example: '#FF5733'
+        selectionValue:
+          description: Selection value for numerical attributes
+          type: string
+          example: 5
+        selectionValueAsDouble:
+          type: number
+          format: double
+      required:
+      - value
+    AttributeContext:
+      type: object
+      properties:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    SchemaSummaryDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        nameKey:
+          type: string
+        uri:
+          type: string
+    AttributeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        fieldName:
+          type: string
+          maxLength: 100
+          minLength: 0
+        nameKey:
+          description: Key used for name translation
+          type: string
+          example: VendorsName
+        description:
+          description: Description of the attribute
+          type: string
+          example: Name of the vendor
+        descriptionKey:
+          description: Key used for description translation
+          type: string
+          example: VendorsNameDesc
+        required:
+          description: Flag indicating if the attribute is required
+          type: boolean
+          example: true
+        status:
+          description: Status of the attribute
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        attributeType:
+          description: Type of the attribute
+          type: string
+          example: none
+          enum:
+          - none
+          - users
+          - locations
+          - organizations
+          - vendors
+          - assets
+          - entities
+          - processing-activities
+          - statuses
+        responseType:
+          description: Response type of the attribute
+          type: string
+          example: single-select
+          enum:
+          - text
+          - date
+          - single-select
+          - multi-select
+          - numerical-text
+          - numerical-single-select
+          - score
+          - formula
+        readOnly:
+          description: Flag indicating if the attribute is read-only
+          type: boolean
+          example: false
+        seeded:
+          description: Flag indicating if the attribute is seeded (system-provided)
+          type: boolean
+          example: true
+        hiddenAtInventory:
+          description: Flag indicating if the attribute is hidden at inventory detail view
+          type: boolean
+          example: false
+        trackedAtRelatedInventoryType:
+          description: Related inventory type where this attribute is tracked
+          type: string
+          example: vendors
+        source:
+          description: Source of the attribute
+          type: string
+          example: System
+          enum:
+          - System
+          - Custom
+          - Vendorpedia
+        dataSource:
+          description: Data source information for the attribute
+          $ref: '#/components/schemas/AttributeDataSourceDto'
+        formula:
+          description: Formula expression for formula-type attributes
+          type: string
+          example: sum(Assets:customField1044,Entities:customField1001)
+        schemaName:
+          description: Name of the schema this attribute belongs to
+          type: string
+          example: Vendors
+        hidden:
+          description: Flag indicating if the attribute is hidden
+          type: boolean
+          example: false
+        allowLabels:
+          description: Flag indicating if the attribute allows labels
+          type: boolean
+          example: false
+        intakeQuestionKey:
+          description: Key for the intake question
+          type: string
+          example: VendorsIntakeQuestion1
+        intakeQuestion:
+          description: Intake question details
+          $ref: '#/components/schemas/IntakeQuestion'
+        validationRuleId:
+          description: ID of the validation rule applied to this attribute
+          type: string
+          example: f17a3b03-62da-4448-b3bb-e56d4a2291c2
+        abacBasicAssignmentInfo:
+          description: Assignments for the Attribute
+          $ref: '#/components/schemas/AbacAssignmentAssociation'
+        systemManaged:
+          description: Flag indicating if the attribute is system-managed and cannot be modified
+          type: boolean
+          example: false
+        responseSubType:
+          description: Sub-type of the response
+          type: string
+          example: Standard
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        associatedAttributes:
+          description: List of associated attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeResponse'
+    AttributeCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the attribute
+          type: string
+          example: Vendor Rating
+        description:
+          description: Description of the attribute
+          type: string
+          example: Rating assigned to the vendor
+        responseType:
+          description: Response type of the attribute
+          type: string
+          example: single-select
+          enum:
+          - text
+          - date
+          - single-select
+          - multi-select
+          - numerical-text
+          - numerical-single-select
+          - score
+          - formula
+        allowOther:
+          type: boolean
+          enum:
+          - 'true'
+          - 'false'
+        formula:
+          description: Formula expression for formula-type attributes
+          type: string
+          example: sum(Assets:customField1044,Entities:customField1001)
+        intakeQuestionKey:
+          description: Key for the intake question
+          type: string
+          example: VendorsIntakeQuestion1
+        question:
+          description: Question for Attribute
+          type: string
+        questionDescription:
+          description: Question Description for Attribute
+          type: string
+        context:
+          $ref: '#/components/schemas/AttributeContext'
+        fieldName:
+          description: Field name of the attribute (system-generated if not provided)
+          type: string
+          example: vendorRating
+        attributeType:
+          description: Type of the attribute
+          type: string
+          example: none
+          enum:
+          - none
+          - users
+          - locations
+          - organizations
+          - vendors
+          - assets
+          - entities
+          - processing-activities
+          - statuses
+        trackedAtRelatedInventoryType:
+          description: Related inventory type where this attribute is tracked
+          type: string
+          example: vendors
+        responseSubType:
+          description: Response sub-type for the attribute
+          type: string
+          example: Standard
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        associatedAttributeRequest:
+          description: Associated attribute request details for linked attributes
+          $ref: '#/components/schemas/AssociatedAttributeRequest'
+        allowLabels:
+          description: Flag indicating if the attribute allows labels
+          type: boolean
+          example: false
+          default: 'false'
+        abacBasicAssignmentInfo:
+          description: GUID, name and the objectType of the linked assignment
+          $ref: '#/components/schemas/AbacAssignmentAssociation'
+      required:
+      - description
+      - name
+      - responseType
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: Associated attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+          minItems: 1
+    AttributeOptionRequest:
+      type: object
+      properties:
+        option:
+          description: The option text to be displayed
+          type: string
+          example: Example Option
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option key which can be used for translation and internationalization
+          type: string
+          example: example_option
+          maxLength: 255
+        optionSelectionValue:
+          description: Option selection value used to identify the option in forms or programmatic interfaces
+          type: string
+          example: value1
+          maxLength: 255
+        colorCode:
+          description: Color code in hexadecimal format for UI representation
+          type: string
+          example: '#FFFFFF'
+          enum:
+          - '#000000'
+          - '#FFFFFF'
+          - '#FF0000'
+          - '#00FF00'
+          - '#0000FF'
+          maxLength: 7
+          minLength: 4
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+        metadata:
+          description: Additional metadata associated with the attribute option
+          example:
+            hint: This option provides additional information about the attribute
+            hintKey: attribute.option.hint.key
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      example:
+        option: Example Option
+        optionKey: example_option
+        optionSelectionValue: value1
+        colorCode: '#FFFFFF'
+      required:
+      - option
+      title: Attribute Option Request
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: Key used for intake question name translation
+          type: string
+          example: VendorsIntakeQuestionName
+          maxLength: 100
+          minLength: 0
+        name:
+          description: Name of the intake question
+          type: string
+          example: What is your preferred vendor category?
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          description: Key used for intake question description translation
+          type: string
+          example: VendorsIntakeQuestionDesc
+          maxLength: 100
+          minLength: 0
+        description:
+          description: Description of the intake question
+          type: string
+          example: Please select the category that best describes your vendor
+          maxLength: 500
+          minLength: 0
+    AttributeValueResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the attribute value
+          type: string
+          example: 91e37a36-ca61-499b-b3c3-7d556aef5cde
+        value:
+          description: Value of the attribute option
+          type: string
+          example: Option 1
+        valueKey:
+          description: Key used for value translation
+          type: string
+          example: VendorsOption1
+        hint:
+          description: Hint text for the attribute value
+          type: string
+          example: Select this option if...
+        hintKey:
+          description: Key used for hint translation
+          type: string
+          example: VendorsOption1Hint
+        status:
+          description: Status of the attribute value
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        seeded:
+          description: Flag indicating if the attribute value is seeded (system-provided)
+          type: boolean
+          example: true
+        sequence:
+          description: Sequence number for ordering
+          type: integer
+          format: int32
+          example: 1
+          minimum: 1
+        colorCode:
+          description: Color code for visual representation
+          type: string
+          example: '#FF5733'
+        selectionValue:
+          description: Selection value for numerical attributes
+          type: string
+          example: 5
+    AttributeResponse_2:
+      type: object
+      properties:
+        attributeType:
+          type: string
+        description:
+          type: string
+        descriptionKey:
+          type: string
+        fieldName:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        nameKey:
+          type: string
+        required:
+          type: boolean
+        responseType:
+          type: string
+        status:
+          type: string
+      title: AttributeResponse
+  parameters:
+    inventoryType:
+      name: type
+      in: path
+      description: 'The type of inventory or schema to retrieve. Each type represents a different category of data mapping records:
+
+        - **processing-activities**: Records describing how personal data is processed
+
+        - **vendors**: Third-party organizations that process data on your behalf
+
+        - **assets**: Systems, applications, or databases that store or process data
+
+        - **entities**: Legal entities or business units within your organization'
+      required: true
+      schema:
+        type: string
+        enum:
+        - processing-activities
+        - vendors
+        - assets
+        - entities
+      example: vendors
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY_READ: Read inventory records
+            INVENTORY_WRITE: Create and delete inventory records
+x-refined-from:
+- onetrust-privacy-automation-data-mapping-automation-openapi.json
+- onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

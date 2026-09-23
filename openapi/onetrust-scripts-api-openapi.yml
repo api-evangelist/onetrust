@@ -1,0 +1,1264 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Scripts API
+  version: '1.0'
+  description: 'Operations tagged Scripts across 2 of this provider''s published API definitions: onetrust-consent-preferences-cookie-consent-openapi.json, onetrust-consent-preferences-cookie-consent-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api/cookiemanager
+tags:
+- name: Scripts
+  description: The Scripts APIs are used to manage publishing of scripts to websites.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+paths:
+  /api/cmp/v1/applications/{id}/publish:
+    put:
+      operationId: publishAppScript
+      summary: Publish Application SDK
+      description: Use this API to publish the script configuration options for the specified application.
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: UUID of the application to publish for
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishGeolocationRuleRequestApplicationPublicDto'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/applications/{id}/script-details:
+    get:
+      operationId: getAppScriptDetails
+      summary: Get Script for Application
+      description: Use this API to retrieve script details for the specified application.
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the Application to retrieve a script of
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationScriptDetailsPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/publish:
+    put:
+      operationId: publishScriptToSite
+      summary: Publish Script to Website
+      description: 'Use this API to publish the script configuration options for the specified website.
+
+
+        > 👍
+
+        >
+
+        > For more information, see Publishing and Implementing Cookie Consent Scripts.'
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: scriptType
+        in: query
+        description: The type of script either production or test.
+        required: false
+        schema:
+          type: string
+          enum:
+          - production
+          - test
+        example: production
+      - name: website
+        in: query
+        description: The website domain to target for the operation.
+        required: true
+        schema:
+          type: string
+          maxLength: 1024
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptPublishRequestDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishScriptDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/scripts:
+    get:
+      operationId: getScriptForWebsite
+      summary: Get Script for Website
+      description: Use this API to retrieve the script for the specified website.
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: scriptType
+        in: query
+        description: The type of script either production or test.
+        required: false
+        schema:
+          type: string
+          enum:
+          - production
+          - test
+        example: production
+      - name: website
+        in: query
+        description: The website domain to target for the operation.
+        required: true
+        schema:
+          type: string
+          maxLength: 1024
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/{domainId}/script-details:
+    get:
+      operationId: getScriptDetails
+      summary: Get Script for Domain
+      description: Use this API to retrieve script details for the specified website.
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: Identifier of the domain to retrieve the latest script for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      - name: scriptType
+        in: query
+        description: The type of script either production or test.
+        required: false
+        schema:
+          type: string
+          enum:
+          - production
+          - test
+        example: production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainScriptDetailsPublicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/{domainId}/scripts:
+    get:
+      operationId: downloadScriptFile
+      summary: Download Script File
+      description: 'Use this API to download the script files for the specified domain. The files will be downloaded within a folder in blob format.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The domain must be in **Published** status.
+
+
+        > 👍
+
+        >
+
+        > For more information, see Downloading and Deploying Scripts from Local Hosting.'
+      tags:
+      - Scripts
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /v1/script-integration/{domainId}/downloadscriptv2:
+    get:
+      tags:
+      - Scripts
+      summary: Download Script File
+      description: 'Use this API to download the script files for the specified domain. The files will be downloaded within a folder in blob format.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The domain must be in **Published** status.
+
+
+        > 👍
+
+        >
+
+        > For more information, see Downloading and Deploying Scripts from Local Hosting.'
+      operationId: downloadToLocalUsingGet
+      parameters:
+      - in: path
+        name: domainId
+        description: ID of the domain in OneTrust Admin Portal. This string is obtained from the URL on the specific pages in OneTrust Admin Portal relating to that domain. (Example- The script page or the scan results page for that domain.)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      security:
+      - apikey: []
+      - oauth2:
+        - COOKIE
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+  /v2/websites/scripts:
+    get:
+      tags:
+      - Scripts
+      summary: Get Script for Website
+      description: Use this API to retrieve the script for the specified website.
+      operationId: getScriptForWebsiteUsingGET
+      parameters:
+      - name: website
+        in: query
+        description: ID of the webiste or URL of the website.
+        required: true
+        schema:
+          type: string
+      - name: scriptType
+        in: query
+        description: Type of the script. It can be test or prod/production. test publishes test script and prod/production - publishes production script. If nothing is provided by the user, both production and test scripts will be published.
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      deprecated: false
+      security:
+      - apikey: []
+      - oauth2:
+        - COOKIE_READ
+        - COOKIE_FREE
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+  /v2/websites/publish:
+    put:
+      tags:
+      - Scripts
+      summary: Publish Script to Website
+      operationId: publishToSiteUsingPUT
+      parameters:
+      - name: website
+        in: query
+        description: ID of the webiste or URL of the website.
+        required: true
+        schema:
+          type: string
+      - name: scriptType
+        in: query
+        description: Type of the script. It can be test or prod/production. test publishes test script and prod/production - publishes production script. If nothing is provided by the user, both production and test scripts will be published.
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptPublishRequestDto_2'
+        description: Publish Request Details
+        x-examples:
+          application/json:
+            autoblockEnabled: true
+            enableCommonTrackers: false
+            languageDetectionEnabled: true
+            languageDetectionHtml: true
+            languageDetectionVisitor: false
+            languages:
+            - English
+            - Spanish
+            publishIndividualLanguages: false
+            requireReconsent: false
+            suppressBannerEnabled: false
+            suppressPCEnabled: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishScriptDto_2'
+              examples:
+                response:
+                  value:
+                    autoBlocking: false
+                    consentPolicyName: EU Georule
+                    publishVersion: 6.8.0
+                    publishedDate: '2002-05-31T14:17:26.598Z'
+                    reconsentRequired: false
+                    responseMsg: Publish initiated successfully
+                    userName: 123e4567-e89b-12d3-a456-426614174000
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      deprecated: false
+      security:
+      - apikey: []
+      - oauth2:
+        - COOKIE
+      description: 'Use this API to publish the script configuration options for the specified website.
+
+
+        > 👍
+
+        >
+
+        > For more information, see Publishing and Implementing Cookie Consent Scripts.'
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+components:
+  schemas:
+    ScriptPublishRequestDto:
+      type: object
+      properties:
+        scriptVersion:
+          description: '(Optional) The SDK version to publish to. If not provided, the previously configured SDK version will be used. '
+          type: string
+          example: 202607.1.0
+        languages:
+          description: The list of language codes for localized content.
+          type: array
+          items:
+            type: string
+          example:
+          - Irish
+          - English - United States of America
+          - Greek
+          maxItems: 100
+          minItems: 0
+        publishIndividualLanguages:
+          description: This flag indicates whether to publish scripts for individual languages separately.
+          type: boolean
+          example: true
+          default: 'false'
+        requireReconsent:
+          description: This flag indicates whether user reconsent is required.
+          type: boolean
+          example: true
+          default: 'false'
+        regionRules:
+          description: (Optional) Individual geolocation rules to apply require reconsent to.
+          type: array
+          items:
+            $ref: '#/components/schemas/PublishRegionRuleDto'
+          example:
+          - ruleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            ruleName: Global
+          - ruleId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            ruleName: Europe
+          maxItems: 1000
+          minItems: 0
+        suppressBannerEnabled:
+          description: This flag indicates whether the consent banner display is suppressed.
+          type: boolean
+          example: false
+        suppressPCEnabled:
+          description: This flag indicates whether the preference center display is suppressed.
+          type: boolean
+          example: false
+        gaTrackingEnabled:
+          description: When toggle is ON, Google Analytics events will be created and passed based on user interaction. You can also choose for gaEvent tracking on the banner to be associated with the acceptance of a category. The data-ignore-ga='true' attribute will override this configuration. Google Analytics integration also required.
+          type: boolean
+        gaAssignCategory:
+          description: Name of the category to assign to Google Analytics events. Use 'AS' for always send. Unnecessary unless gaTrackingEnabled is true.
+          type: string
+          example: C0001
+        autoblockEnabled:
+          description: This flag indicates whether automatic blocking of cookies is enabled.
+          type: boolean
+          example: false
+        enableCommonTrackers:
+          description: This flag indicates whether common tracking technologies are enabled.
+          type: boolean
+          example: false
+        commonTrackers:
+          description: Select the hosts that you want to autoblock. Only applicable when autoblockEnabled and enableCommonTrackers are true.
+          type: array
+          items:
+            type: string
+          enum:
+          - addthis.com
+          - addtoany.com
+          - adsrvr.org
+          - amazon-adsystem.com
+          - bing.com
+          - bounceexchange.com
+          - bouncex.net
+          - criteo.com
+          - criteo.net
+          - dailymotion.com
+          - doubleclick.net
+          - everesttech.net
+          - facebook.com
+          - facebook.net
+          - googleadservices.com
+          - googlesyndication.com
+          - krxd.net
+          - liadm.com
+          - linkedin.com
+          - outbrain.com
+          - rubiconproject.com
+          - sharethis.com
+          - taboola.com
+          - twitter.com
+          - vimeo.com
+          - yahoo.com
+          - youtube.com
+          maxItems: 100
+          minItems: 0
+        sameSiteNone:
+          description: Sets the cookies used SameSite attribute to 'None'
+          type: boolean
+          example: false
+        separateCookieByDomain:
+          description: Only applicable when sameSiteNone is true.When cookies are created with partitioned state from an iframe, they are created specific to their top level site domain and are not shared with other top-level domains using the same iframe. This setting is ignored if sameSiteNone is false.
+          type: boolean
+          example: false
+        supportSPA:
+          description: Enabling this allows you to force the banner to reload, the same as it would on an actual page change.
+          type: boolean
+          example: false
+        supportCSP:
+          description: If enabled, the polyfill allows us to add inline styles, style tags with a nonce are allowed by the CSP
+          type: boolean
+        languageDetectionEnabled:
+          description: This flag indicates whether automatic language detection is enabled.
+          type: boolean
+          example: false
+        languageDetectionVisitor:
+          description: This flag indicates whether visitor-based language detection is enabled.
+          type: boolean
+          example: false
+        languageDetectionHtml:
+          description: This flag indicates whether HTML-based language detection is enabled.
+          type: boolean
+          example: false
+        autoRefreshEnabled:
+          description: When a user makes any consent choice, the web page and consent banner will refresh automatically. This setting can further prevent unauthorized cookies from dropping without consent.
+          type: boolean
+          default: 'false'
+    PublishGeolocationRuleRequestApplicationPublicDto:
+      type: object
+      properties:
+        publishVersion:
+          description: Version to publish, by default the lastest version will be used.
+          type: string
+          example: 202603.1.0
+          maxLength: 255
+          minLength: 1
+        production:
+          description: Publish a test (false) or production (true)
+          type: boolean
+          example: true
+          default: 'false'
+        publishType:
+          description: The type of SDK being published
+          type: string
+          example: PUBLISHERS
+          default: HEADLESS
+          enum:
+          - PUBLISHERS
+          - HEADLESS
+          - UNITY
+          - ROKU
+          - XAMARIN
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        requireReconsent:
+          description: If users will be required to reconsent once this update is published
+          type: boolean
+          example: false
+          default: 'false'
+        langCodes:
+          description: Languages to publish in, by default all languages will be published.
+          type: array
+          items:
+            type: string
+          example:
+          - fr
+          - de
+          - en
+          maxItems: 100
+          minItems: 0
+        regionRules:
+          description: Individual geolocation rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PublishRegionRuleDto'
+          example:
+          - ruleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            ruleName: Global
+          - ruleId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            ruleName: Europe
+          maxItems: 1000
+          minItems: 0
+    DomainScriptDetailsPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier (UUID).
+          type: string
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        url:
+          description: URL assigned to this domain
+          type: string
+          example: onetrust.com
+          maxLength: 255
+          minLength: 1
+        cdnUrl:
+          description: The CDN script to use for production
+          type: string
+          example: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+          maxLength: 500
+          minLength: 1
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        publishStatus:
+          description: The status of the script publication
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        publishDate:
+          description: Date of this publish (timezone UTC)
+          type: string
+          format: date-time
+          example: '2024-01-15T14:30:45'
+        publishVersion:
+          description: Version of this script publish
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        publishBy:
+          description: Tenant who triggered this publish
+          type: string
+          example: Adithya H.
+          maxLength: 255
+        webformIntegrationEnabled:
+          description: If webform integration is enabled
+          type: boolean
+          example: false
+        autoBlockingEnabled:
+          description: Is autoblocking enabled for this script
+          type: boolean
+          example: true
+        distinctSrcUrl:
+          type: boolean
+    PublishScriptDto:
+      type: object
+      properties:
+        responseMsg:
+          description: The response message returned from the operation.
+          type: string
+          example: Publish initiated successfully!
+          maxLength: 500
+          minLength: 1
+        publishVersion:
+          description: The version number of the published script.
+          type: string
+          example: 202503.2.0
+          maxLength: 50
+          minLength: 1
+        consentPolicyName:
+          description: The name of the consent policy that is applied.
+          type: string
+          example: Default Consent Policy
+          maxLength: 255
+          minLength: 1
+        autoBlocking:
+          description: This flag indicates whether automatic cookie blocking is enabled.
+          type: boolean
+          example: true
+        reconsentRequired:
+          description: This flag indicates whether user reconsent is required.
+          type: boolean
+          example: true
+        publishedDate:
+          description: The date and time when the script was published.
+          type: string
+          format: date-time
+          example: '2025-05-29T14:53:00Z'
+        userName:
+          description: The name of the user who performed the operation.
+          type: string
+          example: User user
+          maxLength: 255
+          minLength: 1
+    ApplicationScriptDetailsPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of this Application.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of this mobile Application.
+          type: string
+          example: CashPro Mobile-iOS
+          maxLength: 255
+          minLength: 1
+        version:
+          description: The version of the script
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        platform:
+          description: The platform of this Application.
+          type: string
+          example: IOS
+          enum:
+          - IOS
+          - ANDROID
+          - APPLETV
+          - ANDROIDTV
+          - FIRETV
+          - ROKU
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        lastPublishedStatus:
+          description: The status of the SDK publication
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        lastPublishedDate:
+          description: Last date publish date (timezone UTC)
+          type: string
+          format: date-time
+          example: '2024-01-15T14:30:45'
+        lastPublishedVersion:
+          description: Version of the latest publish
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        lastPublishedBy:
+          description: User who triggered the latest publish
+          type: string
+          example: Adithya H.
+          maxLength: 255
+          minLength: 1
+        solution:
+          description: The type of the SDK published within the application.
+          type: string
+          example: ONETRUST_SDK
+          enum:
+          - API
+          - ONETRUST_SDK
+        publishedVersions:
+          description: The published version of this script.
+          type: array
+          items:
+            type: string
+          example:
+          - 202602.1.0
+          - 202212.1.1
+          uniqueItems: true
+    PublishRegionRuleDto:
+      type: object
+      properties:
+        ruleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        ruleName:
+          description: Name of a Geolocation rule
+          type: string
+          example: Global
+          maxLength: 255
+          minLength: 1
+    PublishScriptDto_2:
+      type: object
+      properties:
+        autoBlocking:
+          type: boolean
+          description: Auto-blocking leverages an additional script that must be added to the website to block tracking technologies based on the source setting them.
+          example: false
+        consentPolicyName:
+          type: string
+          description: The consent policy that is assigned to the website being published.
+          example: EU GeoRule
+        publishVersion:
+          type: string
+          description: The last published version of the script.
+          example: 6.8.0
+        publishedDate:
+          type: string
+          format: date-time
+          description: The date-time when the script was last published.
+          example: '2002-05-31T14:17:26.598Z'
+        reconsentRequired:
+          type: boolean
+          description: Indicates whether website visitors will be reprompted with the Consent Management Platform.
+          example: false
+        responseMsg:
+          type: string
+          description: Response message indicating whether the publish was initiated successfully or it failed.
+          example: Publish initiated successfully
+        userName:
+          type: string
+          description: The tenant GUID of the user which initiated the scan.
+          example: 123e4567-e89b-12d3-a456-426614174000
+      title: PublishScriptDto
+      description: Gets the details of the published production or test script for the website that is passed.
+    ScriptPublishRequestDto_2:
+      type: object
+      properties:
+        autoblockEnabled:
+          type: boolean
+          description: Auto-blocking leverages an additional script that must be added to the website to block tracking technologies based on the source setting them. Setting this flag to ’True’ will indicate this script should be published as well. If not specified, this is assumed ‘False’.
+          example: false
+          default: false
+        enableCommonTrackers:
+          type: boolean
+          description: By default, this flag is ‘False’. Setting to ’True’ indicates to the auto-blocking script to automatically block known trackers.
+          example: false
+          default: false
+        languageDetectionEnabled:
+          type: boolean
+          description: Indicates whether to automatically detect the language of the website visitor. By default this is ’True’. If not specified, this will default to the last time it was published.
+          example: true
+          default: true
+        languageDetectionHtml:
+          type: boolean
+          description: Indicates the script should detect the website visitors langauge based on the webpages language.
+          example: false
+          default: false
+        languageDetectionVisitor:
+          type: boolean
+          description: Indicates the script should detect the website visitors langauge based on their browser language. By default this is ’True’.
+          example: true
+          default: true
+        languages:
+          type: array
+          items:
+            type: string
+          description: Only required if ‘publishIndividualLanguages=’True’. Indicates which languages to publish.
+          example: English,Spanish
+          default: null
+        publishIndividualLanguages:
+          type: boolean
+          description: By default, this flag is ‘False’. Setting to ’True’ indicates you only wish to publish a subset of langauges.
+          example: false
+          default: false
+        requireReconsent:
+          type: boolean
+          description: Indicates that website visitors should be reprompted with the Consent Management Platform. By default, this is set to ‘False’.
+          example: false
+          default: false
+        suppressBannerEnabled:
+          type: boolean
+          description: Indicates the banner is manually invoked on the page and should be suppressed upon on initial load. Usually used for SPAs. By default, this flag is ‘False’.
+          example: false
+          default: false
+        suppressPCEnabled:
+          type: boolean
+          description: Indicates the pref. Center is fetched only upon website visitor interaction with the banner. By default, this flag is ‘False’.
+          example: false
+          default: false
+      title: ScriptPublishRequestDto
+      description: Publishes the production or test script for the website that is passed. All available settings for publishing will by default use the saved values from the last publish if not specified.
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+            COOKIE_FREE: Cookie free Scope gives free users access to apis having free scope associated to them inside the Cookie Consent module.
+x-refined-from:
+- onetrust-consent-preferences-cookie-consent-openapi.json
+- onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

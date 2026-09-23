@@ -1,0 +1,1758 @@
+openapi: 3.2.0
+info:
+  title: AI Governance - AI Governance Entity Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The AI Governance APIs are used to integrate external systems and streamline the flow of data with AI Governance in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Entity Management
+  description: The Entity Management APIs are used to manage AI Governance entities.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+paths:
+  /api/ai-governance/v1/entities:
+    post:
+      operationId: addEntityUsingEntityTypeIdOrEntityTypeNameUsingPOST
+      summary: Create Entity
+      description: 'Use this API to create a new entity record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: entityTypeId
+        in: query
+        description: Identifier of the entity type
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: entityTypeName
+        in: query
+        description: Name of the entity type
+        required: false
+        schema:
+          type: string
+        example: datasets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityCreateRequest'
+            examples:
+              Create dataset Example:
+                summary: Create a dataset
+                description: Example request to create a dataset with attributes
+                value:
+                  name: Test Dataset
+                  attributes:
+                    description:
+                    - value: Test Dataset2
+                    owner: []
+                  organization:
+                    id: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+      responses:
+        '201':
+          description: Created - The entity was successfully created
+          content:
+            application/json:
+              schema:
+                description: Complete information about the created entity
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Created DataSet Response:
+                  summary: Response for created DataSet
+                  description: Example response after successfully creating a DataSet
+                  value:
+                    id: 0ed3f38b-31ac-45f5-9f85-750214217387
+                    number: 10
+                    name: Test Dataset
+                    orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                    schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    entityType:
+                      id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                      name: datasets
+                      nameKey: CE.Datasets.Name
+                      seeded: true
+                      moduleName: AIGovernance
+                      schemaName: datasets
+                    workflowAndStage: null
+                    entityDetail:
+                      description:
+                      - id: null
+                        value: Test Dataset2
+                        disabled: false
+                    attributes: {}
+                    auditFields:
+                      createdDate: '2025-11-18T08:54:42.017Z'
+                      lastUpdatedDate: '2025-11-18T08:54:42.017Z'
+                      createdBy:
+                        id: 5fda0b5e-4eea-4f9f-b512-1e4cae352dbd
+                        name: OneTrust User
+                        email: b478e00e9f394aff920a688bdc13a491@api.onetrust.com
+                        initials: OU
+                      lastModifiedBy:
+                        id: 5fda0b5e-4eea-4f9f-b512-1e4cae352dbd
+                        name: OneTrust User
+                        email: b478e00e9f394aff920a688bdc13a491@api.onetrust.com
+                        initials: OU
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_WRITE
+  /api/ai-governance/v1/entities/search:
+    post:
+      operationId: findAllByTypeIdAndCriteriaUsingPOST
+      summary: Get Full Entity Details
+      description: 'Use this API to retrieve all the details for the specified entity record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: page
+        in: query
+        description: 'Results page to be retrieved (0..N). Example: ''?page=1'''
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        description: 'Number of records per page (1..50). Example: ''?size=20'''
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Example: ''?sort=name,asc'''
+        schema:
+          type: string
+          default: name,asc
+          enum:
+          - name,asc
+          - name,desc
+      - name: entityTypeName
+        in: query
+        description: entityTypeName
+        required: false
+        schema:
+          type: string
+        example: datasets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Search parameters including filtering criteria, pagination settings, and sort order
+              $ref: '#/components/schemas/EntityListRequest'
+            examples:
+              Complex Search Example:
+                summary: Search with multiple conditions
+                description: Example request with multiple search conditions and pagination settings
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: source
+                        value:
+                        - c77e1ae7-ac3f-47ca-b086-6771f10f299d
+                        operator: EQUAL_TO
+                      - field: type
+                        value:
+                        - f70ed73d-6246-49f7-a197-e87e4fcda125
+                        operator: EQUAL_TO
+      responses:
+        '200':
+          description: OK - Successfully retrieved matching entities
+          content:
+            application/json:
+              schema:
+                description: Paginated list of detailed entity information matching the search criteria
+                $ref: '#/components/schemas/Page'
+              examples:
+                DataSets List Response:
+                  summary: Paginated list of DataSets
+                  description: Example response showing a paginated list of DataSets.
+                  value:
+                    content:
+                    - attributes: {}
+                      auditFields:
+                        createdDate: '2025-11-18T07:46:47.610Z'
+                        lastUpdatedDate: '2025-11-18T09:29:34.233Z'
+                        createdBy:
+                          id: 5fda0b5e-4eea-4f9f-b512-1e4cae352dbd
+                          name: OneTrust User
+                          email: b478e00e9f394aff920a688bdc13a491@api.onetrust.com
+                          initials: OU
+                        lastModifiedBy:
+                          id: e9922cc1-b33b-4a7f-b02a-b0d3645d8e90
+                          name: Vinod Ramachandran
+                          email: ot-aigov@gmail.com
+                          initials: VR
+                      entityDetail:
+                        extendedBaseAttributes:
+                          type:
+                          - id: f70ed73d-6246-49f7-a197-e87e4fcda125
+                            value: Time-series
+                            valueKey: CE.Datasets.Attribute.Type.Option.Time-seriesDatasets
+                            disabled: false
+                          source:
+                          - id: c77e1ae7-ac3f-47ca-b086-6771f10f299d
+                            value: Cassandra
+                            valueKey: CE.Datasets.Attribute.Source.Option.Cassandra
+                            disabled: false
+                        datasetVersion:
+                        - id: null
+                          value: '3'
+                          disabled: false
+                        description:
+                        - id: null
+                          value: Test Dataset1
+                          disabled: false
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: ea2586b9-d40a-41c8-808e-2801e33a757d
+                      name: Test Dataset1
+                      number: 9
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                      workflowAndStage: null
+                    pageable:
+                      pageNumber: 0
+                      pageSize: 10
+                      sort:
+                        empty: false
+                        sorted: true
+                        unsorted: false
+                      offset: 0
+                      paged: true
+                      unpaged: false
+                    last: true
+                    totalElements: 1
+                    totalPages: 1
+                    size: 10
+                    number: 0
+                    sort:
+                      empty: false
+                      sorted: true
+                      unsorted: false
+                    first: true
+                    numberOfElements: 1
+                    empty: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+        - AI_GOVERNANCE_WRITE
+  /api/ai-governance/v1/entities/{entityId}:
+    get:
+      operationId: getEntityInformationUsingEntityTypeIdOrEntityTypeNameUsingGET
+      summary: Get Entity
+      description: 'Use this API to retrieve a single entity record by its unique identifier along with the associated attributes, module name, and created date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: entityTypeId
+        in: query
+        description: Identifier of the entity type
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: entityTypeName
+        in: query
+        description: Name of the entity type
+        required: false
+        schema:
+          type: string
+        example: datasets
+      - name: entityId
+        in: path
+        description: Identifier of the entity
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: b2ce12f5-841d-47aa-8d72-8e1d47237806
+      responses:
+        '200':
+          description: OK - Successfully retrieved the entity details
+          content:
+            application/json:
+              schema:
+                description: Complete information about the requested entity
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Dataset Details:
+                  summary: Detailed information about a dataset
+                  description: Example response containing full details of a dataset
+                  value:
+                    id: a6a65501-2d42-4ddc-92a1-d8ef52f4e4a8
+                    number: 1
+                    name: Aigov Dataset
+                    orgGroupId: 2b5e1bbd-efbf-42e5-b0d9-2656e4266e25
+                    schemaId: 61d99b0d-e980-4339-ac90-2bb21d63da88
+                    entityType:
+                      id: 2ed963ac-1049-4084-88f2-abfecab8eb3a
+                      name: datasets
+                      nameKey: CE.Datasets.Name
+                      seeded: true
+                      moduleName: AIGovernance
+                      schemaName: datasets
+                    workflowAndStage: null
+                    entityDetail:
+                      extendedBaseAttributes:
+                        function:
+                        - id: 44a91874-1eee-4a4b-881c-16f6032766f1
+                          value: Testing
+                          valueKey: CE.Datasets.Attribute.Function.Option.Testing
+                          disabled: false
+                      annotation:
+                      - id: null
+                        value: Annotation 1.2
+                        disabled: false
+                      datasetVersion:
+                      - id: null
+                        value: Dataset version 1.2
+                        disabled: false
+                      description:
+                      - id: null
+                        value: New Description 1.2
+                        disabled: false
+                    attributes: {}
+                    auditFields:
+                      createdDate: '2025-12-09T13:34:12.193Z'
+                      lastUpdatedDate: '2026-02-04T08:03:03.883Z'
+                      createdBy:
+                        id: af237fbb-a9b9-416b-87e1-8df0670a06df
+                        name: Abhishek Desai
+                        email: adesai1@onetrust.com
+                        initials: AD
+                      lastModifiedBy:
+                        id: af237fbb-a9b9-416b-87e1-8df0670a06df
+                        name: Abhishek Desai
+                        email: adesai1@onetrust.com
+                        initials: AD
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_WRITE
+        - AI_GOVERNANCE_READ
+    delete:
+      operationId: deleteUsingEntityTypeIdOrEntityTypeNameUsingDELETE
+      summary: Delete Entity
+      description: 'Use this API to delete an existing entity record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: entityTypeId
+        in: query
+        description: Identifier of the entity type
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: entityTypeName
+        in: query
+        description: Name of the entity type
+        required: false
+        schema:
+          type: string
+        example: datasets
+      - name: entityId
+        in: path
+        description: Identifier of the entity being removed using the API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4a32ee83-0127-4d44-ac73-81172d3bd723
+      responses:
+        '204':
+          description: No Content - The entity was successfully deleted
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+    patch:
+      operationId: updateUsingEntityTypeIdOrEntityTypeNameUsingPATCH
+      summary: Modify Entity
+      description: 'Use this API to partially update an existing entity record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: entityTypeId
+        in: query
+        description: Identifier of the entity type
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: entityTypeName
+        in: query
+        description: Name of the entity type
+        required: false
+        schema:
+          type: string
+        example: datasets
+      - name: entityId
+        in: path
+        description: Entity Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f04d40dc-f0be-4671-a604-4755f40d2f0b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Entity update request containing the fields to be modified
+              $ref: '#/components/schemas/EntityUpdateRequest'
+            examples:
+              Update dataset Example:
+                summary: Update dataset
+                description: Example request to update a dataset
+                value:
+                  id: ea2586b9-d40a-41c8-808e-2801e33a757d
+                  number: 9
+                  name: Test Dataset1
+                  organization:
+                    id: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                    name: AIGovernance-New
+                  schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                  entityType:
+                    id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                    name: datasets
+                    nameKey: CE.Datasets.Name
+                    seeded: true
+                    moduleName: AIGovernance
+                    schemaName: datasets
+                  createdDate: '2025-11-18T07:46:47.610Z'
+                  lastModifiedDate: '2025-11-18T09:18:24.646Z'
+                  createdBy:
+                  - id: 5fda0b5e-4eea-4f9f-b512-1e4cae352dbd
+                    value: OneTrust User
+                    disabled: false
+                  lastModifiedBy:
+                  - id: e9922cc1-b33b-4a7f-b02a-b0d3645d8e90
+                    value: Vinod Ramachandran
+                    disabled: false
+                  canViewDetails:
+                  - id: null
+                    value: 'true'
+                    disabled: false
+                  type:
+                  - id: a8098fb2-2bbf-4d71-a07e-4c261f55b89a
+                    value: Audio
+                    valueKey: CE.Datasets.Attribute.Type.Option.AudioDatasets
+                    disabled: false
+                  datasetVersion:
+                  - id: null
+                    value: '3'
+                    disabled: false
+                  description:
+                  - id: null
+                    value: Test Dataset1
+                    disabled: false
+      responses:
+        '200':
+          description: OK - The entity was successfully updated
+          content:
+            application/json:
+              schema:
+                description: Complete information about the updated entity
+                $ref: '#/components/schemas/EntityInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_WRITE
+  /api/ai-governance/v1/entity-basic-details/search:
+    post:
+      operationId: findEntityBasicDetailsByTypeAndCriteriaUsingPOST
+      summary: Get Basic Entity Details
+      description: 'Use this API to retrieve basic details for the specified entity record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: page
+        in: query
+        description: 'Results page to be retrieved (0..N). Example: ''?page=1'''
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        description: 'Number of records per page (1..50). Example: ''?size=20'''
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Example: ''?sort=name,asc'''
+        schema:
+          type: string
+          default: name,asc
+          enum:
+          - name,asc
+          - name,desc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Criteria for filtering entities including attribute conditions and sorting preferences
+              $ref: '#/components/schemas/EntityQueryRequest'
+            examples:
+              Search DataSets by System type and type:
+                summary: Find all System Type DataSets
+                description: Example request to search for DataSets with 'Cassandra' System Type
+                value:
+                  criteria:
+                    fullText: ''
+                    filters:
+                    - field: type
+                      value: f930427d-de10-4aee-9013-dd292faa85d8
+                      operator: EQUAL_TO
+                    - field: source
+                      value:
+                      - c77e1ae7-ac3f-47ca-b086-6771f10f299d
+                      operator: EQUAL_TO
+                  organizationTraversalStrategy: ANCESTORS_AND_DESCENDANTS
+      responses:
+        '200':
+          description: OK - Successfully retrieved matching entities
+          content:
+            application/json:
+              schema:
+                description: Paginated list of basic entity information matching the search criteria
+                $ref: '#/components/schemas/Page'
+              examples:
+                Search Results Example:
+                  summary: Paginated search results
+                  description: Example paginated response with basic entity details
+                  value:
+                    content:
+                    - displayLabel: 9 | Test Dataset1
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: ea2586b9-d40a-41c8-808e-2801e33a757d
+                      name: Test Dataset1
+                      number: 9
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    - displayLabel: 10 | Test Dataset2
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: 0ed3f38b-31ac-45f5-9f85-750214217387
+                      name: Test Dataset2
+                      number: 10
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    - displayLabel: 3 | ds3
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: 3c2c11e4-1bf1-4d54-ab27-09103ff1bacd
+                      name: ds3
+                      number: 3
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    - displayLabel: 4 | ds44
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: 7c9c0616-8536-4ed0-94a5-808dcc7f6732
+                      name: ds44
+                      number: 4
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    - displayLabel: 7 | ds5
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: 12ac9990-0453-4bc0-8259-fccc6632af29
+                      name: ds5
+                      number: 7
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    - displayLabel: 5 | Test DataSet
+                      entityType:
+                        id: f9c55c04-0fd4-44dd-b447-b46af9135341
+                        name: datasets
+                        nameKey: CE.Datasets.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: datasets
+                      id: c02abfc6-eeb9-40b7-8c92-0d86ca0c1355
+                      name: Test DataSet
+                      number: 5
+                      orgGroupId: 06e43366-1f49-4afd-8c51-3989f9cf98f1
+                      schemaId: b9c8145e-1431-46f5-922d-2137f0636485
+                    pageable:
+                      pageNumber: 0
+                      pageSize: 10
+                      sort:
+                        empty: false
+                        sorted: true
+                        unsorted: false
+                      offset: 0
+                      paged: true
+                      unpaged: false
+                    last: true
+                    totalElements: 6
+                    totalPages: 1
+                    size: 10
+                    number: 0
+                    sort:
+                      empty: false
+                      sorted: true
+                      unsorted: false
+                    first: true
+                    numberOfElements: 6
+                    empty: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+        - AI_GOVERNANCE_WRITE
+components:
+  schemas:
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The full name of the user.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: Base Seeded Attributes
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    EntityListRequest:
+      type: object
+      properties:
+        context:
+          description: User-defined context for the current request
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: Query request containing search criteria and organization context
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: Field request specifying which fields to include in the response
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
+    EntityUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The updated name of the entity. If not provided, the existing name will be retained.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The updated organization group for the entity. Contains organization ID and optional name. If not provided, the existing organization will be retained.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Business Unit
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: Custom attributes to update on the entity. Only the attributes provided will be updated; others will retain their existing values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      example:
+        name: OneTrust Updated
+        attributes:
+          textAttributeName:
+          - value: New Text Value
+      title: Entity Update Request
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityQueryRequest:
+      type: object
+      properties:
+        criteria:
+          description: The criteria used to search for entities, including filters, full-text search, and sorting
+          example:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            searchQuery: privacy
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+        organizationTraversalStrategy:
+          description: 'The strategy for fetching entities across related organizations. Default: null (no organization traversal applicable)'
+          type: string
+          example: ancestors_and_descendants
+          enum:
+          - ancestors_and_descendants
+          - descendants
+          - all
+        requestedOrganizationId:
+          description: The overridden requested organization identifier. If supplied, would be used instead of request context organization
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction:
+          description: The query action specifies the source of the API call and allows a service to apply a predicate
+          type: string
+          example: ListEntity
+      example:
+        criteria:
+          filters:
+          - fieldName: name
+            operator: contains
+            value: OneTrust
+          - fieldName: entityStatus
+            operator: equals
+            value: Active
+          - fieldName: lastModifiedTimestamp
+            operator: greaterThan
+            value: '2024-01-01T00:00:00Z'
+          searchQuery: privacy
+          sort:
+          - fieldName: lastModifiedTimestamp
+            direction: DESC
+        organizationTraversalStrategy: ancestors_and_descendants
+        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction: ListEntity
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    EntityOrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the organization.
+          type: string
+          example: Business Unit
+      required:
+      - id
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    EntityFieldRequest:
+      type: object
+      properties:
+        fields:
+          description: The requested non-base fields.
+          type: array
+          items:
+            type: string
+          example:
+          - textAttributeField1
+          - singleSelectAttributeField1
+          maxItems: 500
+          minItems: 0
+        mode:
+          description: The mode based on which required non-base fields would be selected.
+          type: string
+          default: select_all
+          enum:
+          - select_all
+          - ignore_all
+          - specific
+          minLength: 1
+        includeSelectedFullTextSearchFields:
+          description: The full text search mode would only includes passed "fields" of Text/Date/NumericalText/DateTime response type.
+          type: boolean
+          example: true
+        overriddenSearchFields:
+          description: The caller can override search (system) fields which need to included.
+          type: array
+          items:
+            type: string
+          example:
+          - name
+    BasicLinkCreateSourceRequest:
+      type: object
+      properties:
+        attributes:
+          description: Custom attributes for the link based on the link type schema. Contains attribute paths mapped to their values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        entity1:
+          description: The first entity in the relationship (source entity). Contains entity identifier and type details.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The second entity in the relationship (target entity). Contains entity identifier and type details.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entityLinkTypeId:
+          description: Unique identifier of the link type that defines the relationship. Required if sourceSystemGenerator is not provided.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        sourceSystemGenerator:
+          description: Identifier of the system that generates this link. Required if entityLinkTypeId is not provided.
+          type: string
+          example: LINK-SOURCE
+        linkTypeLabel:
+          description: Display name for the relationship direction. Used for showing the relationship in UI.
+          type: string
+          example: Sends Data To
+      example:
+        entity1:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          entityType:
+            name: Vendor
+        entity2:
+          id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+          entityType:
+            name: Asset
+        entityLinkTypeId: d1119953-b4b5-4042-8cb9-b78038cc4c46
+      required:
+      - entity2
+      title: Basic Link Create Source Request
+    EntityCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the entity. Required field used as the primary identifier for users.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The organization group that owns this entity. Contains organization ID and optional name.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Organization Name
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: The custom attributes for the entity defined by its schema. Contains attribute paths mapped to their values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        workflowAndStage:
+          description: Requested workflow and stage to be assigned to the entity during creation. Contains workflow and stage identifiers.
+          example:
+            workflow:
+              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              value: Workflow Name
+            stage:
+              id: d2329953-b4b5-4042-8cb9-b78038cc4c46
+              value: Stage Name
+          $ref: '#/components/schemas/EntityWorkflowStageRequest'
+        entityLinks:
+          description: Entity link requests to create relationships with other entities during entity creation
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicLinkCreateSourceRequest'
+          example:
+          - entity1:
+              id: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+              entityType:
+                name: Issue
+            entityLinkTypeId: a1fe9bea-1e27-4f33-bd1c-3420b894bbb0
+      example:
+        name: OneTrust
+        organization:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        attributes:
+          textAttributeName:
+          - value: Text
+      required:
+      - name
+      title: Entity Create Request
+    BasicAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier of an Entity Attribute
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        value:
+          description: Value of an Entity Attribute
+          type: string
+          example: Galaxy
+    EntityWorkflowStageRequest:
+      type: object
+      properties:
+        workflow:
+          description: Workflow to be assigned to the entity. The entity type must have this workflow type defined in its settings.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            value: Example Workflow
+          $ref: '#/components/schemas/BasicAttributeInformation'
+        stage:
+          description: Workflow stage to be assigned to the entity within the specified workflow. Must be a valid stage for the given workflow.
+          example:
+            id: c86539953-b4b5-4042-8cb9-b78038ccfc46
+            value: Example Stage
+          $ref: '#/components/schemas/BasicAttributeInformation'
+        closedDate:
+          description: Date when the entity was closed. Only relevant for workflows with closed stages.
+          type: string
+          format: date-time
+          example: '2017-02-03T10:37:30Z'
+      example:
+        workflow:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          value: Example Workflow
+        stage:
+          id: c86539953-b4b5-4042-8cb9-b78038ccfc46
+          value: Example Stage
+      title: Entity Workflow Stage Request
+    EntityWorkflowInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow.
+          type: string
+          format: uuid
+          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Vendor On-Boarding Workflow
+        type:
+          description: The type of workflow.
+          type: string
+          example: Vendor
+        workflowMode:
+          description: This parameter indicates whether the workflow mode is null, basic, or advanced.
+          type: string
+          example: BASIC
+          enum:
+          - ADVANCED, BASIC
+        stageId:
+          description: The unique identifier of the workflow stage.
+          type: string
+          format: uuid
+          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName:
+          description: The name of the workflow stage.
+          type: string
+          example: Start On-Boarding
+      example:
+        id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name: Vendor On-Boarding Workflow
+        nameKey: Workflow.VendorOnBoarding.Name
+        type: Vendor
+        workflowMode: BASIC
+        stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName: Start On-Boarding
+        stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+        badgeColor: '#4287f5'
+      required:
+      - id
+      - name
+      - stageId
+      - stageName
+      - type
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the entity type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the entity type.
+          type: string
+          example: Vendor
+        seeded:
+          description: This parameter indicates whether the entity type is seeded or custom.
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the module where the entity exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - projects
+          - models
+          - datasets
+          - aisystems
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    ContextInformation:
+      type: object
+      properties:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    LinkedEntityInformation:
+      type: object
+      properties:
+        linkEntityDetail:
+          description: Link entity details extended base properties
+          example:
+            includeCustomFields: true
+            includeStandardFields: true
+          $ref: '#/components/schemas/EntityDetailRequest'
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number:
+          description: Auto-generated sequential entity number
+          type: integer
+          format: int64
+          example: 1024
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: Name of the entity
+          type: string
+          example: OneTrust DataGuidance
+          maxLength: 255
+          minLength: 1
+        detailsAccessRestricted:
+          description: Flag indicating whether entity is view-only
+          type: boolean
+          example: false
+        redirectURL:
+          description: Redirect URL for the entity
+          type: string
+          example: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: Basic information about the entity type
+          example:
+            id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+            name: Product
+            displayName: Product
+            nameKey: entity.type.product
+            displayNameKey: entity.type.product.display
+            module: VENDOR
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        deleted:
+          type: boolean
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number: 1024
+        name: OneTrust DataGuidance
+        isDeleted: false
+        detailsAccessRestricted: false
+        redirectURL: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          name: Product
+          displayName: Product
+          nameKey: entity.type.product
+          displayNameKey: entity.type.product.display
+          module: VENDOR
+        linkEntityDetail:
+          includeCustomFields: true
+          includeStandardFields: true
+      required:
+      - entityType
+      - id
+      - number
+      title: Linked Entity Information
+    EntityInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the entity. Auto-generated when a new entity is created.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        number:
+          description: The numerical order in which the entity was created. Used for reference and sorting.
+          type: integer
+          format: int64
+          example: 1
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: The name of the entity. Used as the primary identifier for users.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        orgGroupId:
+          description: The unique identifier of the organization that owns this entity.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc2c46
+        schemaId:
+          description: The unique identifier of the schema that defines the structure of this entity.
+          type: string
+          format: uuid
+          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+          readOnly: true
+        entityType:
+          description: The parameters that detail the type of entity, including type ID, name and other type-specific information.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        workflowAndStage:
+          description: The parameters that detail the workflow and stage information, including current workflow state and stage details.
+          example:
+            id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+            name: Vendor On-Boarding Workflow
+            nameKey: Workflow.VendorOnBoarding.Name
+            type: Vendor
+            workflowMode: BASIC
+            stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+            stageName: Start On-Boarding
+            stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+            badgeColor: '#4287f5'
+          $ref: '#/components/schemas/EntityWorkflowInformation'
+        attributes:
+          description: The custom attributes of the entity defined by the entity type schema. Contains attribute paths and corresponding values. The number of attributes can vary based on the entity type definition.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        auditFields:
+          description: The parameters that provide audit history for the entity, including creation and modification details.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name: OneTrust
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc2c46
+          name: Vendor
+      required:
+      - entityType
+      - id
+      - name
+      - number
+      - schemaId
+      title: Entity Information
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            AI_GOVERNANCE: Grants full permissions to manage AI Governance operations for external systems
+            AI_GOVERNANCE_READ: Allows read-only access to AI Governance entities
+            AI_GOVERNANCE_WRITE: Grants permissions to create and modify AI Governance entities
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

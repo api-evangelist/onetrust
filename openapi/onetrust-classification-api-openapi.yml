@@ -1,0 +1,1290 @@
+openapi: 3.2.0
+info:
+  title: Data Use Governance - Data Discovery Classification API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Data Discovery API provides comprehensive REST endpoints for managing data discovery operations including data sources, scan profiles, credentials, and scan jobs with OAuth2 security and extensive filtering capabilities.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Classification
+  description: The Classification APIs are used to manage custom data classifiers and classification rules for Data Discovery.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+  x-displayName: Classification
+paths:
+  /api/label-manager/v2/custom-classifiers:
+    get:
+      operationId: listDetectors
+      summary: Get List of Custom Classifiers
+      description: Use this API to retrieve a list of all custom classifiers. The response will include details such as the classifier name, ID, and detector type.
+      tags:
+      - Classification
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: searchTerm
+        in: query
+        description: The keyword used to search for classifiers.
+        required: false
+        schema:
+          description: The keyword used to search for classifiers.
+          type: string
+        example: Employee Id
+      - name: mappedTermId
+        in: query
+        description: The ID of the mapped term.
+        required: false
+        schema:
+          description: The ID of the mapped term.
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Custom classifiers retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorSummaryDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+        - DATA_DISCOVERY
+    post:
+      operationId: createDetector
+      summary: Create Custom Classifier
+      description: Use this API to create a custom classifier.
+      tags:
+      - Classification
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_CustomDetectorDto'
+      responses:
+        '201':
+          description: Classifier created successfully
+          headers:
+            Location:
+              description: URL of the created classifier
+              style: simple
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+        - DATA_DISCOVERY
+  /api/label-manager/v2/custom-classifiers/{classifierName}:
+    get:
+      operationId: getDetectorByClassifierName
+      summary: Get Custom Classifier
+      description: Use this API to retrieve a specific custom classifier. The response will include details such as the detector type, detection rules, last modified date, and created date.
+      tags:
+      - Classification
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: classifierName
+        in: path
+        description: The name of the classifier.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_.\- '\(\)]+$
+        example: Employee Id
+      responses:
+        '200':
+          description: Custom classifier retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+        - DATA_DISCOVERY
+    put:
+      operationId: updateDetector
+      summary: Update Custom Classifier
+      description: Use this API to update an existing custom classifier.
+      tags:
+      - Classification
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: classifierName
+        in: path
+        description: The name of the classifier.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_.\- '\(\)]+$
+        example: Employee Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_CustomDetectorDto'
+      responses:
+        '200':
+          description: Custom classifier updated successfully
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+        - DATA_DISCOVERY
+    delete:
+      operationId: deleteDetector
+      summary: Delete Custom Classifier
+      description: Use this API to delete a custom classifier.
+      tags:
+      - Classification
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: classifierName
+        in: path
+        description: The name of the classifier.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_.\- '\(\)]+$
+        example: Employee Id
+      responses:
+        '204':
+          description: Custom classifier deleted successfully
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Custom classifier not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+        - DATA_DISCOVERY
+components:
+  schemas:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDefinition:
+      type: object
+      properties:
+        name:
+          description: The name of the classifier definition.
+          type: string
+          example: Employee Id
+        otCode:
+          description: The OneTrust code assigned to the classifier definition.
+          type: string
+          example: system_address_es
+          readOnly: true
+        isCustom:
+          description: This flag indicates whether the classifier definition is custom-created.
+          type: boolean
+          example: false
+          readOnly: true
+        VERSION:
+          description: The version number of the classifier definition.
+          type: integer
+          format: int64
+          example: 1
+          readOnly: true
+        SCHEMA_VERSION:
+          description: The schema version used for the classifier definition.
+          type: string
+          example: 1.0.0
+          readOnly: true
+        metadata:
+          description: The metadata information associated with the classifier definition.
+          example:
+            displayName: Politics
+            otDisplayName: Politics
+            description: This Classifier represents someone's political affiliation based on political parties and ideologies.
+            sensitivityLevel: HIGH
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata'
+        detections:
+          description: The list of detectors used to establish the best matching criteria.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule'
+        detectionRules:
+          description: The list of detection rules used to validate and adjust the likelihood result.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectionRule'
+        evaluations:
+          description: The list of evaluation test cases used to validate the classifier.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation'
+          readOnly: true
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_GlossaryTermDto:
+      type: object
+      properties:
+        name:
+          description: The name of the glossary term associated with the classifier.
+          type: string
+          example: Company ID
+        id:
+          description: The unique identifier of the glossary term associated with the classifier.
+          type: string
+          format: uuid
+          example: a787c869-4628-493b-9393-0007ff6d7494
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorSummaryDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the classifier.
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          description: The system-generated code of the classifier.
+          type: string
+          example: custom_employee_id
+        name:
+          description: The name of the classifier.
+          type: string
+          example: Employee Id
+        custom:
+          description: This flag indicates whether the classifier is custom-created.
+          type: boolean
+          example: true
+        enabled:
+          description: This flag indicates whether the classifier is active.
+          type: boolean
+          example: true
+        detectorType:
+          description: The type of detector used by the classifier to classify data.
+          type: string
+          example: DICTIONARY
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+          - VALIDATOR
+          - TEMPLATE
+          - COMPLEX
+        glossaryTerm:
+          description: The details of the glossary term associated with the classifier.
+          type: string
+          example: ID
+        description:
+          description: The description of the classifier.
+          type: string
+          example: Detect Employee ID
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_LikelihoodAdjustment:
+      type: object
+      properties:
+        adjustLikelihood:
+          description: The integer value used to adjust the likelihood level based on the current likelihood when detection rule criteria are met.
+          type: integer
+          format: int32
+          example: 1
+        setLikelihood:
+          description: The target likelihood level that is set when detection rule criteria are met regardless of the current level.
+          type: string
+          example: VERY_LIKELY
+          enum:
+          - NO_MATCH
+          - VERY_UNLIKELY
+          - UNLIKELY
+          - POSSIBLE
+          - LIKELY
+          - VERY_LIKELY
+        type:
+          description: The strategy used to adjust the likelihood level when detection rule criteria are met.
+          type: string
+          example: SET
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule:
+      type: object
+      properties:
+        type:
+          description: The type of detector used for pattern matching.
+          type: string
+          example: PATTERN
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+        pattern:
+          description: The pattern configuration used for detection matching.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig'
+        dictionary:
+          description: The dictionary configuration used for detection matching.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig'
+        surrogate:
+          description: The surrogate configuration used when using a template from an existing detector.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig'
+        likelihood:
+          description: The initial likelihood level assigned to the detector.
+          type: string
+          example: POSSIBLE
+          enum:
+          - NO_MATCH
+          - VERY_UNLIKELY
+          - UNLIKELY
+          - POSSIBLE
+          - LIKELY
+          - VERY_LIKELY
+        description:
+          description: The description of the detector used for pattern matching.
+          type: string
+          example: This detection will find unformatted ID
+        name:
+          description: The name of the detector used for pattern matching.
+          type: string
+          example: Find Unformatted ID
+        prerequisite:
+          description: The prerequisite conditions that must be met before applying the detector.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite'
+          readOnly: true
+      required:
+      - name
+      - type
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig:
+      type: object
+      properties:
+        terms:
+          description: The list of terms or keywords used in the detection rule dictionary.
+          type: array
+          items:
+            type: string
+          example:
+          - hello
+          - hello world
+        ignoreCase:
+          description: This flag indicates whether the detection rule dictionary ignores case sensitivity.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - terms
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectionRule:
+      type: object
+      properties:
+        type:
+          description: The type of detection rule applied to validate matches.
+          type: string
+          example: PATTERN
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - VALIDATOR
+        name:
+          description: The name of the detection rule used for validation.
+          type: string
+          example: Check If The Finding Starts With 123
+        dictionary:
+          description: The dictionary configuration used in the detection rule.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig'
+        pattern:
+          description: The pattern configuration used in the detection rule.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig'
+        validator:
+          description: The validator configuration used in the detection rule.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_ValidatorConfig'
+        inverse:
+          description: This flag indicates whether to return matches that meet or do not meet the detection rule criteria.
+          type: boolean
+          default: 'false'
+        target:
+          description: The target option where the detection rule is applied.
+          type: string
+          enum:
+          - FINDING
+          - CONTEXT
+          - XPATH
+          - OBJECT_NAME
+          - OBJECT_PARENT
+          - FILE_EXTENSION
+          - FILE_NAME
+          - COLUMN_NAME
+        context:
+          description: The context configuration for the detection rule.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_ContextConfig'
+        likelihoodAdjustment:
+          description: The likelihood adjustment configuration applied when detection rule criteria are met.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_LikelihoodAdjustment'
+        includeExpand:
+          description: This flag indicates whether to include context that matches or does not match the detection rule criteria.
+          type: boolean
+          default: 'false'
+      required:
+      - type
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_FilterFlags:
+      type: object
+      properties:
+        ignoreCase:
+          description: This flag indicates whether word filtering ignores case sensitivity.
+          type: boolean
+        inverse:
+          description: This flag indicates whether to apply inverse word filtering logic.
+          type: boolean
+        startBoundary:
+          description: The boundary condition applied at the start of word filtering.
+          type: string
+          enum:
+          - ALWAYS
+          - NEVER
+          - IGNORE
+        endBoundary:
+          description: The boundary condition applied at the end of word filtering.
+          type: string
+          enum:
+          - ALWAYS
+          - NEVER
+          - IGNORE
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDto:
+      type: object
+      properties:
+        name:
+          description: The name of the classifier.
+          type: string
+          example: Employee Id
+          maxLength: 100
+          minLength: 1
+          pattern: ^(?=.*[a-zA-Z0-9])[a-zA-Z0-9_.\- '\(\)]+$
+        description:
+          description: The description of the classifier.
+          type: string
+          example: Find Employee ID
+        code:
+          description: The system-generated code of the classifier.
+          type: string
+          readOnly: true
+        custom:
+          description: This flag indicates whether the classifier is custom-created.
+          type: boolean
+          example: false
+          readOnly: true
+        enabled:
+          description: This flag indicates whether the classifier is active.
+          type: boolean
+          example: true
+          readOnly: true
+        isPII:
+          description: This flag indicates whether the classifier contains personally identifiable information.
+          type: boolean
+          example: false
+        surrogateType:
+          description: The surrogate type associated with the classifier.
+          type: string
+          readOnly: true
+        detectorType:
+          description: The type of detector used by the classifier to classify data.
+          type: string
+          example: DICTIONARY
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+          - VALIDATOR
+          - TEMPLATE
+          - COMPLEX
+          readOnly: true
+        detectorVersion:
+          description: The version number of the classifier.
+          type: integer
+          format: int64
+          example: 1
+          readOnly: true
+        definition:
+          description: The technical definition of the classifier.
+          example:
+            detections:
+            - name: '9 digit Employee ID '
+              type: PATTERN
+              pattern:
+                regex: (?:^|\b)\d{9}(?:\b|$)
+                flags: gm
+              likelihood: POSSIBLE
+            - name: Known Short Special Employee ID
+              type: DICTIONARY
+              dictionary:
+                terms:
+                - '00001'
+                - '10000'
+                ignoreCase: true
+              likelihood: POSSIBLE
+            detectionRules:
+            - type: PATTERN
+              name: Invalid Column Name
+              inverse: false
+              target: COLUMN_NAME
+              includeExpand: false
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: NO_MATCH
+              pattern:
+                regex: license|key|code|security|passport|password|url|token
+                flags: mi
+            - type: PATTERN
+              name: Boost Likelihood for IDs Do Not Start with 123 (Example of Using Inverse)
+              inverse: true
+              target: FINDING
+              includeExpand: false
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 1
+              pattern:
+                regex: ^123
+                flags: mi
+            - type: PATTERN
+              name: Append 4 Digit Extension If Found (Example of Using includeExpand)
+              inverse: false
+              target: FINDING
+              includeExpand: true
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 0
+              pattern:
+                regex: ^[-_+][0-9]{4}
+                flags: mi
+            - name: Deny List Context
+              type: DICTIONARY
+              target: CONTEXT
+              dictionary:
+                ignoreCase: true
+                terms:
+                - telefon
+                - telefax
+                - telex
+                - telephone
+              context:
+                windowBefore: 15
+                windowAfter: 15
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: VERY_UNLIKELY
+            - name: Matches Context For Employee ID
+              type: DICTIONARY
+              target: CONTEXT
+              dictionary:
+                ignoreCase: true
+                terms:
+                - Employee ID
+                - Employee Identification
+              context:
+                windowBefore: 10
+                windowAfter: 10
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 1
+            - name: Matches Term Object Name (File/Column Name)
+              type: DICTIONARY
+              dictionary:
+                terms:
+                - Employee
+                - Employee_Id
+                ignoreCase: true
+              target: OBJECT_NAME
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: VERY_LIKELY
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDefinition'
+        glossaryTerm:
+          description: The details of the glossary term associated with the classifier.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_GlossaryTermDto'
+        isGlossaryTermChanged:
+          description: This flag indicates whether the glossary term association has changed.
+          type: boolean
+          example: false
+          readOnly: true
+        lastModifiedDate:
+          description: The date and time when the classifier was last modified.
+          type: string
+          format: date-time
+          example: '2024-04-04T11:33:16.538+00:00'
+          readOnly: true
+        createdDate:
+          description: The date and time when the classifier was created.
+          type: string
+          format: date-time
+          example: '2024-04-04T11:33:16.538+00:00'
+          readOnly: true
+        createdBy:
+          description: The unique identifier of the user that created the classifier.
+          type: string
+          format: uuid
+          example: a897fe47-a504-4dd4-8eda-52add1a397f1
+          readOnly: true
+        lastModifiedBy:
+          description: The unique identifier of the user that last modified the classifier.
+          type: string
+          format: uuid
+          example: e897fe47-a504-4dd4-8eda-52add1a397f0
+          readOnly: true
+        version:
+          description: The version number used for optimistic locking.
+          type: integer
+          format: int64
+          example: 1
+          readOnly: true
+        id:
+          description: The unique identifier of the classifier.
+          type: string
+          format: uuid
+          example: a997fe47-a504-4dd4-8eda-52add1a397f0
+          readOnly: true
+      required:
+      - definition
+      - isPII
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata:
+      type: object
+      properties:
+        displayName:
+          description: The display name used for the classifier in user interfaces.
+          type: string
+          example: Credit Card Number
+        otDisplayName:
+          description: The OneTrust display name used for the classifier.
+          type: string
+          example: Uniform Resource Locator
+        description:
+          description: The description of the classifier metadata.
+          type: string
+          example: Detects credit card numbers in text using pattern matching.
+        locations:
+          description: The list of geographic locations where the classifier applies.
+          type: array
+          items:
+            type: string
+            description: List of geographical locations relevant for the detector.
+            example: '["US","EU","APAC"]'
+          example:
+          - US
+          - EU
+          - APAC
+        languages:
+          description: The list of languages supported by the classifier.
+          type: array
+          items:
+            type: string
+            description: List of languages supported by this detector.
+            example: '["en","fr","de"]'
+          example:
+          - en
+          - fr
+          - de
+        industries:
+          description: The list of industries where the classifier is applicable.
+          type: array
+          items:
+            type: string
+            description: Industries where this detector is applicable.
+            example: '["Finance","Healthcare"]'
+          example:
+          - Finance
+          - Healthcare
+        categories:
+          description: The list of categories assigned to the classifier.
+          type: array
+          items:
+            type: string
+            description: Categories assigned to this detector for classification.
+            example: '["PII","Financial"]'
+          example:
+          - PII
+          - Financial
+        sensitivityLevel:
+          description: The sensitivity level assigned to the classifier data.
+          type: string
+          example: HIGH
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite:
+      type: object
+      properties:
+        minLength:
+          description: The minimum length requirement for the detected data.
+          type: integer
+          format: int32
+        requirements:
+          description: The list of requirements that must be satisfied for the detector.
+          type: array
+          items:
+            type: string
+        wordFilter:
+          description: The list of words used to filter detection results.
+          type: array
+          items:
+            type: string
+        wordFilterFlags:
+          description: The flags that control how word filtering is applied.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_FilterFlags'
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_ContextConfig:
+      type: object
+      properties:
+        windowBefore:
+          description: The maximum number of characters to include for context before the match.
+          type: integer
+          format: int32
+          example: 10
+        windowAfter:
+          description: The maximum number of characters to include for context after the match.
+          type: integer
+          format: int32
+          example: 15
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig:
+      type: object
+      properties:
+        regex:
+          description: The regular expression pattern used in the detection rule.
+          type: string
+          example: '[0-9]{1,10}'
+        flags:
+          description: The flags that control the regex pattern matching logic in the detection rule.
+          type: string
+          example: mi
+        groupIndexes:
+          description: The list of group indexes to extract from the detection rule regex match.
+          type: array
+          items:
+            type: integer
+            format: int32
+          example:
+          - 1
+          - 2
+      required:
+      - regex
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig:
+      type: object
+      properties:
+        name:
+          description: The classifier code for the existing detector being used as the base classifier.
+          type: string
+          example: system_address_uk
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation:
+      type: object
+      properties:
+        text:
+          description: The sample text used for evaluation testing.
+          type: string
+        match:
+          description: The list of expected matches for the evaluation test case.
+          type: array
+          items:
+            type: string
+        metadata:
+          description: The metadata information associated with the evaluation test case.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata'
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata:
+      type: object
+      properties:
+        XPATH:
+          description: The XPath expression used in the evaluation metadata.
+          type: string
+        OBJECT_NAME:
+          description: The object name used in the evaluation metadata.
+          type: string
+        OBJECT_PARENT:
+          description: The parent object name used in the evaluation metadata.
+          type: string
+        xpath:
+          description: The XPath expression used in the evaluation metadata.
+          type: string
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_ValidatorConfig:
+      type: object
+      properties:
+        type:
+          description: The type of validator used in the detection rule.
+          type: string
+          enum:
+          - ABA_ROUTING_NUMBER
+          - ACH_ROUTING_NUMBER
+          - ALL_DIGITS_IN_SEQUENCE
+          - ALL_DIGITS_SAME
+          - ARGENTINA_CUIT_CUIL
+          - AUSTRALIA_MEDICAL_ACCOUNT
+          - AUSTRALIAN_ABN
+          - AUSTRALIAN_ACN
+          - AUSTRALIAN_TFN
+          - AUSTRIA_SSN
+          - AUSTRIA_TIN
+          - BELGIUM_NATIONAL_NUMBER
+          - BELGIUM_VAT
+          - BRAZIL_CNH
+          - BRAZIL_CNPJ
+          - BRAZIL_CPF
+          - BRAZIL_RG
+          - CHILEAN_RUT
+          - CDCCM_CODE
+          - CDCPCS_CODE
+          - CELL_CONTENT
+          - CITY
+          - CREDIT_CARD
+          - CROATIA_OIB
+          - CUSIP
+          - CYPRUS_TIN
+          - CZECH_SLOVAK_PERSONAL_ID
+          - DATE
+          - DEA_NUMBER
+          - DENMARK_PERSONAL_ID
+          - EAN13
+          - FINLAND_NATIONAL_ID
+          - FRANCE_INSEE
+          - FRANCE_TIN
+          - FRANCE_VAT
+          - GERMAN_NATIONAL_ID_NUMBER
+          - GERMAN_TIN
+          - GERMAN_VAT
+          - HONG_KONG_HKID
+          - HUNGARY_PERSONAL_ID
+          - HUNGARY_TIN
+          - HUNGARY_TAJ
+          - HUNGARY_VAT
+          - IBAN_CODE
+          - IF_CODE
+          - IMSI
+          - INDIA_GST
+          - INDONESIA_KTP
+          - IRELAND_PPSN
+          - ISBN
+          - ISIN
+          - ISSN
+          - ITALY_FISCAL_CODE
+          - JAPAN_CORPORATE_NUMBER
+          - JAPAN_INDIVIDUAL_NUMBER
+          - KOREA_RRN
+          - LITHUANIA_PERSONAL_CODE
+          - LUHN
+          - LUXEMBOURG_NATIONAL_ID
+          - MEXICO_CURP
+          - NETHERLANDS_BSN
+          - NETHERLANDS_TIN
+          - NETHERLANDS_VAT
+          - NEW_ZEALAND_IRD
+          - NEW_ZEALAND_NHI
+          - NORWAY_IDENTIFICATION_NUMBER
+          - NPI
+          - PHONE_NUMBER
+          - POLISH_ID_CARD
+          - POLISH_PESEL
+          - POLISH_TIN
+          - PORTUGAL_CITIZEN_CARD
+          - PORTUGAL_TIN
+          - REGON_NUMBER
+          - ROMANIA_CNP
+          - SEDOL
+          - SINGAPORE_NRIC
+          - SLOVENIA_JMBG
+          - SOUTH_AFRICAN_ID
+          - SOUTH_AFRICAN_TIN
+          - SPAIN_DNI
+          - SPAIN_NIF
+          - SPAIN_SSN
+          - STRING_REQUIREMENTS
+          - SWEDEN_NATIONAL_ID_NUMBER
+          - SWIFT_CODE
+          - SWISS_AHV
+          - TAIWAN_UI
+          - THAILAND_NATIONAL_ID_CODE
+          - TURKEY_NATIONAL_ID
+          - UAE_ID_CARD
+          - UDI_GS1
+          - UDI_HIBCC
+          - UDI_ICCBBA
+          - UK_NHS
+          - UKNHS_NUMBER
+          - US_VIN
+          - VERHOEFF
+        options:
+          description: The configuration options for the validator used in the detection rule.
+          type: object
+          additionalProperties:
+            type: object
+      required:
+      - type
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_CustomDetectorDto:
+      type: object
+      properties:
+        name:
+          description: The name of the classifier.
+          type: string
+          example: Employee Id
+          maxLength: 100
+          minLength: 1
+          pattern: ^(?=.*[a-zA-Z0-9])[a-zA-Z0-9_.\- '\(\)]+$
+        description:
+          description: The description of the classifier.
+          type: string
+          example: Find Employee ID
+        isPII:
+          description: This flag indicates whether the classifier contains personally identifiable information.
+          type: boolean
+          example: false
+        definition:
+          description: The technical definition of the classifier.
+          example:
+            detections:
+            - name: '9 digit Employee ID '
+              type: PATTERN
+              pattern:
+                regex: (?:^|\b)\d{9}(?:\b|$)
+                flags: gm
+              likelihood: POSSIBLE
+            - name: Known Short Special Employee ID
+              type: DICTIONARY
+              dictionary:
+                terms:
+                - '00001'
+                - '10000'
+                ignoreCase: true
+              likelihood: POSSIBLE
+            detectionRules:
+            - type: PATTERN
+              name: Invalid Column Name
+              inverse: false
+              target: COLUMN_NAME
+              includeExpand: false
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: NO_MATCH
+              pattern:
+                regex: license|key|code|security|passport|password|url|token
+                flags: mi
+            - type: PATTERN
+              name: Boost Likelihood for IDs Do Not Start with 123 (Example of Using Inverse)
+              inverse: true
+              target: FINDING
+              includeExpand: false
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 1
+              pattern:
+                regex: ^123
+                flags: mi
+            - type: PATTERN
+              name: Append 4 Digit Extension If Found (Example of Using includeExpand)
+              inverse: false
+              target: FINDING
+              includeExpand: true
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 0
+              pattern:
+                regex: ^[-_+][0-9]{4}
+                flags: mi
+            - name: Deny List Context
+              type: DICTIONARY
+              target: CONTEXT
+              dictionary:
+                ignoreCase: true
+                terms:
+                - telefon
+                - telefax
+                - telex
+                - telephone
+              context:
+                windowBefore: 15
+                windowAfter: 15
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: VERY_UNLIKELY
+            - name: Matches Context For Employee ID
+              type: DICTIONARY
+              target: CONTEXT
+              dictionary:
+                ignoreCase: true
+                terms:
+                - Employee ID
+                - Employee Identification
+              context:
+                windowBefore: 10
+                windowAfter: 10
+              likelihoodAdjustment:
+                type: ADJUST
+                adjustLikelihood: 1
+            - name: Matches Term Object Name (File/Column Name)
+              type: DICTIONARY
+              dictionary:
+                terms:
+                - Employee
+                - Employee_Id
+                ignoreCase: true
+              target: OBJECT_NAME
+              likelihoodAdjustment:
+                type: SET
+                setLikelihood: VERY_LIKELY
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDefinition'
+        glossaryTerm:
+          description: The glossary term associated with the classifier.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_GlossaryTermDto'
+        detectorVersion:
+          description: The version number of the detector used by the classifier.
+          type: integer
+          format: int64
+          example: 1
+          readOnly: true
+        id:
+          description: The unique identifier of the classifier.
+          type: string
+          format: uuid
+          example: a997fe47-a504-4dd4-8eda-52add1a397f0
+          readOnly: true
+        code:
+          description: The system-generated code of the classifier.
+          type: string
+          readOnly: true
+        custom:
+          description: This flag indicates whether the classifier is custom-created.
+          type: boolean
+          example: false
+          readOnly: true
+        enabled:
+          description: This flag indicates whether the classifier is active.
+          type: boolean
+          example: true
+          readOnly: true
+        surrogateType:
+          description: The surrogate type associated with the classifier.
+          type: string
+          readOnly: true
+        detectorType:
+          description: The type of detector used by the classifier to classify data.
+          type: string
+          example: DICTIONARY
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+          - VALIDATOR
+          - TEMPLATE
+          - COMPLEX
+          readOnly: true
+        isGlossaryTermChanged:
+          description: This flag indicates whether the glossary term association has changed.
+          type: boolean
+          example: false
+          readOnly: true
+        lastModifiedDate:
+          description: The date and time when the classifier was last modified.
+          type: string
+          format: date-time
+          example: '2024-04-04T11:33:16.538+00:00'
+          readOnly: true
+        createdDate:
+          description: The date and time when the classifier was created.
+          type: string
+          format: date-time
+          example: '2024-04-04T11:33:16.538+00:00'
+          readOnly: true
+        createdBy:
+          description: The unique identifier of the user that created the classifier.
+          type: string
+          format: uuid
+          example: a897fe47-a504-4dd4-8eda-52add1a397f1
+          readOnly: true
+        lastModifiedBy:
+          description: The unique identifier of the user that last modified the classifier.
+          type: string
+          format: uuid
+          example: e897fe47-a504-4dd4-8eda-52add1a397f0
+          readOnly: true
+        version:
+          description: The version number used for optimistic locking.
+          type: integer
+          format: int64
+          example: 1
+          readOnly: true
+      required:
+      - definition
+      - isPII
+      - name
+  securitySchemes:
+    DataUseGovernance-DataDiscovery_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_DISCOVERY: DATA_DISCOVERY scope for external systems
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_DISCOVERY: DATA_DISCOVERY scope for external systems
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

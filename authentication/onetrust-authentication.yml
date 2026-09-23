@@ -1,14 +1,83 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/onetrust-openapi.yml
-summary:
-  types:
-  - http
+generated: '2026-08-27'
+method: searched
+source: openapi/onetrust-ai-governance-openapi.json, openapi/onetrust-audit-api-openapi.json, openapi/onetrust-consent-preferences-consent-receipts-openapi.json,
+  openapi/onetrust-consent-preferences-cookie-consent-openapi.json, openapi/onetrust-consent-preferences-cookie-consent-swagger-openapi.json,
+  openapi/onetrust-consent-preferences-policy-notice-management-openapi.json, openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json,
+  openapi/onetrust-data-use-governance-data-catalog-openapi.json, openapi/onetrust-data-use-governance-data-discovery-openapi.json,
+  openapi/onetrust-esg-program-reporting-disclosures-openapi.json, openapi/onetrust-platform-access-management-openapi.json,
+  openapi/onetrust-platform-bulk-export-openapi.json ...
+summary: 'Every OneTrust API is authorized with OAuth 2.0. There are two credential types and they behave
+  differently: a Client Credential exchanges for a short-lived bearer token at POST https://{hostname}/api/access/v1/oauth/token,
+  while an API Key IS the bearer token and never expires until revoked. Both carry the scopes chosen when
+  the credential was created in Global Settings > Access Management > Client Credentials; scopes cannot
+  be widened at token-request time. Tokens are tenant-scoped to one environment host.'
 schemes:
-- name: BearerAuth
-  type: http
-  scheme: bearer
-  bearerFormat: JWT
-  description: JWT bearer token issued via OAuth 2.0 client credentials.
+- name: OAUTH2
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/api/access/v1/oauth/token
+    scopes: 3
   sources:
-  - openapi/onetrust-openapi.yml
+  - openapi/onetrust-ai-governance-openapi.json
+  - openapi/onetrust-audit-api-openapi.json
+  - openapi/onetrust-consent-preferences-consent-receipts-openapi.json
+  - openapi/onetrust-consent-preferences-cookie-consent-openapi.json
+  - openapi/onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+  - openapi/onetrust-consent-preferences-policy-notice-management-openapi.json
+  - openapi/onetrust-consent-preferences-universal-consent-preference-management-oas-openapi.json
+  - openapi/onetrust-data-use-governance-data-catalog-openapi.json
+  - openapi/onetrust-data-use-governance-data-discovery-openapi.json
+  - openapi/onetrust-esg-program-reporting-disclosures-openapi.json
+  - openapi/onetrust-platform-access-management-openapi.json
+  - openapi/onetrust-platform-bulk-export-openapi.json
+  - openapi/onetrust-platform-documents-openapi.json
+  - openapi/onetrust-platform-integrations-openapi.json
+  - openapi/onetrust-platform-inventory-openapi.json
+  - openapi/onetrust-platform-object-manager-openapi.json
+  - openapi/onetrust-platform-task-management-openapi.json
+  - openapi/onetrust-platform-user-provisioning-openapi.json
+  - openapi/onetrust-privacy-automation-assessment-automation-openapi.json
+  - openapi/onetrust-privacy-automation-data-mapping-automation-openapi.json
+  - openapi/onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+  - openapi/onetrust-privacy-automation-data-subject-request-dsr-automation-openapi.json
+  - openapi/onetrust-privacy-automation-incident-management-openapi.json
+  - openapi/onetrust-tech-risk-compliance-audit-management-openapi.json
+  - openapi/onetrust-tech-risk-compliance-compliance-automation-openapi.json
+  - openapi/onetrust-tech-risk-compliance-enterprise-policy-management-openapi.json
+  - openapi/onetrust-tech-risk-compliance-issues-management-openapi.json
+  - openapi/onetrust-tech-risk-compliance-it-risk-management-openapi.json
+  - openapi/onetrust-tech-risk-compliance-training-openapi.json
+  - openapi/onetrust-third-party-management-third-party-risk-management-openapi.json
+docs: https://developer.onetrust.com/onetrust/reference/quick-start-guide
+docs_pages:
+- https://developer.onetrust.com/onetrust/reference/quick-start-guide
+- https://developer.onetrust.com/onetrust/reference/oauth-20
+- https://developer.onetrust.com/onetrust/reference/oauth-20-scopes
+- https://my.onetrust.com/s/article/UUID-3faa8a9f-7635-bcda-5184-c01a157c3132
+- https://my.onetrust.com/s/article/UUID-76f55697-ba16-d000-849a-d33e3d217f41
+provider: OneTrust
+providerId: onetrust
+credential_types:
+- name: OAuth 2.0 Client Credentials
+  grant: client_credentials
+  token_url: https://{hostname}/api/access/v1/oauth/token
+  operationId: GetOAuthToken
+  placement: 'Authorization: Bearer {oauth_access_token} header only'
+  created_in: OneTrust app — Global Settings > Access Management > Client Credentials > Client Credentials
+    tab
+  management_docs: https://my.onetrust.com/s/article/UUID-3faa8a9f-7635-bcda-5184-c01a157c3132
+- name: OAuth 2.0 API Keys
+  grant: none — the key is the access token
+  placement: 'Authorization: Bearer {key} header, OR ?Authorization=Bearer+{key} query parameter'
+  created_in: OneTrust app — Global Settings > Access Management > Client Credentials > API Keys tab
+  management_docs: https://my.onetrust.com/s/article/UUID-76f55697-ba16-d000-849a-d33e3d217f41
+  warning: The query-parameter form puts a long-lived bearer credential into URLs, access logs and Referer
+    headers. Prefer the header form; agents should never construct the query form.
+scim_note: SCIM endpoints are authorized via an OAuth 2.0 access token in the Authorization header. All
+  other endpoints accept either credential type.
+tenant_scoping: A token issued against one environment host (e.g. uat.onetrust.com) will 401 against another
+  (app.onetrust.com). There is no global token. See conventions/onetrust-conventions.yml base_url.
+mtls: false
+openid_connect: false
+scopes: scopes/onetrust-scopes.yml

@@ -1,0 +1,249 @@
+generated: '2026-08-27'
+method: derived
+source: >-
+  Derived from components.schemas ($ref graph) and id-reference field names across the 37 OpenAPI
+  definitions in openapi/; entity naming cross-checked against the developer portal API reference
+  category tree at https://developer.onetrust.com/onetrust/reference
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust is not one data model, it is roughly a dozen module models sharing a small platform spine.
+  1,272 component schemas are declared across the 37 definitions and almost none are reused between
+  them — every module namespaces its own copies (ConsentPreferences-UniversalConsentPreferenceManag_*,
+  TechRiskCompliance-ITRiskManagement_*, ...), so a PageableObject in the consent surface is a
+  different schema from the identical PageableObject in the risk surface. The graph below is the one
+  that matters to an integrator: what actually joins across modules is Organization, User/User Group,
+  Inventory, Attachment and the Object Manager custom-entity layer.
+schema_count: 1272
+cross_module_reuse: false
+platform_spine:
+- entity: Organization
+  id_field: organizationId / orgGroupId / externalId
+  module: Platform - Access Management
+  note: >-
+    orgGroupId appears in 59 schemas — the single most-referenced identifier in the platform. Almost
+    every module scopes its records to an org group.
+- entity: User
+  id_field: userId / id
+  module: Platform - Access Management, Platform - User Provisioning (SCIM 2.0)
+- entity: UserGroup
+  id_field: userGroupId / groupId
+  module: Platform - Access Management, Platform - User Provisioning
+- entity: Attachment
+  id_field: attachmentId / fileId
+  module: Platform - Documents
+  note: Referenced from assessments, incidents, consent receipts and enterprise policy documents.
+- entity: InventoryRecord
+  id_field: inventoryId
+  module: Platform - Inventory, Privacy Automation - Data Mapping
+- entity: CustomEntity
+  id_field: entityId / entityTypeId
+  module: Platform - Object Manager, AI Governance
+  note: >-
+    Object Manager (/api/custom-entity/*) and AI Governance (/api/ai-governance/v1/entities) share the
+    same entity/entity-type/relationship/attribute shape. AI Governance is Object Manager applied to
+    AI systems.
+- entity: Task
+  id_field: assigneeId / assignmentId / stageId
+  module: Platform - Task Management, AI Governance, Object Manager
+entities:
+- name: DataSubject
+  module: Consent & Preferences
+  id_field: DataSubjectId / identifier
+  relationships:
+  - has_many: PurposePreference
+    via: purposeId
+  - has_many: ConsentReceipt
+    via: receiptGuid
+  - has_many: Transaction
+  - belongs_to: DataSubjectGroup
+  - has_many: CustomPreference
+    via: customPreferenceId
+  - has_many: ConsentAttachment
+    via: attachmentId
+- name: Purpose
+  module: Consent & Preferences
+  id_field: purposeId / purposeGuid
+  relationships:
+  - has_many: PurposeVersion
+  - has_many: Topic
+  - belongs_to: CollectionPoint
+- name: CollectionPoint
+  module: Consent & Preferences
+  id_field: collectionpointId / collectionPointGuid
+  relationships:
+  - has_many: Purpose
+  - has_one: PreferenceCenter
+    via: prefcenterId
+  - has_one: HostedWebForm
+- name: PreferenceCenter
+  module: Consent & Preferences
+  id_field: prefcenterId
+  relationships:
+  - has_many: Purpose
+  - has_many: DataSubjectPreference
+- name: ConsentReceipt
+  module: Consent & Preferences - Consent Receipts
+  id_field: receiptGuid
+  relationships:
+  - belongs_to: DataSubject
+  - belongs_to: Purpose
+  - belongs_to: CollectionPoint
+- name: LinkedIdentityGroup
+  module: Consent & Preferences
+  id_field: linkedIdentityGroupId
+  relationships:
+  - has_many: DataSubject
+  note: The cross-device / known-user join.
+- name: Domain
+  module: Consent & Preferences - Cookie Consent
+  id_field: domainId
+  relationships:
+  - has_many: Cookie
+  - has_many: Script
+  - has_many: GeolocationRule
+  - has_many: Scan
+    via: scanId
+  - has_one: Template
+    via: templateId
+- name: Cookie
+  module: Consent & Preferences - Cookie Consent
+  relationships:
+  - belongs_to: Domain
+    via: domainId
+  - belongs_to: Categorization
+    via: categoryId
+- name: RequestQueue
+  module: Privacy Automation - DSR Automation
+  id_field: requestQueueId / requestQueueRefId
+  relationships:
+  - has_many: Subtask
+  - has_many: Resolution
+  - has_one: VerificationMethod
+  - belongs_to: DataSubject
+  - has_many: Attachment
+    via: attachmentId
+- name: Assessment
+  module: Privacy Automation - Assessment Automation
+  id_field: assessmentId
+  relationships:
+  - belongs_to: Template
+    via: templateId
+  - has_many: Section
+    via: sectionId
+  - has_many: Question
+    via: questionId
+  - has_many: AssessmentComment
+  - has_many: Attachment
+    via: attachmentId
+  - has_many: Risk
+- name: Incident
+  module: Privacy Automation - Incident Management
+  id_field: incidentId
+  relationships:
+  - has_many: Assignment
+    via: assignmentId
+  - belongs_to: Organization
+- name: DataAsset
+  module: Data Use Governance - Data Catalog
+  id_field: dataAssetId
+  relationships:
+  - has_many: DataAssetAttribute
+    via: targetAttributeId
+  - has_many: Tag
+    via: tagId
+  - has_many: Term
+    via: termId
+  - belongs_to: Glossary
+- name: ScanProfile
+  module: Data Use Governance - Data Discovery
+  id_field: scanProfileId
+  relationships:
+  - belongs_to: DataSource
+    via: sourceId
+  - has_one: Credential
+  - has_many: ScanJob
+  - has_many: Classification
+- name: Risk
+  module: Tech Risk & Compliance - IT Risk Management
+  id_field: riskId
+  relationships:
+  - belongs_to: RiskTemplate
+    via: templateId
+  - has_many: Control
+    via: controlId
+  - has_many: Threat
+    via: threatId
+  - has_many: Vulnerability
+  - has_one: ImpactLevel
+    via: impactLevelId
+  - has_one: ProbabilityLevel
+    via: probabilityLevelId
+  - has_many: RiskAction
+  - has_many: RiskRelationship
+- name: Control
+  module: Tech Risk & Compliance - IT Risk Management
+  id_field: controlId
+  relationships:
+  - has_many: ControlImplementation
+  - belongs_to: Framework
+    via: frameworkId
+  - has_many: ControlLink
+- name: Audit
+  module: Tech Risk & Compliance - Audit Management
+  id_field: auditId
+  relationships:
+  - has_many: Workpaper
+    via: workpaperId
+  - has_many: AuditScope
+    via: scopeId
+  - belongs_to: Control
+- name: Issue
+  module: Tech Risk & Compliance - Issues Management
+  id_field: issueId
+  relationships:
+  - belongs_to: Risk
+  - belongs_to: Control
+- name: PolicyDocument
+  module: Tech Risk & Compliance - Enterprise Policy Management
+  relationships:
+  - has_many: DocumentAttachment
+    via: attachmentId
+- name: Engagement
+  module: Third-Party Management - TPRM
+  relationships:
+  - has_many: Contract
+  - belongs_to: Inventory (Vendor)
+    via: inventoryId
+- name: PrivacyNotice
+  module: Consent & Preferences - Policy & Notice Management
+  id_field: privacyNoticeId
+  relationships:
+  - has_many: PrivacyNoticeVersion
+- name: IntegrationWorkflow
+  module: Platform - Integrations
+  id_field: integrationWorkflowId / workflowId
+  relationships:
+  - has_many: SystemCredential
+  - has_many: WebhookTrigger
+- name: BulkExportJob
+  module: Platform - Bulk Export
+  id_field: id
+  relationships:
+  - has_many: AttachmentDownloadCommand
+id_conventions:
+  primary_shape: UUID
+  observed_suffixes:
+  - Id
+  - Guid
+  - Ref
+  note: >-
+    Both `...Id` and `...Guid` suffixes are used for the same UUID shape, sometimes for the same concept
+    in different modules (purposeId vs purposeGuid, receiptGuid vs receiptId). There is no id prefix
+    scheme — an identifier does not tell you what kind of thing it points at.
+  cross_environment: >-
+    Identifiers are tenant-scoped. A guid from uat.onetrust.com will 404 against app.onetrust.com.
+render: null
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

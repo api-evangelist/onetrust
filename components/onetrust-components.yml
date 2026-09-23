@@ -1,0 +1,85 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://developer.onetrust.com/onetrust/docs/onetrust-sdk-reference and the guides indexed in
+  https://developer.onetrust.com/onetrust/llms.txt
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust ships a substantial client-side embeddable surface, and it is arguably the part of the
+  product most developers actually touch — the cookie banner, the preference centre, the vendor list
+  and the hosted/embedded web form are rendered by OneTrust code inside the customer's page or app,
+  configured from the OneTrust tenant rather than from the API. These are distinct from the SDK
+  packages in packages/onetrust-packages.yml: those are the delivery vehicles, these are the UI
+  surfaces they render.
+families:
+- name: Cookie Consent (CMP) UI
+  components:
+  - name: Cookie Banner
+    surface: web, mobile, OTT/CTV
+    note: Rendered by the OneTrust SDK; geolocation rules decide which banner a visitor sees.
+  - name: Preference Center
+    surface: web, mobile, OTT/CTV
+  - name: Vendor List
+    surface: web, mobile
+    note: IAB TCF vendor disclosure UI.
+  loader:
+    name: otSDKStub.js
+    url: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+    distribution: cdn
+    pinned: false
+    probe:
+      fetched: '2026-08-27'
+      http_status: 200
+      bytes: 26840
+- name: Universal Consent & Preference Management UI
+  components:
+  - name: Hosted Preference Center
+    surface: hosted page
+    docs: https://developer.onetrust.com/onetrust/docs/enabling-iframing-of-a-onetrust-preference-center
+    note: >-
+      Supports iframing into an existing page; OneTrust publishes a guide specifically for enabling it.
+  - name: Multi-page Preference Center
+    docs: https://developer.onetrust.com/onetrust/docs/using-the-preference-center-schema-to-build-multi-page-preference-centers
+    note: Built from the Preference Center Schema rather than a drop-in widget.
+  - name: Enhanced Preference Center
+    docs: https://developer.onetrust.com/onetrust/docs/using-the-preference-center-schema-to-build-original-or-enhanced-preference-centers
+  - name: Embedded Web Form (Collection Point)
+    surface: embedded
+    docs: https://developer.onetrust.com/onetrust/docs/embedded-web-forms-methods-and-events
+    loader: Web Form Collection Point JavaScript SDK
+    note: >-
+      Exposes a documented method/event surface and a command queue
+      (https://developer.onetrust.com/onetrust/docs/command-queue) for pre-load calls.
+  - name: External Web Form
+    docs: https://developer.onetrust.com/onetrust/docs/common-sdk-methods
+- name: Privacy Portal
+  components:
+  - name: Privacy Portal
+    surface: hosted page
+    hosts:
+    - privacyportal.onetrust.com
+    - privacyportal-eu.onetrust.com
+    - privacyportaltrial.onetrust.com
+    - privacyportaluat.onetrust.com
+    note: >-
+      The public-facing DSR intake surface, addressed by the ${privacy-portal-domain} variable in the
+      SDK docs. Custom domains and subdomains are supported.
+- name: Trust Center
+  components:
+  - name: Embedded Trust Center
+    surface: embedded
+    docs: https://developer.onetrust.com/onetrust/docs/embedding-the-trust-center-on-an-existing-webpage
+    note: OneTrust publishes a guide for embedding its Trust Center product into a customer web page.
+- name: Tag management
+  components:
+  - name: OneTrust GTM Template
+    surface: Google Tag Manager
+    source: https://github.com/OneTrustCMP/OneTrust-gtm-template
+    note: First-party consent template for Google Tag Manager.
+note: >-
+  None of these are shipped as standard web components / custom elements — they are script-tag loaders
+  and hosted pages configured from the OneTrust tenant. There is no npm-installable element library.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

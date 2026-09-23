@@ -1,0 +1,213 @@
+openapi: 3.2.0
+info:
+  version: '1.0'
+  title: Consent & Preferences - Cookie Consent (Swagger)…
+servers:
+- url: https://customer.my.onetrust.com/api/cookiemanager
+security:
+- oauth2: []
+tags:
+- name: Categorizations
+paths:
+  /v2/categorize:
+    post:
+      tags:
+      - Categorizations
+      summary: Categorize Cookies by Domain
+      description: Use this API to categorize cookies by cookie name and host for the specified domain. The response will return details for each cookie such as pattern (First-Party or Third-Party) and category (Functional, Strictly Necessary, Targeting, Social Media, or Performance)
+      operationId: getCategorizedCookiesUsingGET
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domain:
+                  type: string
+                  description: Name of the domain.
+                cookies:
+                  type: array
+                  default: []
+                  description: A list of Cookies with name and host.
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      host:
+                        type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CookiepediaContribsDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+  /v2/categorizewithids:
+    post:
+      tags:
+      - Categorizations
+      summary: Categorize Cookies by Domain and Cookie ID
+      description: Use this API to categorize cookies by domain and cookie ID. The response will return details for each cookie such as the pattern (First-Party or Third-Party) and the category (Functional, Strictly Necessary, Targeting, Social Media, or Performance).
+      operationId: getCategorizedCookiesWithCookieIdsUsingGET
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domain:
+                  type: string
+                  description: Name of the domain.
+                cookiesIds:
+                  type: array
+                  default: []
+                  description: A list of Cookies IDs.
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CookiepediaContribsDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+components:
+  schemas:
+    CookiepediaContribsDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the cookie.
+        type:
+          type: string
+          description: Type of the cookie.
+        host:
+          type: string
+          description: Host of the cookie.
+        hostDescription:
+          type: string
+          description: Description of the cookie host.
+        description:
+          type: string
+          description: Description of the cookie category.
+        firstPartyDescription:
+          type: string
+          description: Description of the first party cookie catogory.
+        thirdPartyDescription:
+          type: string
+          description: Description of the third party cookie catogory.
+        patternKey:
+          type: string
+          description: Cookie caterory pattern key.
+        thirdPartyKey:
+          type: string
+          description: Third party key of categorized cookie.
+        firstPartyKey:
+          type: string
+          description: First party key of categorized cookie.
+        category:
+          type: string
+          description: Category of the cookie.
+      title: CookiepediaContribsDto
+      description: Gets the cookie category of the cookies passed
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+            COOKIE_FREE: Cookie free Scope gives free users access to apis having free scope associated to them inside the Cookie Consent module.
+x-readme:
+  explorer-enabled: false
+  metrics-enabled: false
+  proxy-enabled: true
+x-onetrust:
+  spec-label: Swagger 2
+  links:
+    Cookie Consent Knowledge Base: https://my.onetrust.com/s/topic/0TO1Q000000ItRyWAK/cookie-compliance

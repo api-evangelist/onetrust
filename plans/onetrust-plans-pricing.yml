@@ -4,11 +4,9 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: OneTrust
 providerId: onetrust
 created: '2026-05-08'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-08, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-08'
-reconciled: false
+method: searched
+modified: '2026-08-27'
+reconciled: true
 tags:
 - Privacy
 - GRC
@@ -16,12 +14,21 @@ tags:
 - Consent
 - TPRM
 - Plans
-description: OneTrust is enterprise-only and does not publish self-serve pricing tiers. Subscriptions
-  are scoped per module (Privacy Management, GRC, Consent, ESG, etc.).
-notes: Pricing varies significantly by modules selected, headcount, and geography.
+description: 'OneTrust publishes no self-serve price. The pricing page is a contact-sales funnel: it names
+  the product modules and the buying motion but attaches no number, no tier and no included quota to any
+  of them. Subscriptions are negotiated per module and scaled by headcount, entity count and geography.
+  The only published, quantified entitlements anywhere in the OneTrust surface are the API rate limits
+  (200,000 requests/hour per account, 1,000/minute per endpoint; 50,000 and 250 in sandbox) and the Bulk
+  Export credit balance the API exposes at GET /api/ot-insights/v1/bulk-export-jobs/credits — which is
+  the closest thing OneTrust has to a metered unit a customer can read programmatically.'
+notes: Enterprise contact-sales only. Recorded as plan_count 1 (the single 'contact sales' enterprise
+  plan) rather than 0, because OneTrust does publish a named commercial motion and a module list — it
+  just publishes no price against them. A free trial tenant (trial.onetrust.com) exists but is sales-provisioned,
+  not self-serve.
 sources:
-- https://www.onetrust.com/
-- https://developer.onetrust.com/
+- https://www.onetrust.com/pricing/
+- https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+- https://www.onetrust.com/products/
 plans:
 - id: onetrust-enterprise
   name: Enterprise (Module-Based)
@@ -49,3 +56,18 @@ plans:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+plan_count: 1
+pricing_page: https://www.onetrust.com/pricing/
+pricing_page_status: 200
+self_serve: false
+published_prices: false
+metered_signals:
+- name: API rate limits
+  quantified: true
+  source: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+  detail: rate-limits/onetrust-rate-limits.yml
+- name: Bulk Export credits
+  quantified: true
+  operationId: getCreditsInformationGET
+  path: GET /api/ot-insights/v1/bulk-export-jobs/credits
+  detail: The only consumption balance exposed through the API.

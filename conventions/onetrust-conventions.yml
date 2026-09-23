@@ -1,0 +1,239 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://developer.onetrust.com/onetrust/reference/quick-start-guide,
+  https://developer.onetrust.com/onetrust/reference/url-variables-for-apis-sdks,
+  https://developer.onetrust.com/onetrust/reference/understanding-implementing-pagination,
+  https://developer.onetrust.com/onetrust/reference/rate-limits-overview,
+  https://developer.onetrust.com/onetrust/reference/oauth-20-scopes
+  plus derivation from the 37 OpenAPI definitions in openapi/
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust documents its cross-cutting semantics unusually well for an enterprise GRC platform —
+  authentication, both pagination styles, rate-limit headers, environment host resolution and scope
+  assignment each have their own reference page. Two things are absent and matter to an agent:
+  there is NO idempotency mechanism anywhere in the platform, and there is NO documented reversal
+  window for any destructive operation.
+auth:
+  style: oauth2-client-credentials
+  scheme_count: 40
+  flow: clientCredentials
+  token_url: https://{hostname}/api/access/v1/oauth/token
+  header: 'Authorization: Bearer {oauth_access_token}'
+  alternate: >-
+    OAuth 2.0 API Keys may also be passed as an `Authorization` QUERY PARAMETER
+    (?Authorization=Bearer+{token}). Client Credentials tokens may NOT. Passing a bearer token in a
+    query string puts it in logs and referrers; treat the header form as the only safe path.
+  scim_exception: >-
+    SCIM endpoints are authorized via an OAuth 2.0 access token in the Authorization header; all other
+    endpoints accept either a Client Credentials token or an API Key.
+  detail: authentication/onetrust-authentication.yml
+  scopes: scopes/onetrust-scopes.yml
+base_url:
+  pattern: https://{hostname}/{baseURL}/{endpoint}
+  base_url_pattern: api/{microservice}/{version}
+  hostname_variable: true
+  docs: https://developer.onetrust.com/onetrust/reference/url-variables-for-apis-sdks
+  note: >-
+    {hostname} is the customer's OneTrust environment, not a single global API host. An agent cannot
+    build a callable URL without being told which environment the tenant lives in.
+  shared_environments:
+    APP: app.onetrust.com
+    APP-AE: app-ae.onetrust.com
+    APP-APAC: app-apac.onetrust.com
+    APP-AU: app-au.onetrust.com
+    APP-BR: app-br.onetrust.com
+    APP-CA: app-ca.onetrust.com
+    APP-CH: app-ch.onetrust.com
+    APP-DE: app-de.onetrust.com
+    APP-EU: app-eu.onetrust.com
+    APP-FR: app-fr.onetrust.com
+    APP-HC: na01.onetrust.com
+    APP-IN: app-in.onetrust.com
+    APP-JP: app-jp.onetrust.com
+    APP-UK: app-uk.onetrust.com
+    TRIAL: trial.onetrust.com
+    UAT: uat.onetrust.com
+    UAT-DE: uat-de.onetrust.com
+    UAT-HC: uat-na01.onetrust.com
+  dedicated_environments: 'yourcompany.my.onetrust.com'
+  other_variables:
+  - '{$$.env.host} — Document Gateway'
+  - 'customer.my.onetrust.com — Cookie Consent (Swagger), Mobile App Consent, Data Mapping (Swagger), Training'
+  - '${privacyportal-domain} — Privacy Portal (privacyportal.onetrust.com / privacyportal-eu.onetrust.com)'
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  evidence: >-
+    Zero matches for "idempoten" across all 37 OpenAPI definitions and no idempotency reference page on
+    the developer portal. Retrying a POST — a consent receipt, an incident, an assessment — will create a
+    second record. An agent must implement its own dedupe key against a OneTrust business identifier.
+  note: >-
+    This is the highest-value agent-readiness gap in the OneTrust contract. POST /v1/consentreceipts/bulk
+    is explicitly rate-limit-provisioned for 3,000 calls/minute of ingestion with no replay protection.
+pagination:
+  docs: https://developer.onetrust.com/onetrust/reference/understanding-implementing-pagination
+  styles:
+  - name: page-based (offset)
+    request_params:
+      page: The page number of the results. Default 0.
+      size: Number of results per page.
+      sort: 'property,direction — direction is asc or desc.'
+    response_fields:
+    - content
+    - pageable
+    - totalPages
+    - totalElements
+    - size
+    - number
+    - numberOfElements
+    - first
+    - last
+    - empty
+    - sort
+  - name: request-continuation (keyset / cursor)
+    request_params:
+      requestContinuation: Opaque continuation token returned in `pageable.requestContinuation`.
+    response_fields:
+    - pageable.requestContinuation
+    note: >-
+      Used where the dataset is large enough that offset paging degrades — consent transactions and
+      data subject profiles are the documented cases.
+field_expansion:
+  supported: false
+  note: No documented expand/fields/include mechanism.
+metadata:
+  supported: partial
+  note: >-
+    Object Manager and Inventory expose custom attributes and custom entity types
+    (/api/custom-entity/*), which is the platform's extension point rather than a free-form metadata
+    bag on every resource.
+request_id_tracing:
+  supported: partial
+  fields:
+  - name: ot-ratelimit-event-id
+    where: 429 response header
+    note: Identifies the rate-limit event, not the request.
+  - name: requestTraceId
+    where: DSR Automation — GET /requestqueues/status/{requestTraceId}
+    note: A DSR job identifier, not a platform-wide correlation id.
+  note: >-
+    There is NO platform-wide X-Request-Id / correlation header documented. Reporting a failed call to
+    OneTrust Support means quoting tenant ID, endpoint and volume rather than an id.
+versioning:
+  style: path
+  observed: [v1, v2, v3, v4]
+  note: >-
+    Versions coexist rather than supersede — v1 through v4 of the Data Subjects surface are all live at
+    once, with a published V1-to-V4 migration guide. Choosing the wrong one is a real failure mode.
+  migration_guide: https://developer.onetrust.com/onetrust/reference/v1-to-v4-migration-guide
+error_envelope:
+  format: vendor
+  rfc9457: false
+  problem_json: false
+  detail: errors/onetrust-problem-types.yml
+  documented_status_codes:
+    source_docs: https://developer.onetrust.com/onetrust/reference/quick-start-guide
+    source_spec: derived from response objects across all 37 definitions
+    codes:
+      '200': OK — request successfully processed. (456 declarations)
+      '201': Created — one or more new resources created. (109)
+      '202': Accepted — accepted for processing, processing not complete. (14)
+      '204': No Content. (63)
+      '400': Bad Request. (606)
+      '401': Unauthorized. (620)
+      '403': Forbidden. (626)
+      '404': Not Found. (145)
+      '409': Conflict. (4)
+      '422': Unprocessable Entity. (3)
+      '429': Too Many Requests. (628)
+      '500': Internal Server Error. (607)
+    note: >-
+      Coverage is near-uniform: 628 of 631 operations declare a 429 and 626 declare a 403, which is
+      unusually disciplined. 404 is declared on only 145 — a gap on the {id}-bearing reads.
+rate_limit_signaling:
+  status: 429
+  headers: [Retry-After, ot-ratelimit-event-id, ot-requests-allowed, ot-period, ot-request-made]
+  proactive_budget_headers: false
+  detail: rate-limits/onetrust-rate-limits.yml
+dry_run_mode:
+  supported: false
+  evidence: No dryRun/preview/validate-only parameter found in any of the 37 definitions.
+reversibility:
+  grade: documented
+  write_surface: true
+  summary: >-
+    OneTrust has a large write and delete surface — 60 DELETE operations across the platform, plus
+    withdraw/unlink/unenroll semantics in consent and training — and it publishes reversal PATHS for
+    several of them. It publishes a stated WINDOW for none of them. That is the difference between
+    `documented` and `verified`, and it is the honest grade: an agent about to call
+    DELETE /api/consentmanager/v2/datasubjects/profiles can find no OneTrust statement of how long, if
+    at all, that profile can be recovered.
+  reversals:
+  - action: Withdraw consent for a purpose
+    operationId: withdrawTransactionBehalfOfDatasubjectUsingPUT
+    method: PUT
+    path: /api/consentmanager/v1/transactions/withdraw/fordatasubject
+    reverses: A prior consent transaction
+    window: null
+    window_source: null
+    note: >-
+      Withdrawal is itself a forward-only consent event, not an undo — the receipt of the original
+      consent is retained. Deprecated in the spec; the V2/V4 surface is the current path.
+  - action: Unlink a consent group from a data subject
+    operationId: unlinkConsentGroupUsingDELETE
+    method: DELETE
+    path: /api/consent/v2/consent-groups/{consentGroupGuid}/consent-groups
+    reverses: A prior consent-group link
+    window: null
+    window_source: null
+  - action: Unenroll a user from a course
+    operationId: unEnrollUserUsingDELETE
+    method: DELETE
+    path: /v1/enrollments/enrollment-assignees/{enrollmentAssigneeId}
+    reverses: A prior enrollment
+    window: null
+    window_source: null
+  - action: Cancel a bulk export job
+    operationId: cancelBulkExportDELETE
+    method: DELETE
+    path: /api/ot-insights/v1/bulk-export-jobs/{id}
+    module: Platform - Bulk Export
+    spec: onetrust-platform-bulk-export-openapi.json
+    reverses: A running bulk export
+    window: null
+    window_source: null
+    note: >-
+      The changelog entry for 202606.2.0 states the Bulk Export APIs can create AND CANCEL exports and
+      retrieve status/progress/credit details. Cancellation is bounded by the job still running, which
+      is a state condition rather than a published time window.
+  irreversible:
+  - operationId: deleteDataSubjectProfilesUsingDELETE
+    path: /api/consentmanager/v2/datasubjects/profiles
+    note: No documented restore path or retention window.
+  - operationId: deleteDataSubjectUsingTTL
+    path: /rest/api/consent/v4/data-subjects
+    note: >-
+      TTL-based deletion. The name implies a delay before permanence, but no window is stated in the
+      contract or the docs. Do not assume one exists.
+  - operationId: bulkDeleteCookies
+    path: /api/cmp/v1/webscans/cookies
+  - operationId: deleteDomain
+    path: /api/cmp/v1/domains/{domainId}
+  gap_note: >-
+    OneTrust is a data-deletion platform — deletion certificates are a first-class product concept
+    (/deletion-certificates). Publishing the retention window behind each delete would move this from
+    `documented` to `verified` at no engineering cost.
+cross_links:
+  errors: errors/onetrust-problem-types.yml
+  lifecycle: lifecycle/onetrust-lifecycle.yml
+  authentication: authentication/onetrust-authentication.yml
+  scopes: scopes/onetrust-scopes.yml
+  rate_limits: rate-limits/onetrust-rate-limits.yml
+  data_model: data-model/onetrust-data-model.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

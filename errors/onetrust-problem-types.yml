@@ -1,0 +1,115 @@
+generated: '2026-08-27'
+method: derived
+source: >-
+  Derived from the 4xx/5xx response objects across the 37 OpenAPI definitions in openapi/, enriched
+  from https://developer.onetrust.com/onetrust/reference/quick-start-guide and
+  https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+provider: OneTrust
+providerId: onetrust
+format: vendor
+rfc9457: false
+summary: >-
+  OneTrust does NOT publish an RFC 9457 problem+json envelope, and it does not publish a numbered error
+  code registry. Errors are HTTP status codes with a short prose description, and the response body
+  schema is inconsistent — the same 401 is typed as a bare `string` in 22 operations and as an untyped
+  `object` in others. What OneTrust does do well is DECLARE the failure modes: 628 of 631 operations
+  declare a 429, 626 declare a 403, 620 a 401 and 607 a 500, so a generated client knows every call can
+  fail those ways. The only error class with real runtime detail is 429, which carries five ot-* headers.
+envelope:
+  content_types:
+  - application/json
+  - '*/*'
+  shape: inconsistent
+  note: >-
+    No shared components.schemas error type is reused across the definitions. An agent cannot write one
+    error parser for OneTrust; it must tolerate a JSON string, a JSON object with unspecified keys, and
+    an empty body.
+problem_types:
+- status: 400
+  title: Bad Request
+  declarations: 606
+  common_descriptions:
+  - Bad Request
+  - Invalid request data
+  - Missing required attributes
+  - Invalid request data (e.g., invalid UUID format)
+  - Invalid request data (e.g., empty member list)
+  remediation: >-
+    Validate the request body against the operation's requestBody schema. UUID-shaped path and body
+    identifiers are validated for format before existence.
+- status: 401
+  title: Unauthorized
+  declarations: 620
+  common_descriptions:
+  - Unauthorized
+  - Unauthorized - Invalid or missing authentication
+  - Unauthorized access
+  remediation: >-
+    The bearer token is missing, malformed or expired. Re-issue via
+    POST https://{hostname}/api/access/v1/oauth/token with the client credential. Note the token is
+    tenant-scoped: a token for app-eu.onetrust.com will 401 against app.onetrust.com.
+- status: 403
+  title: Forbidden
+  declarations: 626
+  common_descriptions:
+  - Forbidden
+  - Forbidden - Insufficient permissions
+  remediation: >-
+    The token is valid but the client credential lacks the OAuth scope this operation requires. See
+    scopes/onetrust-scopes.yml — OneTrust publishes a scope-to-API assignment table, so the required
+    scope is knowable in advance.
+  note: >-
+    403 vs 401 is the most common OneTrust integration failure, because scopes are selected when the
+    credential is CREATED in Global Settings and cannot be widened at token-request time.
+- status: 404
+  title: Not Found
+  declarations: 145
+  common_descriptions:
+  - Not Found
+  - User group not found
+  - User not found
+  - Organization not found
+  - User group or member not found
+  - Unable to find a datasubject with given identifier
+  remediation: Confirm the identifier exists in this tenant. Identifiers are not portable across environments.
+- status: 409
+  title: Conflict
+  declarations: 4
+  remediation: >-
+    Rare. Raised where a create would duplicate a uniquely-keyed record. With no idempotency key
+    available, a 409 is the only signal a retry has already been applied.
+- status: 422
+  title: Unprocessable Entity
+  declarations: 3
+  remediation: Semantically invalid payload that passed schema validation.
+- status: 429
+  title: Too Many Requests
+  declarations: 628
+  documented_headers:
+  - Retry-After
+  - ot-ratelimit-event-id
+  - ot-requests-allowed
+  - ot-period
+  - ot-request-made
+  docs: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+  remediation: >-
+    Sleep for Retry-After seconds, then retry with exponential backoff and jitter. `ot-period` tells you
+    whether you hit the per-minute endpoint cap or the per-hour account cap — they need different
+    remedies.
+- status: 500
+  title: Internal Server Error
+  declarations: 607
+  common_descriptions:
+  - Internal Server Error
+  - Invalid sort criteria
+  remediation: >-
+    Retryable, but note OneTrust returns 500 rather than 400 for at least one client-side mistake
+    (an invalid `sort` criterion), so a blind retry loop on 500 can spin forever on a malformed request.
+gaps:
+- No RFC 9457 application/problem+json.
+- No numbered/stable error code registry — nothing an agent can switch on beyond the status code.
+- No shared error schema; response shape varies by operation.
+- No correlation id on error responses outside of 429's ot-ratelimit-event-id.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

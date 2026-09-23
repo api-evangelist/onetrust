@@ -1,0 +1,74 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://developer.onetrust.com/onetrust/reference/url-variables-for-apis-sdks,
+  https://developer.onetrust.com/onetrust/reference/rate-limits-overview,
+  https://developer.onetrust.com/onetrust/reference/quick-start-guide
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust's sandbox is an ENVIRONMENT, not a test-mode flag. There is no test/live key prefix, no
+  hosted test fixtures and no time simulation. What OneTrust gives you is separately-hosted Trial, UAT
+  and Sandbox tenants with their own hostnames, their own credentials and their own (lower) rate limits
+  — you switch environments by changing {hostname}, and the same OAuth client credential does not carry
+  across. The developer portal also ships a browser "Try It" playground on every reference page, but it
+  calls your real tenant with your real token.
+mode: separate-environment
+test_mode_flag: false
+key_prefixes: false
+key_prefix_note: >-
+  OneTrust bearer tokens and API keys carry no environment marker. A token from uat.onetrust.com is
+  indistinguishable by inspection from a production one — the only thing that separates them is the
+  host you send it to. Agents should treat the hostname as the environment guard.
+environments:
+- name: Trial
+  host: trial.onetrust.com
+  privacy_portal: privacyportaltrial.onetrust.com
+  purpose: Evaluation tenant.
+- name: UAT
+  host: uat.onetrust.com
+  privacy_portal: privacyportaluat.onetrust.com
+  purpose: Customer pre-production testing.
+- name: UAT-DE
+  host: uat-de.onetrust.com
+  privacy_portal: privacyportaluateu.onetrust.com
+- name: UAT-HC
+  host: uat-na01.onetrust.com
+  privacy_portal: privacyportaluat.onetrust.com
+- name: Production (shared)
+  host: app.onetrust.com and 13 regional siblings
+  note: See conventions/onetrust-conventions.yml base_url.shared_environments for the full list.
+sandbox_rate_limits:
+  source: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+  hour: 50000
+  minute_per_endpoint: 250
+  note: >-
+    One quarter of the production per-endpoint limit and one quarter of the hourly. Load-testing an
+    integration in sandbox will hit 429 well before the same traffic would in production, which is a
+    known source of false failures.
+  production_comparison:
+    hour: 200000
+    minute_per_endpoint: 1000
+console:
+  name: Try It playground
+  url: https://developer.onetrust.com/onetrust/reference
+  hosted: true
+  note: >-
+    Every reference page carries a ReadMe "Try It" panel. It is not a sandbox — it issues a real request
+    against whichever {hostname} and token you supply, so running a DELETE from the docs page deletes.
+test_data:
+  fixtures: false
+  test_cards: false
+  magic_identifiers: false
+  note: >-
+    No published test identifiers, no seeded fixture tenant, no trigger tooling. Test data is whatever
+    you create in the Trial or UAT tenant yourself.
+time_simulation:
+  supported: false
+gaps:
+- No test-vs-live credential prefix.
+- No fixture or trigger tooling for the event/webhook surface.
+- No documented way to reset or seed a UAT tenant via API.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,474 @@
+openapi: 3.2.0
+info:
+  title: Privacy Automation - Data Mapping Automation Inventory…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Data Mapping Automation APIs are used to manage structured records (assets, vendors, processing activities, and legal entities), define schema attributes, traverse parent–child hierarchies, and create cross-record relationships—including links to personal data.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: inventory-management-controller
+paths:
+  /api/inventory/v2/inventories/{schemaName}/business-keys:
+    post:
+      operationId: getInventoryIdsFromBusinessKeysUsingPOST
+      summary: Get Inventory IDs from Business Keys
+      description: 'Use this API to retrieve inventory IDs for the given business keys and schema type.
+
+
+        ### Example Request
+
+
+        `POST https://{hostname}/api/inventory/v2/inventories/processing-activities/business-keys`
+
+
+        `POST https://trial.onetrust.com/api/inventory/v2/inventories/processing-activities/business-keys`'
+      tags:
+      - inventory-management-controller
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema. The value can be obtained using the [Get Schemas](/onetrust/reference/getSchemas) API.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: processing-activities
+      - name: orgGroupId
+        in: query
+        description: The organization group ID to scope the search
+        required: false
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK - Successfully retrieved inventory IDs for the given business keys.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyIdDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{schemaName}/identifiers:
+    post:
+      operationId: getInventoryIdentifiersUsingPOST
+      summary: Get Inventory Identifiers
+      description: 'Use this API to retrieve a paginated list of inventory identifiers for a given type with advanced filtering capabilities.
+
+
+        ### Example Request
+
+
+        `POST https://{hostname}/api/inventory/v2/inventories/{type}/identifiers`
+
+
+        `POST https://trial.onetrust.com/api/inventory/v2/inventories/vendors/identifiers`'
+      tags:
+      - inventory-management-controller
+      parameters:
+      - name: schemaName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      - name: orgGroupId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: traversal
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: filterById
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: generator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: searchText
+        in: query
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryFilterRequest'
+      responses:
+        '200':
+          description: OK - Successfully retrieved inventory identifiers.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+  /api/inventory/v2/vendors/search:
+    get:
+      operationId: searchVendorsByNameOrWebsiteUsingGET
+      summary: Search Vendors by Name or Website
+      description: 'Use this API to search for vendors by name or website. At least one of name or website must be provided.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/vendors/search?name=Acme`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/vendors/search?website=acme.com`'
+      tags:
+      - inventory-management-controller
+      parameters:
+      - name: name
+        in: query
+        description: The vendor name to search for
+        required: false
+        schema:
+          type: string
+        example: Acme Corp
+      - name: website
+        in: query
+        description: The vendor website to search for
+        required: false
+        schema:
+          type: string
+        example: acme.com
+      - name: orgGroupId
+        in: query
+        description: The organization group ID to scope the search
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: traversal
+        in: query
+        description: The organization traversal strategy
+        required: false
+        schema:
+          type: string
+          enum:
+          - up
+          - down
+        example: down
+      responses:
+        '200':
+          description: OK - Successfully retrieved vendor search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorSearchResult'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+components:
+  schemas:
+    KeyIdDto:
+      type: object
+      properties:
+        businessKey:
+          type: string
+        inventoryId:
+          type: string
+          format: uuid
+      required:
+      - businessKey
+    VendorSearchResult:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        website:
+          type: string
+        matchType:
+          type: string
+          enum:
+          - NAME
+          - WEBSITE
+          - BOTH
+          - NONE
+        vendorUrl:
+          type: string
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+    DateDto:
+      type: object
+      properties:
+        fromDateValue:
+          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-01'
+          maxLength: 60
+          minLength: 0
+        toDateValue:
+          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-31'
+          maxLength: 60
+          minLength: 0
+      required:
+      - fromDateValue
+    InventoryFilterRequest:
+      type: object
+      properties:
+        filterCriteria:
+          description: A map of filter criteria, where the key is a logical operator (AND, OR) and the value is a list of criteria definitions. This allows for building complex queries.
+          type: object
+          example:
+            AND:
+            - fieldName: name
+              operator: CONTAINS
+              value: Server
+            - fieldName: status.key
+              operator: EQUALS
+              value: active
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/CriteriaDefinition'
+        searchText:
+          description: A simple text string to search across multiple relevant fields of an inventory item. Used for quick search functionality.
+          type: string
+          example: Mainframe Alpha
+        searchOnNumber:
+          description: Indicates if the searchText should specifically target numeric fields. Default is false.
+          type: boolean
+          example: false
+          default: 'false'
+    CriteriaDefinition:
+      type: object
+      properties:
+        attributeKey:
+          description: The key or path of the attribute to filter on (e.g., 'name', 'status.key', 'customFields.someCustomField').
+          type: string
+          example: name
+        dataType:
+          description: 'The data type of the attribute being filtered. (Note: Consider replacing with a more descriptive enum or String if specific integer values have meanings, e.g., 0 for String, 1 for Number, 2 for Date). For now, assuming it''s an internal type identifier.'
+          type: integer
+          format: int32
+          example: 0
+          enum:
+          - '0'
+          - '1'
+          - '2'
+        operator:
+          description: The operator to use for comparing the attribute with the provided values (e.g., EQUALS, CONTAINS, GREATER_THAN).
+          type: string
+          example: CONTAINS
+          enum:
+          - FilterOperator.EQUAL_TO(description=Equal To)
+          - FilterOperator.NOT_EQUAL_TO(description=Not Equal To)
+          - FilterOperator.EQ(description=Equals)
+          - FilterOperator.LT(description=LessThan)
+          - FilterOperator.GT(description=GreaterThan)
+          - FilterOperator.LE(description=LessThanOrEquals)
+          - FilterOperator.GE(description=GreaterThanOrEquals)
+          - FilterOperator.IN_BETWEEN(description=InBetween)
+          - FilterOperator.CONTAINS(description=Contains)
+          - FilterOperator.DOES_NOT_CONTAIN(description=DoesNotContain)
+          - EQUAL_TO
+          - EQ
+          - LT
+          - GT
+          - LE
+          - GE
+          - IN_BETWEEN
+          - CONTAINS
+          - DOES_NOT_CONTAIN
+          - NOT_EQUAL_TO
+        values:
+          description: An array of string values to match against the attribute. For operators like 'IN', multiple values can be provided. For others, typically one value is used.
+          type: array
+          items:
+            type: string
+          example:
+          - Server Alpha
+          - Server Beta
+        date:
+          description: A DTO for specifying date values, used when the attribute is a date type and the operator requires date comparison (e.g., DATE_EQUALS, DATE_BETWEEN).
+          $ref: '#/components/schemas/DateDto'
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Data Mapping Automation Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO1Q000000ItRxWAK/data-mapping-automation''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

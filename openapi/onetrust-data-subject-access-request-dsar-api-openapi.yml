@@ -1,0 +1,478 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Consent Management Platform (CMP)…
+  description: These are server-based APIs that will act as a medium between the OT hosted server that owns business logic and the client-side SDK, which will take the responsibility to render elements on UI based on the response sent via APIs.
+  version: 202608.1.0
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://mobile-data.onetrust.io
+  description: The OneTrust Consent Management Platform endpoint.
+tags:
+- name: Data Subject Access Request (DSAR)
+paths:
+  /cfw/cmp/v1/dsar:
+    post:
+      operationId: post_Dsar
+      summary: Submit Global Opt-Out Request
+      description: Use this API to submit a global opt-out Data Subject Access Request (DSAR) on behalf of a data subject.
+      tags:
+      - Data Subject Access Request (DSAR)
+      x-onetrust:
+        release-status: Public Preview
+        release-status-link: https://developer.onetrust.com/onetrust/changelog/onetrust-20240520-released
+      parameters:
+      - name: OT-CDN-Location
+        in: header
+        required: true
+        schema:
+          description: The location of the CDN.
+          type: string
+          enum:
+          - cdn.cookielaw.org
+          - cdn-apac.onetrust.com
+          - cdn.au.onetrust.com
+          - cdn-ukwest.onetrust.com
+          - cookie-cdn.cookiepro.com
+          - otcc-demo.otprivacy.com
+          - otcc-training.onetrust.com
+      - name: OT-App-Id
+        in: header
+        required: true
+        schema:
+          description: The unique identifier for the app or domain.
+          type: string
+          example: 95c1b37a-c271-44e8-9dd3-1742d82ec948-test
+          pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(-test)?$
+      - name: OT-Device-Type
+        in: header
+        required: true
+        schema:
+          description: The type of device.
+          type: string
+          enum:
+          - mobile
+          - ctv
+      - name: OT-SDK-Version
+        in: header
+        required: true
+        schema:
+          description: The published version of the app or domain.
+          type: string
+          example: 202403.2.0
+          pattern: ^\d{6}\.\d+\.\d+$
+      - name: OT-SDK-Identification
+        in: header
+        required: false
+        schema:
+          description: The OT SDK identification.
+          type:
+          - string
+          - 'null'
+          example: iOS/17.0/202411.1.0
+      - name: OT-Language
+        in: header
+        required: false
+        schema:
+          description: The language in which the user interface should be displayed.
+          type:
+          - string
+          - 'null'
+          example: en
+      - name: OT-Country-Code
+        in: header
+        required: false
+        schema:
+          description: The country code from which the user is accessing the app or website.
+          type:
+          - string
+          - 'null'
+          example: US
+      - name: OT-Region-Code
+        in: header
+        required: false
+        schema:
+          description: The region code from which the user is accessing the app or website.
+          type:
+          - string
+          - 'null'
+          example: GA
+      - name: OT-Fetch-Type
+        in: header
+        required: false
+        schema:
+          description: The type of data to download.
+          type:
+          - string
+          - 'null'
+          enum:
+          - APP_DATA_ONLY
+          - APP_DATA_AND_PROFILE
+          - APP_DATA_AND_SYNC_PROFILE
+      - name: OT-Consent-String
+        in: header
+        required: false
+        schema:
+          description: The encoded consent string that contains the interface's metadata.
+          type:
+          - string
+          - 'null'
+          example: eyJsYXN0TGF1bmNoRGF0ZSI6MTcxMjMzMDgyOTEwMywic2hvdWxkU2hvd0Jhbm5lciI6MSwiZHNJZCI6IjljZDFjZGM1LTMwNmUtNGQ0Yi05MWFiLTg2MzdjODQ3ZjA3NyIsImFwcElkIjoiOTVjMWIzN2EtYzI3MS00NGU4LTlkZDMtMTc0MmQ4MmVjOTQ4LXRlc3QiLCJjZG4iOiJjZG4uY29va2llbGF3Lm9yZyIsImlzQW5vbnltb3VzIjoxLCJleHBpcnlEYXRlIjpudWxsfQ==
+      - name: OT-Identifier
+        in: header
+        required: false
+        schema:
+          description: The unique identifier for the data subject.
+          type:
+          - string
+          - 'null'
+          examples:
+          - 9cd1cdc5-306e-4d4b-91ab-8637c847f077
+          - gpburdell@onetrust.com
+      - name: OT-Identifier-Type
+        in: header
+        required: false
+        schema:
+          description: The identifier type associated with the unique identifier in OT-Identifier header
+          type:
+          - string
+          - 'null'
+          example: Email
+      - name: OT-Identifier-UpdateType
+        in: header
+        required: false
+        schema:
+          type:
+          - string
+          - 'null'
+          enum:
+          - Rename-Identifier
+      - name: OT-Sync-Profile-Auth
+        in: header
+        required: false
+        schema:
+          description: The JSON Web Token (JWT) generated using Public Keys within the OneTrust application.
+          type:
+          - string
+          - 'null'
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJncGJ1cmRlbGxAb25ldHJ1c3QuY29tIiwibmFtZSI6Ikdlb3JnZSBQLiBCdXJkZWxsIiwiaWF0IjoxNTE2MjM5MDIyfQ.qisq7xmfAqXkkSckWpeJKs86JlXuKmClEgMaooSaih0
+      - name: OT-Platform
+        in: header
+        required: false
+        schema:
+          description: To handle platform-specific features like ATT (App Tracking Transparency for Apple) or GoogleAdId (for Android) in a structured way, you can send the platform type in the parameters of an API or request.
+          type:
+          - string
+          - 'null'
+          enum:
+          - Apple
+          - Android
+      - name: OT-Exclude-Html-Tags
+        in: header
+        required: false
+        schema:
+          description: This is specifically to unbold the vendor numbers only.
+          type:
+          - boolean
+          - 'null'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: Request body cannot be empty
+              type: object
+              properties:
+                globalOptOut:
+                  type: object
+                  properties:
+                    identifier:
+                      description: Email address entered by the user via the pop-up. DSAR only supports email.
+                      type: string
+                    purposes:
+                      description: Array of groupId for all global opt-out purposes that were opted out.
+                      type: array
+                      items:
+                        type: string
+                  required:
+                  - identifier
+                  - purposes
+              example:
+                globalOptOut:
+                  identifier: john@gmail.com
+                  purposes:
+                  - C0001
+              required:
+              - globalOptOut
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    errors:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            example: ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                            enum:
+                            - SUCCESS
+                            - ERROR_CODE_TEXT_RESOURCE_NOT_FOUND
+                            - ERROR_CODE_NO_CONTENT
+                            - ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                            - ERROR_CODE_INVALID_LOCATION
+                            - ERROR_CODE_INVALID_COUNTRY_OR_REGION
+                            - ERROR_CODE_INVALID_DEVICE_TYPE
+                            - ERROR_CODE_INVALID_FETCH_TYPE
+                            - ERROR_CODE_INVALID_CONSENT_REQUEST
+                            - ERROR_CODE_HTTP_IF_NONE_MATCHED
+                            - ERROR_CODE_SYNC_GROUP
+                            - ERROR_CODE_FAILURE
+                            - ERROR_CODE_DEFAULT_PURPOSE_STATUS
+                            - ERROR_CODE_INVALID_OT_CONSENT_STRING
+                            - ERROR_CODE_GENERIC_ERROR
+                            - ERROR_CODE_MISSING_REQUIRED_HEADER
+                            - ERROR_CODE_NO_ACCESS
+                            - ERROR_CODE_INVALID_INTERACTION_TYPE
+                            - ERROR_CODE_INVALID_CONTENT_TYPE_HEADER
+                            - ERROR_IDENTIFIER_MISMATCH
+                            - ERROR_UCP_NOT_CONFIGURED
+                            - ERROR_CODE_INVALID_TC_STRING
+                            - ERROR_GOOGLE_ADS_DISABLED
+                            - ERROR_CODE_CONSENT_LOGGING
+                            - ERROR_CODE_INVALID_REQUEST_BODY
+                            - ERROR_CODE_UNSUPPORTED_VERSION
+                            - ERROR_CODE_INVALID_AGE_RANGE
+                            - ERROR_CODE_EMPTY_CONSENT
+                            - ERROR_CODE_GLOBAL_OPT_OUT_NOT_CONFIGURED
+                            - ERROR_CODE_GLOBAL_OPT_OUT_DISABLED
+                            - ERROR_CODE_DSAR
+                          message:
+                            type: string
+                            example: Unable to fetch data for the specified Application ID. Please check your configurations.
+                            enum:
+                            - Not Found
+                            - No content
+                            - success
+                            - Unable to fetch data for the specified Application ID. Please check your configurations.
+                            - Invalid location
+                            - Invalid country code or region code. If you want to skip validation, please set the header 'OT-Geolocation-Skip-Validation' to true.
+                            - Invalid Device Type
+                            - Invalid Fetch type
+                            - Missing either or all of TenantId or Identifier or Authorization
+                            - If-None-Match
+                            - syncGroup
+                            - failure
+                            - NO_CONSENT
+                            - Invalid OT consent string
+                            - Something went wrong
+                            - No access to this resource
+                            - Invalid Interaction Type
+                            - Content-Type header should be application/json
+                            - Input Identifier does not match with one in consent string
+                            - The UC Purposes API call was successful, but no data is available for display.
+                            - UC Purposes is disabled.
+                            - Error decoding TC string, default consent is returned.
+                            - Google Ads is disabled.
+                            - Consent Logging has failed, please retry in sometime and if issue still persists please reach out to support team.
+                            - Error parsing request body
+                            - The published version is not supported. Please publish a newer version.
+                            - The upper bound of the age range must be greater than lower bound.
+                            - At least one purpose consent is required.
+                            - Global Opt-Out is not configured.
+                            - Global Opt-Out is disabled.
+                        required:
+                        - code
+                        - message
+                    warnings:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            example: WARNING_CODE_PUBLISHED_VERSION_MISMATCH
+                            enum:
+                            - WARNING_CODE_PUBLISHED_VERSION_MISMATCH
+                          message:
+                            type: string
+                            example: Requested data for the OT-SDK-Version does not match the published version on the OneTrust server. The latest published version will be returned instead.
+                            enum:
+                            - Requested data for the OT-SDK-Version does not match the published version on the OneTrust server. The latest published version will be returned instead.
+                        required:
+                        - code
+                        - message
+                - type: object
+                  properties:
+                    response:
+                      description: Response from the DSAR service
+                - type: object
+                  properties:
+                    storageKeys:
+                      type: object
+                      example:
+                        OT_GlobalOptOut:
+                          C0001:
+                            lastOptedOut: '2025-10-15T10:30:00Z'
+                            identifier: test@example.com
+                      properties:
+                        OT_GlobalOptOut:
+                          type: object
+                          additionalProperties:
+                            type: object
+                            properties:
+                              lastOptedOut:
+                                type: string
+                              identifier:
+                                type: string
+                            required:
+                            - lastOptedOut
+                            - identifier
+                      required:
+                      - OT_GlobalOptOut
+                  required:
+                  - storageKeys
+                - type: object
+                  properties:
+                    otConsentString:
+                      type: string
+                      example: eyJMYXN0TGF1bmNoRGF0ZSI6MTcwNDczNzM3OTY1MSwiU2hvdWxkU2hvd0Jhbm5lciI6MSwiRFNJRCI6InN1cC1uZXdsa2diIn0=
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_BLOB_LOCATIONS_UNAVAILABLE
+                        message:
+                          type: string
+                          example: Unable to fetch data for the specified Application ID. Please check your configurations.
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_NO_ACCESS
+                        message:
+                          type: string
+                          example: No access to this resource
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_TEXT_RESOURCE_NOT_FOUND
+                        message:
+                          type: string
+                          example: Not Found
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+        '429':
+          description: Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ERROR_CODE_GENERIC_ERROR
+                        message:
+                          type: string
+                          example: Something went wrong
+                      required:
+                      - code
+                      - message
+                required:
+                - errors
+externalDocs:
+  url: https://developer.onetrust.com/onetrust/docs/implementation-guidance
+  description: Implementation Guidance
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - Consent & Preference Management Knowledge Base: https://my.onetrust.com/s/topic/0TO3q000000kIWOGA2/consent-management
+    Implementation Guidance: https://developer.onetrust.com/onetrust/docs/implementation-guidance
+  - '{''Consent & Preference Management Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO3q000000kIWOGA2/consent-management'', ''Implementation Guidance'': ''https://developer.onetrust.com/onetrust/docs/implementation-guidance''}'
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true
+  metrics-enabled: false

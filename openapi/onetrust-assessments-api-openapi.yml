@@ -1,0 +1,3419 @@
+openapi: 3.2.0
+info:
+  title: Privacy Automation - Assessment Automation Assessments API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Assessment Automation APIs provide functionality for managing assessment template lifecycle operations, including template export and import for cross-environment migration, retrieving published template metadata with filtering by template type, and template deletion with comprehensive validation checks.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Assessments
+  description: The Assessments APIs are used to retrieve assessment data and details.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+  x-displayName: Assessments
+paths:
+  /api/assessment/v2/assessment-tags:
+    get:
+      operationId: getTagsUsingGET
+      summary: Get List of Assessment Tags
+      description: 'Use this API to retrieve all available assessment tags that can be used to categorize or label assessments.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The list of tag IDs returned in the response can be used to update a specific assessment''s tag using the Update Assessment Tags API.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TagEntityDetail'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments:
+    get:
+      operationId: getAllAssessmentBasicDetailsUsingGET
+      summary: Get List of Assessments
+      description: 'Use this API to retrieve a list of all assessments with basic assessment details. The response will include details such as the assessment ID, number, stage, result, and associated organization.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - All assessments regardless of their stage are returned in the response by default.
+
+        >
+
+        > - The assessments can be filtered by stage using the `assessmentStatuses` query parameter.
+
+        >
+
+        > - The `size` and `page` query parameters can be used to paginate the response (list of assessments). The `size` parameter defines the number of assessments to be returned in each page. The `page` parameter defines the page number. The first page and default `page` is page number 0. The `size` parameter is optional and default value is 20, but cannot exceed 2000. If you input a value greater than 2000, then 2000 will be used for the `size`.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: templateTypes
+        in: query
+        description: 'List of template types to filter assessments by. Available options:
+
+
+          - **PIA** (PIA & DPIA Automation)
+
+          - **VENDOR** (Third-Party Risk Management)
+
+          - **ITRM** (IT & Security Risk Management)
+
+          - **CONTROL** (Risk and Controls)
+
+          - **INCIDENT** (Incident Management)
+
+          - **EXCHANGE** (Third-Party Risk Exchange)
+
+          - **ESG** (ESG Program Reporting)
+
+          - **DISCLOSURE** (Disclosure Management)
+
+          - **DISCLOSURE_YOY** (Year Over Year Disclosures)
+
+          - **ERM** (Enterprise Risk Management)
+
+          - **TPDD** (Third-Party Due Diligence)
+
+          - **AIGOVERNANCE** (AI Governance)'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            description: Template types used in assessments
+            enum:
+            - PIA
+            - VENDOR
+            - ITRM
+            - CONTROL
+            - INCIDENT
+            - EXCHANGE
+            - ESG
+            - DISCLOSURE
+            - DISCLOSURE_YOY
+            - ERM
+            - TPDD
+            - AIGOVERNANCE
+        example:
+        - PIA
+        - VENDOR
+        - ITRM
+      - name: assessmentStatuses
+        in: query
+        description: List of assessment statuses to filter by
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - UNDER_REVIEW
+            - COMPLETED
+        example:
+        - NOT_STARTED
+        - IN_PROGRESS
+        - UNDER_REVIEW
+        - COMPLETED
+      - name: assessmentArchivalState
+        in: query
+        description: Filter by archival state
+        required: false
+        schema:
+          type: string
+          enum:
+          - ALL
+          - ARCHIVED
+          - NON_ARCHIVED
+        example: NON_ARCHIVED
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N). Example- '?page=1
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page (1…N).
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          default: createdDate,desc
+          enum:
+          - number,asc
+          - number,desc
+          - status,asc
+          - status,desc
+          - createdDate,asc
+          - createdDate,desc
+          - name,asc
+          - name,desc
+          - result,asc
+          - result,desc
+          - orgGroupName,asc
+          - orgGroupName,desc
+          - deadline,asc
+          - deadline,desc
+          - openRiskCount,asc
+          - openRiskCount,desc
+          - openInfoRequestCount,asc
+          - openInfoRequestCount,desc
+        example: createdDate,desc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_PageAssessmentListViewBasicDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/activities/types/assessmentdelete:
+    get:
+      operationId: getAssessmentDeleteLogsUsingGET
+      summary: Export Deleted Assessment Audit Log
+      description: 'Use this API to export a log of all deleted assessments. The response will include details such as the assessment name, assessment ID, user who deleted the assessment, and deletion timestamp.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The exported log only includes assessments deleted after OneTrust 4.1.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentDeleteLogInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/assessment-results:
+    get:
+      operationId: getAssessmentResultsUsingGET
+      summary: Get List of Assessment Results
+      description: Use this API to retrieve a list of all assessment result options that can be used to complete an assessment. The `id` corresponding to each result option in the response can be used to complete assessments using the Complete Assessment API.
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: filterValue
+        in: query
+        description: Filter to apply when retrieving assessment results. Use ACTIVE_EXCLUDING_INTERNAL to exclude internal results.
+        required: false
+        schema:
+          type: string
+          enum:
+          - ACTIVE_EXCLUDING_INTERNAL
+        example: ACTIVE_EXCLUDING_INTERNAL
+      - name: templateTypes
+        in: query
+        description: 'List of template types to filter assessment results by. Available options:
+
+
+          - **PIA** (PIA & DPIA Automation)
+
+          - **VENDOR** (Third-Party Risk Management)
+
+          - **ITRM** (IT & Security Risk Management)
+
+          - **CONTROL** (Risk and Controls)
+
+          - **INCIDENT** (Incident Management)
+
+          - **EXCHANGE** (Third-Party Risk Exchange)
+
+          - **ESG** (ESG Program Reporting)
+
+          - **ERM** (Enterprise Risk Management)
+
+          - **TPDD** (Third-Party Due Diligence)
+
+          - **AIGOVERNANCE** (AI Governance)'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            description: Template types used in assessments
+            enum:
+            - PIA
+            - VENDOR
+            - ITRM
+            - CONTROL
+            - INCIDENT
+            - EXCHANGE
+            - ESG
+            - DISCLOSURE
+            - DISCLOSURE_YOY
+            - ERM
+            - TPDD
+            - AIGOVERNANCE
+        example:
+        - PIA
+        - VENDOR
+        - ITRM
+      - name: includeMasterResults
+        in: query
+        description: Flag to include master results
+        required: false
+        schema:
+          type: boolean
+          default: true
+        example: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResultDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/reference-objects/{id}/assessments:
+    get:
+      operationId: getLinkedAssessmentsInformationUsingGET
+      summary: Get List of Linked Assessments
+      description: 'Use this API to retrieve a list of all assessments linked to a particular record. The linked assessments list will support all copied, reassessed, and rule triggered related assessments.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The following APIs can be used to retrieve the record ID (`id`):
+
+        >
+
+        > - For Assets, Processing Activities, & Entities, use the Get List of Inventories API.
+
+        >
+
+        > - For Vendors, use the List Vendors API.
+
+        >
+
+        > - For Engagements, use the Get List of Engagements API.
+
+        >
+
+        > - For Incidents, use the List Incidents API.
+
+        >
+
+        > - For Control Implementations, use the List Controls API.
+
+        >
+
+        > - If the ID does not match the entered reference-object from the URL, 0 results will be returned.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: UUID of the reference object
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - name: referenceType
+        in: query
+        description: Type of reference object
+        required: true
+        schema:
+          type: string
+          enum:
+          - INVENTORY
+          - CONTROL_IMPLEMENTATION
+          - ENGAGEMENT
+          - INCIDENT
+          - CUSTOM_ENTITY
+          - DYNAMIC
+        example: INVENTORY
+      - name: linkTypes
+        in: query
+        description: Types of links to filter by
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - PRIMARY
+            - AUTO
+            - MANUAL
+        example:
+        - PRIMARY
+        - AUTO
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1…N)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          default: createdDate,desc
+          enum:
+          - number,asc
+          - number,desc
+          - status,asc
+          - status,desc
+          - createdDate,asc
+          - createdDate,desc
+          - name,asc
+          - name,desc
+          - result,asc
+          - result,desc
+          - orgGroupName,asc
+          - orgGroupName,desc
+          - deadline,asc
+          - deadline,desc
+          - openRiskCount,asc
+          - openRiskCount,desc
+          - openInfoRequestCount,asc
+          - openInfoRequestCount,desc
+        example: createdDate,desc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_PageLinkedAssessmentInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/{assessmentId}/export:
+    get:
+      operationId: exportAssessmentUsingGET
+      summary: Get Assessment
+      description: 'Use this API to retrieve details of a specific assessment. The response will include details such as basic assessment information, respondents, approvers, assessment questions and responses, and assessment risks.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The API response body will include all assessment responses received for that assessment after the assessment was launched. If a response record references an object (such as vendors, engagements, or assets) that was subsequently deleted from the OneTrust Platform after the assessment was launched, that record would still be included within the response body but would no longer exist in the OneTrust Platform.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: assessmentId
+        in: path
+        description: UUID of the assessment to export
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - name: excludeSkippedQuestions
+        in: query
+        description: Flag to exclude skipped questions from the export
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentExportInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/{assessmentId}/record:
+    get:
+      operationId: getAssessmentRecordUsingGET
+      summary: Get Assessment Record
+      description: Use this API to retrieve an assessment record containing basic assessment information, sections with questions and responses, and current status. By default, returns a lightweight version that excludes risk information, approvers, respondents, attachments, and other detailed metadata. Set showAllDetails=true to get the full export equivalent response.
+      tags:
+      - Assessments
+      parameters:
+      - name: assessmentId
+        in: path
+        description: UUID of the assessment
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - name: showAllDetails
+        in: query
+        description: When true, returns the full assessment export with all details including risks, approvers, respondents, attachments, etc. When false (default), returns a lightweight record with only basic info, sections, questions, and responses.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: excludeSkippedQuestions
+        in: query
+        description: Flag to exclude skipped questions (only applicable when showAllDetails=true)
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                oneOf:
+                - $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRecordInformation'
+                - $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentExportInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/assessments/{assessmentId}/score-profiles:
+    get:
+      operationId: getAssessmentScoreProfilesWithQuestionBreakdownUsingGET
+      summary: Get Assessment Score Profiles
+      description: 'Use this API to retrieve comprehensive score profile information for an assessment, including:
+
+
+        - Overall profile scores
+
+        - Question-level score breakdown
+
+        - Section and question names
+
+        - Selected options with individual scores
+
+        - Question weights and scoring types
+
+
+        > Things to Know
+
+        >
+
+        > - This API returns data only for assessments that have been submitted and have calculated score profiles.
+
+        >
+
+        > - Score profiles must be configured in the assessment template.
+
+        >
+
+        > - The response includes detailed breakdown of how each question contributed to the overall profile score.
+
+        >
+
+        > - Returns an empty list if no score profiles are configured or no scores have been calculated.
+
+        >
+
+        > - Each question score includes the selected options and their individual contribution to the score.
+
+        >
+
+        > - Question weights show how much each question contributes to the overall profile score.'
+      tags:
+      - Assessments
+      parameters:
+      - name: assessmentId
+        in: path
+        description: The unique ID of the assessment for which to retrieve score profiles.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Successfully retrieved score profiles with question breakdown
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentProfileScoreWithQuestionsDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Access denied to the assessment
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentProfileScoreWithQuestionsDto'
+        '404':
+          description: Assessment not found
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentProfileScoreWithQuestionsDto'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT
+        - ASSESSMENT_READ
+  /api/assessment/v2/assessments/{assessmentId}/workflows:
+    get:
+      operationId: getWorkflowDetailsForAssessmentUsingGET
+      summary: Get Assessment Workflow Stages
+      description: 'Use this API to retrieve workflow and approval stage details of an assessment. The response will include details such as the workflow ID, workflow name, stage ID, and stage name.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Workflow stage indicates the current stage of the workflow that the assessment is in.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: assessmentId
+        in: path
+        description: The unique ID of the assessment to retrieve workflow details for
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_WorkflowAndApprovalStageDetails'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+  /api/assessment/v2/comments/assessments/{assessmentId}:
+    get:
+      operationId: getCommentsForAssessmentUsingGET
+      summary: Get Assessment Comments
+      description: Use this API to retrieve all comments for a given assessment, paginated and sorted by section and question sequence.
+      tags:
+      - Assessments
+      parameters:
+      - name: assessmentId
+        in: path
+        description: The unique ID of the assessment to retrieve comments for.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT
+        - ASSESSMENT_READ
+  /api/assessment/v3/assessments/comments:
+    post:
+      operationId: createCommentUsingPOST
+      summary: Create Assessment Comment
+      description: Use this API to create a new comment on an assessment question.
+      tags:
+      - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_CommentInformation'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: Bad Request — validation error in request payload
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: uuid
+        '401':
+          description: Unauthorized — missing or invalid authentication
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: uuid
+        '403':
+          description: Forbidden — insufficient permissions or scope
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: uuid
+        '404':
+          description: Not Found — assessment, section, or question does not exist
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: uuid
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT
+  /api/assessment/v3/assessments/list:
+    post:
+      operationId: getAssessmentsUsingPOST
+      summary: Get List of Assessments by Criteria
+      description: 'Use this API to retrieve list of all the assessments or assessments by filter criteria like Approver Ids, Respondent Ids, Template Ids etc. The response will include details such as the assessment ID, number, stage, result, primary record, and associated organization.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - All assessments regardless of their stage are returned in the response by default.
+
+        >
+
+        > - The assessments can be filtered by stage using the `assessmentStatuses, templateTypes, assessmentArchivalState` query parameter. Other than these commonly used filters, request body can be used to filter assessments by approver Ids, respondent Ids, template Ids, workflow stage name.'
+      tags:
+      - Assessments
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-assessment-automation.json
+      parameters:
+      - name: templateTypes
+        in: query
+        description: 'List of template types to filter assessments by. Available options:
+
+
+          - **PIA** (PIA & DPIA Automation)
+
+          - **VENDOR** (Third-Party Risk Management)
+
+          - **ITRM** (IT & Security Risk Management)
+
+          - **CONTROL** (Risk and Controls)
+
+          - **INCIDENT** (Incident Management)
+
+          - **EXCHANGE** (Third-Party Risk Exchange)
+
+          - **ESG** (ESG Program Reporting)
+
+          - **DISCLOSURE** (Disclosure Management)
+
+          - **DISCLOSURE_YOY** (Year Over Year Disclosures)
+
+          - **ERM** (Enterprise Risk Management)
+
+          - **TPDD** (Third-Party Due Diligence)
+
+          - **AIGOVERNANCE** (AI Governance)'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            description: Template types used in assessments
+            enum:
+            - PIA
+            - VENDOR
+            - ITRM
+            - CONTROL
+            - INCIDENT
+            - EXCHANGE
+            - ESG
+            - DISCLOSURE
+            - DISCLOSURE_YOY
+            - ERM
+            - TPDD
+            - AIGOVERNANCE
+        example:
+        - PIA
+        - VENDOR
+        - ITRM
+      - name: assessmentStatuses
+        in: query
+        description: List of assessment statuses to filter assessments by
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - UNDER_REVIEW
+            - COMPLETED
+        example:
+        - IN_PROGRESS
+        - UNDER_REVIEW
+      - name: assessmentArchivalState
+        in: query
+        description: Filter assessments by their archival state. Use ALL to include both archived and non-archived assessments, ARCHIVED to include only archived assessments, or NON_ARCHIVED to include only non-archived assessments.
+        required: false
+        schema:
+          type: string
+          example: NON_ARCHIVED
+          default: NON_ARCHIVED
+          enum:
+          - ALL
+          - ARCHIVED
+          - NON_ARCHIVED
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N). Example- '?page=1
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page (1…N).
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+        schema:
+          type: string
+          default: createdDate,desc
+          enum:
+          - number,asc
+          - number,desc
+          - status,asc
+          - status,desc
+          - createdDate,asc
+          - createdDate,desc
+          - name,asc
+          - name,desc
+          - result,asc
+          - result,desc
+          - orgGroupName,asc
+          - orgGroupName,desc
+          - deadline,asc
+          - deadline,desc
+          - openRiskCount,asc
+          - openRiskCount,desc
+          - openInfoRequestCount,asc
+          - openInfoRequestCount,desc
+        example: createdDate,desc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentListRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentListResponseListAssessmentListViewResponseV2'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - PrivacyAutomation-AssessmentAutomation_OAUTH2:
+        - ASSESSMENT_READ
+        - ASSESSMENT
+components:
+  schemas:
+    PrivacyAutomation-AssessmentAutomation_OptionInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        option:
+          type: string
+        optionKey:
+          type: string
+        sequence:
+          type: integer
+          format: int32
+        hint:
+          type: string
+        hintKey:
+          type: string
+        attributes:
+          type: string
+        optionType:
+          type: string
+          enum:
+          - NOT_SURE
+          - NOT_APPLICABLE
+          - OTHERS
+          - DEFAULT
+        score:
+          type: integer
+          format: int32
+        preSelectedOption:
+          type: boolean
+        translationIdentifier:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_AssessmentListRequest:
+      type: object
+      properties:
+        filterCriteria:
+          description: List of reminder schedules to trigger notifications to configured users (respondents or approvers)
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SearchCriteriaInformation'
+          example:
+          - reminderType: DEADLINE
+            daysBeforeDeadline: 7
+            userTypes:
+            - RESPONDENT
+        assessmentListViewType:
+          description: Load assessments for corresponding view types. Optional for linked assessment APIs (determined from entity type reference). Required for general list APIs.
+          type: string
+          example: ASSESSMENT_AUTOMATION_LIST_VIEW
+          enum:
+          - VENDOR_VIEW
+          - CONTROL_VIEW
+          - ASSESSMENT_AUTOMATION_LIST_VIEW
+          - DATA_MAPPING_LIST_VIEW
+          - ITRM_LIST_VIEW
+          - INCIDENT_LIST_VIEW
+          - ESG_LIST_VIEW
+          - ENGAGEMENT_LIST_VIEW
+          - EXCHANGE_LIST_VIEW
+          - DISCLOSURE_LIST_VIEW
+          - EMPLOYEE_DISCLOSURE_LIST_VIEW
+          - TPDD_LIST_VIEW
+          - GENERAL_LIST
+        visibleColumns:
+          type: array
+          items:
+            type: string
+            example: number
+          maxItems: 2147483647
+          minItems: 1
+        adminOnlyView:
+          description: Loads admin view
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - visibleColumns
+    PrivacyAutomation-AssessmentAutomation_QuestionInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        rootVersionId:
+          type: string
+          format: uuid
+        sequence:
+          type: integer
+          format: int32
+        questionType:
+          type: string
+          enum:
+          - TEXTBOX
+          - MULTICHOICE
+          - YESNO
+          - DATE
+          - STATEMENT
+          - INVENTORY
+          - INCIDENT
+          - ATTRIBUTE
+          - PERSONAL_DATA
+          - YES_NO_PARTIALLY
+          - CONTROL
+          - CONTRACT
+          - ENGAGEMENT
+          - ASSESS_CONTROL
+          - ASSESS_RISK
+          - ASSESS_ISSUE
+          - CUSTOM_ENTITY
+          - RELATIONSHIP
+          - DISCLOSURE
+        required:
+          type: boolean
+        attributes:
+          type: string
+        friendlyName:
+          type: string
+        description:
+          type: string
+        hint:
+          type: string
+        parentQuestionId:
+          type: string
+          format: uuid
+        prePopulateResponse:
+          type: boolean
+        linkAssessmentToInventory:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_OptionInformation'
+        valid:
+          type: boolean
+        businessKeyReference:
+          type: string
+        topic:
+          type: string
+        questionLaws:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_LawInformation'
+        attachmentRequired:
+          type: boolean
+        responseFilter:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseFilter'
+        linkAssessmentToResponseEntity:
+          type: boolean
+        attachmentIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        readOnly:
+          type: boolean
+        translationIdentifier:
+          type: string
+          format: uuid
+        optionMetadata:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AttributeOptionMetadataInformation'
+        type:
+          type: string
+          enum:
+          - TEXTBOX
+          - MULTICHOICE
+          - YESNO
+          - DATE
+          - STATEMENT
+          - INVENTORY
+          - INCIDENT
+          - ATTRIBUTE
+          - PERSONAL_DATA
+          - YES_NO_PARTIALLY
+          - CONTROL
+          - CONTRACT
+          - ENGAGEMENT
+          - ASSESS_CONTROL
+          - ASSESS_RISK
+          - ASSESS_ISSUE
+          - CUSTOM_ENTITY
+          - RELATIONSHIP
+          - DISCLOSURE
+        schema:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SchemaIdentifier'
+        allowJustification:
+          type: boolean
+        attributeId:
+          type: string
+          format: uuid
+        allowMultiSelect:
+          type: boolean
+        assetQuestion:
+          type: boolean
+        vendorQuestion:
+          type: boolean
+        entityQuestion:
+          type: boolean
+        paquestion:
+          type: boolean
+        inventoryTypeEnum:
+          type: string
+          enum:
+          - ASSETS
+          - PROCESSING_ACTIVITY
+          - VENDORS
+          - DATA_SUBJECTS
+          - DATA_ELEMENTS
+          - DATA_CATEGORIES
+          - ENTITIES
+          - PERSONAL_DATA
+        seeded:
+          type: boolean
+        forceOther:
+          type: boolean
+        requireJustification:
+          type: boolean
+        content:
+          type: string
+        isParentQuestionMultiSelect:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_submittedBy:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity (organization group, user, etc.)
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Display name of the entity (organization name or user's full name)
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Translation key for the name, used for internationalization
+          type: string
+          example: EntityName
+    PrivacyAutomation-AssessmentAutomation_AssessmentResultDto:
+      type: object
+      properties:
+        id:
+          description: Assessment Result ID
+          type: string
+          format: uuid
+        name:
+          description: Assessment Result Name
+          type: string
+        optionHint:
+          description: Assessment Result Option Hint
+          type: string
+        nameKey:
+          description: Assessment Result name Key for translation
+          type: string
+        optionHintKey:
+          description: Assessment Result optionHint Key for translation
+          type: string
+        updateOtherServcies:
+          description: This value determines whether the result will update inventories and launch follow-up assessments (like the system result 'Approved').
+          type: boolean
+        templateType:
+          description: Assessment Result template type
+          type: string
+          enum:
+          - PIA
+          - VENDOR
+          - RA
+          - GRA
+          - DINA
+          - BENCHMARKING
+          - ITRM
+          - CONTROL
+          - INCIDENT
+          - EXCHANGE
+          - ESG
+          - DISCLOSURE
+          - DISCLOSURE_YOY
+          - ERM
+          - TPDD
+          - AIGOVERNANCE
+          - DYNAMIC
+          x-enumDescriptions:
+            ERM: Enterprise Risk Management
+            AIGOVERNANCE: AI Governance
+            ITRM: IT & Security Risk Management
+            DISCLOSURE: Disclosure Management
+            INCIDENT: Incident Management
+            ESG: ESG Program Reporting
+            PIA: PIA & DPIA Automation
+            VENDOR: Third-Party Risk Management
+            TPDD: Third-Party Due Diligence
+            EXCHANGE: Third-Party Risk Exchange
+            DISCLOSURE_YOY: Year Over Year Disclosures
+            CONTROL: Risk and Controls
+        active:
+          type: boolean
+        system:
+          type: boolean
+        internal:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_AssessmentListViewResponseV2:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier for the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Assessment number used for reference
+          type: integer
+          format: int32
+          example: 1001
+        name:
+          description: Name of the assessment
+          type: string
+          example: GDPR Compliance Assessment
+        status:
+          description: Current status of the assessment
+          type: string
+          example: IN_PROGRESS
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - UNDER_REVIEW
+          - COMPLETED
+        result:
+          description: Result of the assessment approval process
+          type: string
+          example: APPROVED
+        orgGroupId:
+          description: Unique identifier of the organization group this assessment belongs to
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        orgGroupName:
+          description: Name of the organization group this assessment belongs to
+          type: string
+          example: Marketing Department
+        assessmentCreatedBy:
+          description: Details of the user who created the assessment
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174000
+            fullName: John Doe
+            email: john.doe@example.com
+            deleted: false
+            assigneeType: USER
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        respondent:
+          type: string
+        respondents:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+          uniqueItems: true
+        approver:
+          type: string
+        creator:
+          description: Name of the assessment creator
+          type: string
+          example: John Doe
+        approvers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+          uniqueItems: true
+        deadline:
+          description: Deadline date for assessment completion
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createDT:
+          description: Date and time when the assessment was created
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00Z'
+        createdBy:
+          description: Unique identifier of the user who created the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        completedOn:
+          description: Date and time when the assessment was completed
+          type: string
+          format: date-time
+          example: '2025-06-15T14:45:00Z'
+        completedBy:
+          description: Unique identifier of the user who completed the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        templateId:
+          description: Unique identifier of the template used for this assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174003
+        templateRootVersionId:
+          description: Unique identifier of the template root version
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174004
+        templateName:
+          description: Name of the template used for this assessment
+          type: string
+          example: GDPR PIA Template
+        assessmentRiskLevelId:
+          description: Identifier of the assessment risk level
+          type: integer
+          format: int64
+          example: 3
+        assessmentRiskScore:
+          description: Numerical score representing the assessment risk
+          type: number
+          format: decimal
+          example: 7.5
+        assessmentRiskLevelName:
+          description: Name of the assessment risk level
+          type: string
+          example: HIGH
+        templateType:
+          description: Type of the assessment template
+          type: string
+          example: PIA
+          enum:
+          - PIA
+          - VENDOR
+          - ITRM
+          - CONTROL
+          - INCIDENT
+          - EXCHANGE
+          - ESG
+          - DISCLOSURE
+          - DISCLOSURE_YOY
+          - ERM
+          - TPDD
+          - AIGOVERNANCE
+          x-enumDescriptions:
+            ERM: Enterprise Risk Management
+            AIGOVERNANCE: AI Governance
+            ITRM: IT & Security Risk Management
+            DISCLOSURE: Disclosure Management
+            INCIDENT: Incident Management
+            ESG: ESG Program Reporting
+            PIA: PIA & DPIA Automation
+            VENDOR: Third-Party Risk Management
+            TPDD: Third-Party Due Diligence
+            EXCHANGE: Third-Party Risk Exchange
+            DISCLOSURE_YOY: Year Over Year Disclosures
+            CONTROL: Risk and Controls
+        templateVersion:
+          description: Version number of the template
+          type: integer
+          format: int32
+          example: 2
+        editAllResponsesWhenInProgress:
+          description: Flag indicating if all responses can be edited when assessment is in progress
+          type: boolean
+          example: true
+        deletedDT:
+          description: Date and time when the assessment was deleted (if applicable)
+          type: string
+          format: date-time
+          example: '2025-07-20T09:15:00Z'
+        deletedBy:
+          description: Unique identifier of the user who deleted the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174005
+        assessmentDeletedBy:
+          description: Details of the user who deleted the assessment
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        assessmentCompletedBy:
+          description: Details of the user who completed the assessment
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        pendingReviews:
+          description: Comma-separated list of pending reviewer names
+          type: string
+          example: Charlie Brown, Diana Prince
+        pendingReviewers:
+          description: Set of pending reviewer user details
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+          uniqueItems: true
+        submittedDT:
+          description: Date and time when the assessment was submitted
+          type: string
+          format: date-time
+          example: '2025-05-10T16:20:00Z'
+        canResendLink:
+          description: Flag indicating if assessment link can be resent
+          type: boolean
+          example: true
+        inherentRiskScore:
+          description: Numerical score representing the inherent risk
+          type: number
+          format: decimal
+          example: 8.2
+        inherentRiskLevelId:
+          description: Identifier of the inherent risk level
+          type: integer
+          format: int64
+          example: 4
+        inherentRiskLevelName:
+          description: Name of the inherent risk level
+          type: string
+          example: CRITICAL
+        primaryRecordName:
+          description: Name of the primary record associated with this assessment
+          type: string
+          example: Customer Database
+        primaryRecordNumber:
+          description: Reference number of the primary record
+          type: string
+          example: DB-2025-001
+        targetRiskScore:
+          description: Target numerical score for risk after mitigation
+          type: number
+          format: decimal
+          example: 3.5
+        targetRiskLevelId:
+          description: Identifier of the target risk level
+          type: integer
+          format: int64
+          example: 2
+        targetRiskLevelName:
+          description: Name of the target risk level
+          type: string
+          example: MEDIUM
+        workflowId:
+          description: Unique identifier of the workflow
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174006
+        workflowStageId:
+          description: Unique identifier of the current workflow stage
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174007
+        workflowName:
+          description: Name of the workflow
+          type: string
+          example: Standard PIA Approval Process
+        approvalStageName:
+          description: Name of the current approval stage
+          type: string
+          example: Legal Review
+        badgeColor:
+          description: Color code for the approval stage badge
+          type: string
+          example: '#4287f5'
+        updatedDT:
+          description: Date and time when the assessment was last updated
+          type: string
+          format: date-time
+          example: '2025-07-01T11:25:30Z'
+        assessmentDeleteStatus:
+          description: Status of assessment deletion
+          type: string
+          example: SOFT_DELETED
+          enum:
+          - ACTIVE
+          - SOFT_DELETED
+          - HARD_DELETED
+        attestationRequired:
+          description: Flag indicating if attestation is required
+          type: boolean
+          example: true
+        attestationCompleted:
+          description: Date and time when attestation was completed
+          type: string
+          format: date-time
+          example: '2025-06-20T14:30:00Z'
+        finalComment:
+          description: Final comment provided on the assessment
+          type: string
+          example: All requirements have been met with appropriate controls in place.
+        openRiskCount:
+          description: Count of open risks associated with this assessment
+          type: integer
+          format: int32
+          example: 3
+          minimum: 0
+        openInfoRequestCount:
+          description: Count of open information requests associated with this assessment
+          type: integer
+          format: int32
+          example: 2
+          minimum: 0
+        tags:
+          description: Comma-separated list of tags associated with the assessment
+          type: string
+          example: GDPR,High Priority,Marketing
+        redacted:
+          description: Flag indicating if the assessment is redacted
+          type: boolean
+          example: false
+        assessmentDetailUrl:
+          description: URL link to the assessment
+          type: string
+          example: https://example.com/assessments/123e4567-e89b-12d3-a456-426614174000
+        recordAdminId:
+          description: Unique identifier of the record admin user
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174008
+        recordAdmin:
+          description: Details of the record admin user
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        recordAdminData:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+          writeOnly: true
+    PrivacyAutomation-AssessmentAutomation_EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity type
+          type: string
+          format: uuid
+        name:
+          description: Name of the entity type
+          type: string
+        nameKey:
+          description: Translation key for the entity type name
+          type: string
+        moduleName:
+          description: Module name that owns this entity type
+          type: string
+        schemaName:
+          description: Schema name for this entity type
+          type: string
+        seeded:
+          description: Whether this entity type is seeded
+          type: boolean
+        validEntityType:
+          type: boolean
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Assets
+        nameKey: Assets
+    PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails:
+      type: object
+      properties:
+        entity Number:
+          type: integer
+          format: int64
+        source Id:
+          type: string
+          format: uuid
+        source Name:
+          type: string
+        source type:
+          type: string
+          enum:
+          - Risks, Assets, ProcessingActivities, Vendors, Entities
+        Business key:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformation:
+      type: object
+      properties:
+        responseId:
+          type: string
+          format: uuid
+        response:
+          type: string
+        responseKey:
+          type: string
+        type:
+          type: string
+          enum:
+          - NOT_SURE, JUSTIFICATION, NOT_APPLICABLE, DEFAULT, OTHERS
+        responseSourceType:
+          type: string
+          enum:
+          - LAUNCH_FROM_INVENTORY/LAUNCH_FROM_INCIDENT/INCIDENT_TEMPLATE/LAUNCH_FROM_CONTROL_IMPLEMENTATION/AI_IMPORT/AI_ACCEPT
+        errorCode:
+          description: not required
+          type: string
+          enum:
+          - ATTRIBUTE_DISABLED
+          - ATTRIBUTE_OPTION_DISABLED
+          - INVALID_RESPONSE_VALUE
+          - INVENTORY_NOT_EXISTS
+          - RELATED_INVENTORY_ATTRIBUTE_DISABLED
+          - DATA_ELEMENT_NOT_EXISTS
+          - DATA_SUBJECT_NOT_EXISTS
+          - DUPLICATE_INVENTORY
+          - INVENTORY_ASSOCIATION_TYPE_INVALID
+          - INVENTORY_ASSOCIATION_TYPE_NOT_APPLICABLE
+          - MULTIPLE_SERVICE_PROVIDER_VENDOR_ASSET_RELATION
+          - EMAIL_INVALID
+          - RELATIONSHIP_ATTRIBUTE_OPTION_DISABLED
+          - CONTRACT_NOT_FOUND
+          - VENDOR_CHILD_ATTRIBUTE_INVALID_VALUE_FORMAT
+          - VENDOR_CHILD_ATTRIBUTE_VALUE_LONG
+          - CONTRACT_INVALID_NAME
+          - ENGAGEMENT_NOT_FOUND
+          - DUPLICATE_ENGAGEMENT
+          - INVALID_ENTITY
+          - NOT_FOUND_LINK_TYPE
+          - LINK_TYPE_DOES_NOT_BELONG_TO_ENTITY_TYPE
+          - LINK_RECORD_CANNOT_BE_CREATED_BETWEEN_SAME_ENTITY
+          - LINK_TYPE_DISABLED
+          - INVALID_CONTROL
+          - GENERIC_EXCEPTION
+          - UNKNOWN_MODULE_CLIENT_ERROR
+        errorTranslationKey:
+          description: not required
+          type: string
+        responseMap:
+          description: 'only applicable for inventory type responses. Allowable values for the key: ASSETS, PROCESSING_ACTIVITY, VENDORS, DATA_SUBJECTS, DATA_ELEMENTS, DATA_CATEGORIES'
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        scaleResponseMap:
+          description: only applicable for YES_NO_PARTIALLY type responses. key should be OVERALL or LAW Name
+          type: object
+          additionalProperties:
+            type: number
+        controlResponse:
+          description: only applicable for control responses
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ControlResponse'
+        responseAdditionalDetails:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails'
+        contractResponse:
+          description: only applicable for contract responses
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ContractAdditionalResponseInformation'
+        relationshipResponseDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto'
+        valid:
+          description: not required
+          type: boolean
+        textRedacted:
+          description: Applicable for attribute text questions
+          type: boolean
+        lastModifiedDate:
+          type: string
+          format: date-time
+        assessmentDetailId:
+          description: Assessment Detail Identifier of the question response
+          type: string
+          format: uuid
+        personalDataDetailId:
+          description: Pre-generated ID for AssessmentPersonalDataDetail entity, used in AI auto-suggestion mode
+          type: string
+          format: uuid
+        dataSubject:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        dataCategory:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        dataElement:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+    PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto:
+      type: object
+      properties:
+        relationshipNodeType:
+          description: Type of the relationship node
+          type: string
+          example: ASSESSMENT
+          minLength: 1
+        entityId:
+          description: Unique identifier of the related entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        entityDisplayName:
+          description: Display name of the related entity
+          type: string
+          example: Customer Data Assessment
+          minLength: 1
+        entityType:
+          description: Type information of the related entity
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_EntityTypeInformation'
+      example:
+        relationshipNodeType: ASSESSMENT
+        entityId: 123e4567-e89b-12d3-a456-426614174000
+        entityDisplayName: Customer Data Assessment
+        entityType:
+          id: 1
+          name: Privacy Impact Assessment
+          description: Assessment type for privacy impact evaluation
+      required:
+      - entityId
+      - entityType
+    PrivacyAutomation-AssessmentAutomation_WorkflowAndApprovalStageDetails:
+      type: object
+      properties:
+        workflowId:
+          description: The unique identifier of the workflow
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        workflowName:
+          description: The name of the workflow
+          type: string
+          example: Standard Approval Workflow
+        workflowNameKey:
+          description: The key for the workflow name used for localization
+          type: string
+          example: workflow.standard.approval
+        approvalStageDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_WorkflowStageBasicDetails'
+    PrivacyAutomation-AssessmentAutomation_PageAssessmentListViewBasicDto:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentListViewBasicDto'
+          description: The assessment data content
+        page:
+          description: Pagination information for the response
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentPage'
+    PrivacyAutomation-AssessmentAutomation_AssessmentListResponseListAssessmentListViewResponseV2:
+      type: object
+      properties:
+        content:
+          description: The assessment data content
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentListViewResponseV2'
+          type: array
+        page:
+          description: Pagination information for the response
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentPage'
+    PrivacyAutomation-AssessmentAutomation_primaryInventoryDetails:
+      type: object
+      properties:
+        primaryInventoryName:
+          description: Name of the primary inventory record
+          type: string
+          example: Server Infrastructure
+        primaryInventoryId:
+          description: Unique identifier for the primary inventory record
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        primaryInventoryNumber:
+          description: Sequential number assigned to the primary inventory record
+          type: integer
+          format: int64
+          example: 10042
+    PrivacyAutomation-AssessmentAutomation_QuestionResponseWithAIMetadata:
+      type: object
+      properties:
+        responses:
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionBasicResponseDTO'
+          type: array
+        answerSource:
+          type: string
+          enum:
+          - AI
+          - HUMAN
+        confidenceScoreLevel:
+          type: string
+        flagged:
+          type: boolean
+        flag:
+          type: string
+          enum:
+          - NONE
+          - WEAK_ANSWER
+          - PARTIAL_ANSWER
+          - WEAK_ANSWER_AND_PARTIAL_ANSWER
+          - CONFLICTING_EVIDENCE
+          - CONFLICTING_EVIDENCE_AND_WEAK_ANSWER
+          - CONFLICTING_EVIDENCE_AND_PARTIAL_ANSWER
+          - CONFLICTING_EVIDENCE_AND_PARTIAL_ANSWER_AND_WEAK_ANSWER
+        flagResolved:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_PageLinkedAssessmentInformation:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_LinkedAssessmentInformation'
+          description: List of linked assessments in the current page
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_LinkedAssessmentInformation'
+        empty:
+          description: Flag to check if the result list is empty or not
+          type: boolean
+        first:
+          description: Flag to check if this is the first page
+          type: boolean
+        last:
+          description: Flag to check if this is the last page
+          type: boolean
+        number:
+          description: Current page number (0-based)
+          type: integer
+          format: int32
+        numberOfElements:
+          description: Number of elements in the current page
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: Page size
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: Total number of elements across all pages
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: Total number of pages
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SortObject'
+        pageable:
+          description: 'Pagination information with page number (0-based, min: 0) and page size (min: 1)'
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+      example:
+        content:
+        - assessmentId: 550e8400-e29b-41d4-a716-446655440000
+          assessmentName: Privacy Impact Assessment - Customer Portal
+          assessmentNumber: 12345
+          templateName: PIA Template
+          status: IN_PROGRESS
+        totalElements: 1
+        totalPages: 1
+        size: 20
+        number: 0
+        numberOfElements: 1
+        first: true
+        last: true
+        empty: false
+    PrivacyAutomation-AssessmentAutomation_riskStatistics:
+      type: object
+      properties:
+        sectionId:
+          type: string
+          format: uuid
+        riskCount:
+          type: integer
+          format: int64
+        maxRiskLevel:
+          type: integer
+          format: int64
+    PrivacyAutomation-AssessmentAutomation_AssessmentPage:
+      type: object
+      properties:
+        number:
+          description: Current page number (zero-based)
+          type: integer
+          format: int64
+          example: 0
+        size:
+          description: Number of items per page
+          type: integer
+          format: int64
+          example: 20
+        totalElements:
+          description: Total number of elements across all pages
+          type: integer
+          format: int64
+          example: 100
+        totalPages:
+          description: Total number of pages available
+          type: integer
+          format: int64
+          example: 5
+    PrivacyAutomation-AssessmentAutomation_SelectedOptionScore:
+      type: object
+      properties:
+        optionText:
+          description: Text of the selected option
+          type: string
+          example: More than 5 years
+        optionScore:
+          description: Score assigned to this option
+          type: number
+          example: 25
+    PrivacyAutomation-AssessmentAutomation_AssessmentDeleteLogInformation:
+      type: object
+      properties:
+        assessmentGuid:
+          description: Unique identifier (UUID) of the deleted assessment
+          type: string
+          format: uuid
+        assessmentName:
+          description: Name of the deleted assessment
+          type: string
+        deletedBy:
+          description: Username or identifier of the user who deleted the assessment
+          type: string
+        deletedDT:
+          description: Date and time when the assessment was deleted, in UTC timezone
+          type: string
+          format: date-time
+        assessmentId:
+          description: Numeric identifier of the deleted assessment
+          type: integer
+          format: int64
+    PrivacyAutomation-AssessmentAutomation_ApproverInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        workflowStageId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        approver:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        approvedOn:
+          type: string
+          format: date-time
+        approvalState:
+          type: string
+          enum:
+          - OPEN
+          - APPROVED
+          - REJECTED
+        resultId:
+          type: string
+          format: uuid
+        resultName:
+          type: string
+        resultNameKey:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskInformation:
+      type: object
+      properties:
+        questionId:
+          description: Identifier of the question associated with this risk
+          type: string
+          format: uuid
+        parentQuestionResponseDetailId:
+          description: Identifier of the parent question response detail
+          type: string
+          format: uuid
+        riskId:
+          description: Unique identifier of the risk
+          type: string
+          format: uuid
+        level:
+          description: Risk level value
+          type: integer
+          format: int64
+        score:
+          description: Numerical risk score
+          type: integer
+          format: int64
+        probability:
+          description: Probability component of risk score
+          type: integer
+          format: int64
+        impactLevel:
+          description: Impact level component of risk score
+          type: integer
+          format: int64
+        riskLevelValue:
+          description: Display value of the risk level (e.g., 'High', 'Medium', 'Low')
+          type: string
+        riskLevelValueKey:
+          description: Key for the risk level value for localization
+          type: string
+        riskLevelColorCode:
+          description: Color code associated with the risk level for UI display
+          type: string
+        attributeOptionId:
+          description: Identifier of the attribute option associated with this risk level
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_AssessableEntityDetail:
+      type: object
+      properties:
+        id:
+          description: ID of the assessable entity
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Name of the assessable entity
+          type: string
+          example: Vendor name
+        number:
+          description: Number of the assessable entity
+          type: integer
+          format: int64
+          example: 1
+        relationshipResponseDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto'
+        displayName:
+          description: Display name of the entity
+          type: string
+          example: Vendor display name
+          readOnly: true
+        entityBusinessKey:
+          description: Business Key of the entity
+          type: string
+          example: Vendor business key
+    PrivacyAutomation-AssessmentAutomation_AssessmentAttachmentResponse:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+          format: uuid
+        sectionId:
+          type: string
+          format: uuid
+        questionId:
+          type: string
+          format: uuid
+        createdDate:
+          type: string
+          format: date-time
+        fileName:
+          type: string
+        fileDescription:
+          type: string
+        creator:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        createdBy:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        resourcePath:
+          type: string
+        attributeParentResponseId:
+          type: string
+          format: uuid
+        attachmentIntent:
+          type: string
+          enum:
+          - AI_CONTEXT
+          - QUESTION_EVIDENCE
+          - ASSESSMENT_LEVEL
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionIssueInformation:
+      type: object
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        issueId:
+          type: string
+          format: uuid
+        parentQuestionResponseDetailId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_LawInformation:
+      type: object
+      properties:
+        name:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_LinkedAssessmentInformation:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier of the linked assessment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assessmentName:
+          description: Name of the linked assessment
+          type: string
+          example: GDPR Assessment for Marketing Department
+        assessmentNumber:
+          description: Numeric identifier of the linked assessment
+          type: integer
+          format: int64
+          example: 1001
+        linkType:
+          description: Type of link between the entity and the assessment. Can be PRIMARY, AUTO, or MANUAL
+          type: string
+          example: PRIMARY
+          enum:
+          - PRIMARY
+          - AUTO
+          - MANUAL
+    PrivacyAutomation-AssessmentAutomation_WorkflowStageBasicDetails:
+      type: object
+      properties:
+        stageId:
+          description: The unique identifier of the workflow stage
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        stageName:
+          description: The name of the workflow stage
+          type: string
+          example: Under Review
+        stageNameKey:
+          description: The key for the stage name used for localization
+          type: string
+          example: workflow.stage.under.review
+        badgeColor:
+          description: The color code for the badge representing this stage
+          type: string
+          example: '#FF9800'
+    PrivacyAutomation-AssessmentAutomation_ControlResponse:
+      type: object
+      properties:
+        control id:
+          type: string
+          format: uuid
+        control identifier:
+          type: string
+        control name:
+          type: string
+        framework id:
+          type: string
+          format: uuid
+        framework name:
+          type: string
+        category id:
+          type: string
+          format: uuid
+        category name:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionResponseInformation:
+      type: object
+      properties:
+        responses:
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformation'
+          type: array
+        justification:
+          description: Justification text provided for the response
+          type: string
+        maturityScale:
+          description: Maturity scale value selected for the question
+          type: integer
+          format: int32
+        effectivenessScale:
+          description: Effectiveness scale value selected for the question
+          type: integer
+          format: int32
+        parentAssessmentDetailId:
+          description: Identifier of the parent assessment detail
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity (organization group, user, etc.)
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Display name of the entity (organization name or user's full name)
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Translation key for the name, used for internationalization
+          type: string
+          example: EntityName
+    PrivacyAutomation-AssessmentAutomation_TagEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the tag
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        option:
+          description: Display text for the tag that appears in the UI
+          type: string
+          example: High Priority
+    PrivacyAutomation-AssessmentAutomation_ResponseFilter:
+      type: object
+      properties:
+        Collection of key-value(s) pairs:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+        operator:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentRecordInformation:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier of the assessment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assessmentNumber:
+          description: Sequential number assigned to the assessment
+          type: integer
+          format: int64
+          example: 12345
+        name:
+          description: Name of the assessment
+          type: string
+          example: GDPR Assessment
+        orgGroup:
+          description: Organization group to which the assessment belongs
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440000
+            name: Legal Department
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        template:
+          description: Template used to create the assessment
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440001
+            name: GDPR Assessment Template
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        status:
+          description: Current status of the assessment
+          type: string
+          example: COMPLETED
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - UNDER_REVIEW
+          - COMPLETED
+        createdBy:
+          description: User who created the assessment
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440002
+            name: John Doe
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        createdDT:
+          description: Date and time when the assessment was created (in UTC)
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45Z'
+        sections:
+          description: List of sections in the assessment with their questions and responses
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformation'
+    PrivacyAutomation-AssessmentAutomation_ProfileQuestionScoreDto:
+      type: object
+      properties:
+        questionId:
+          description: Unique identifier of the question
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        sectionId:
+          description: Unique identifier of the section containing this question
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174001
+        questionName:
+          description: Name of the question
+          type: string
+          example: What is your data retention period?
+        sectionName:
+          description: Name of the section containing this question
+          type: string
+          example: Data Management
+        questionWeight:
+          description: Weight assigned to this question in the profile scoring
+          type: number
+          example: 2.5
+        questionScoringType:
+          description: Type of scoring applied to this question
+          type: string
+          example: WEIGHTED
+          enum:
+          - SUM
+          - AVERAGE
+          - MIN
+          - MAX
+        selectedOptions:
+          description: List of selected options with their individual scores
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SelectedOptionScore'
+        questionScore:
+          description: Final calculated score for this question (after applying weight)
+          type: number
+          example: 75.5
+    PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformation:
+      type: object
+      properties:
+        header:
+          description: Assessment section header information containing basic details like name, description, and sequence
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_header'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformation'
+        hasNavigationRules:
+          description: Indicates if the section has navigation rules that affect question flow
+          type: boolean
+        submittedBy:
+          description: Information about the user who submitted this section
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_submittedBy'
+        submittedDt:
+          description: Date and time when the section was submitted
+          type: string
+          format: date-time
+          example: '2025-07-23T15:30:45Z'
+        name:
+          description: Name of the section
+          type: string
+        isHidden:
+          description: Indicates if the section is hidden
+          type: boolean
+        isValid:
+          description: Indicates if the section is valid
+          type: boolean
+        submitted:
+          type: boolean
+        description:
+          description: Description of the section
+          type: string
+        sectionId:
+          description: Unique identifier for the section
+          type: string
+          format: uuid
+        sequence:
+          description: Sequence number of the section
+          type: integer
+          format: int32
+    PrivacyAutomation-AssessmentAutomation_header:
+      type: object
+      properties:
+        sectionId:
+          description: Unique identifier for the section
+          type: string
+          format: uuid
+        name:
+          description: Name of the section
+          type: string
+        description:
+          description: Description of the section
+          type: string
+        sequence:
+          description: Sequence number indicating the order of the section in the assessment
+          type: integer
+          format: int32
+        hidden:
+          description: Indicates if the section is hidden based on navigation rules
+          type: boolean
+          default: 'false'
+        invalidQuestionIds:
+          type: array
+          items:
+            format: uuid
+        requiredUnansweredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        requiredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        unansweredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        effectivenessQuestionIds:
+          type: array
+          items:
+            format: uuid
+            description: Set of question identifiers that are related to effectiveness assessment
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        autoAnsweredQuestionIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        riskStatistics:
+          description: Risk statistics for the section
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_riskStatistics'
+        status:
+          description: Current status of the section
+          type: string
+        nameKey:
+          description: Translation key for the section name
+          type: string
+        descriptionKey:
+          description: Translation key for the section description
+          type: string
+        openNMIQuestionIds:
+          type: array
+          items:
+            format: uuid
+          uniqueItems: true
+        sectionUserType:
+          description: Type of user assigned to the section (e.g., RESPONDENT, APPROVER)
+          type: string
+          enum:
+          - APPROVER
+          - RESPONDENT
+        submitted:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_QuestionAssociationInformation:
+      type: object
+      properties:
+        associationType:
+          type: string
+          enum:
+          - SOURCE
+          - TARGET
+          - ADDITIONAL_LINK_1
+          - ADDITIONAL_LINK_2
+          - RESTRICT_RESPONSE_OPTIONS
+        associatedQuestionIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the user
+          type: string
+          format: uuid
+        fullName:
+          description: Full name of the user
+          type: string
+        email:
+          description: Email address of the user
+          type: string
+        deleted:
+          description: Flag indicating whether the user has been deleted
+          type: boolean
+        assigneeType:
+          description: Type of assignee (e.g., USER, GROUP)
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionSectionBasicInfo:
+      type: object
+      properties:
+        id:
+          description: UUID of the section
+          type: string
+          format: uuid
+        name:
+          description: Name of the section
+          type: string
+        description:
+          description: Description of the section
+          type: string
+        sequence:
+          description: Sequence number indicating the order of the section in the assessment
+          type: integer
+          format: int32
+    PrivacyAutomation-AssessmentAutomation_ProfileScoreInformation:
+      type: object
+      properties:
+        scoreProfileName:
+          type: string
+        profileScore:
+          type: number
+    PrivacyAutomation-AssessmentAutomation_AssessmentListViewBasicDto:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier for the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Sequential number assigned to the assessment
+          type: integer
+          format: int32
+          example: 12345
+        name:
+          description: Name of the assessment
+          type: string
+          example: Annual Security Review
+        status:
+          description: Current status of the assessment
+          type: string
+          example: In Progress
+          enum:
+          - Not Started
+          - In Progress
+          - Under Review
+          - Completed
+        state:
+          description: Current state of the assessment
+          type: string
+          example: Active
+        result:
+          type: string
+          deprecated: true
+        resultId:
+          description: Unique identifier for the assessment result
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        resultName:
+          description: Name of the assessment result
+          type: string
+          example: Approved with Conditions
+        orgGroupName:
+          description: Name of the organization group to which the assessment belongs
+          type: string
+          example: Finance Department
+        createDt:
+          description: Date when the assessment was created
+          type: string
+          format: date-time
+          example: '2025-07-01T10:30:00Z'
+        tags:
+          type: array
+          items:
+            type: string
+        templateName:
+          description: Name of the template used for the assessment
+          type: string
+          example: Security Assessment Template v2
+        templateId:
+          description: Unique identifier for the template
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        templateRootVersionId:
+          description: Root version identifier for the template
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174003
+        primaryInventoryDetails:
+          description: Details about the primary inventory associated with the assessment
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_primaryInventoryDetails'
+        residualRiskScore:
+          description: Risk score after controls have been applied
+          type: number
+          format: decimal
+          example: 3.5
+        openRiskCount:
+          description: Number of open risks associated with the assessment
+          type: integer
+          format: int64
+          example: 5
+        inherentRiskScore:
+          description: Risk score before any controls are applied
+          type: number
+          format: decimal
+          example: 7.2
+        targetRiskScore:
+          description: Target risk score to achieve
+          type: number
+          format: decimal
+          example: 2
+        lastUpdated:
+          description: Date and time when the assessment was last updated
+          type: string
+          format: date-time
+          example: '2025-07-23T15:30:45Z'
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformation:
+      type: object
+      properties:
+        question:
+          description: Core information about the question including text, type, and configuration
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionInformation'
+        sectionInformation:
+          description: Information about the section containing this question
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionSectionBasicInfo'
+        hidden:
+          description: Indicates if the question should be hidden or not based on the responses provided so far
+          type: boolean
+        lockReason:
+          description: Reason why the question is locked, if applicable
+          type: string
+          enum:
+          - LAUNCH_FROM_INVENTORY, LAUNCH_FROM_INCIDENT, LAUNCH_FROM_CONTROL_IMPLEMENTATION
+        copyErrors:
+          type: array
+          items:
+            type: string
+            enum:
+            - OTHER_RESPONSE_NOT_ALLOWED
+            - NOT_SURE_NOT_ALLOWED
+            - NOT_APPLICABLE_NOT_ALLOWED
+            - NEW_QUESTION
+            - MULTI_SELECT_NOT_ALLOWED
+            - OPTION_REMOVED
+            - INVENTORY_REMOVED
+            - ENTITY_REMOVED
+          uniqueItems: true
+        hasNavigationRules:
+          description: Indicates if the question has navigation rules associated with it
+          type: boolean
+        questionResponses:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionResponseInformation'
+        risks:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskInformation'
+        rootRequestInformationIds:
+          type: array
+          items:
+            format: uuid
+          uniqueItems: true
+        totalAttachments:
+          description: Total number of attachments for this question
+          type: integer
+          format: int64
+        attachmentIds:
+          type: array
+          items:
+            format: uuid
+          uniqueItems: true
+        canReopenWithAllowEditOption:
+          description: Indicates if a question can be opened for allowing a response to be edited. If true, it means the question has no skip logic tied to it, or it is not an inventory/attribute/incident question.
+          type: boolean
+        riskCreationAllowed:
+          description: Indicates if the question can be allowed to flag risk manually
+          type: boolean
+        riskDeletionPopupAllowed:
+          description: Indicates if risk deletion alert popup is allowed on this question
+          type: boolean
+        allowMaturityScaleOnQuestions:
+          description: Indicates if Maturity Scale is allowed on this question
+          type: boolean
+        questionAssociations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionAssociationInformation'
+        attachmentsById:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentAttachmentResponse'
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionIssueInformation'
+        questionResponseWithAIMetadata:
+          description: Question response with AI metadata including confidence scores and flags
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionResponseWithAIMetadata'
+        responseEditableWhileUnderReview:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_SearchCriteriaInformation:
+      type: object
+      properties:
+        field:
+          description: The field name to apply the search criterion to
+          type: string
+          example: status
+        operation:
+          description: The operation to apply (eq, ne, gt, lt, in, between, etc.)
+          type: string
+          example: eq
+        value:
+          description: The value to compare against. Can be a single value or a list of values depending on the operation
+          type: object
+        toValue:
+          description: The upper bound value for 'between' operations
+          type: object
+    PrivacyAutomation-AssessmentAutomation_QuestionBasicResponseDTO:
+      type: object
+      properties:
+        responseId:
+          type: string
+          format: uuid
+        response:
+          type: string
+        responseKey:
+          type: string
+        type:
+          type: string
+          enum:
+          - NOT_SURE, JUSTIFICATION, NOT_APPLICABLE, DEFAULT, OTHERS
+        responseSourceType:
+          type: string
+          enum:
+          - LAUNCH_FROM_INVENTORY/LAUNCH_FROM_INCIDENT/INCIDENT_TEMPLATE/LAUNCH_FROM_CONTROL_IMPLEMENTATION/AI_IMPORT/AI_ACCEPT
+        errorCode:
+          description: not required
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        personalDataDetailId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_AssessmentProfileScoreWithQuestionsDto:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier of the assessment
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        profileId:
+          description: Unique identifier of the score profile
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174001
+        scoreProfileRootVersionId:
+          description: Unique identifier of the score profile (root version ID)
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174001
+        profileName:
+          description: Name of the score profile
+          type: string
+          example: Privacy Risk Assessment
+        profileScoringType:
+          description: Type of scoring applied to this profile
+          type: string
+          example: WEIGHTED
+          enum:
+          - SUM
+          - AVERAGE
+          - MIN
+          - MAX
+          - WEIGHTED_AVERAGE
+        profileSequence:
+          description: Sequence order of this profile in the assessment
+          type: integer
+          format: int32
+          example: 1
+        profileScore:
+          description: Overall calculated score for this profile
+          type: number
+          example: 85.5
+        questionScores:
+          description: List of question scores contributing to this profile score
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ProfileQuestionScoreDto'
+    PrivacyAutomation-AssessmentAutomation_AssessmentExportInformation:
+      type: object
+      properties:
+        assessmentId:
+          description: Unique identifier of the assessment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assessmentNumber:
+          description: Sequential number assigned to the assessment
+          type: integer
+          format: int64
+          example: 12345
+        name:
+          description: Name of the assessment
+          type: string
+          example: GDPR Assessment
+        description:
+          description: Description of the assessment
+          type: string
+          example: Annual GDPR compliance assessment
+        welcomeText:
+          description: Welcome text displayed at the beginning of the assessment
+          type: string
+          example: Welcome to the annual GDPR compliance assessment. Please answer all questions thoroughly.
+        orgGroup:
+          description: Organization group to which the assessment belongs
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440000
+            name: Legal Department
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        template:
+          description: Template used to create the assessment
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440001
+            name: GDPR Assessment Template
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        status:
+          description: Current status of the assessment
+          type: string
+          example: COMPLETED
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - UNDER_REVIEW
+          - COMPLETED
+        createdBy:
+          description: User who created the assessment
+          example:
+            id: 550e8400-e29b-41d4-a716-446655440002
+            name: John Doe
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        createdDT:
+          description: Date and time when the assessment was created (in UTC)
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45Z'
+        sections:
+          description: List of sections in the assessment with their questions and responses
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformation'
+        approvers:
+          description: List of users who are approvers for the assessment
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ApproverInformation'
+          example:
+          - id: 550e8400-e29b-41d4-a716-446655440003
+            name: Jane Smith
+            email: jane.smith@example.com
+        respondents:
+          description: List of users who are respondents for the assessment
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+          example:
+          - id: 550e8400-e29b-41d4-a716-446655440004
+            name: Bob Johnson
+        respondent:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        deadline:
+          description: Deadline for completing the assessment
+          type: string
+          format: date-time
+          example: '2023-12-31T23:59:59Z'
+        submittedOn:
+          description: Date when the assessment was submitted for review
+          type: string
+          format: date-time
+          example: '2023-11-10T09:15:30Z'
+        completedOn:
+          description: Date when the assessment was completed
+          type: string
+          format: date-time
+          example: '2023-11-15T14:22:33Z'
+        result:
+          description: Result of the assessment (deprecated, use resultName instead)
+          type: string
+          deprecated: true
+        resultId:
+          description: Unique identifier of the assessment result
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440005
+        resultName:
+          description: Name of the assessment result
+          type: string
+          example: Approved
+        lowRisk:
+          description: Count of low risk findings in the assessment
+          type: integer
+          format: int32
+          example: 3
+        mediumRisk:
+          description: Count of medium risk findings in the assessment
+          type: integer
+          format: int32
+          example: 2
+        highRisk:
+          description: Count of high risk findings in the assessment
+          type: integer
+          format: int32
+          example: 1
+        veryHighRisk:
+          description: Count of very high risk findings in the assessment
+          type: integer
+          format: int32
+          example: 0
+        totalRiskCount:
+          description: Total count of all risk findings in the assessment
+          type: integer
+          format: int64
+          example: 6
+        riskLevel:
+          description: Overall risk level of the assessment
+          type: string
+          example: LOW
+        residualRiskScore:
+          description: Residual risk score after mitigations
+          type: number
+          example: 2.5
+        openRiskCount:
+          description: Count of open risks in the assessment
+          type: integer
+          format: int64
+          example: 2
+        inherentRiskScore:
+          description: Inherent risk score before mitigations
+          type: number
+          example: 4.8
+        targetRiskScore:
+          description: Target risk score to achieve
+          type: number
+          example: 1.5
+        lastUpdated:
+          description: Date and time when the assessment was last updated (in UTC)
+          type: string
+          format: date-time
+          example: '2023-11-05T16:42:18Z'
+        primaryEntityDetails:
+          description: Details of the primary entities associated with the assessment
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessableEntityDetail'
+        primaryRecordType:
+          description: Type of the primary record associated with the assessment
+          type: string
+          example: INVENTORY
+        tags:
+          description: List of tags associated with the assessment
+          type: array
+          items:
+            type: string
+          example:
+          - GDPR
+          - Annual
+          - High Priority
+        profileScoreInformationList:
+          description: List of profile scores for the assessment, containing profile name and calculated score
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ProfileScoreInformation'
+          example:
+          - scoreProfileName: Profile A
+            profileScore: 1
+          - scoreProfileName: Profile B
+            profileScore: 11
+    PrivacyAutomation-AssessmentAutomation_AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: Option Source Entity Type
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: Basic Url for the Option source Service
+          type: string
+          example: /api/location
+        optionUrl:
+          description: Api URL for the Drop Down Api
+          type: string
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: This will help to identify the view type of list
+          type: string
+    PrivacyAutomation-AssessmentAutomation_ContractAdditionalResponseInformation:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_CommentInformation:
+      type: object
+      properties:
+        comment:
+          description: The comment text to associate with the question
+          type: string
+          example: Please provide supporting documentation for this response.
+        assessmentId:
+          description: Identifier of the assessment the comment belongs to
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        sectionId:
+          description: Identifier of the section containing the question being commented on
+          type: string
+          format: uuid
+          example: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+        questionId:
+          description: Identifier of the question the comment applies to
+          type: string
+          format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      required:
+      - assessmentId
+      - comment
+      - questionId
+      - sectionId
+    PrivacyAutomation-AssessmentAutomation_SchemaIdentifier:
+      type: object
+      properties:
+        schemaName:
+          type: string
+        moduleName:
+          type: string
+  securitySchemes:
+    PrivacyAutomation-AssessmentAutomation_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ASSESSMENT: Access to assessment scope for external systems
+            ASSESSMENT_READ: Access to read assessment scope for external systems
+    Template_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ASSESSMENT: Access to assessment scope for external systems
+            ASSESSMENT_READ: Access to read assessment scope for external systems
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

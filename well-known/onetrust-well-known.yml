@@ -1,0 +1,153 @@
+generated: '2026-08-27'
+method: probed
+source: live GET probes of /.well-known/* on every apis.yml host and every OpenAPI servers[] host
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  One real document was served: an RFC 9727 API catalog on the developer portal. The root
+  /.well-known/api-catalog on developer.onetrust.com is a linkset that points at a second, fuller
+  linkset under the /onetrust branch, which enumerates all 37 published OpenAPI definitions with
+  type application/vnd.oai.openapi+json. my.onetrust.com serves an OpenID Connect discovery document,
+  but it describes the Salesforce Experience Cloud identity provider behind the OneTrust support
+  community (its scopes_supported are Salesforce's: cdp_ingest_api, pardot_api, wave_api), NOT the
+  OneTrust platform API — the platform API uses OAuth 2.0 client credentials at
+  https://{hostname}/api/access/v1/oauth/token. No security.txt, no ai-plugin.json, no agent card.
+notes:
+- developer.onetrust.com answers HTTP 200 with the ReadMe single-page-app shell (1.79 MB of HTML) for
+  every unmatched path. Those 200s are recorded below as shell, not as documents.
+- www.onetrust.com returns 403 from a bot challenge on every /.well-known/* path; that is our crawler
+  being turned away, not evidence the provider serves nothing.
+hosts:
+- host: developer.onetrust.com
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    file: onetrust-api-catalog.json
+    note: >-
+      RFC 9727 linkset. The root document is a 288-byte pointer to
+      https://developer.onetrust.com/onetrust/.well-known/api-catalog; the saved file is that second
+      document (13,306 bytes), which lists all 37 OpenAPI definitions.
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    note: SPA shell, not a document.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    file: null
+    note: SPA shell, not a document.
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: null
+    note: SPA shell, not an AgentCard.
+  - path: /.well-known/agent.json
+    status: 200
+    file: null
+    note: SPA shell, not an AgentCard.
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+- host: my.onetrust.com
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: onetrust-my-openid-configuration.json
+    note: >-
+      Real OIDC discovery document, but for the Salesforce Experience Cloud community login at
+      my.onetrust.com — not for the OneTrust platform API.
+  - path: /.well-known/security.txt
+    status: 401
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 401
+    file: null
+  - path: /.well-known/api-catalog
+    status: 401
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 401
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 401
+    file: null
+  - path: /.well-known/agent.json
+    status: 401
+    file: null
+- host: www.onetrust.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 403
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 403
+    file: null
+  - path: /.well-known/api-catalog
+    status: 403
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 403
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 403
+    file: null
+  - path: /.well-known/agent.json
+    status: 403
+    file: null
+- host: app.onetrust.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 401
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 401
+    file: null
+  - path: /.well-known/api-catalog
+    status: 401
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 401
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 401
+    file: null
+  - path: /.well-known/agent.json
+    status: 401
+    file: null
+- host: consent-api.onetrust.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 530
+    file: null
+    note: Cloudflare error 1016 (origin DNS error) on every path for this host.
+  - path: /.well-known/api-catalog
+    status: 530
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 530
+    file: null
+  - path: /.well-known/agent.json
+    status: 530
+    file: null
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

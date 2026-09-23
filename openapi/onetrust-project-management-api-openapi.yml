@@ -1,0 +1,1795 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Project Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Project Management
+  description: The Project Management APIs are used to conduct full management of Project objects.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /api/custom-entity/v1/projects:
+    post:
+      operationId: createProjectUsingPOST
+      summary: Create Project Object
+      description: 'Use this API to create a new Project object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports creating Project objects via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateRequest'
+            examples:
+              Create a basic project:
+                summary: Simple project creation request with minimal details
+                description: Create a basic project
+                value: "{\n \"name\": \"Data Analytics Platform Development\",\n \"description\": \"Development of an enterprise-wide data analytics platform\",\n \"deadline\": \"2025-12-31\",\n \"externalId\": \"PROJ-2025-001\",\n \"status\": \"Active\",\n \"type\": \"Development\"\n \"additionalAttributes\": {\n \"attributeMultiSelectValue.valueId1\": [\n {\n \"id\": \"17a0d9f9-234f-44a4-b467-ab9542551a3c\"\n },\n {\n \"id\": \"766e4e53-5aeb-4ce1-a81d-7a1bcf376092\"\n }\n ],\n \"attributeSingleSelectValue.value1\": [\n {\n \"id\": \"2a27dde9-50d9-47a5-839b-4e10a43c5333\"\n }\n ]\n },}"
+              Create a comprehensive project:
+                summary: Detailed project creation with all available fields
+                description: Create a comprehensive project
+                value:
+                  name: Enterprise Data Warehouse Migration
+                  description: Migration of legacy data warehouse to cloud-based solution
+                  deadline: '2025-09-30'
+                  externalId: PROJ-2025-002
+                  projectLink: https://project-tracker.example.com/projects/PROJ-2025-002
+                  intendedUse: Improve data analytics capabilities and reduce operational costs
+                  businessValue: High
+                  projectOwner: jane.doe@example.com
+                  status: In Progress
+                  type: Infrastructure
+                  internalOrExternal: Internal
+                  promotionStatus: Not Promoted
+                  additionalAttributes:
+                    priority:
+                    - stringValue: High
+                    completionPercentage:
+                    - doubleValue: 15
+                    stakeholders:
+                    - stringValue: Executive Team, IT Department
+                  entityDetail:
+                    data:
+                      owner: jane.doe@example.com
+                      department: IT
+                      budget: $1,500,000
+                  organization:
+                    id: f8e7d6c5-b4a3-2019-8765-432109876543
+      responses:
+        '201':
+          description: Project entity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Created Project Response:
+                  summary: Example of a successfully created project
+                  description: Response containing the details of the newly created project entity
+                  value:
+                    id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                    name: Data Analytics Platform Development
+                    description: Development of an enterprise-wide data analytics platform
+                    entityTypeId: dbc72382-65ec-4c1c-b6a9-83f7856a1f52
+                    attributes:
+                      deadline: '2025-12-31'
+                      externalId: PROJ-2025-001
+                      status: Active
+                      type: Development
+                    createdBy: user@example.com
+                    createdDate: '2025-05-30T10:15:30Z'
+                    lastModifiedBy: user@example.com
+                    lastModifiedDate: '2025-05-30T10:15:30Z'
+                    entityDetail:
+                      owner: jane.doe@example.com
+                      department: IT
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-write
+        - integration
+  /api/custom-entity/v1/projects/basic-details/search:
+    post:
+      operationId: findProjectBasicDetailsByQueryCriteriaUsingPOST
+      summary: Get Basic Project Object Details
+      description: 'Use this API to retrieve basic details for the specified Project object record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Project objects created via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityQueryRequest'
+            examples:
+              Query by name pattern:
+                summary: Query projects with names starting with 'Analytics'
+                description: Query by name pattern
+                value:
+                  query: name:Analytics*
+              Query by status:
+                summary: Query projects with specific status
+                description: Query by status
+                value:
+                  query: status:Active
+              Query by priority and deadline range:
+                summary: Find high priority projects with approaching deadlines
+                description: Query by priority and deadline range
+                value:
+                  query: priority:High AND deadline:[NOW TO 2025-06-30T00:00:00Z]
+              Query by completion percentage range:
+                summary: Find projects with completion percentage in a specific range
+                description: Query by completion percentage range
+                value:
+                  query: completionPercentage:[50 TO 75]
+              Query by team assignments:
+                summary: Find projects assigned to specific teams
+                description: Query by team assignments
+                value:
+                  query: assignedTeam:("Data Science Team" OR "Analytics Team")
+              Query by specific stakeholders:
+                summary: Find projects with specific stakeholder mentions
+                description: Query by specific stakeholders
+                value:
+                  query: stakeholders:*executive* OR stakeholders:*VP*
+              Complex query with boolean logic:
+                summary: Advanced query combining multiple conditions
+                description: Complex query with boolean logic
+                value:
+                  query: (status:Active OR status:"In Progress") AND priority:(High OR Critical) AND completionPercentage:<75 AND deadline:<2025-06-30T00:00:00Z AND NOT name:*Legacy*
+      responses:
+        '200':
+          description: Successfully retrieved list of basic project details matching query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEntityIdentifierInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+  /api/custom-entity/v1/projects/search:
+    post:
+      operationId: findProjectsByListCriteriaUsingPOST
+      summary: Get Project Object Details
+      description: 'Use this API to retrieve all the details for the Project object record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Project objects created via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityListRequest'
+            examples:
+              Filter by name:
+                summary: Filter projects by name
+                description: Filter by name
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: name
+                        value: Project_0610
+                        operator: EQUAL_TO
+              Filter by project status:
+                summary: Filter projects by specific status
+                description: Filter by project status
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: status
+                        value:
+                        - 23d1e72f-d3ce-43a2-bb72-89cc2edaa6fa
+                        operator: EQUAL_TO
+              Filter by deadline and organization:
+                summary: Filter projects by deadline and organization
+                description: Filter by deadline and organization
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: deadline
+                        value: '2025-06-08T18:30:00.000Z'
+                        toValue: '2025-06-29T18:30:00.000Z'
+                        operator: BETWEEN
+                      - field: organization
+                        value: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                        operator: EQUAL_TO
+              Filter by multiple criteria:
+                summary: Filter projects by status not equal to and creation date
+                description: Filter by multiple criteria
+                value: "{{\n \"queryRequest\": {\n \"criteria\": {\n \"fullText\": \"\",\n \"filters\": [\n {\n \"field\": \"status\",\n \"value\": [\n \"23d1e72f-d3ce-43a2-bb72-89cc2edaa6fa\"\n ],\n \"operator\": \"NOT_EQUAL_TO\"\n },\n {\n \"field\": \"createdDate\",\n \"value\": \"2025-06-08T18:30:00.000Z\",\n \"operator\": \"GREATER_THAN\"\n }\n ]\n }\n }\n}"
+              Filter by custom attributes:
+                summary: Filter projects by custom attributes
+                description: Filter by custom attributes
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: attributeMultiSelectValue.valueId1
+                        value:
+                        - 9bbeb65a-e1d2-4236-b64d-cbf8de0a852f
+                        operator: EQUAL_TO
+                      - field: attributeTextValue.value1
+                        value: text
+                        operator: EQUAL_TO
+              Complex filters with multiple criteria:
+                summary: Advanced filtering with multiple criteria
+                description: Complex filters with multiple criteria
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: attributeSingleSelectValue.value4_9
+                        value:
+                        - afcce13b-617a-4197-9cc1-ebddc51c117f
+                        operator: EQUAL_TO
+                      - field: attributeMultiSelectValue.valueId15_23
+                        value:
+                        - bfce6d48-f7e9-4aee-afe6-bf5aa6969c27
+                        operator: EQUAL_TO
+      responses:
+        '200':
+          description: Successfully retrieved list of projects matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEntityInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+  /api/custom-entity/v1/projects/{entityId}:
+    get:
+      operationId: getProjectUsingGET
+      summary: Get Project Object
+      description: 'Use this API to retrieve a single Project object record by its unique identifier along with the associated attributes, module name, and created date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Project objects created via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '200':
+          description: Project entity details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Project Details Response:
+                  summary: Example of project entity details
+                  description: Response containing the comprehensive details of a project entity
+                  value:
+                    id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                    name: Data Analytics Platform Development
+                    description: Development of an enterprise-wide data analytics platform
+                    entityTypeId: dbc72382-65ec-4c1c-b6a9-83f7856a1f52
+                    attributes:
+                      deadline: '2025-12-31'
+                      externalId: PROJ-2025-001
+                      status: Active
+                      type: Development
+                      completionPercentage: 25
+                      nextReviewDate: '2025-07-15'
+                    createdBy: user@example.com
+                    createdDate: '2025-05-30T10:15:30Z'
+                    lastModifiedBy: admin@example.com
+                    lastModifiedDate: '2025-06-05T14:22:10Z'
+                    entityDetail:
+                      owner: jane.doe@example.com
+                      department: IT
+                      relatedAssets:
+                      - Customer Database
+                      - Marketing Analytics Platform
+                      taskCount: 12
+                      openIssues: 3
+                    links:
+                    - id: f7e6d5c4-b3a2-1098-7654-321fedcba987
+                      name: Privacy Risk Assessment
+                      type: Assessment
+                      status: In Progress
+                    - id: 98765432-10ab-cdef-9876-54321abcdef0
+                      name: Customer Data Platform
+                      type: System
+                      status: Active
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+        - integration
+    put:
+      operationId: updateProjectUsingPUT
+      summary: Modify Project Object
+      description: 'Use this API to partially update an existing Project object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Project objects created via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityUpdateRequest'
+            examples:
+              Update Project Status:
+                summary: Update project status example
+                description: A request to update the status and completion percentage of a project
+                value: "{\n \"name\": \"project_01\",\n \"attributes\": {\n \"number\": [{\n \"id\": null,\n \"value\": \"7\"\n }],\n \"createdBy\": [{\n \"id\": \"41955b71-e581-4187-ab6c-d00d1403350c\",\n \"value\": \"Arpita Kusabi\"\n }],\n \"createdDate\": [{\n \"id\": null,\n \"value\": \"2025-06-10T13:07:25.460Z\"\n }],\n \"lastModifiedBy\": [{\n \"id\": \"41955b71-e581-4187-ab6c-d00d1403350c\",\n \"value\": \"Arpita Kusabi\"\n }],\n \"lastModifiedDate\": [{\n \"id\": null,\n \"value\": \"2025-06-10T13:07:25.460Z\"\n }],\n \"description\": [{\n \"id\": null,\n \"value\": \"desc\"\n }],\n \"status\": null,\n \"projectOwner\": null,\n \"type\": [{\n \"id\": \"2696fc88-0e07-4add-b2ff-20566b531bab\",\n \"value\": \"AI\"\n }],\n \"deadline\": null,\n \"externalId\": null,\n \"projectLink\": null,\n \"intendedUse\": null,\n \"businessValue\": null,\n \"internalOrExternal\": null,\n },\n \"organization\": {\n \"id\": \"3e2b27ae-6842-41a2-b7f7-fa7c3b7de6c4\"\n }\n}"
+              Comprehensive Project Update:
+                summary: Detailed project update example
+                description: A comprehensive update to multiple aspects of a project
+                value:
+                  name: test_0610_01
+                  attributes:
+                    number:
+                    - id: null
+                      value: '155'
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    createdDate:
+                    - id: null
+                      value: '2025-06-10T06:52:30.377Z'
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    lastModifiedDate:
+                    - id: null
+                      value: '2025-06-11T10:08:24.833Z'
+                    description:
+                    - id: null
+                      value: desc
+                    status:
+                    - id: 23d1e72f-d3ce-43a2-bb72-89cc2edaa6fa
+                      value: Pending
+                    projectOwner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    type:
+                    - id: 996d4292-7a59-4c78-9d34-cb7d903d847f
+                      value: AI
+                    deadline:
+                    - id: null
+                      value: '2025-06-18'
+                    externalId:
+                    - id: null
+                      value: PROJ-2025-002
+                    projectLink:
+                    - id: null
+                      value: https://project-tracker.example.com/projects/PROJ-2025-002
+                    intendedUse:
+                    - id: null
+                      value: Improve data analytics capabilities and reduce operational costs
+                    businessValue:
+                    - id: null
+                      value: '2'
+                    internalOrExternal:
+                    - id: 43496a9a-8319-49df-b5c3-7fdd2d31ee3f
+                      value: Internal
+                    attributeTextValue.value2:
+                    - id: null
+                      value: '2025-06-09'
+                    attributeMultiSelectValue.valueId1:
+                    - id: 9bbeb65a-e1d2-4236-b64d-cbf8de0a852f
+                      value: O1
+                    - id: 1d468aeb-6708-4c1e-a73d-9c8ce8b48543
+                      value: O4
+                    attributeSingleSelectValue.value2:
+                    - id: 909f7f84-7c2a-4a2e-bcc7-342607faffd8
+                      value: '0.1'
+                  organization:
+                    id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+      responses:
+        '200':
+          description: Project entity updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Updated Project Response:
+                  summary: Example of a successfully updated project
+                  description: Response containing the details of the updated project entity
+                  value:
+                    id: 4faac997-83c2-4137-9d5c-273eb6457552
+                    number: 155
+                    name: test_0610_01
+                    organization:
+                      id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                      name: PLTF REP
+                    schemaId: fc39968b-9393-4041-8712-e50da2f19e03
+                    entityType:
+                      id: ef4e5bf9-7462-43af-b74f-72b61308629b
+                      name: projects
+                      nameKey: CE.Projects.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: projects
+                    workflow:
+                      id: c86bffc1-6bd5-414b-816e-dfe330a9c7f5
+                      name: MS Workflow
+                      nameKey: null
+                      type: ef4e5bf9-7462-43af-b74f-72b61308629b
+                      workflowMode: ADVANCED
+                    stage:
+                      id: 0f304090-d19d-4749-9bac-a59efba81699
+                      name: Not Started
+                      nameKey: CE.Workflow.Stage.NotStarted
+                      badgeColor: New
+                      sequence: null
+                    createdDate: '2025-06-10T06:52:30.377Z'
+                    lastModifiedDate: '2025-06-11T11:03:24.198Z'
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    attributeTextValue.value3:
+                    - id: null
+                      value: '2025-06-09T18:30:00.000Z'
+                      disabled: false
+                    attributeSingleSelectValue.value4_9:
+                    - id: afcce13b-617a-4197-9cc1-ebddc51c117f
+                      value: '1'
+                      valueKey: OneTrustApp.OM.CustomEntity.Attributes.4fae7aee-0ac3-4e27-90ef-c490e6259eaa
+                      optionSelectionValue: Low
+                      disabled: false
+                    attributeMultiSelectValue.valueId13_19:
+                    - id: e07f4116-8c5c-48d3-87ab-1dec8ef42514
+                      value: Low
+                      valueKey: OneTrustApp.OM.CustomEntity.Attributes.7d313d7b-961f-4e8b-9c5b-7b81997ed3f0
+                      colorCode: '#5BC0DE'
+                      optionSelectionValue: '1.9'
+                      disabled: false
+                    attributeMultiSelectValue.valueId1:
+                    - id: 9bbeb65a-e1d2-4236-b64d-cbf8de0a852f
+                      value: O1
+                      valueKey: OneTrustApp.OM.CustomEntity.Attributes.8b254ecb-9f7f-4e6f-afb9-463f97a40572
+                      disabled: false
+                    - id: 1d468aeb-6708-4c1e-a73d-9c8ce8b48543
+                      value: O4
+                      valueKey: OneTrustApp.OM.CustomEntity.Attributes.3c44d221-6e08-4803-8d17-afdc24b8f292
+                      disabled: false
+                    projectOwner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    internalOrExternal:
+                    - id: 43496a9a-8319-49df-b5c3-7fdd2d31ee3f
+                      value: Internal
+                      valueKey: CE.Projects.Attribute.InternalOrExternal.Option.Internal
+                      disabled: false
+                    type:
+                    - id: 996d4292-7a59-4c78-9d34-cb7d903d847f
+                      value: AI
+                      valueKey: CE.Projects.Attribute.Type.Option.AI
+                      disabled: false
+                    status:
+                    - id: 23d1e72f-d3ce-43a2-bb72-89cc2edaa6fa
+                      value: Pending
+                      valueKey: CE.Projects.Attribute.Status.Option.Pending
+                      disabled: false
+                    openItemsCount:
+                    - id: null
+                      value: '0'
+                      disabled: false
+                    projectLink:
+                    - id: null
+                      value: https://project-tracker.example.com/projects/PROJ-2025-002
+                      disabled: false
+                    businessValue:
+                    - id: null
+                      value: '2'
+                      disabled: false
+                    intendedUse:
+                    - id: null
+                      value: Improve data analytics capabilities and reduce operational costs
+                      disabled: false
+                    externalId:
+                    - id: null
+                      value: PROJ-2025-002
+                      disabled: false
+                    description:
+                    - id: null
+                      value: desc
+                      disabled: false
+                    timeToReview:
+                    - id: null
+                      value: '1.17'
+                      disabled: false
+                    isLastWorkflowStage:
+                    - id: null
+                      value: 'false'
+                      disabled: false
+                    deadline:
+                    - id: null
+                      value: '2025-06-18'
+                      disabled: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-write
+        - integration
+    delete:
+      operationId: deleteProjectUsingDELETE
+      summary: Delete Project Object
+      description: 'Use this API to delete an existing Project object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Project objects created via Object Manager.'
+      tags:
+      - Project Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '204':
+          description: Project entity deleted successfully
+          content:
+            '*/*':
+              examples:
+                Empty Response:
+                  summary: No content returned on successful deletion
+                  description: A successful deletion returns no content with a 204 status code
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - integration
+components:
+  schemas:
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: The details of the attribute.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    Sort:
+      type: object
+      properties:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+          example: true
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
+          type: boolean
+          example: false
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
+          type: boolean
+          example: false
+    EntityListRequest:
+      type: object
+      properties:
+        context:
+          description: The contextual details of the object.
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: The details of the filter, text, and organization search criteria.
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: The details of the non-required fields to include in the response.
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
+    ProjectCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the object.
+          type: string
+          example: Data Analytics Platform Development
+          maxLength: 255
+          minLength: 3
+          title: Project Name
+        description:
+          description: The description of the object.
+          type: string
+          example: Development of an enterprise-wide data analytics platform with machine learning capabilities
+          maxLength: 1000
+          title: Project Description
+        deadline:
+          description: The deadline of the project.
+          type: string
+          format: date
+          example: '2025-12-31'
+          title: Project Deadline
+        externalId:
+          description: The external identifier for the project.
+          type: string
+          example: PROJ-2025-001
+          maxLength: 100
+          title: External ID
+        projectLink:
+          description: The project link or other URL.
+          type: string
+          format: uri
+          example: https://project-tracker.example.com/projects/PROJ-2025-001
+          maxLength: 2048
+          title: Project Link
+        intendedUse:
+          description: The intended use of the project.
+          type: string
+          example: Improve data-driven decision making across the organization
+          maxLength: 1000
+          title: Intended Use
+        businessValue:
+          description: The business value of the project.
+          type: string
+          example: High
+          maxLength: 100
+          title: Business Value
+        projectOwner:
+          description: The user assigned as the owner of the project.
+          type: string
+          example: john.smith@example.com
+          title: Project Owner
+        status:
+          description: The status of the project.
+          type: string
+          example: Active
+          enum:
+          - Draft
+          - Active
+          - In Progress
+          - On Hold
+          - Completed
+          - Cancelled
+          title: Project Status
+        type:
+          description: The type of project.
+          type: string
+          example: Development
+          enum:
+          - AI
+          - Campaign
+          - Feature
+          - General
+          - Process
+          - Product
+          title: Project Type
+        internalOrExternal:
+          description: This parameter indicates whether the project is internal or external.
+          type: string
+          example: Internal
+          enum:
+          - Internal
+          - External
+          title: Internal or External
+        promotionStatus:
+          description: The project promotion status.
+          type: string
+          example: Not Promoted
+          enum:
+          - Not Promoted
+          - Promoted
+          - Promotion Pending
+          title: Promotion Status
+        additionalAttributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            description:
+            - value: Project to describe AI models
+            status:
+            - id: c93031cd-7ed0-44c8-b454-396ec67095d9
+            projectOwner:
+            - id: 2e236528-dc82-4527-a76e-449d7044945a
+            type:
+            - value: AI
+            deadline:
+            - value: '2025-07-30'
+            externalId:
+            - value: PROJ-123
+            intendedUse:
+            - value: To provide data
+            internalOrExternal:
+            - id: 0bed5a32-ff57-49e9-8d21-143d50172d49
+            purpose:
+            - id: 0c5e58bc-8eb3-4fd6-810a-92d7e436d8d0
+            attributeMultiSelectValue.valueId4_1:
+            - id: b28c4fe7-8ae7-4468-aa81-070600564f83
+          additionalProperties: true
+          title: Additional Attributes
+        entityDetail:
+          description: The details of the object.
+          example:
+            extendedBaseAttributes:
+              location:
+              - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                value: New York
+                displayValue: New York
+              certifications:
+              - value: AWS Certified Solutions Architect
+            nameKey: OneTrust.CM.ProjectNameKey
+          $ref: '#/components/schemas/EntityDetailRequest'
+          additionalProperties: true
+          title: Entity Details
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          format: uuid
+          example:
+            id: f8e7d6c5-b4a3-2019-8765-432109876543
+            name: Parent Org
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+          title: Organization Group ID
+      example:
+        name: Data Analytics Platform Development
+        description: Development of an enterprise-wide data analytics platform
+        deadline: '2025-12-31'
+        externalId: PROJ-2025-001
+        projectLink: https://project-tracker.example.com/projects/PROJ-2025-001
+        status: Active
+        type: Development
+      required:
+      - name
+      title: Project Creation Request
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+    EntityUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The details of the organization responsible for the object.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Business Unit
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      example:
+        name: OneTrust Updated
+        attributes:
+          textAttributeName:
+          - value: New Text Value
+      title: Entity Update Request
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityQueryRequest:
+      type: object
+      properties:
+        criteria:
+          description: The details of the filter criteria.
+          example:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            searchQuery: privacy
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+        organizationTraversalStrategy:
+          description: The strategy used to return objects within the organizational hierarchy.
+          type: string
+          example: ancestors_and_descendants
+          enum:
+          - ancestors_and_descendants
+          - descendants
+          - all
+        requestedOrganizationId:
+          description: The unique identifier of the organization for the request.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction:
+          description: The action specifying the source of the API request.
+          type: string
+          example: ListEntity
+      example:
+        criteria:
+          filters:
+          - fieldName: name
+            operator: contains
+            value: OneTrust
+          - fieldName: entityStatus
+            operator: equals
+            value: Active
+          - fieldName: lastModifiedTimestamp
+            operator: greaterThan
+            value: '2024-01-01T00:00:00Z'
+          searchQuery: privacy
+          sort:
+          - fieldName: lastModifiedTimestamp
+            direction: DESC
+        organizationTraversalStrategy: ancestors_and_descendants
+        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction: ListEntity
+    EntityOrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the organization.
+          type: string
+          example: Business Unit
+      required:
+      - id
+    PageEntityIdentifierInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: Customer Entity
+            type: customer
+          items:
+            $ref: '#/components/schemas/EntityIdentifierInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 250
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 25
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 1
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+      example:
+        content:
+        - id: 123e4567-e89b-12d3-a456-426614174000
+          name: Customer Entity
+          type: customer
+          status: active
+        totalElements: 250
+        totalPages: 25
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The name of the attribute.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The color code associated with the attribute.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: The selection value of the attribute.
+          type: string
+          example: 3.5
+        displayLabel:
+          description: The display label for the attribute.
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: This flag indicates whether the attribute is disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    EntityFieldRequest:
+      type: object
+      properties:
+        fields:
+          description: The name of the field.
+          type: array
+          items:
+            type: string
+          example:
+          - textAttributeField1
+          - singleSelectAttributeField1
+        mode:
+          description: The mode in which non-required fields would be selected.
+          type: string
+          default: select_all
+          enum:
+          - select_all
+          - ignore_all
+          - specific
+        includeSelectedFullTextSearchFields:
+          description: This flag indicates whether to include selected full text search fields.
+          type: boolean
+          example: true
+        overriddenSearchFields:
+          description: The overridden search fields.
+          type: array
+          items:
+            type: string
+          example:
+          - name
+      required:
+      - mode
+    EntityIdentifierInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+      required:
+      - entityType
+      - id
+    EntityWorkflowInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow.
+          type: string
+          format: uuid
+          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Vendor On-Boarding Workflow
+        type:
+          description: The type of workflow.
+          type: string
+          example: Vendor
+        workflowMode:
+          description: The mode in which the workflow was created.
+          type: string
+          example: BASIC
+          enum:
+          - ADVANCED, BASIC
+        stageId:
+          description: The unique identifier of the workflow stage.
+          type: string
+          format: uuid
+          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName:
+          description: The name of the workflow stage.
+          type: string
+          example: Start On-Boarding
+      example:
+        id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name: Vendor On-Boarding Workflow
+        nameKey: Workflow.VendorOnBoarding.Name
+        type: Vendor
+        workflowMode: BASIC
+        stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName: Start On-Boarding
+        stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+        badgeColor: '#4287f5'
+      required:
+      - id
+      - name
+      - stageId
+      - stageName
+      - type
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    ContextInformation:
+      type: object
+      properties:
+        parameters:
+          description: This parameter can be used to store details in key value pairs.
+          additionalProperties:
+            type: object
+          type: object
+    PageEntityInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - entityType: Customer
+            idType: UUID
+            javaType: com.example.Customer
+          items:
+            $ref: '#/components/schemas/EntityInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 100
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 20
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+      example:
+        content:
+        - entityType: Customer
+          idType: UUID
+          javaType: com.example.Customer
+        totalElements: 100
+        totalPages: 10
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    EntityInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc2c46
+        schemaId:
+          description: The unique identifier of the schema.
+          type: string
+          format: uuid
+          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+          readOnly: true
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        workflowAndStage:
+          description: The details of the workflow and stage.
+          example:
+            id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+            name: Vendor On-Boarding Workflow
+            nameKey: Workflow.VendorOnBoarding.Name
+            type: Vendor
+            workflowMode: BASIC
+            stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+            stageName: Start On-Boarding
+            stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+            badgeColor: '#4287f5'
+          $ref: '#/components/schemas/EntityWorkflowInformation'
+        attributes:
+          description: The details of the associated attributes.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name: OneTrust
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc2c46
+          name: Vendor
+      required:
+      - entityType
+      - id
+      - name
+      - number
+      - schemaId
+      title: Entity Information
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

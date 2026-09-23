@@ -1,0 +1,864 @@
+openapi: 3.2.0
+info:
+  title: Platform - Access Management User Groups API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Access Management APIs enable you to programmatically control user access, manage organizational hierarchies, and monitor authentication activities across your OneTrust platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: User Groups
+  description: APIs to manage user groups and their memberships. Create groups to organize users, assign permissions collectively, add or remove members, and retrieve information about existing groups and their members.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+  x-displayName: User Groups
+paths:
+  /api/access/v1/user-groups:
+    get:
+      operationId: retrieveUserGroupsUsingGET
+      summary: Get List of User Groups
+      description: Use this API to retrieve a list of user groups.
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: filters
+        in: query
+        description: Filter criteria for the results.
+        required: false
+        schema:
+          type: string
+        example: name:Administrators
+      - name: page
+        in: query
+        description: The page number to retrieve.
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of records per page.
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: Sort order for the results.
+        schema:
+          type: string
+          default: name,asc
+          enum:
+          - name,asc
+          - name,desc
+          - description,asc
+          - description,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+        example: name,asc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_PageUserGroupResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+    post:
+      operationId: createUserGroupUsingPOST
+      summary: Create User Group
+      description: Use this API to create a new user group.
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_CreateGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '201':
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+  /api/access/v1/user-groups/{userGroupId}:
+    put:
+      operationId: updateUserGroupUsingPUT
+      summary: Update User Group
+      description: Use this API to update the name and description of a specific user group.
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userGroupId
+        in: path
+        description: The unique identifier of the user group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_UpdateGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+    delete:
+      operationId: deleteUserGroupUsingDELETE
+      summary: Delete User Group
+      description: Use this API to delete an existing user group.
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userGroupId
+        in: path
+        description: The unique identifier of the user group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+  /api/access/v1/user-groups/{userGroupId}/members:
+    get:
+      operationId: retrieveMembersUsingGET
+      summary: Get User Group Members
+      description: Use this API to retrieve a list of users that are members of a specific user group.
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userGroupId
+        in: path
+        description: The unique identifier of the user group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      - name: page
+        in: query
+        description: The page number to retrieve.
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of records per page.
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: Sort order for the results.
+        schema:
+          type: string
+          default: fullName,asc
+          enum:
+          - fullName,asc
+          - fullName,desc
+          - memberId, asc
+          - memberId, desc
+          - email,asc
+          - email,desc
+          - enabled,asc
+          - enabled,desc
+          - createdBy,asc
+          - createdBy,desc
+          - createdDate,asc
+          - createdDate,desc
+        example: fullName,asc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_PageMemberResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_PageMemberResponse'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+    post:
+      operationId: addMembersUsingPOST
+      summary: Add Members to User Group
+      description: 'Use this API to add users as members of a specific user group.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - When a user is added as a member of a user group, the user inherits the role and organization configured for that user group. If the user belongs to other user groups, the user will still retain existing membership with those groups in addition to their other existing roles and permissions.
+
+        > - The `userId` of the users to be added to the user group can be specified in the request body in a comma separated list.'
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userGroupId
+        in: path
+        description: The unique identifier of the user group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_AddMembersRequest'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+    delete:
+      operationId: removeMembersUsingDELETE
+      summary: Remove Members from User Group
+      description: 'Use this API to remove users as members of a specific user group.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The `userId` of the users to be removed from the user group can be specified in the request body in a comma separated list.'
+      tags:
+      - User Groups
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userGroupId
+        in: path
+        description: The unique identifier of the user group.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_DeleteMembersRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User group not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+components:
+  schemas:
+    Platform-AccessManagement_PageMemberResponse:
+      type: object
+      properties:
+        content:
+          description: The list of group members in the current page.
+          items:
+            $ref: '#/components/schemas/Platform-AccessManagement_MemberResponse'
+          type: array
+        empty:
+          description: Indicates whether the result set is empty.
+          type: boolean
+        first:
+          description: Indicates whether this is the first page.
+          type: boolean
+        last:
+          description: Indicates whether this is the last page.
+          type: boolean
+        number:
+          description: The current page number.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The number of records in the current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The total number of records across all pages.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total number of pages available.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The pagination details for this response.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort order for the results.
+          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
+        pageable:
+          description: The pagination details for this response.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+    Platform-AccessManagement_CreateGroupRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the user group.
+          type: string
+          example: Administrators
+          maxLength: 100
+          minLength: 1
+        description:
+          description: The brief description of the user group.
+          type: string
+          example: Group for system administrators
+          maxLength: 300
+    Platform-AccessManagement_AddMembersRequest:
+      type: object
+      properties:
+        members:
+          description: The list of user identifiers to be added to the user group.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_DeleteMembersRequest:
+      type: object
+      properties:
+        members:
+          description: 'The list of user identifiers of the user group. '
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_PageUserGroupResponse:
+      type: object
+      properties:
+        content:
+          description: The list of user groups in the current page.
+          items:
+            $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+          type: array
+        empty:
+          description: Indicates whether the result set is empty.
+          type: boolean
+        first:
+          description: Indicates whether this is the first page.
+          type: boolean
+        last:
+          description: Indicates whether this is the last page.
+          type: boolean
+        number:
+          description: The current page number.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The number of records in the current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The total number of records across all pages.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total number of pages available.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The pagination details for this response.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort order for the results.
+          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
+        pageable:
+          description: The pagination details for this response.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+    Platform-AccessManagement_UpdateGroupRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the user group.
+          type: string
+          example: Administrators
+          maxLength: 100
+          minLength: 1
+        description:
+          description: A brief description of the user group.
+          type: string
+          example: Group for system administrators
+          maxLength: 300
+    Platform-AccessManagement_SortObject:
+      type: object
+      properties:
+        empty:
+          description: Indicates whether the result set is empty, meaning no records were found.
+          type: boolean
+        sorted:
+          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          type: boolean
+        unsorted:
+          description: The indicator of whether the results are unsorted.
+          type: boolean
+    Platform-AccessManagement_UserGroupResponse:
+      type: object
+      properties:
+        userGroupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the user group.
+          type: string
+          example: Administrators
+          maxLength: 100
+          minLength: 1
+        description:
+          description: The brief description of the user group.
+          type: string
+          example: Group for system administrators
+          maxLength: 250
+        createdBy:
+          description: The unique identifier of the user who created this record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The date and time the record was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+        lastModifiedBy:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        lastModifiedDate:
+          description: The date and time the record was last modified.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+    Platform-AccessManagement_MemberResponse:
+      type: object
+      properties:
+        fullName:
+          description: The user's full name.
+          type: string
+          example: John Doe
+          maxLength: 201
+        email:
+          description: The user's email address.
+          type: string
+          format: email
+          example: jdoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        memberId:
+          description: The unique identifier of the group member.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        enabled:
+          description: Indicates whether the user account is active.
+          type: boolean
+          example: true
+        internal:
+          description: Indicates whether this is an internal system record.
+          type: boolean
+          example: false
+        createdBy:
+          description: The unique identifier of the user who created this record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The date and time when the record was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+  securitySchemes:
+    Platform-AccessManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ORGANIZATION: Grants full access to manage organizations. This includes Create, Read, Update and Delete operations.
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+    AuditRecords_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

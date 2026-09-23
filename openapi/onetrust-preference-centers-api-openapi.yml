@@ -1,0 +1,889 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Preference Centers
+  description: The Preference Centers APIs are used to manage data subjects' preferences in a preference center.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Preference Centers
+paths:
+  /api/consentmanager/v1/preferencecenters/{prefcenterId}/datasubjects/preferences:
+    get:
+      operationId: getDataSubjectPurposesByIdentifierUsingGET_1
+      summary: Get Data Subject's Preferences in a Preference Center
+      description: Use this API to retrieve a data subject's preferences within a Preference Center. The response will include the list of Purposes that the data subject interacted with in the specified Preference Center along with their current status.
+      tags:
+      - Preference Centers
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: prefcenterId
+        in: path
+        description: The unique identifier of a Preference Center.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 82bd54d4-433a-451e-8512-950da5f9c1c6
+      - name: identifier
+        in: query
+        description: The data subject identifier associated with a data subject.
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+        deprecated: true
+      - name: identifier
+        in: header
+        description: Data Subject Identifier (prefer the header parameter).
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+      responses:
+        '200':
+          description: OK - Successfully retrieved data subject's preferences.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPurposesByIdentifier'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+    put:
+      operationId: updatePreferencesForDataSubjectApiUsingPUT
+      summary: Update Data Subject's Preferences in a Preference Center
+      description: 'Use this API to update the data subject''s preferences within a Preference Center.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Pascal case is required for all parameters. For example, use `DsDataElements` instead of `dsDataElements`.'
+      tags:
+      - Preference Centers
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: prefcenterId
+        in: path
+        description: Preference Center UUID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 156129da-7441-498d-a0eb-a89da357d741
+      - name: identifier
+        in: query
+        description: Data Subject Identifier (prefer the header parameter).
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+        deprecated: true
+      - name: identifier
+        in: header
+        description: Data Subject Identifier (prefer the header parameter).
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesRequestDto'
+      responses:
+        '200':
+          description: OK - Successfully updated data subject's preferences.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+    delete:
+      operationId: withdrawPreferencesApiUsingDELETE
+      summary: Withdraw Data Subject's Consent for All Purposes in a Preference Center
+      description: 'Use this API to withdraw a data subject''s consent for all Purposes within a Preference Center.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The Notification Opt-Out Purpose will be excluded when calling this API.'
+      tags:
+      - Preference Centers
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: prefcenterId
+        in: path
+        description: Preference Center UUID.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 156129da-7441-498d-a0eb-a89da357d741
+      - name: identifier
+        in: query
+        description: Data Subject Identifier (prefer the header parameter).
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+        deprecated: true
+      - name: identifier
+        in: header
+        description: Data Subject Identifier (prefer the header parameter).
+        required: false
+        schema:
+          type: string
+          example: user@example.com
+      responses:
+        '200':
+          description: OK - Successfully withdrew data subject's consent for all purposes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+  /api/consentmanager/v1/preferencecenters/{prefcenterId}/preferences:
+    get:
+      operationId: getPreferenceCenterByIdUsingGET
+      summary: Get Preference Center Schema
+      description: 'Use this API to retrieve the schema of a Preference Center. The response will include details about the Preference Center such as settings, languages, and Purposes.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API can be used for Original, Enhanced, and Multi Page Preference Centers.'
+      tags:
+      - Preference Centers
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: prefcenterId
+        in: path
+        description: Preference Center UUID
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 156129da-7441-498d-a0eb-a89da357d741
+      - name: state
+        in: query
+        description: Draft or published preference center
+        required: false
+        schema:
+          type: string
+          enum:
+          - PUBLISHED
+          - DRAFT
+      responses:
+        '200':
+          description: OK - Successfully retrieved Preference Center schema.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: string
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto:
+      properties:
+        Name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        Description:
+          description: The Purpose description
+          type: string
+          example: Collect customer emails for marketing purposes
+        Description of Implicit Purpose Confirmation checkbox:
+          description: The Implicit Purpose Confirmation checkbox description
+          type: string
+          example: I can confirm
+        Language:
+          description: The Purpose content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Purpose
+          type: boolean
+          example: true
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - Description
+      - Name
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto:
+      properties:
+        messages:
+          description: List of status messages related to the Purpose update operation
+          type: array
+          items:
+            type: string
+          example:
+          - added
+          - updated
+        Id:
+          description: Unique identifier for the Purpose that was updated
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Status:
+          description: Indicates whether the Purpose update was successful
+          type: boolean
+          example: true
+        ReceiptGuid:
+          description: Unique identifier for the receipt of this update operation
+          type: string
+          format: uuid
+          example: 64a9b83e-3aae-4e9f-b75e-5fbd01aecd85
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesRequestDto:
+      properties:
+        Id:
+          description: Unique Identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Topics:
+          description: List of Topics associated with the Purpose and their consent status
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectTopicsDto'
+        CustomPreferences:
+          description: List of custom preferences associated with the Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto'
+      required:
+      - Id
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto:
+      properties:
+        Name:
+          description: The Topic name
+          type: string
+          example: Car Marketing
+        Language:
+          description: The Topic content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Topic
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesResponseDto:
+      type: object
+      properties:
+        Purposes:
+          description: List of Purposes with their updated consent status for the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto'
+        Language:
+          description: The preferred language of the Data Subject in BCP 47 format
+          type: string
+          example: en-us
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto:
+      properties:
+        Id:
+          type: string
+          format: uuid
+        Options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectTopicsDto:
+      properties:
+        Id:
+          type: string
+          format: uuid
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposesWithLanguagesDto:
+      properties:
+        Id:
+          description: Unique identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Version:
+          description: Version number of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        Label:
+          description: Display name of the Purpose
+          type: string
+          example: Marketing Communications
+        Description:
+          description: Detailed description explaining the Purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        Status:
+          description: Current status of the Purpose (e.g., ACTIVE, INACTIVE)
+          type: string
+          example: ACTIVE
+        PurposeType:
+          description: Classification type of the Purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        ExternalReference:
+          type: string
+        Languages:
+          description: List of language-specific data for the Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto'
+        Topics:
+          description: List of Topics associated with this Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
+        CustomPreferences:
+          description: List of custom preference settings for this Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
+        LifeSpan:
+          description: Lifespan of consents recorded against this Purpose in seconds
+          type: integer
+          format: int64
+          example: 7889238
+        ImplicitConsentLifeSpan:
+          description: Lifespan of implicit consents for this Purpose in seconds
+          type: integer
+          format: int64
+          example: 7889238
+        ImplicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I can confirm
+        DefaultConsentStatus:
+          description: Default consent status for this Purpose
+          type: string
+          example: OPT_OUT
+          default: OPT_OUT
+          enum:
+          - ACTIVE
+          - OPT_OUT
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto:
+      properties:
+        Id:
+          description: The unique identifier of the Purpose and Topic relation
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        Name:
+          description: The Topic name
+          type: string
+          example: Car Marketing
+        IntegrationKey:
+          description: The Topic integration key (combination of Purpose and Topic names)
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        Languages:
+          description: Translations for a Topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesRequestDto:
+      type: object
+      properties:
+        Purposes:
+          description: List of Data Subject Purposes with their consent status
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesRequestDto'
+        DsDataElements:
+          description: Map of Data Subject Elements and their values. Maximum supported characters for a data element value is 750.
+          type: object
+          example:
+            First Name: John
+            Last Name: Doe
+          additionalProperties:
+            type: object
+            description: Map of Data Subject Elements and their values. Maximum supported characters for a data element value is 750.
+            example:
+              First Name: John
+              Last Name: Doe
+        Language:
+          description: The preferred language of the Data Subject in BCP 47 format
+          type: string
+          example: en-us
+        dsDataElements:
+          type: object
+          additionalProperties:
+            type: object
+          writeOnly: true
+      required:
+      - Purposes
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto:
+      properties:
+        Id:
+          type: string
+          format: uuid
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto:
+      properties:
+        Id:
+          description: Unique Identifier identifying an Option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        Label:
+          description: The Option label
+          type: string
+          example: Weekly
+        Order:
+          description: The order of the Option, Starts from 0
+          type: integer
+          format: int32
+          example: 1
+        IsDefault:
+          description: Whether the Option is default option or not
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPurposesByIdentifier:
+      type: object
+      properties:
+        DataSubjectId:
+          description: The Data Subject identifier
+          type: string
+          example: example@otprivacy.com
+        Language:
+          description: The Data Subject's preferred language code
+          type: string
+          example: en-us
+        Purposes:
+          description: A list of Purposes associated to the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto'
+        Status:
+          description: Status code for the Preference Center [200 (active), 400 (no transactions for this Data Subject)]
+          type: integer
+          format: int32
+          example: 200
+        DsDataElements:
+          description: A list containing the Data Elements and their values for the specified Data Subject
+          type: object
+          example:
+          - First Name: John
+            Last Name: Doe
+          additionalProperties:
+            type: object
+            description: A list containing the Data Elements and their values for the specified Data Subject
+            example:
+            - First Name: John
+              Last Name: Doe
+        messages:
+          type: array
+          items:
+            type: string
+        unsubscribeAll:
+          description: 'Indicates whether a data subject has opted to unsubscribe from all Purposes within a Preference Center '
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto:
+      properties:
+        Name:
+          description: name for a Custom Preference
+          type: string
+          example: Monthly
+        Description:
+          description: The description of the Custom Preference
+          type: string
+          example: Options for different frequencies to receive emails
+        Language:
+          description: The Custom Preference content language code
+          type: string
+          example: en-us
+        Default:
+          description: The Option label
+          type: boolean
+          example: true
+        Options:
+          description: Options associated with a Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
+      required:
+      - Description
+      - Name
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterDto:
+      type: object
+      properties:
+        messages:
+          description: List of messages associated with the Preference Center
+          type: array
+          items:
+            type: string
+            description: List of messages associated with the Preference Center
+        PreferenceCentreId:
+          description: Unique identifier identifying a Preference Center
+          type: string
+          format: uuid
+          example: d3c9d247-8f0b-4277-bd22-01837d6db3e6
+        Purposes:
+          description: List of Purposes associated to the Preference Center
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposesWithLanguagesDto'
+        Status:
+          description: Status code for the preference center [200 (active), 400 (error retrieving this preference center)]
+          type: integer
+          format: int32
+          example: 200
+        PreferenceCenterSettings:
+          description: Preference Center settings
+          type: object
+        PortalSettings:
+          description: Preference Center Portal settings
+          type: object
+        Language:
+          description: The Preference Center content language code
+          type: string
+          example: en-us
+        Languages:
+          description: List containing the Preference Center translations' language codes
+          type: array
+          items:
+            type: string
+          example:
+          - en-us
+          - fr
+        Translations:
+          description: List containing the Preference Center translations
+          type: object
+          example:
+            languageCode:
+              property: value
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+              description: List containing the Preference Center translations
+              example: '{"languageCode":{"property":"value"}}'
+            description: List containing the Preference Center translations
+            example:
+              languageCode:
+                property: value
+        DisplayNotificationPurpose:
+          description: Setting to display or hide email notification option when Preferences change
+          type: boolean
+          example: true
+          default: true
+        Template:
+          description: The Preference Center template type
+          type: string
+          example: ENHANCED
+          enum:
+          - ORIGINAL
+          - ENHANCED
+          - MULTIPAGE
+        ProfileSettings:
+          description: Preference Center Profile page settings
+          type: object
+        EnableMultipleIdentities:
+          type: boolean
+        HierarchicalAccessControl:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto:
+      properties:
+        Id:
+          description: Unique Identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Label:
+          description: Name of the Purpose
+          type: string
+          example: Marketing Communications
+        Description:
+          description: Description of the Purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        Status:
+          description: Status of the Purpose
+          type: string
+          example: ACTIVE
+        TransactionStatus:
+          description: Status for a Data Subject consent on a Purpose
+          type: string
+          example: ACTIVE
+        ExternalReference:
+          type: string
+        Topics:
+          description: List of consented Topics associated to a Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
+        CustomPreferences:
+          description: List of consented Custom Preferences associated to a Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto:
+      properties:
+        Id:
+          description: Unique identifier of the Purpose and Custom Preference relation
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        Name:
+          description: The Custom Preference name
+          type: string
+          example: Email Frequency
+        Description:
+          description: The description of the Custom Preference
+          type: string
+          example: Options for different frequencies to receive emails
+        SelectionType:
+          description: Selection Type of the Custom Preference Options
+          type: string
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        DisplayAs:
+          description: Display Type of the Custom Preference Options
+          type: string
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        Required:
+          description: Whether selection for this Custom Preference is required
+          type: boolean
+          example: false
+        Options:
+          description: A list containing the Custom Preference's Options
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
+        Languages:
+          description: A list containing the Custom Preference's Languages
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto'
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

@@ -1,0 +1,479 @@
+openapi: 3.2.0
+info:
+  title: Platform - Access Management Audit Records API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Access Management APIs enable you to programmatically control user access, manage organizational hierarchies, and monitor authentication activities across your OneTrust platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Audit Records
+  description: APIs to manage and retrieve audit logs for user activities, including login history and access patterns. These endpoints help you monitor security events, track user authentication attempts, and maintain compliance with audit requirements.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+  x-displayName: Audit Records
+paths:
+  /api/access/v1/login-history:
+    get:
+      operationId: loginHistory
+      summary: Get Audit Records for Login History
+      description: 'Use this API to retrieve the login history of all users or a specific user for audit purposes.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - If a date range and specific `userId` is not specified in the request, the response will include the login history for all users over the past 7 days.
+
+        > - If a date range is not specified but a specific `userId` is specified in the request, the response will include the login history for that specific user over the past 365 days.
+
+        > - If a date range is specified but a specific `userId` is not specified in the request, the response will include the login history for all users over the specified date range.
+
+        > - If the date range does not fall within the last 365 days, the response will return an error.'
+      tags:
+      - Audit Records
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userId
+        in: query
+        description: The unique identifier of a specific user to filter login history.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: a7281178-7c90-421c-b4a1-57e39e3550a9
+      - name: startDate
+        in: query
+        description: 'The start date for the login history search. Format: YYYY-MM-DDTHH:MM:SSZ'
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2022-01-01T00:00:00Z'
+      - name: endDate
+        in: query
+        description: 'The end date for the login history search. Format: YYYY-MM-DDTHH:MM:SSZ'
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2022-12-31T23:59:59Z'
+      - name: page
+        in: query
+        description: The page number to retrieve.
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of records per page.
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_PageLoginHistoryResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - USER
+  /api/audit/v1/users/{userId}/activities:
+    get:
+      operationId: userActivity
+      summary: Get Audit Records for User's Profile
+      description: Use this API to retrieve a list of changes made to a user's profile for audit purposes. The response will include a history of changes made to the user's details, roles, and organizations.
+      tags:
+      - Audit Records
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: userId
+        in: path
+        description: " >-\n `userId` can be retireved using the [Retrieve list of\n Users](https://{$$.env.developer}/api-reference/general/user-provisioning/user-provisioning-apis/users/getallusersusingget)\n API\n\n"
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: c01233a5-482c-4274-8f88-15e24c1c96a4
+      - name: includeChildObjects
+        in: query
+        description: Whether to include child object activities
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N). Example- '?page=1
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page (1…N).
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditRecords_PageUserActivityResponse'
+        '400':
+          description: Invalid user ID format
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuditRecords_PageUserActivityResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Access denied
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuditRecords_PageUserActivityResponse'
+        '404':
+          description: User not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuditRecords_PageUserActivityResponse'
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - AuditRecords_OAUTH2:
+        - USER
+components:
+  schemas:
+    Platform-AccessManagement_LoginHistoryResponse:
+      type: object
+      properties:
+        userName:
+          description: The username or email address used to log in.
+          type: string
+          example: johndoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        ipAddress:
+          description: The IP address from which the login attempt was made. Supports both IPv4 and IPv6 addresses.
+          type: string
+          example: 127.0.0.1.
+          maxLength: 45
+          minLength: 7
+        userAgentString:
+          description: The browser and operating system information from the login attempt.
+          type: string
+          example: Chrome 90.0.4430.212 | Windows 10
+          maxLength: 500
+        createDT:
+          description: The date and time of the login attempt.
+          type: string
+          format: date-time
+          example: '2023-01-15T14:30:00Z'
+        status:
+          description: The result of the login attempt (Success or Failure).
+          type: string
+          example: Success
+          enum:
+          - Success
+          - Failure
+          maxLength: 8
+          minLength: 7
+        userId:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+    AuditRecords_PageUserActivityResponse:
+      type: object
+      properties:
+        content:
+          description: List of User Activities in the current page
+          items:
+            $ref: '#/components/schemas/AuditRecords_UserActivityResponse'
+          type: array
+        empty:
+          description: Flag to check if the result list is empty or not
+          type: boolean
+        first:
+          description: Flag to check if this is the first page
+          type: boolean
+        last:
+          description: Flag to check if this is the last page
+          type: boolean
+        number:
+          description: Current page number (0-based)
+          type: integer
+          format: int32
+        numberOfElements:
+          description: Number of elements in the current page
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: Page size
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: Total number of elements across all pages
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: Total number of pages
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          $ref: '#/components/schemas/AuditRecords_SortObject'
+        pageable:
+          description: 'Pagination information with page number (0-based, min: 0) and page size (min: 1)'
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+    Platform-AccessManagement_SortObject:
+      type: object
+      properties:
+        empty:
+          description: Indicates whether the result set is empty, meaning no records were found.
+          type: boolean
+        sorted:
+          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          type: boolean
+        unsorted:
+          description: The indicator of whether the results are unsorted.
+          type: boolean
+    Platform-AccessManagement_PageLoginHistoryResponse:
+      type: object
+      properties:
+        content:
+          description: The list of login history records in the current page.
+          items:
+            $ref: '#/components/schemas/Platform-AccessManagement_LoginHistoryResponse'
+          type: array
+        empty:
+          description: Indicates whether the result set is empty.
+          type: boolean
+        first:
+          description: Indicates whether this is the first page.
+          type: boolean
+        last:
+          description: Indicates whether this is the last page.
+          type: boolean
+        number:
+          description: The current page number.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The number of records in the current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The total number of records across all pages.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total number of pages available.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The pagination details for this response.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort order for the results.
+          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
+        pageable:
+          description: The pagination details for this response.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+    AuditRecords_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    AuditRecords_UserActivityResponse:
+      type: object
+      properties:
+        name:
+          description: Name of the user
+          type: string
+          example: Test User6
+        email:
+          description: Email address
+          type: string
+          example: tu7@rootorg.com
+        event:
+          description: Event type
+          type: string
+          example: User Edit
+        fieldName:
+          description: Field Name
+          type: string
+          example: Email Address
+        oldValue:
+          description: Old value
+          type: string
+          example: tu6@rootorg.com
+        newValue:
+          description: New value
+          type: string
+          example: tu7@rootorg.com
+        method:
+          description: Method name
+          type: string
+          example: User Provisioning
+        updatedBy:
+          description: Updated by
+          type: string
+          example: OneTrust User
+        date:
+          description: Date of the event
+          type: string
+          format: date-time
+          example: '2024-09-13T23:02:21.659738Z'
+  securitySchemes:
+    Platform-AccessManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ORGANIZATION: Grants full access to manage organizations. This includes Create, Read, Update and Delete operations.
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+    AuditRecords_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

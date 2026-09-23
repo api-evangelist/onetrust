@@ -1,0 +1,658 @@
+openapi: 3.2.0
+info:
+  title: AI Governance - AI Governance Entity Type Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The AI Governance APIs are used to integrate external systems and streamline the flow of data with AI Governance in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Entity Type Management
+  description: The Entity Type Management APIs are used to manage AI Governance entity types.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+paths:
+  /api/ai-governance/v1/entity-types/search:
+    post:
+      operationId: findAllByTypeAndCriteriaUsingPOST_1
+      summary: Get List of Entity Types
+      description: 'Use this API to retrieve a list of all entity types by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: page
+        in: query
+        description: 'Results page to be retrieved (0..N). Example: ''?page=1'''
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        description: 'Number of records per page (1..50). Example: ''?size=20'''
+        schema:
+          type: integer
+          default: 20
+          maximum: 50
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Example: ''?sort=name,asc'''
+        schema:
+          type: string
+          default: name,asc
+          enum:
+          - name,asc
+          - name,desc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeQueryCriteria'
+            examples:
+              Search System and Active Entity Types:
+                summary: Example of searching for system and active entity types containing 'dataset' in name
+                description: Search System and Active Entity Types
+                value:
+                  fullText: DataSets
+                  filters:
+                  - field: moduleScopes.module
+                    value:
+                    - AIG
+                    operator: EQUAL_TO
+                  - field: enabled
+                    value:
+                    - true
+                    operator: EQUAL_TO
+                  - field: seeded
+                    value:
+                    - true
+                    operator: EQUAL_TO
+              Search Custom and Active Entity Types:
+                summary: Example of searching for custom and active entity types containing 'Dataset' in name
+                description: Search Custom and Active Entity Types
+                value:
+                  fullText: GR1
+                  filters:
+                  - field: moduleScopes.module
+                    value:
+                    - DM
+                    operator: EQUAL_TO
+                  - field: enabled
+                    value:
+                    - true
+                    operator: EQUAL_TO
+                  - field: seeded
+                    value:
+                    - false
+                    operator: EQUAL_TO
+      responses:
+        '200':
+          description: OK - Returns a paginated list of entity types matching the criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+              examples:
+                Page of Entity Types:
+                  summary: Example of a page containing custom entity types
+                  description: Page of Entity Types
+                  value:
+                    content:
+                    - auditFields:
+                        createdDate: '2023-02-20T17:32:03.770Z'
+                        lastUpdatedDate: '2023-02-24T14:45:10.230Z'
+                      description: ''
+                      descriptionKey: f6d7977a-84d3-448d-9440-540fc5710b2f
+                      enabled: true
+                      id: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                      moduleName: AIGovernance
+                      moduleScopes:
+                      - DM
+                      - ITRM
+                      name: GR1
+                      nameKey: 36ce5b96-000e-454d-84cd-ffa92f0b35c8
+                      schemaName: c248b17a-93ea-47e6-bd85-eecd71ce84a7
+                      seeded: false
+                      settings:
+                        enableWorkflow: true
+                        enableWorkflowStageTracking: true
+                        enableAudit: true
+                        assessable: true
+                        enableTask: true
+                        enableRisk: true
+                        enableDocument: true
+                        enableControl: true
+                        enableWebForm: false
+                        enableComment: false
+                      workflowType: c02d15d7-ad0e-4d3b-9037-4580b5bdd7b1
+                    pageable:
+                      pageNumber: 0
+                      pageSize: 20
+                      sort:
+                        empty: false
+                        sorted: true
+                        unsorted: false
+                      offset: 0
+                      paged: true
+                      unpaged: false
+                    last: true
+                    totalPages: 1
+                    totalElements: 1
+                    size: 20
+                    number: 0
+                    sort:
+                      empty: false
+                      sorted: true
+                      unsorted: false
+                    first: true
+                    numberOfElements: 1
+                    empty: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+        - AI_GOVERNANCE_WRITE
+  /api/ai-governance/v1/entity-types/{entityTypeId}:
+    get:
+      operationId: getEntityTypeInformationUsingGET_1
+      summary: Get Entity Type
+      description: 'Use this API to retrieve the details for the specified entity type. The response will return the user who created the entity type, created date, and description.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Entity Type Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: entityTypeId
+        in: path
+        description: The unique identifier of the entity type.
+        required: true
+        schema:
+          description: Entity type Identifier
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested entity type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeInformation'
+              examples:
+                Datasets Entity Type:
+                  summary: Example of datasets entity type details
+                  description: Datasets Entity Type
+                  value:
+                    id: 061309bc-b319-4af0-bca8-04ffdeba559c
+                    name: datasets
+                    nameKey: CE.Datasets.Name
+                    seeded: true
+                    moduleName: AIGovernance
+                    schemaName: datasets
+                    description: Datasets used for ML / AI applications.
+                    descriptionKey: CE.Datasets.Description
+                    workflowType: null
+                    enabled: true
+                    moduleScopes:
+                    - AIG
+                    settings:
+                      enableWorkflow: false
+                      enableWorkflowStageTracking: false
+                      enableAudit: true
+                      assessable: true
+                      enableTask: true
+                      enableRisk: true
+                      enableDocument: true
+                      enableControl: true
+                      enableWebForm: false
+                      enableComment: true
+                    auditFields:
+                      createdDate: '2024-02-06T06:13:00.737Z'
+                      lastUpdatedDate: '2025-11-26T04:38:53.007Z'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+        - AI_GOVERNANCE_WRITE
+components:
+  schemas:
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The full name of the user.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
+    EntityTypeSettingInformation:
+      type: object
+      properties:
+        enableWorkflow:
+          description: Indicate workflow is enabled for given entity type
+          type: boolean
+          example: true
+        enableWorkflowStageTracking:
+          description: Indicate current setting to record entity workflow stage tracking history
+          type: boolean
+          example: true
+        assessable:
+          description: Indicate if entity type are assessable or not
+          type: boolean
+          example: false
+        enableTask:
+          description: Indicate tasks are enabled for given entity type
+          type: boolean
+          example: false
+        enableRisk:
+          description: Indicate risks are enabled for given entity type
+          type: boolean
+          example: false
+        enableDocument:
+          description: Indicate documents are enabled for given entity type
+          type: boolean
+          example: false
+        enableControl:
+          description: Indicate controls are enabled for given entity type
+          type: boolean
+          example: false
+        enableWebForm:
+          description: Indicate web forms are enabled for given entity type
+          type: boolean
+          example: false
+        enableComment:
+          description: Indicate comments are enabled for given entity type
+          type: boolean
+          example: false
+      required:
+      - assessable
+      - enableComment
+      - enableControl
+      - enableDocument
+      - enableRisk
+      - enableTask
+      - enableWebForm
+      - enableWorkflow
+      - enableWorkflowStageTracking
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the entity type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the entity type.
+          type: string
+          example: Vendor
+        seeded:
+          description: This parameter indicates whether the entity type is seeded or custom.
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the module where the entity exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - projects
+          - models
+          - datasets
+          - aisystems
+        description:
+          description: Description of the entity type
+          type: string
+          example: A third-party organization that provides goods or services to the company
+        descriptionKey:
+          description: Translation key for the description
+          type: string
+          example: entity.type.vendor.description
+        workflowType:
+          description: Workflow type associated with the entity type
+          type: string
+          example: vendor_assessment
+        enabled:
+          description: Flag indicating whether the entity type is enabled
+          type: boolean
+          example: true
+          default: 'true'
+        moduleScopes:
+          description: Module scopes for the entity type
+          type: array
+          items:
+            type: string
+          example:
+          - AIG
+          - AA
+          - DM
+          - ESG
+          enum:
+          - AIG
+          - AA
+          - DM
+          - ESG
+          - ITRM
+        settings:
+          description: Entity type settings
+          example:
+            enableSearch: true
+            enableQuickCreate: true
+            enableExtendedAttributes: true
+            enableDuplicateDetection: true
+            workflowEnabled: true
+            auditEnabled: true
+          $ref: '#/components/schemas/EntityTypeSettingInformation'
+        auditFields:
+          description: Audit fields containing information about creation and modification
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+      example:
+        id: 789e4567-e89b-12d3-a456-426614174123
+        name: Vendor
+        nameKey: entity.type.vendor
+        displayName: Vendor
+        displayNameKey: entity.type.vendor.display
+        module: VENDOR
+        description: A third-party organization that provides goods or services to the company
+        descriptionKey: entity.type.vendor.description
+        workflowType: vendor_assessment
+        enabled: true
+        moduleScopes:
+        - Inventory
+        - VRM
+        - Security
+        settings:
+          enableSearch: true
+          enableQuickCreate: true
+          enableExtendedAttributes: true
+          enableDuplicateDetection: true
+          workflowEnabled: true
+          auditEnabled: true
+        auditFields:
+          createdBy: admin@example.com
+          createdTimestamp: '2023-01-15T10:30:45Z'
+          lastModifiedBy: system@example.com
+          lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+      required:
+      - id
+      - name
+      - settings
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            AI_GOVERNANCE: Grants full permissions to manage AI Governance operations for external systems
+            AI_GOVERNANCE_READ: Allows read-only access to AI Governance entities
+            AI_GOVERNANCE_WRITE: Grants permissions to create and modify AI Governance entities
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

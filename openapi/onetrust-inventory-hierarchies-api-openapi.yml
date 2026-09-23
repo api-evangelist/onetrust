@@ -1,0 +1,666 @@
+openapi: 3.2.0
+info:
+  title: Privacy Automation - Data Mapping Automation Inventory…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Data Mapping Automation APIs are used to manage structured records (assets, vendors, processing activities, and legal entities), define schema attributes, traverse parent–child hierarchies, and create cross-record relationships—including links to personal data.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Inventory Hierarchies
+  description: APIs used to list, link, and unlink child inventories under a root inventory to model organizational or data-flow trees.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+paths:
+  /api/inventory/v2/inventories/{inventoryId}/set-as-parent:
+    put:
+      operationId: setInventoryAsParentInventoryUsingPUT
+      summary: Set Inventory as Parent
+      description: Use this API to set an existing inventory as a Parent inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: inventoryId
+        in: path
+        description: The unique identifier of the inventory to set as parent
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c4bee781-912b-4328-8851-6f906afd7ccb
+      - name: inventoryType
+        in: query
+        description: The type of inventory (e.g., assets, vendors, processing-activities, legal-entities)
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: assets
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{inventoryId}/unset-as-parent:
+    put:
+      operationId: unsetInventoryAsParentInventoryUsingPUT
+      summary: Unset Inventory as Parent
+      description: Use this API to unset an existing inventory from being a Parent inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: inventoryId
+        in: path
+        description: The unique identifier of the inventory to unset as parent
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c4bee781-912b-4328-8851-6f906afd7ccb
+      - name: inventoryType
+        in: query
+        description: The type of inventory (e.g., assets, vendors, processing-activities, legal-entities)
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: assets
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{parentInventoryId}/link-assets:
+    post:
+      operationId: linkAssetInventoryToParentAssetIdUsingPOST
+      summary: Add Asset Inventory as Child to Parent Inventory
+      description: Use this API to link an existing asset inventory as a child inventory to a parent asset inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: parentInventoryId
+        in: path
+        description: The unique identifier of the parent asset inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+            examples:
+              childInventoryIds:
+                description: childInventoryIds
+                value:
+                - 96214230-ffbb-4870-b6c4-0f30c3bfec60
+                - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{parentInventoryId}/link-legal-entities:
+    post:
+      operationId: linkLegalEntityInventoryToParentLegalEntityIdUsingPOST
+      summary: Add Legal Entity Inventory as Child to Parent Inventory
+      description: Use this API to link an existing legal entity inventory as a child inventory to a parent legal entity inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: parentInventoryId
+        in: path
+        description: The unique identifier of the parent legal entity inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+            examples:
+              childInventoryIds:
+                description: childInventoryIds
+                value:
+                - 96214230-ffbb-4870-b6c4-0f30c3bfec60
+                - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{parentInventoryId}/link-processing-activities:
+    post:
+      operationId: linkProcessingActivityInventoryToParentProcessingActivityIdUsingPOST
+      summary: Add Processing Activity Inventory as Child to Parent Inventory
+      description: Use this API to link an existing processing activity inventory as a child inventory to a parent processing activity inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: parentInventoryId
+        in: path
+        description: The unique identifier of the parent processing activity inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+            examples:
+              childInventoryIds:
+                description: childInventoryIds
+                value:
+                - 96214230-ffbb-4870-b6c4-0f30c3bfec60
+                - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{parentInventoryId}/link-vendors:
+    post:
+      operationId: linkVendorInventoryToParentVendorIdUsingPOST
+      summary: Add Vendor Inventory as Child to Parent Inventory
+      description: Use this API to link an existing vendor inventory as a child inventory to a parent vendor inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: parentInventoryId
+        in: path
+        description: The unique identifier of the parent vendor inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: List of child vendor inventory IDs to link to the parent
+              type: array
+              format: uuid
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventory-hierarchies/{rootInventoryId}:
+    get:
+      operationId: getHierarchyForInventoryIdUsingGET
+      summary: Get List of Child Inventories by Root Inventory
+      description: Use this API to provide a paginated list of Child Inventories for a given Inventory Schema Type and a Root Inventory Id.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: rootInventoryId
+        in: path
+        description: The unique identifier of the root inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      - name: inventoryType
+        in: query
+        description: The type of inventory (e.g., assets, vendors, processing-activities, legal-entities)
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: assets
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+          - createdDate,asc
+          - createdDate,desc
+        example: name,asc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    delete:
+      operationId: unlinkChildInventoryFromHierarchyUsingDELETE
+      summary: Remove Child Inventory from Root Inventory
+      description: Use this API to unlink a Child Inventory from a Root Inventory.
+      tags:
+      - Inventory Hierarchies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: rootInventoryId
+        in: path
+        description: The unique identifier of the root inventory
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+      - name: inventoryType
+        in: query
+        description: The type of inventory (e.g., assets, vendors, processing-activities, legal-entities)
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: assets
+      - name: childInventoryId
+        in: query
+        description: The unique identifier of the child inventory to unlink
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 6ed251ca-969a-486f-a645-e5fc3c709f55
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+components:
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Data Mapping Automation Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO1Q000000ItRxWAK/data-mapping-automation''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

@@ -1,0 +1,862 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Data Subjects V2
+  description: The Data Subjects V2 APIs are used to manage data subjects using version 2 of the API.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Data Subjects V2
+paths:
+  /api/consentmanager/v2/datasubjects:
+    get:
+      operationId: getDataSubjectsUsingGET
+      summary: Get List of Data Subjects
+      description: 'Use this API to retrieve a list of all data subjects. The response will include details for each data subject such as the associated data elements, data subject ID, and data subject identifier. By default, the response will return data subject details sorted in descending order of last modified date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API is not designed to be used in synchronous workflows. As an alternative, the Gets preferences for a Data Subject API can be called.
+
+
+        > 🚧
+
+        >
+
+        > Please note that the FTC Do Not Call List is updated once daily and not updated in real time. As such, there may be a possibility that a consumer''s preferences may have changed and they may have opted out of receiving communication before the Do Not Call list gets refreshed. OneTrust is merely conveying information received from the FTC and is not responsible for compiling the lists.'
+      tags:
+      - Data Subjects V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: page
+        in: query
+        description: Page number (0-based).
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page (1-50).
+        schema:
+          type: integer
+          example: 20
+          default: 20
+          maximum: 2000
+          minimum: 1
+      - name: updatedSince
+        in: query
+        description: 'Filter Data Subject records that were last updated on or after the specified date. Formats accepted: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.'
+        schema:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00'
+      - name: updatedUntil
+        in: query
+        description: 'Filter Data Subject records that were last updated on or before the specified date. Must be used with updatedSince. Formats accepted: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss.'
+        schema:
+          type: string
+          format: date-time
+          example: '2023-12-31T23:59:59'
+      - name: identifier
+        in: header
+        description: Filter by data subject identifier (prefer using the header parameter).
+        schema:
+          type: string
+          example: user@example.com
+      - name: id
+        in: query
+        description: Filter by data subject ID (UUID).
+        schema:
+          type: string
+          format: uuid
+          example: a9adf402-adcd-45be-b981-a56a5c0739ec
+      - name: dataElementName
+        in: header
+        description: Filter by data element name (must be used with dataElementValue).
+        schema:
+          type: string
+          example: Email
+      - name: dataElementValue
+        in: header
+        description: Filter by data element value (must be used with dataElementName).
+        schema:
+          type: string
+          example: user@example.com
+      - name: language
+        in: query
+        description: Filter by language code (e.g., 'en', 'fr').
+        schema:
+          type: string
+          example: en
+      - name: properties
+        in: query
+        description: 'Specify optional properties to control the response. Multiple values can be comma-separated.
+
+
+          - `ignoreCount`: Skip the total record count calculation (improves performance)
+
+          - `linkTokens`: Include link tokens in the response
+
+          - `ignoreDefaultSort`: Disable default sorting by last modified date'
+        schema:
+          type: string
+          example: ignoreCount,linkTokens
+      - name: includeDataSubjectsWithOutPurposeTransactions
+        in: query
+        description: Include data subjects without purpose transactions (true/false).
+        schema:
+          type: boolean
+          default: false
+      - name: isDNCInclude
+        in: query
+        description: Include Do Not Call list information (true/false).
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: OK - List of data subjects retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSliceDtoV2'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/datasubjects/profiles:
+    delete:
+      operationId: deleteDataSubjectProfilesUsingDELETE
+      summary: Delete Purposes from Data Subject
+      description: 'Use this API to delete up to 100 purposes from one data subject or to delete one purpose from up to 100 data subjects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - By default, related data subject transactions will be removed from the database and will no longer appear in the OneTrust Platform UI after calling this API. However, the transactions can still be retrieved using the Get List of Receipts API. To maintain data subject transactions in the database and OneTrust Platform UI, set the `retainTransactions` parameter to `true`.'
+      tags:
+      - Data Subjects V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DeletePurposeFromDataSubject'
+      responses:
+        '200':
+          description: OK - Successfully processed deletion of purposes from data subjects.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consentmanager/v2/datasubjects/search:
+    post:
+      operationId: searchDataSubjectsPostUsingPOST
+      summary: Search Data Subjects
+      description: 'Use this API to search for data subjects based on various criteria. The response will include details for each matching data subject such as the associated data elements, data subject ID, and data subject identifier.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API supports complex search criteria including filtering by data elements, purposes, and consent status.
+
+        > - For large result sets, use pagination to retrieve data in manageable chunks.
+
+        > - The response can be customized using the properties parameter to include or exclude certain data.
+
+
+        > 🚧
+
+        >
+
+        > Please note that the FTC Do Not Call List is updated once daily and not updated in real time. As such, there may be a possibility that a consumer''s preferences may have changed and they may have opted out of receiving communication before the Do Not Call list gets refreshed. OneTrust is merely conveying information received from the FTC and is not responsible for compiling the lists.'
+      tags:
+      - Data Subjects V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: page
+        in: query
+        description: Page number (0-based).
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page (1-2000).
+        schema:
+          type: integer
+          example: 1000
+          default: 1000
+          maximum: 2000
+          minimum: 1
+      - name: isDNCInclude
+        in: query
+        description: Include Do Not Call list information (true/false).
+        schema:
+          type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSearchDto'
+            examples:
+              Search by Email:
+                summary: Find data subjects by email
+                description: Search by Email
+                value:
+                  dataElements:
+                  - name: Email
+                    value: user@example.com
+              Search by Purpose:
+                summary: Find data subjects who consented to a specific purpose
+                description: Search by Purpose
+                value:
+                  purposeGuid: 550e8400-e29b-41d4-a716-446655440000
+                  consentStatus: GRANTED
+      responses:
+        '200':
+          description: OK - Search results returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSliceDtoV2'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+        - CONSENT_READ
+  /api/consent/v2/datasubject-purposes/{purposeGuid}:
+    delete:
+      operationId: deletePurposeFromDataSubjectUsingDELETE
+      summary: Delete Purpose from Data Subjects
+      description: 'Use this API for large scale deletion of a specific purpose from all data subjects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - A data subject exclusion list is required to provide the specific data subjects from which the purpose should not be deleted. The **Consent DS Exclusion** import template within Global Settings in the OneTrust Platform can be used to create the data subject exclusion list and can be imported via Bulk Import in the application or via API.
+
+        > - Once the data subject exclusion list has been successfully imported, either an `importID` or `jobGuid` parameter value must be specified in the request body.
+
+        > - Data subject exclusion lists are valid during the next 30 days after submission.
+
+        > - To override the data subject exclusion list requirement, set the `deletePurposeFromAllDataSubjects` parameter value to `true`. By default, this parameter is set to `false`.
+
+        > - By default, related data subject transactions will be removed from the database and will no longer appear in the OneTrust Platform UI after calling this API. However, the transactions can still be retrieved using the Get List of Receipts API. To maintain data subject transactions in the database and OneTrust Platform UI, set the `retainTransactions` parameter to `true`.'
+      tags:
+      - Data Subjects V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: purposeGuid
+        in: path
+        description: UUID of the Purpose to be deleted
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: fb1e4567-e89b-12d3-a456-426614174015
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_DeleteDataSubjectByPurposeRequest'
+      responses:
+        '202':
+          description: Purpose deletion from Data Subjects request processed successfully.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: DataSubject Profile Delete Request has been accepted
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+  /api/consent/v2/datasubjects:
+    delete:
+      operationId: DeleteDataSubjectProfileUsingDELETE
+      summary: Delete Data Subjects
+      description: 'Use this API to delete data subjects. Deleting data subjects is a permanent action that should be exercised with caution.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Data subjects can be deleted using any of the following values at a time:
+
+        > - List of Identifiers
+
+        > - List of Data Subject Identifier GUIDs
+
+        > - Date range between `fromCreatedDate` and `toCreatedDate` (the timespan must be 24 hours or less).
+
+        > - Date range between `fromInteractionDate` and `toInteractionDate` (the timespan must be 24 hours or less).
+
+        > - When filtering by date range, created date and interaction date should be used separately. They should not be used at the same time.
+
+        > - Up to 999 data subject identifiers can be deleted per API call.
+
+        > - If a new data subject has to be deleted, it is recommended to wait at least 24 hours after its creation to ensure that all the data has been properly stored and synchronized before removal.
+
+        > - Requests will be processed asynchronously and can be monitored in the View Activity option in the Data Subject list view within the OneTrust Platform. If multiple calls are required, wait until each request processes before making another call.
+
+        > - By default, related data subject receipts and transactions will be removed from the database and will no longer appear in the OneTrust Platform UI after calling this API. However, the receipts and transactions can still be retrieved using the Get List of Receipts API. To maintain data subject receipts and transactions in the database and OneTrust Platform UI, set the `retainReceiptsTransactions` parameter to `true`.
+
+
+        > 👍
+
+        >
+
+        > The **Enable Data Subject Deletion** setting must be enabled within Global Settings in the OneTrust application in order to use this API. For more information, see Deleting Data Subject Records.'
+      tags:
+      - Data Subjects V2
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentAPI_DataSubjectDeleteRequestV2'
+      responses:
+        '200':
+          description: Data Subjects deletion request processed successfully.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Deletion Request has been accepted
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentAPI_OAUTH2:
+        - CONSENT
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSliceDtoV2:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentAPI_DeleteDataSubjectByPurposeRequest:
+      type: object
+      properties:
+        jobGuid:
+          description: The UUID of the data exclusion job.
+          type: string
+          format: uuid
+          example: fa0e8400-e29b-41d4-a716-446655441200
+        importId:
+          description: The import ID of the data exclusion job.
+          type: string
+          example: '101'
+        retainTransactions:
+          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+          default: 'false'
+        deletePurposeFromAllDataSubjects:
+          description: This flag indicates whether the purpose should be deleted from all data subjects.
+          type: boolean
+          example: false
+          default: 'false'
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2:
+      properties:
+        id:
+          description: Unique identifier for the Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        identifier:
+          description: The Data Subject's identifier (e.g., email, phone number)
+          type: string
+          example: example@otprivacy.com
+        language:
+          description: The preferred language code for the Data Subject
+          type: string
+          example: en-us
+        lastUpdatedDate:
+          description: The timestamp when the Data Subject's record was last updated
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        dataElements:
+          description: Map of data elements and their corresponding values for the Data Subject
+          type: object
+          example:
+            Title: Mr
+            FirstName: Example
+          additionalProperties: true
+        dataElementsMetaData:
+          description: List of data elements with metadata for the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2'
+        linkToken:
+          description: Token used for magic link authentication of the Data Subject
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
+        createdDate:
+          description: The timestamp when the Data Subject's record was created
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        identifierType:
+          description: The type of identifier used for the Data Subject
+          type: string
+          example: Email
+        testDataSubject:
+          description: Indicates whether this is a test Data Subject
+          type: boolean
+          example: false
+        doNotCall:
+          description: Indicates if the Data Subject's phone number is on the FCC's Do Not Call list
+          type: boolean
+          example: false
+    ConsentAPI_DataSubjectDeleteRequestV2:
+      type: object
+      properties:
+        identifiers:
+          description: The list of data subject identifiers for the data subjects.
+          type: array
+          items:
+            type: string
+          example: user1@otprivacy.com
+        dataSubjectGuids:
+          description: The list of GUIDS for the data subject identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        fromCreatedDate:
+          description: The start of a date and time range for the data subject creation date.
+          type: string
+          format: date-time
+          example: '2022-02-01T12:33:40.000'
+        toCreatedDate:
+          description: The end of a date and time range for the data subject creation date.
+          type: string
+          format: date-time
+          example: '2022-02-01T10:04:59.000'
+        fromInteractionDate:
+          description: The start of a date and time range for the data subject interaction date.
+          type: string
+          format: date-time
+          example: '2022-02-01T08:10:11.000'
+        toInteractionDate:
+          description: The end of a date and time range for the data subject interaction date.
+          type: string
+          format: date-time
+          example: '2022-02-02T08:10:11.000'
+        retainReceiptsTransactions:
+          description: This flag indicates whether receipts and transactions will be retained while deleting data subjects. When set to `false`, receipts and transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these receipts and transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+        removePIInfo:
+          description: This flag indicates whether to remove PII data element values from receipts and transactions. This parameter must be used in conjunction with the `retainReceiptsTransactions` parameter.
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_DeletePurposeFromDataSubject:
+      properties:
+        purposes:
+          description: The unique identifiers of the purposes.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Purpose ID
+            example: 550e8400-e29b-41d4-a716-446655440000
+        dataSubjects:
+          description: The list of GUIDS for the data subject identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Data Subject GUID
+            example: a9adf402-adcd-45be-b981-a56a5c0739ec
+        retainTransactions:
+          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+        identifiers:
+          description: The list of data subject identifiers for the data subjects.
+          type: array
+          items:
+            type: string
+            description: Data Subject identifier (e.g., email, phone number)
+            example: user@example.com
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSearchDto:
+      type: object
+      properties:
+        id:
+          description: Filter Data Subject records by GUID
+          type: string
+          format: uuid
+          example: 2a95b8c1-e54f-49f0-906a-2f5880450999
+        identifier:
+          description: Filter Data Subject records by identifier (e.g., email, phone number)
+          type: string
+          example: example@otprivacy.com
+        updatedSince:
+          description: 'Filter Data Subject records updated on or after this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
+          type: string
+          example: '2023-01-01T00:00:00'
+        updatedUntil:
+          description: 'Filter Data Subject records updated on or before this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
+          type: string
+          example: '2023-12-31T23:59:59'
+        dataElements:
+          description: Filter Data Subject records by data elements with specific names and values
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto'
+        language:
+          description: Filter Data Subject records by preferred language code
+          type: string
+          example: en-us
+        includeCounts:
+          description: When false, the response will not include the total record count (improves performance for large result sets)
+          type: boolean
+          example: true
+          default: true
+        linkTokens:
+          description: When true, includes link tokens in the response for magic link functionality
+          type: boolean
+          example: false
+          default: false
+        linkedDS:
+          description: When true, includes additional linked Data Subject information in the response
+          type: boolean
+          example: false
+          default: false
+        ignoreDefaultSort:
+          description: When true, overrides the default sorting by last modified date
+          type: boolean
+          example: false
+          default: false
+        orgIds:
+          description: Filter Data Subject records by organization IDs (internal use only)
+          type: array
+          items:
+            type: string
+            format: uuid
+        includeDataSubjectsWithOutPurposeTransactions:
+          description: When true, includes Data Subjects that don't have any purpose transactions
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2:
+      properties:
+        name:
+          description: The name of the data element
+          type: string
+          example: Work Email
+        linked:
+          description: Indicates whether this data element value is linked as an identifier
+          type: boolean
+          example: true
+        value:
+          description: The value of the data element. Can be a single value or an array of values.
+          type: object
+          example: example@otprivacy.com
+        doNotCall:
+          description: Indicates if a phone number is listed in FCC's Do Not Call registry
+          type: boolean
+          example: true
+      required:
+      - linked
+      - name
+      - value
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto:
+      properties:
+        name:
+          description: The name of the data element to search for
+          type: string
+          example: Work Email
+        value:
+          description: The value to match against the specified data element name
+          type: string
+          example: example@otprivacy.com
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

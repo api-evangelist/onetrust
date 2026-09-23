@@ -1,0 +1,229 @@
+openapi: 3.2.0
+info:
+  title: Platform - Access Management OAuth Token API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Access Management APIs enable you to programmatically control user access, manage organizational hierarchies, and monitor authentication activities across your OneTrust platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: OAuth Token
+  description: APIs to manage OAuth 2.0 authentication for secure API access. Generate access tokens using client credentials, retrieve token information, and manage API authentication for your applications.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+  x-displayName: OAuth Token
+paths:
+  /api/access/v1/oauth/token:
+    post:
+      operationId: GetOAuthToken
+      summary: Generate Access Token
+      description: 'Use this API to generate an OAuth access token using the `client_credentials` grant type.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Client credentials can be generated from within Global Settings in the OneTrust application. For more information, see Managing OAuth 2.0 Client Credentials.
+
+        > - Use the `client_id` and `client_secret` to generate the OAuth access token using this API.
+
+        > - A maximum of 500 OAuth 2.0 client credentials can be created per account.'
+      tags:
+      - OAuth Token
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_ClientCredentialsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_ClientCredentialsResponse'
+              example:
+                access_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQXBpIEtleSBVc2VyIiwidXNlcl9uYW1lIjoiMGI2ZDRlMjI3ZDAxNGM5YzkwZjdkOWE1NGZjOTVjOTVAYXBpLm9uZXRydXN0LmNvbSIsImxhbmd1YWdlSWQiOjEsInNlc3Npb25JZCI6ImRlOGEzZDUxLTFiMTYtNGM5ZS1hODNhLWZkZDUwOWI4YmNiZSIsInRlbmFudEd1aWQiOiIwYjZkNGUyMi03ZDAxLTRjOWMtOTBmNy1kOWE1NGZjOTVjOTUiLCJjbGllbnRfaWQiOiIzMWJiMjBmOGUzYjU0N2YwYjc1MzY2NWVjODMxNmFkYyIsIm9yZ0dyb3VwSWQiOiJjZjQzMTljMi03MmQ1LTRlMjgtOGIwNy1kY2FhMmI3YTBkYzUiLCJvcmdHcm91cEd1aWQiOiJjZjQzMTljMi03MmQ1LTRlMjgtOGIwNy1kY2FhMmI3YTBkYzUiLCJvdC1zY29wZXMiOiJBU1NFU1NNRU5ULEFTU0VTU01FTlRfUkVBRCxDT05TRU5ULENPTlNFTlRfUkVBRCxDT05UUk9MLENPT0tJRSxDT09LSUVfUkVBRCIsInNjb3BlIjpbInJlYWQiXSwidGVuYW50SWQiOjM2LCJndWlkIjoiMGRmY2RiMjItZGNlNS00NWI5LWJlYTctNmNmZTQwMGFkZDJkIiwiZXhwIjoxNjM5MjU5Nzg4LCJqdGkiOiIwNzE1OGVkYi1mZjdkLTRkZjktYjQxYS0xZTRhMjgzZmE3N2EiLCJlbWFpbCI6IjBiNmQ0ZTIyN2QwMTRjOWM5MGY3ZDlhNTRmYzk1Yzk1QGFwaS5vbmV0cnVzdC5jb20ifQ.Hrzgo-vEE073wxkXtJDLKGRjAr2iT4G3EsyISr7x1brLLUuAojWWEGO1ue4RWfntUjEDYC9UAxpMbuP2Xv5ymqUartufj6YwamAqKdGd9gijaoGTXSNvE6ALSCqGOz8owpjh10Qu7nmBnSfzvmkSAD0dJKofJGvGd6IUC21eAU9rcX16R7hbGdmvSWtX7pzjwrZ72CcnLtwCSg7-XJhNB24dY_-iaftBu_vsw3Lr6nddMOGMfXtUl8bPN_ptmXcF4bA-7y2Vw7xEKYVKreKuQsiMAJ2a2aKiRVmHE1RFbyp2R-Z2soqkUL_DQxKZMeU9ehX8NDcmZ_JmtzemgeaoPQ
+                email: 0b6d4e227d014c9c90f7d9a54fc95c95@api.onetrust.com
+                expires_in: 31535999
+                guid: 0dfcdb22-dce5-45b9-bea7-6cfe400add2d
+                jti: U3TACUsO6qB_19J1ueRBUGqXRL0
+                languageId: 1
+                orgGroupGuid: cf4319c2-72d5-4e28-8b07-dcaa2b7a0dc5
+                orgGroupId: cf4319c2-72d5-4e28-8b07-dcaa2b7a0dc5
+                ot-scopes: ASSESSMENT,ASSESSMENT_READ,ATTACHMENT,ATTACHMENT_READ,AUDIT_MANAGEMENT,CONSENT,CONSENT_READ,CONTROL,COOKIE,COOKIE_READ,DATA_CATALOG_READ,DATA_DISCOVERY,DSAR_READ,DSAR_WRITE,INCIDENT,INCIDENT_CREATE,INCIDENT_READ,INTEGRATIONS,INVENTORY,INVENTORY_READ,INVENTORY_WRITE,ITRM,ORGANIZATION,POLICY,RISK,SCIM,USER,VRM,VRM_READ
+                role: Api Key User
+                scope: read
+                sessionId: de8a3d51-1b16-4c9e-a83a-fdd509b8bcbe
+                tenantGuid: 0b6d4e22-7d01-4c9c-90f7-d9a54fc95c95
+                tenantId: 36
+                token_type: bearer
+                user_name: 0b6d4e227d014c9c90f7d9a54fc95c95@api.onetrust.com
+        '400':
+          description: 'Bad Request
+
+
+            ### Possible Reasons:
+
+            * Invalid `grant_type`
+
+            '
+        '401':
+          description: 'Unauthorized
+
+
+            ### Possible Reasons:
+
+            * Invalid client credentials
+
+            '
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    Platform-AccessManagement_ClientCredentialsResponse:
+      type: object
+      properties:
+        access_token:
+          description: The OAuth access token for API authentication.
+          type: string
+        email:
+          description: The API user email in the format tenantGuid@api.onetrust.com.
+          type: string
+          format: email
+        expires_in:
+          description: The token lifetime in seconds.
+          type: integer
+          format: int32
+        guid:
+          description: A unique identifier for this token session.
+          type: string
+          format: uuid
+        jti:
+          description: The JWT identifier for this token.
+          type: string
+        languageId:
+          description: The numeric identifier for the user's language.
+          type: integer
+          format: int32
+        orgGroupGuid:
+          description: The unique identifier of the organization where the credential was created.
+          type: string
+          format: uuid
+        orgGroupId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+        ot_scopes:
+          description: The API scopes granted to this credential.
+          type: string
+        role:
+          description: The user role associated with this token.
+          type: string
+        scope:
+          description: The OAuth scope for this token.
+          type: string
+        sessionId:
+          description: The unique identifier for this API session.
+          type: string
+          format: uuid
+        tenantGuid:
+          description: The unique identifier of your OneTrust tenant.
+          type: string
+        tenantId:
+          description: The numeric identifier of your OneTrust tenant.
+          type: integer
+          format: int32
+        token_type:
+          description: The type of token. Always 'bearer'.
+          type: string
+        user_name:
+          description: The API username in the format tenantGuid@api.onetrust.com.
+          type: string
+          format: email
+    Platform-AccessManagement_ClientCredentialsRequest:
+      type: object
+      properties:
+        grant_type:
+          description: The OAuth grant type. Always use 'client_credentials'.
+          type: string
+          default: client_credentials
+          enum:
+          - client_credentials
+        client_id:
+          description: Your OneTrust client credential identifier.
+          type: string
+          default: 3d8efc3b94ed49628482eb2ab5e3bc8g
+        client_secret:
+          description: Your OneTrust client credential secret key.
+          type: string
+          default: Ycx7HNUbHWyPBZvT4WhjYyIvnEdQL3d4
+      required:
+      - client_id
+      - client_secret
+      - grant_type
+  securitySchemes:
+    Platform-AccessManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ORGANIZATION: Grants full access to manage organizations. This includes Create, Read, Update and Delete operations.
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+    AuditRecords_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

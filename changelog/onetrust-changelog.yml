@@ -1,0 +1,85 @@
+generated: '2026-08-27'
+method: searched
+source: https://developer.onetrust.com/onetrust/changelog
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust runs a dated developer-portal changelog on a roughly monthly cadence, one entry per platform
+  release, each grouped by product area with General Availability / Public Preview labels. Entries link
+  directly to the affected operation's reference page. A second, product-wide release-notes stream lives
+  in the customer community at https://my.onetrust.com/s/release-notes.
+scheme: CalVer
+pattern: YYYYMM.N.0
+current_version: 202608.1.0
+current_version_date: '2026-08-07'
+cadence: monthly, occasionally twice monthly
+breaking_change_policy: >-
+  Breaking changes are handled through the separate Sunset & Deprecation guidelines rather than announced
+  in the changelog; see lifecycle/onetrust-lifecycle.yml.
+url: https://developer.onetrust.com/onetrust/changelog
+platform_release_notes: https://my.onetrust.com/s/release-notes
+entries:
+- version: 202608.1.0
+  date: '2026-08-07'
+  title: OneTrust 202608.1.0 Released! (Summer Release)
+  breaking: false
+  areas:
+  - Assessment Automation
+  highlights:
+  - Enhancements to the Assessment Automation APIs.
+- version: 202607.1.0
+  date: '2026-07-17'
+  title: OneTrust 202607.1.0 Released!
+  breaking: false
+  areas:
+  - Assessment Automation
+  additions:
+  - New Assessment Comments APIs (Create Assessment Comment).
+- version: 202606.2.0
+  date: '2026-06-26'
+  title: OneTrust 202606.2.0 Released!
+  breaking: false
+  areas:
+  - Cookie Consent
+  additions:
+  - >-
+    Bulk Export APIs — create and cancel bulk exports and retrieve status, progress, download details
+    and credit details.
+- version: 202606.1.0
+  date: '2026-06-05'
+  title: OneTrust 202606.1.0 Released!
+  breaking: false
+  areas:
+  - Cookie Consent
+  highlights:
+  - Bulk Export APIs listed under Existing Public Preview Features.
+- version: 202605.1.0
+  date: '2026-05-15'
+  title: OneTrust 202605.1.0 Released!
+  breaking: false
+- version: 202604.2.0
+  date: '2026-04-27'
+  title: OneTrust 202604.2.0 Released!
+  breaking: false
+- version: 202604.1.0
+  date: '2026-04-02'
+  title: OneTrust 202604.1.0 Released!
+  breaking: false
+- version: 202603.1.0
+  date: '2026-03-13'
+  title: OneTrust 202603.1.0 Released!
+  breaking: false
+- version: 202602.1.0
+  date: '2026-02-20'
+  title: OneTrust 202602.1.0 Released!
+  breaking: false
+- version: 202601.2.0
+  date: '2026-01-30'
+  title: OneTrust 202601.2.0 Released!
+  breaking: false
+note: >-
+  The ten entries above are the current window the portal returns. Titles and dates are verbatim; the
+  areas/highlights fields summarise the first section of each entry body and are not exhaustive.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

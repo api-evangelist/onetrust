@@ -1,0 +1,172 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  registry.npmjs.org, pypi.org, search.maven.org, trunk.cocoapods.org, api.github.com, and
+  https://developer.onetrust.com/onetrust/docs/onetrust-sdk-reference
+provider: OneTrust
+providerId: onetrust
+summary: >-
+  OneTrust's first-party client libraries are CONSENT SDKs, not API clients. There is no OneTrust SDK
+  for the 631-operation REST platform in any language — a developer calling the OneTrust APIs writes
+  raw HTTP. What OneTrust does ship is a mobile/OTT/web Consent Management Platform SDK family
+  (Android, iOS/tvOS, React Native, Cordova/Ionic, Flutter, Roku, Fire TV, Web) plus one Python SDK for
+  the AI Guard service. The CMP packages are versioned on the platform's CalVer train and were current
+  as of the probe; the Maven web-sdk artifact has not shipped since 2022 and the Adobe extension since
+  2019.
+decay_signals:
+- >-
+  react-native-onetrust-cmp and cordova-plugin-onetrust-cmp both sit at 202608.1.0, the same release
+  string as the OneTrust 202608.1.0 (Summer) platform release announced 2026-08-07 — the strongest
+  currency signal available here.
+- >-
+  com.onetrust.cmp:web-sdk last published 2022-03-14 on Maven Central. The supported Web CMP is
+  distributed from the OneTrust CDN, not Maven, so this artifact is a stale mirror rather than the
+  shipping product.
+- com.onetrust.mobile:onetrust_adobe_extension last published 2019-02-04.
+packages:
+- name: react-native-onetrust-cmp
+  registry: npm
+  url: https://www.npmjs.com/package/react-native-onetrust-cmp
+  official: true
+  language: JavaScript/TypeScript
+  platform: React Native
+  purpose: Consent Management Platform SDK
+  version: 202608.1.0
+  published: '2026-08-18'
+  first_published: '2021-04-27'
+  publisher: onetrust
+- name: cordova-plugin-onetrust-cmp
+  registry: npm
+  url: https://www.npmjs.com/package/cordova-plugin-onetrust-cmp
+  official: true
+  language: JavaScript
+  platform: Apache Cordova / Ionic
+  purpose: Consent Management Platform SDK
+  version: 202608.1.0
+  published: '2026-08-18'
+  first_published: '2021-04-27'
+  publisher: onetrust
+  homepage: https://onetrust.com
+- name: onetrust-ai-guard-sdk
+  registry: pypi
+  url: https://pypi.org/project/onetrust-ai-guard-sdk/
+  official: true
+  language: Python
+  platform: Python 3.13+
+  purpose: >-
+    Client for the OneTrust AI Guard Service — classification/redaction of prompts and LLM responses
+    against the OneTrust Data Discovery classifier set.
+  version: 0.1.0
+  published: '2026-06-02'
+  source: https://github.com/onetrust-oss/ai-guard-sdk
+  license: Apache-2.0
+- name: com.onetrust.cmp:native-sdk
+  registry: maven
+  url: https://search.maven.org/artifact/com.onetrust.cmp/native-sdk
+  official: true
+  language: Java/Kotlin
+  platform: Android
+  purpose: Consent Management Platform SDK
+  version: 202506.1.0.0
+  published: '2025-06-19'
+- name: com.onetrust.cmp:web-sdk
+  registry: maven
+  url: https://search.maven.org/artifact/com.onetrust.cmp/web-sdk
+  official: true
+  language: Java
+  platform: Web (server-side bundle)
+  purpose: Consent Management Platform SDK
+  version: 6.33.0.0
+  published: '2022-03-14'
+  note: >-
+    Stale. Four years behind the CalVer train the other CMP packages follow; the supported Web CMP is
+    the CDN script below.
+- name: com.onetrust.mobile:onetrust_adobe_extension
+  registry: maven
+  url: https://search.maven.org/artifact/com.onetrust.mobile/onetrust_adobe_extension
+  official: true
+  language: Java
+  platform: Adobe Experience Platform Mobile SDK
+  purpose: OneTrust consent extension for the Adobe Mobile SDK
+  version: 1.0.1
+  published: '2019-02-04'
+  note: Stale. Seven years since the last release.
+- name: OneTrust Web CMP (OneTrust SDK / otSDKStub.js)
+  registry: cdn
+  url: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+  official: true
+  language: JavaScript
+  platform: Web browser
+  purpose: Cookie banner / preference centre loader
+  version: null
+  published: null
+  probe:
+    fetched: '2026-08-27'
+    url: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+    http_status: 200
+    bytes: 26840
+  note: >-
+    Distribution is UNPINNED — the URL names no version and floats to whatever the CDN currently serves,
+    so a consumer cannot tell what build they are running any more than we can. There is no registry
+    metadata endpoint for this artefact. version is null deliberately: checked, nothing to record.
+    (cdn.onetrust.com/scripttemplates/otSDKStub.js returns 404 ContainerNotFound; cdn.cookielaw.org is
+    the live host.)
+- name: onetrust-oss/ai-guard-sdk
+  registry: github
+  url: https://github.com/onetrust-oss/ai-guard-sdk
+  official: true
+  language: Python
+  purpose: Source repository for onetrust-ai-guard-sdk
+  version: null
+  published: '2026-06-02'
+  note: >-
+    Last push 2026-06-02. The only public source repository OneTrust operates; version is carried by the
+    PyPI entry above.
+- name: OneTrustCMP/OneTrust-gtm-template
+  registry: github
+  url: https://github.com/OneTrustCMP/OneTrust-gtm-template
+  official: true
+  language: Smarty
+  purpose: Google Tag Manager consent template
+  version: null
+  published: '2026-05-07'
+  note: Template source, not a published package; no registry carries a version for it.
+sdk_platforms_documented:
+  source: https://developer.onetrust.com/onetrust/docs/onetrust-sdk-reference
+  mobile:
+  - Android
+  - iOS / tvOS
+  - React Native
+  - Apache Cordova
+  - Ionic
+  - Flutter
+  ott_ctv:
+  - Roku
+  - Amazon Fire TV
+  - Apple TV
+  - Android TV
+  - Web OS
+  - Tizen
+  web:
+  - Website CMP (CDN script)
+  - Web Form Collection Point JavaScript SDK
+  note: >-
+    Several of these platforms are distributed as direct downloads or CDN bundles from the OneTrust
+    application rather than through a public registry, so they carry no queryable version metadata.
+negative_findings:
+- registry: pypi
+  query: onetrust, onetrust-sdk
+  result: 404 — no general-purpose OneTrust API client on PyPI.
+- registry: cocoapods
+  query: OneTrust-CMP, OneTrustCMP, onetrust-publishers-native-sdk
+  result: 404 — the iOS CMP SDK is not published to the CocoaPods trunk under any of these names.
+- registry: github
+  query: https://github.com/onetrust
+  result: >-
+    NOT OneTrust. github.com/onetrust is a personal user account with one public repo, an Arduino AVR
+    ISP shield from 2013. The apis.yml GitHubOrganization pointer previously named it; it has been
+    repointed at https://github.com/onetrust-oss, which GitHub reports as name "OneTrust" with
+    onetrust.com in its profile.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

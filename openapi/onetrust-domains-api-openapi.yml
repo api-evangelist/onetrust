@@ -1,0 +1,819 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Domains API
+  version: '1.0'
+  description: 'Operations tagged Domains across 2 of this provider''s published API definitions: onetrust-consent-preferences-cookie-consent-openapi.json, onetrust-consent-preferences-cookie-consent-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api/cookiemanager
+tags:
+- name: Domains
+  description: The Domains APIs are used to manage domain configurations and cookie scanning settings.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+paths:
+  /api/cmp/v1/domains/{domainId}:
+    delete:
+      operationId: deleteDomain
+      summary: Delete Domain
+      description: Use this API to delete the specified domain.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/{domainId}/domaingroup:
+    post:
+      operationId: createDomainGroup
+      summary: Create or Update Domain Group
+      description: Use this API to create a new domain group or update an existing domain group.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: domainId
+        in: path
+        description: The unique identifier of the domain.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainGroupRequestDto'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/domains/{id}/branding-attributes:
+    get:
+      operationId: getBrandingAttributeList
+      summary: Get Branding Attributes for Domain
+      description: Use this API to retrieve branding attributes for the specified domain.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: Resource ID (Domain ID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainBrandingAttributesResponseDTO'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    put:
+      operationId: updateBrandingAttributesForPublicApi
+      summary: Update Branding Attributes for Domain
+      description: Use this API to update branding attributes for the specified domain.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: id
+        in: path
+        description: Resource ID (Domain ID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DomainBrandingAttributesRequestDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BrandingAttributesUpdateResponseDTO'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/webscans/domains/schedule:
+    post:
+      operationId: scheduleScans
+      summary: Schedule Website Scans
+      description: Use this API to schedule scans for the specified domains.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DomainScheduleRequest'
+              uniqueItems: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/webscans/domains/schedule/cancel:
+    post:
+      operationId: bulkCancelDomainSchedule
+      summary: Cancel Scheduled Website Scans
+      description: Use this API to cancel scheduled scans.
+      tags:
+      - Domains
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /v1/domains/{domainId}/domaingroup:
+    post:
+      tags:
+      - Domains
+      summary: Create or Update Domain Group
+      description: Use this API to create a new domain group or update an existing domain group.
+      operationId: createDomainGroupUsingPOST
+      parameters:
+      - in: path
+        name: domainId
+        description: ID of the domain in OneTrust Admin Portal. This string is obtained from the URL on the specific pages in OneTrust Admin Portal relating to that domain. (Example- The script page or the scan results page for that domain.)
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                removeExisting:
+                  type: boolean
+                  description: Flag to remove all domains from an existing group. Passing False instructs the API to append the incoming URL list to the existing one.
+                urls:
+                  type: array
+                  default: []
+                  description: A list of urls to be added to the group.
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+        '500':
+          description: "Internal Server Error. \n\n**Possible reason**: Incorrect domain Id or if removeExisting flag is false and a url from the list is already there in the group"
+      security:
+      - apikey: []
+      - oauth2:
+        - COOKIE
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+components:
+  schemas:
+    DomainGroupRequestDto:
+      type: object
+      properties:
+        removeExisting:
+          description: This flag indicates whether to remove existing configurations before applying new ones.
+          type: boolean
+          example: false
+        urls:
+          description: The list of URLs to be processed or managed.
+          type: array
+          items:
+            type: string
+          example:
+          - example.com
+          - test.com
+          - onetrust.com
+          maxItems: 1000
+          minItems: 0
+      title: DomainGroupRequestDto
+    EntityActionResponseDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          description: The main content or data payload of the response.
+          type: object
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    DomainBrandingAttributesResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Domain ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        resourceName:
+          description: Resource name (Domain name)
+          type: string
+          example: www.example.com
+          maxLength: 255
+          minLength: 1
+        attributes:
+          description: Map of branding attributes keyed by attribute name
+          type: object
+          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
+          additionalProperties:
+            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
+    PublicDomainBrandingAttributeDTO:
+      type: object
+      properties:
+        id:
+          description: Attribute ID
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: 'Domain branding attribute name. Allowed attributes (key: description)'
+          type: string
+          enum:
+          - dPCenterCookiePolicyLinkScreenReader
+          - dPCenterButtonColor
+          - dPCenterLegIntButtonColor
+          - dPCenterBackgroundColor
+          - dPCenterImprintLink
+          - dPCenterShowImprintLink
+          - dBannerCategoryStyle
+          - dBannerImprintLink
+          - dPCenterMenuColor
+          - dBannerBackgroundColor
+          - dBannerContinueWithoutAcceptLinkColor
+          - dBannerCompanyLogoScreenReader
+          - dBannerLogoFilePath
+          - dPCenterFooterLogoFilePath
+          - dBannerCategoryContainerColor
+          - dBannerButtonTextColor
+          - dBannerCookiePolicyURL
+          - dBannerCookiePolicyLink
+          - dBannerCompanyLogoFilePath
+          - dBannerShowImprintLink
+          - dCListBackgroundColor
+          - dPCenterCookiePolicyLink
+          - dBannerTextColor
+          - dBannerSaveChoicesButtonColor
+          - dBannerRequireExternalLinks
+          - dBannerShowCookiePolicyLink
+          - dBannerImprintLinkURL
+          - dPCenterImprintLinkURL
+          - dPCenterCookiePolicyURL
+          - dCListGroupColor
+          - dCListButtonColor
+          - dCListTableHeaderColor
+          - dCListTextColor
+          - dPCenterContinueWithoutAcceptLinkColor
+          - dBannerMPButtonTextColor
+          - dCListTitleColor
+          - dPCenterLogoScreenReader
+          - dPCenterShowCookiePolicyLink
+          - dBannerLineBreakColor
+          - dPCenterLegIntButtonTextColor
+          - dBannerExternalLinksLogoFilePath
+          - dBannerCustomCSS
+          - dBannerMPButtonColor
+          - dBannerCategoryStyleColor
+          - dPCenterLinksTextColor
+          - dPCenterLogoFilePath
+          - dCListCustomCSS
+          - dCListButtonTextColor
+          - dPCenterOverrideBranding
+          - dBannerLinksTextColor
+          - dOverrideTemplateStyling
+          - dCListTableHeaderBackgroundColor
+          - dPCenterMenuHighlightColor
+          - dPCenterButtonTextColor
+          - dPCenterCustomCSS
+          - dBannerButtonColor
+          - dPCenterTextColor
+          - dBannerAnimation
+          x-enumDescriptions:
+            dCListGroupColor: Cookie list group color
+            dPCenterCookiePolicyLinkScreenReader: Preference center cookie policy link screen reader text
+            dCListButtonColor: Cookie list button color
+            dPCenterButtonColor: Preference center primary button color
+            dCListTableHeaderColor: Cookie list table header text color
+            dCListTextColor: Cookie list text color
+            dPCenterContinueWithoutAcceptLinkColor: Preference center 'continue without accepting' link color
+            dPCenterLegIntButtonColor: Preference center legitimate interest button color
+            dBannerMPButtonTextColor: Banner multi-purpose button text color
+            dPCenterBackgroundColor: Preference center background color
+            dCListTitleColor: Cookie list title color
+            dPCenterLogoScreenReader: Preference center logo screen reader text
+            dPCenterImprintLink: Preference center imprint link text
+            dPCenterShowImprintLink: Show/hide imprint link in preference center
+            dBannerCategoryStyle: Banner category style option
+            dPCenterShowCookiePolicyLink: Show/hide cookie policy link in preference center
+            dBannerImprintLink: Banner imprint link text
+            dBannerLineBreakColor: Banner line break color
+            dPCenterMenuColor: Preference center menu color
+            dPCenterLegIntButtonTextColor: Preference center legitimate interest button text color
+            dBannerBackgroundColor: Banner background color
+            dBannerExternalLinksLogoFilePath: Banner external links logo file path
+            dBannerContinueWithoutAcceptLinkColor: Banner 'continue without accepting' link color
+            dBannerCustomCSS: Banner custom CSS
+            dBannerMPButtonColor: Banner multi-purpose button color
+            dBannerCompanyLogoScreenReader: Banner company logo screen reader text
+            dBannerLogoFilePath: Banner logo file path
+            dBannerCategoryStyleColor: Banner category style color
+            dPCenterFooterLogoFilePath: Preference center footer logo file path
+            dPCenterLinksTextColor: Preference center links text color
+            dPCenterLogoFilePath: Preference center logo file path
+            dCListCustomCSS: Cookie list custom CSS
+            dBannerCategoryContainerColor: Banner category container color
+            dCListButtonTextColor: Cookie list button text color
+            dBannerButtonTextColor: Banner button text color
+            dPCenterOverrideBranding: Override preference center branding
+            dBannerCookiePolicyURL: Banner cookie policy URL
+            dBannerCookiePolicyLink: Banner cookie policy link text
+            dBannerCompanyLogoFilePath: Banner company logo file path
+            dBannerShowImprintLink: Show/hide imprint link in banner
+            dBannerLinksTextColor: Banner links text color
+            dCListBackgroundColor: Cookie list background color
+            dPCenterCookiePolicyLink: Preference center cookie policy link text
+            dBannerTextColor: Banner text color
+            dBannerSaveChoicesButtonColor: Banner save choices button color
+            dOverrideTemplateStyling: Override template styling
+            dCListTableHeaderBackgroundColor: Cookie list table header background color
+            dBannerRequireExternalLinks: Require external links handling on banner
+            dPCenterMenuHighlightColor: Preference center menu highlight color
+            dBannerShowCookiePolicyLink: Show/hide cookie policy link in banner
+            dPCenterButtonTextColor: Preference center button text color
+            dPCenterCustomCSS: Preference center custom CSS
+            dBannerButtonColor: Banner primary button color
+            dPCenterTextColor: Preference center text color
+            dBannerAnimation: Banner animation option
+            dBannerImprintLinkURL: Banner imprint URL
+            dPCenterImprintLinkURL: Preference center imprint URL
+            dPCenterCookiePolicyURL: Preference center cookie policy URL
+        value:
+          description: Attribute value
+          type: object
+          example: '#000000'
+        type:
+          description: Attribute type
+          type: string
+          example: STRING
+          enum:
+          - STRING
+          - LONG
+          - BOOLEAN
+          - UUID
+    DomainScheduleRequest:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        emailRecipient:
+          description: The email address that will receive notifications.
+          type: string
+          example: user1@gmail.com,user2@gmail.com
+          maxLength: 300
+          minLength: 0
+        nextScanDate:
+          description: The date and time when the next scan is scheduled.
+          type: string
+          format: date-time
+          example: '2025-04-25T10:15:30'
+        intervalType:
+          description: The frequency unit for recurring scans.
+          type: string
+          example: MONTH
+          enum:
+          - MONTH
+        timeInterval:
+          description: The frequency at which recurring scans are performed.
+          type: integer
+          format: int32
+          example: 2
+          maximum: 12
+          minimum: 1
+        geoLocation:
+          description: The geographic location settings for the scan.
+          type: string
+          example: eastus
+          enum:
+          - northeurope
+          - eastus
+      required:
+      - domainId
+      - geoLocation
+      - intervalType
+      - timeInterval
+    DomainBrandingAttributesRequestDTO:
+      type: object
+      properties:
+        attributes:
+          description: 'List of branding attributes. Allowed attributes (key: description)'
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
+          example:
+          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: dPCenterCookiePolicyLinkScreenReader
+            value: Cookie Policy
+            type: STRING
+          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            name: dPCenterButtonColor
+            value: '#FFFFFF'
+            type: STRING
+    BrandingAttributesUpdateResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Domain ID or Application ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+            COOKIE_FREE: Cookie free Scope gives free users access to apis having free scope associated to them inside the Cookie Consent module.
+x-refined-from:
+- onetrust-consent-preferences-cookie-consent-openapi.json
+- onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

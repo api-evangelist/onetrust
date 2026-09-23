@@ -1,0 +1,1297 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Relationship Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: 'Operations tagged Relationship Management across 2 of this provider''s published API definitions: onetrust-ai-governance-openapi.json, onetrust-platform-inventory-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Relationship Management
+  description: The Relationship Management APIs are used to manage relationships between AI Governance entities.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+paths:
+  /api/ai-governance/v1/linked-entity-types/entity-types/names/{entityTypeName}/entities/{entityId}/links/pages:
+    post:
+      operationId: getRelatedEntitiesForAnEntityUsingPOST
+      summary: Get List of Relationship Records by Entity
+      description: 'Use this API to retrieve a list of Relationship Records by entity.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: page
+        in: query
+        description: 'Results page to be retrieved (0..N). Example: ''?page=1'''
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        description: 'Number of records per page (1..50). Example: ''?size=20'''
+        schema:
+          type: integer
+          default: 10
+          maximum: 50
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property,(asc|desc). Example: ''?sort=id,desc'''
+        schema:
+          type: string
+          default: id,desc
+          enum:
+          - id,asc
+          - id,desc
+      - name: entityTypeName
+        in: path
+        description: Name of the Entity Type
+        required: true
+        schema:
+          type: string
+          enum:
+          - aisystems
+          - datasets
+          - models
+          - aiagents
+        example: aisystems
+      - name: entityId
+        in: path
+        description: Entity Identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4c994bfc-987e-4a24-b0bd-9644e05e9b5d
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttributeQueryCriteria'
+            examples:
+              Get All Related Entities for a given AISystem:
+                summary: Get All Related Entities for a given AISystem
+                description: Get All Related Entities for a given AISystem
+                value:
+                  fullText: ''
+      responses:
+        '200':
+          description: Gets - All Related Entities for a given AISystem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+              examples:
+                Related Entities:
+                  summary: Related Entities for a given AISystem.
+                  description: Related Entities
+                  value:
+                    content:
+                    - createdDate: '2026-02-19T06:13:22.810Z'
+                      id: 8fd085db-f213-4690-8d5a-100449ce880c
+                      lastUpdatedDate: '2026-02-19T06:13:22.810Z'
+                      relationshipTypeDetail:
+                        id: 8857005c-662f-4f90-9e4e-481b225a666a
+                        name: ai-system-composition
+                        nameKey: CE.Link.AISystemComposition.Name
+                        schemaName: ai-system-composition
+                        seeded: true
+                        moduleName: CustomEntityManagement
+                        description: Defines a compositional relationship between AI Systems where one system is an integral part or component of another system
+                        descriptionKey: CE.Link.AISystemComposition.Description
+                        entityType1ToEntityType2EntityLinkName: is composed of
+                        entityType1ToEntityType2EntityLinkNameKey: CE.Link.AISystemComposition.ForwardLabel
+                        entityType2ToEntityType1EntityLinkName: is a component of
+                        entityType2ToEntityType1EntityLinkNameKey: CE.Link.AISystemComposition.BackwardLabel
+                        enableAudit: true
+                        allowNewCustomLinkAssociation: true
+                        auditFields:
+                          createdDate: '2025-12-08T15:19:47.897Z'
+                          lastUpdatedDate: '2025-12-08T15:19:47.897Z'
+                      source:
+                        linkEntityDetail:
+                          extendedBaseAttributes: {}
+                          displayLabel: AISystem 1
+                        id: 0f79003f-b177-4f02-aa83-9bf11deec7c7
+                        number: 1
+                        name: AISystem 1
+                        entityType:
+                          id: 8a0b318a-d206-4ff9-b1db-00c8c8611d37
+                          name: aisystems
+                          nameKey: CE.AISystems.Name
+                          seeded: true
+                          moduleName: AIGovernance
+                          schemaName: aisystems
+                        deleted: false
+                      target:
+                        linkEntityDetail:
+                          extendedBaseAttributes: {}
+                          displayLabel: Model Test
+                        id: 296c0a2d-b5f6-450d-8b13-3c2327775042
+                        number: 2
+                        name: Model Test
+                        entityType:
+                          id: 963bbab3-8bc9-4787-9ebb-a502775bef54
+                          name: models
+                          nameKey: CE.Models.Name
+                          seeded: true
+                          moduleName: AIGovernance
+                          schemaName: models
+                        deleted: false
+                    number: 0
+                    size: 20
+                    totalElements: 1
+                    first: true
+                    last: true
+                    hasContent: true
+                    numberOfElements: 1
+                    totalPages: 1
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/ai-governance/v1/links:
+    post:
+      operationId: createLinkRecordBetweenEntitiesUsingLinkTypeIdUsingPOST
+      summary: Create Relationship Record between Entities
+      description: 'Use this API to create a new Relationship Record between entities.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: Unique identifier of the link type to use for creating the relationship
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkRequest'
+            examples:
+              Create Model - AISystem Relationship:
+                summary: Example of creating a relationship between a model and AISystem
+                description: Create Model - AISystem Relationship
+                value:
+                  entity2:
+                    id: 296c0a2d-b5f6-450d-8b13-3c2327775042
+                    entityType:
+                      name: models
+                  entity1:
+                    id: 0f79003f-b177-4f02-aa83-9bf11deec7c7
+                    entityType:
+                      name: aisystems
+                  attributes: null
+                  context: null
+              Create model-vendor Relationship:
+                summary: Example of creating a is source from relationship between a model and a vendor
+                description: Create model-vendor Relationship
+                value:
+                  entity1:
+                    id: b4c4991c-ab14-4bb2-abae-dad255a513c3
+                    entityType:
+                      name: models
+                  entity2:
+                    id: 690c2d22-d864-4ec7-92ad-850c678a1cd3
+                    entityType:
+                      name: vendors
+                  attributes: null
+                  context: null
+      responses:
+        '200':
+          description: Created - The relationship was successfully established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkInformation'
+              examples:
+                Model - AISystem Relationship:
+                  summary: Example of created relationship information
+                  description: Model - AISystem Relationship
+                  value:
+                    id: c0f18be7-1205-4417-874c-e5b8d292ac9f
+                    linkType:
+                      id: 8857005c-662f-4f90-9e4e-481b225a666a
+                      name: ai-system-composition
+                      nameKey: CE.Link.AISystemComposition.Name
+                      idOrNamePresent: true
+                    linkTypeLabel:
+                      id: 5
+                      entityType1ToEntityType2EntityLinkName: is composed of
+                      entityType1ToEntityType2EntityLinkNameKey: CE.Link.AISystemComposition.ForwardLabel
+                      entityType2ToEntityType1EntityLinkName: is a component of
+                      entityType2ToEntityType1EntityLinkNameKey: CE.Link.AISystemComposition.BackwardLabel
+                    entity1:
+                      linkEntityDetail: null
+                      id: 0f79003f-b177-4f02-aa83-9bf11deec7c7
+                      number: null
+                      name: AISystem 1
+                      entityType:
+                        id: 8a0b318a-d206-4ff9-b1db-00c8c8611d37
+                        name: aisystems
+                        nameKey: CE.AISystems.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: aisystems
+                      deleted: false
+                    entity2:
+                      linkEntityDetail: null
+                      id: 296c0a2d-b5f6-450d-8b13-3c2327775042
+                      number: null
+                      name: Model Test
+                      entityType:
+                        id: 963bbab3-8bc9-4787-9ebb-a502775bef54
+                        name: models
+                        nameKey: CE.Models.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: models
+                      deleted: false
+                    schemaId: f48f80ee-78b6-4dbe-adb4-9872b69b804b
+                    entityLinkDetail: null
+                    auditFields:
+                      createdDate: '2026-02-10T13:10:23.267Z'
+                      lastUpdatedDate: '2026-02-10T13:10:23.267Z'
+                      createdBy:
+                        id: d59129eb-7fa7-45b9-a1fb-b29a7f3b13cd
+                        name: null
+                        email: null
+                        initials: null
+                      lastModifiedBy:
+                        id: d59129eb-7fa7-45b9-a1fb-b29a7f3b13cd
+                        name: null
+                        email: null
+                        initials: null
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/ai-governance/v1/links/{linkId}:
+    get:
+      operationId: getLinkRecordInformationUsingLinkTypeIdUsingGET
+      summary: Get Relationship Record
+      description: 'Use this API to retrieve the details of a specific Relationship Record between entities.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: Unique identifier of the link type to use for getting the relationship
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: linkId
+        in: path
+        description: Unique identifier of the link record to retrieve
+        required: true
+        schema:
+          description: Identifier of the link record
+          type: string
+          format: uuid
+        example: 1bc71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - Returns the complete details of the requested relationship
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkInformation'
+              examples:
+                AISystem - Model Relationship:
+                  summary: Example of relationship information
+                  description: AISystem - Model Relationship
+                  value:
+                    id: c0f18be7-1205-4417-874c-e5b8d292ac9f
+                    linkType:
+                      id: 8857005c-662f-4f90-9e4e-481b225a666a
+                      name: ai-system-composition
+                      nameKey: CE.Link.AISystemComposition.Name
+                      idOrNamePresent: true
+                    linkTypeLabel:
+                      id: 5
+                      entityType1ToEntityType2EntityLinkName: is composed of
+                      entityType1ToEntityType2EntityLinkNameKey: CE.Link.AISystemComposition.ForwardLabel
+                      entityType2ToEntityType1EntityLinkName: is a component of
+                      entityType2ToEntityType1EntityLinkNameKey: CE.Link.AISystemComposition.BackwardLabel
+                    entity1:
+                      linkEntityDetail: null
+                      id: 0f79003f-b177-4f02-aa83-9bf11deec7c7
+                      number: null
+                      name: AISystem 1
+                      entityType:
+                        id: 8a0b318a-d206-4ff9-b1db-00c8c8611d37
+                        name: aisystems
+                        nameKey: CE.AISystems.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: aisystems
+                      deleted: false
+                    entity2:
+                      linkEntityDetail: null
+                      id: 296c0a2d-b5f6-450d-8b13-3c2327775042
+                      number: null
+                      name: Model Test
+                      entityType:
+                        id: 963bbab3-8bc9-4787-9ebb-a502775bef54
+                        name: models
+                        nameKey: CE.Models.Name
+                        seeded: true
+                        moduleName: AIGovernance
+                        schemaName: models
+                      deleted: false
+                    schemaId: f48f80ee-78b6-4dbe-adb4-9872b69b804b
+                    entityLinkDetail: null
+                    auditFields:
+                      createdDate: '2026-02-10T13:10:23.267Z'
+                      lastUpdatedDate: '2026-02-10T13:10:23.267Z'
+                      createdBy:
+                        id: d59129eb-7fa7-45b9-a1fb-b29a7f3b13cd
+                        name: null
+                        email: null
+                        initials: null
+                      lastModifiedBy:
+                        id: d59129eb-7fa7-45b9-a1fb-b29a7f3b13cd
+                        name: null
+                        email: null
+                        initials: null
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+        - AI_GOVERNANCE_READ
+        - AI_GOVERNANCE_WRITE
+    delete:
+      operationId: deleteLinkRecordByIdAndTypeUsingLinkTypeIdUsingDELETE
+      summary: Remove Relationship Record
+      description: 'Use this API to remove an existing Relationship Record between entities.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports AI Governance entities (Models, Datasets, AI Systems, and AI Agents).
+
+        > - AI Governance APIs will become available over the course of the Spring as customer tenants are upgraded to enhanced AI Governance services. No customer action is required and more detailed information will be published in upcoming release notes and product documentation.'
+      tags:
+      - Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/ai-governance.json
+      parameters:
+      - name: linkTypeId
+        in: query
+        description: Unique identifier of the link type
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+      - name: linkId
+        in: path
+        description: Unique identifier of the link record to delete
+        required: true
+        schema:
+          description: Identifier of the link record
+          type: string
+          format: uuid
+        example: 1bc71ead-0c9a-416a-8471-bdfb67c8d113
+      responses:
+        '200':
+          description: OK - The relationship was successfully deleted
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AI_GOVERNANCE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory-linking/v1/relationship:
+    post:
+      operationId: addRelationshipBetweenEntitiesUsingPOST
+      summary: Create Relationship
+      description: Use this API to create a Relationship Record between inventories (Assets, Vendors, Processing Activities, and Entities).
+      tags:
+      - Relationship Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-inventory.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RelationshipCreateRequest'
+      responses:
+        '201':
+          description: Relationship successfully created
+          content:
+            application/json:
+              schema:
+                description: UUID of the created relationship
+                type: string
+                format: uuid
+                example: 4c09bf9a-38aa-45a9-87ba-77596525849e
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+components:
+  schemas:
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: Base Seeded Attributes
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    IdOrNameLinkType:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier of an Link Type
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of an Link Type
+          type: string
+          example: Product/Service
+        idOrNamePresent:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    BasicLinkTypeLabelInformation:
+      type: object
+      properties:
+        id:
+          description: Pk of an Link Type Object Type Pair
+          type: integer
+          format: int64
+          example: 1
+        entityType1ToEntityType2EntityLinkName:
+          description: Link type name from EntityType1-EntityType2
+          type: string
+          example: OneTrust provides GRC
+        entityType2ToEntityType1EntityLinkName:
+          description: Link type name from EntityType2-EntityType1
+          type: string
+          example: GRC belongs to OneTrust
+      required:
+      - id
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The full name of the user.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
+    LinkRequest:
+      type: object
+      properties:
+        attributes:
+          description: Custom Attributes based on schema defined for given link type
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        entity1:
+          description: Associated Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: Associated Entity Instance for given Entity Type
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+      required:
+      - entity1
+      - entity2
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    LinkInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the link record. Auto-generated when a new link is created.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        linkType:
+          description: Link type information defining the type of relationship. Can be specified by ID or name.
+          example:
+            name: Related
+          $ref: '#/components/schemas/IdOrNameLinkType'
+        linkTypeLabel:
+          description: Link type label information showing the directional relationship names between the two entities.
+          example:
+            entityType1ToEntityType2EntityLinkName: Send Data To
+            entityType2ToEntityType1EntityLinkName: Receive Data From
+          $ref: '#/components/schemas/BasicLinkTypeLabelInformation'
+        entity1:
+          description: Source entity information for this relationship. Contains entity identifier and type details.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: Target entity information for this relationship. Contains entity identifier and type details.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        schemaId:
+          description: Unique identifier of the schema used for this link type.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        auditFields:
+          description: Audit information for the link including creation and modification details. Contains information about when the link was created/modified and by whom.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        linkType:
+          name: Related
+      required:
+      - entity1
+      - entity2
+      - id
+      - linkType
+      title: Link Information
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the entity type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the entity type.
+          type: string
+          example: Vendor
+        seeded:
+          description: This parameter indicates whether the entity type is seeded or custom.
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the module where the entity exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - projects
+          - models
+          - datasets
+          - aisystems
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    LinkedEntityInformation:
+      type: object
+      properties:
+        linkEntityDetail:
+          description: Link entity details extended base properties
+          example:
+            includeCustomFields: true
+            includeStandardFields: true
+          $ref: '#/components/schemas/EntityDetailRequest'
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number:
+          description: Auto-generated sequential entity number
+          type: integer
+          format: int64
+          example: 1024
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: Name of the entity
+          type: string
+          example: OneTrust DataGuidance
+          maxLength: 255
+          minLength: 1
+        detailsAccessRestricted:
+          description: Flag indicating whether entity is view-only
+          type: boolean
+          example: false
+        redirectURL:
+          description: Redirect URL for the entity
+          type: string
+          example: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: Basic information about the entity type
+          example:
+            id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+            name: Product
+            displayName: Product
+            nameKey: entity.type.product
+            displayNameKey: entity.type.product.display
+            module: VENDOR
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        deleted:
+          type: boolean
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        number: 1024
+        name: OneTrust DataGuidance
+        isDeleted: false
+        detailsAccessRestricted: false
+        redirectURL: /entity/product/f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          name: Product
+          displayName: Product
+          nameKey: entity.type.product
+          displayNameKey: entity.type.product.display
+          module: VENDOR
+        linkEntityDetail:
+          includeCustomFields: true
+          includeStandardFields: true
+      required:
+      - entityType
+      - id
+      - number
+      title: Linked Entity Information
+    AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    RelationshipCreateRequest:
+      type: object
+      properties:
+        entity1:
+          description: Entity 1 Details
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: assets
+          $ref: '#/components/schemas/EntityIdAndType'
+        entity2:
+          description: Entity 2 Details
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: vendors
+          $ref: '#/components/schemas/EntityIdAndType'
+        additionalFields:
+          description: Additional non attribute details associated with relationship
+          type: object
+          additionalProperties:
+            type: object
+        relationshipLabel:
+          description: Relationship Label NameKey and Contextual Entity Type Id. This can be forward or reverse label of a contextual entity
+          example:
+            relationshipTypeRequest:
+              relationshipTypeId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              relationshipTypeName: Data Transfer
+            labelName: sends data to
+          $ref: '#/components/schemas/RelationshipTypeLabelRequest'
+        attributes:
+          description: Custom And Base Attributes
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    RelationshipTypeLabelRequest:
+      type: object
+      properties:
+        labelName:
+          description: Forward/Backward Relationship Label
+          type: string
+          enum:
+          - sends data to
+          - is related to
+          - is controller of
+          - is source/collection point of
+          - is destination/access point of
+          - is storage/processing point of
+          - is joint controller of
+          - is processor of
+          - is subprocessor of
+          - sells data to
+          - is product/service provider of
+          - is representative of
+          - is sale recipient of
+          - receives data from
+          - is related to
+          - is controlled by
+          - has source/collection point of
+          - has destination/access point of
+          - has storage/processing point of
+          - is jointly controlled by
+          - is processed by
+          - is subprocessed by
+          - buys data from
+          - is provided by
+          - is represented by
+          - initiates sale to
+          - Parent-Of, Child-Of
+        relationshipTypeRequest:
+          description: Relationship associated params which includes relationshipTypeName and relationshipTypeId
+          example:
+            relationshipTypeId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            relationshipTypeName: Data Transfer
+          $ref: '#/components/schemas/RelationshipTypeRequest'
+      required:
+      - labelName
+    RelationshipTypeRequest:
+      type: object
+      properties:
+        relationshipTypeId:
+          description: Id of the Relationship Type
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        relationshipTypeName:
+          description: Relationship type name
+          type: string
+          enum:
+          - Data Transfer
+          - Representative
+          - Sale of Data
+          - Destination Or Access
+          - Processor
+          - Related
+          - Controller
+          - Collection
+          - Storage Or Processing
+          - Recipient Of Sale
+          - SubProcessor
+          - Product Or Service Provider
+          - Joint Controller
+          - DirectParentChild
+      required:
+      - relationshipTypeName
+    EntityIdAndType:
+      type: object
+      properties:
+        id:
+          description: Entity id
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        type:
+          description: Entity type
+          type: string
+          enum:
+          - assets
+          - processing-activities
+          - vendors
+          - entities
+          - data-elements
+          - data-subjects
+      required:
+      - id
+      - type
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            AI_GOVERNANCE: Grants full permissions to manage AI Governance operations for external systems
+            AI_GOVERNANCE_READ: Allows read-only access to AI Governance entities
+            AI_GOVERNANCE_WRITE: Grants permissions to create and modify AI Governance entities
+x-refined-from:
+- onetrust-ai-governance-openapi.json
+- onetrust-platform-inventory-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

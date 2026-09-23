@@ -1,0 +1,1311 @@
+openapi: 3.2.0
+info:
+  title: Privacy Automation - Data Mapping Automation Inventory…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Data Mapping Automation APIs are used to manage structured records (assets, vendors, processing activities, and legal entities), define schema attributes, traverse parent–child hierarchies, and create cross-record relationships—including links to personal data.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Inventory Relationships V1
+  description: APIs used to create, update, and delete bidirectional links between inventories and to manage associations to related items (including personal data).
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+paths:
+  /api/inventory/v2/inventories/{id}/associations/{associationId}:
+    put:
+      operationId: updateInventoryAssociationUsingPUT
+      summary: Update Inventory Link
+      description: Use this API to update a bidirectional link between two inventories.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: associationId
+        in: path
+        description: The unique identifier of the association
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryAssociationRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{id}/personal-data:
+    get:
+      operationId: listPersonalDataAssociationsUsingGET
+      summary: Get Personal Data Links
+      description: Use this API to list existing links between an inventory and personal data items.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+              example: '{"data":[{"id":"8b208355-5450-4eb2-ab6c-9e7f1518295c","dataElement":{"id":"cac1a0f5-381b-4470-beb6-62d82d9fdd34","name":"Bullying and harassment details","nameKey":"DataElementsBullyingAndHarassmentDetails","description":null,"descriptionKey":null,"source":"System","status":"active","visible":true},"dataCategories":[{"id":"a8e7df07-a0a4-40fe-995b-082a0308bbd2","name":"Workplace Welfare","nameKey":"DataElementsCategoryWorkplaceWelfare","description":null,"descriptionKey":null,"source":"System"}],"dataSubjectType":{"id":"6711a9d6-51da-4d3b-b5f6-2334df034f0f","name":"Contractors","nameKey":"DataElementsDataSubjectContractors","description":null,"descriptionKey":null,"source":"System","visible":true},"dataClassifications":[],"personalDataAssociationValues":{},"source":"Inventory","dateLinked":"2026-06-19T06:53:49.340Z","hidden":false},{"id":"468c4024-6ff5-4990-bb8a-c8ef786244b0","dataElement":{"id":"cac1a0f5-381b-4470-beb6-62d82d9fdd34","name":"Bullying and harassment details","nameKey":"DataElementsBullyingAndHarassmentDetails","description":null,"descriptionKey":null,"source":"System","status":"active","visible":true},"dataCategories":[{"id":"a8e7df07-a0a4-40fe-995b-082a0308bbd2","name":"Workplace Welfare","nameKey":"DataElementsCategoryWorkplaceWelfare","description":null,"descriptionKey":null,"source":"System"}],"dataSubjectType":{"id":"9ac845bb-89e9-44b8-bf41-ff2e954ee2f7","name":"Prospective Employees","nameKey":"DataElementsDataSubjectProspectiveEmployees","description":null,"descriptionKey":null,"source":"System","visible":true},"dataClassifications":[],"personalDataAssociationValues":{},"source":"Inventory","dateLinked":"2026-06-19T06:53:49.507Z","hidden":false}]}'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY_VIEW_RELATED
+        - VENDOR_RISK_MANAGEMENT
+    post:
+      operationId: linkPersonalDataUsingPOST
+      summary: Link Personal Data
+      description: Use this API to create a link between inventory and personal data items.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: generator
+        in: query
+        description: Generator parameter
+        required: false
+        schema:
+          type: string
+        example: UI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PersonalDataLinkRequest'
+            example:
+            - dataElement:
+                id: 5b226f37-278c-410e-a6a7-7561edd8541b
+              dataSubjectType:
+                id: 0846b630-af9c-43d3-9cad-5d39c86530a7
+            - dataElement:
+                id: 57a951e4-2c55-4ce7-8991-9aa9432e4260
+              dataSubjectType:
+                id: 0846b630-af9c-43d3-9cad-5d39c86530a7
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    delete:
+      operationId: removePersonalDataAssociationsUsingDELETE
+      summary: Delete Personal Data Link
+      description: Use this API to permanently delete a link between an inventory and personal data items.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PersonalDataLinkRequest'
+            example:
+            - dataElement:
+                id: 07dcda61-e519-4fe9-be6c-db62e6151fd9
+              dataSubjectType:
+                id: 6711a9d6-51da-4d3b-b5f6-2334df034f0f
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{id}/relations:
+    put:
+      operationId: updateRelationsUsingPUT
+      summary: Link Inventory
+      description: Use this API to create a bidirectional link between an inventory and one or more other inventories.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: entityType
+        in: query
+        description: Entity type parameter
+        required: false
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/InventoryAssociationUpdateRequest'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2: []
+    post:
+      operationId: createRelationsUsingPOST
+      summary: Link Inventory
+      description: Use this API to create a bidirectional link between an inventory and one or more other inventories.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: entityType
+        in: query
+        description: Entity type parameter
+        required: false
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/InventoryAssociationCreateRequest'
+            example: "[\n {\n \"id\": \"d31425ae-1321-4738-bb76-bdca83c0944c\"\n \"relation\": \"SourceCollectionLinkType\"\n }\n]"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BaseInventoryAssociationDto'
+              example:
+              - inventoryId: d31425ae-1321-4738-bb76-bdca83c0944c
+                inventoryAssociationId: 3cdcd5b1-7960-4e7d-b212-641975fe2b12
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteRelationsUsingDELETE
+      summary: Delete Inventory Link
+      description: Use this API to permanently delete a link between an inventory and one or more other inventories.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/InventoryAssociationRemoveRequest'
+            example:
+            - inventoryAssociationId: d31425ae-1321-4738-bb76-bdca83c0944c
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{id}/relations/{inventoryType}:
+    get:
+      operationId: getInventoryRelationsByIdUsingGET
+      summary: Get Inventory Links
+      description: Use this API to list an existing links between an inventory and one or more other inventories of a given type.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: inventoryType
+        in: path
+        description: The type of inventory records to check relations for.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+          - data-elements
+        example: vendors
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BaseInventoryAssociationDto'
+              example:
+                data:
+                - inventoryId: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                  inventoryAssociationId: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+                  inventoryType: vendors
+                  anchorInventoryId: ba1d8b56-98e3-438b-a24d-cc4a8b282f93
+                  inventoryAssociationTypeKey: JointControllerLinkType
+                  inventoryAssociationType: JointController
+                  name: Vendorrecord
+                  organization: aws
+                  organizationId: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                  type: Operations
+                  typeKey: VendorsTypeOperations
+                  editable: true
+                meta:
+                  page:
+                    first: true
+                    last: true
+                    number: 0
+                    size: 20
+                    totalElements: 1
+                    totalPages: 1
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+  /api/inventory/v2/inventories/{inventoryId}/personal-data/{personalDataAssociationId}/attributes:
+    get:
+      operationId: getPersonalDataLinkAttributesUsingGET
+      summary: Get Inventory Personal Data Link Attributes
+      description: Gets the attribute values for the attributes that are tracked at Inventory Personal Data links
+      tags:
+      - Inventory Relationships V1
+      parameters:
+      - name: inventoryId
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: personalDataAssociationId
+        in: path
+        description: The unique identifier of the personal data association
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '201':
+          description: Created
+          content: {}
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY_VIEW_RELATED
+  /api/inventory/v2/inventories/{schemaName}/{id}/relations/{relatedSchemaName}/{linkId}/attributes:
+    put:
+      operationId: updatePersonalDataLinkAttributesUsingPUT
+      summary: Update Inventory Personal Data Link Attributes
+      description: Updates the attribute values for the attributes that are tracked at Inventory Personal Data links
+      tags:
+      - Inventory Relationships V1
+      parameters:
+      - name: schemaName
+        in: path
+        description: Schema name
+        required: true
+        schema:
+          type: string
+        example: assets
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      - name: relatedSchemaName
+        in: path
+        description: Related schema name
+        required: true
+        schema:
+          type: string
+        example: personal-data
+      - name: linkId
+        in: path
+        description: Link ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalDataLinkAttributesRequest'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - DATA_MAPPING_INVENTORY_MANAGE_RELATED
+  /api/inventory/v2/inventories/{type}/{inventoryId}/control-implementations:
+    post:
+      operationId: addControlsToInventoryUsingPOST
+      summary: Create Control Implementation
+      description: Use this API to create one or more control implementations on an inventory using the `type` and `id` for the inventory item and the id(s) of the master controls. When the operation is run unsuccessfully, this will return an exception.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: type
+        in: path
+        description: The type of inventory to add controls to
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+      - name: inventoryId
+        in: path
+        description: The unique identifier of an inventory record. This value can be obtained using the [Get List of Inventories](/onetrust/reference/getinventorylist) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 1c3fa261-36d1-405b-a6cd-5bc734033715
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryControlImplementationsRequest'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+  /api/inventory/v2/inventories-personal-data/{personalDataAssociationId}:
+    put:
+      operationId: updateAdvancedAttributesForPersonalDataAssociationUsingPUT
+      summary: Update Advanced Attributes for Personal Data Association
+      description: Use this API to update the advanced attributes of a Personal Data Association that is linked to an inventory object.
+      tags:
+      - Inventory Relationships V1
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: inventoryType
+        in: query
+        description: Type of the inventory
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: assets
+      - name: personalDataAssociationId
+        in: path
+        description: ID of the personal data association
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalDataLinkAttributesRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+components:
+  schemas:
+    InventoryControlImplementationsRequest:
+      type: object
+      properties:
+        controlIds:
+          description: Set of control IDs to be implemented for the given inventory entity
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a8d2f0c6-63e5-476b-b600-79a447251a2a
+          - b9e3f1d7-74f6-587c-c711-8ba558362b3b
+          uniqueItems: true
+        status:
+          description: Implementation status of the controls being added to the inventory. If not provided, defaults to 'Pending'
+          type: string
+          example: Implemented
+          enum:
+          - Implemented
+          - Not Implemented
+          - Partially Implemented
+          - Not Applicable
+          - Pending
+      required:
+      - controlIds
+    InventoryValue:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory value
+          type: string
+          format: uuid
+          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
+        value:
+          description: The display value
+          type: string
+          example: High Risk
+        valueKey:
+          description: The key of the value
+          type: string
+          example: HIGH_RISK
+        colorCode:
+          description: Color code associated with the value
+          type: string
+          example: '#FF0000'
+        selectionValue:
+          description: Selection value
+          type: string
+          example: high
+    InventoryAssociationCreateRequest:
+      type: object
+      properties:
+        relation:
+          description: The type of relationship between inventory records
+          type: string
+          example: JointControllerLinkType
+          enum:
+          - ControllerLinkType
+          - JointControllerLinkType
+          - RelatedLinkType
+          - RecipientOfSaleLinkType
+          - SubProcessorLinkType
+          - ProcessorLinkType
+          - DestinationAccessLinkType
+          - ProductOrServiceProviderLinkType
+          - StorageProcessingLinkType
+          - SourceCollectionLinkType
+        id:
+          description: The unique identifier of the inventory record to link to
+          type: string
+          format: uuid
+          example: d31425ae-1321-4738-bb76-bdca83c0944c
+        entityType:
+          description: The type of the inventory entity
+          type: string
+          example: vendors
+      required:
+      - id
+    PersonalDataLinkAttributesRequest:
+      type: object
+      properties:
+        linkAttributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+    InventoryAssociationRequest:
+      type: object
+      properties:
+        relation:
+          description: The type of relationship between inventory records
+          type: string
+          example: JointControllerLinkType
+          enum:
+          - ControllerLinkType
+          - JointControllerLinkType
+          - RelatedLinkType
+          - RecipientOfSaleLinkType
+          - SubProcessorLinkType
+          - ProcessorLinkType
+          - DestinationAccessLinkType
+          - ProductOrServiceProviderLinkType
+          - StorageProcessingLinkType
+          - SourceCollectionLinkType
+    PersonalDataLinkRequest:
+      type: object
+      properties:
+        dataElement:
+          description: Reference to the data element to link
+          example:
+            id: 11111111-1111-1111-1111-111111111111
+            value: Email
+            valueKey: email
+          $ref: '#/components/schemas/ObjectReference'
+        dataCategory:
+          description: Reference to the data category to link
+          example:
+            id: 22222222-2222-2222-2222-222222222222
+            value: Contact Info
+            valueKey: contact_info
+          $ref: '#/components/schemas/ObjectReference'
+        dataSubjectType:
+          description: Reference to the data subject type to link
+          example:
+            id: 33333333-3333-3333-3333-333333333333
+            value: Customer
+            valueKey: customer
+          $ref: '#/components/schemas/ObjectReference'
+        linkAttributes:
+          description: Map of attribute names to their values for the link
+          type: object
+          example:
+            priority:
+            - id: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
+              value: High Risk
+              valueKey: HIGH_RISK
+              colorCode: '#FF0000'
+              selectionValue: high
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        metadata:
+          description: List of metadata for the personal data link
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonalDataMetadataRequest'
+          example:
+            fieldMetadataMapId: 123e4567-e89b-12d3-a456-426614174000
+            fieldName: emailAddress
+            basePath: /user/contact
+            subPath: /email
+            fieldType: String
+            fieldValue: user@example.com
+            fieldDescription: Primary email address of the user
+            fieldLabel: Email Address
+            systemType: CRM
+            recordCount: 1500
+            key: email_key
+            metadataId: 987e6543-e21b-12d3-a456-426614174999
+            dataSourceId: 456e7890-e12b-12d3-a456-426614174abc
+        dataClassifications:
+          description: List of data classifications for the personal data link
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectReference'
+          example:
+          - id: 44444444-4444-4444-4444-444444444444
+            value: Confidential
+            valueKey: confidential
+        associationId:
+          description: The unique identifier of the association
+          type: string
+          format: uuid
+          example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+    InventoryAssociationUpdateRequest:
+      type: object
+      properties:
+        relation:
+          description: The type of relationship between inventory records
+          type: string
+          example: JointControllerLinkType
+          enum:
+          - ControllerLinkType
+          - JointControllerLinkType
+          - RelatedLinkType
+          - RecipientOfSaleLinkType
+          - SubProcessorLinkType
+          - ProcessorLinkType
+          - DestinationAccessLinkType
+          - ProductOrServiceProviderLinkType
+          - StorageProcessingLinkType
+          - SourceCollectionLinkType
+        InventoryType:
+          type: string
+          example: vendors
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        Ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a1087fcb-1058-40ba-8c36-43dfafc0bba8
+          - f9d7a8f1-af0d-418e-9092-e860307a48a3
+      required:
+      - Ids
+      - InventoryType
+    BaseInventoryAssociationDto:
+      type: object
+      properties:
+        inventoryId:
+          description: The unique identifier of the linked inventory record
+          type: string
+          format: uuid
+          example: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+        inventoryAssociationId:
+          description: The unique identifier of the association between inventory records
+          type: string
+          format: uuid
+          example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+    InventoryAssociationRemoveRequest:
+      type: object
+      properties:
+        inventoryAssociationId:
+          description: The unique identifier of the association to remove
+          type: string
+          format: uuid
+          example: d31425ae-1321-4738-bb76-bdca83c0944c
+      required:
+      - inventoryAssociationId
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
+    PersonalDataMetadataRequest:
+      type: object
+      properties:
+        fieldMetadataMapId:
+          type: string
+          format: uuid
+        fieldName:
+          type: string
+        basePath:
+          type: string
+        subPath:
+          type: string
+        fieldType:
+          type: string
+        fieldValue:
+          type: string
+        fieldDescription:
+          type: string
+        fieldLabel:
+          type: string
+        systemType:
+          type: string
+        recordCount:
+          type: integer
+          format: int32
+        key:
+          type: string
+        metadataId:
+          type: string
+          format: uuid
+        dataSourceId:
+          type: string
+          format: uuid
+      required:
+      - fieldName
+      - systemType
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Data Mapping Automation Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO1Q000000ItRxWAK/data-mapping-automation''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

@@ -1,0 +1,454 @@
+openapi: 3.2.0
+info:
+  title: Platform - Access Management Organizations API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Access Management APIs enable you to programmatically control user access, manage organizational hierarchies, and monitor authentication activities across your OneTrust platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Organizations
+  description: APIs to manage your organizational hierarchy and structure. Create, update, and delete organizations, define parent-child relationships, and configure organization-specific settings such as default languages and approvers.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+  x-displayName: Organizations
+paths:
+  /api/access/v1/external/organizations:
+    get:
+      operationId: organizationTreeStructureUsingGET
+      summary: Get List of Organizations
+      description: Use this API to retrieve a list of all organizations within the organizational hierarchy.
+      tags:
+      - Organizations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_OrganizationExternalBasicDetailResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - ORGANIZATION
+    post:
+      operationId: createOrganizationUsingPOST
+      summary: Create Organization
+      description: 'Use this API to create an organization within the organizational hierarchy.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The organization will be created as a child of the organization specified in the `parentExternalId` parameter. If a `parentExternalId`value is not specified in the request, the organization will be created as a child of the root organization.'
+      tags:
+      - Organizations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_OrganizationExternalRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_OrganizationExternalResponse'
+        '400':
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Platform-AccessManagement_OrganizationExternalResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - ORGANIZATION
+  /api/access/v1/external/organizations/{externalId}:
+    put:
+      operationId: updateOrganizationUsingPUT
+      summary: Update Organization
+      description: Use this API to update the details of an existing organization within the organizational hierarchy.
+      tags:
+      - Organizations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: externalId
+        in: path
+        description: The external identifier of the organization.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+        example: ABCDEF01
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Platform-AccessManagement_OrganizationExternalRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Organization not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - ORGANIZATION
+    delete:
+      operationId: deleteOrganizationPOST
+      summary: Delete Organization
+      description: Use this API to delete an existing organization and move its associated objects to a different organization.
+      tags:
+      - Organizations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-access-management.json
+      parameters:
+      - name: externalId
+        in: path
+        description: The external identifier of the organization.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+        example: ABCDEF01
+      - name: targetExternalId
+        in: query
+        description: The external identifier of the organization that will receive all objects from the deleted organization.
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 1
+        example: ABCDEF02
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Organization not found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - Platform-AccessManagement_OAUTH2:
+        - ORGANIZATION
+components:
+  schemas:
+    Platform-AccessManagement_OrganizationExternalResponse:
+      type: object
+      properties:
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        externalId:
+          description: The external identifier of the organization.
+          type: string
+          example: ext-org-123
+          maxLength: 100
+        parentOrganizationId:
+          description: The unique identifier of the parent organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174999
+        parentExternalId:
+          description: The external identifier of the parent organization.
+          type: string
+          example: ext-org-parent-456
+          maxLength: 100
+        name:
+          description: The name of the organization.
+          type: string
+          example: OneTrust
+          maxLength: 255
+        defaultApprover:
+          description: The email address of the default approver for the organization.
+          type: string
+          example: approver@onetrust.com
+          maxLength: 255
+          minLength: 5
+        defaultLanguageCode:
+          description: 'The ISO language code for the organization''s default language (for example: en, fr, de, es, zh).'
+          type: string
+          example: en
+          maxLength: 5
+          minLength: 2
+        description:
+          description: 'A brief description of the organization. '
+          type: string
+          example: Privacy, Security and Third-Party Risk Software
+          maxLength: 250
+    Platform-AccessManagement_OrganizationExternalBasicDetailResponse:
+      type: object
+      properties:
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        externalId:
+          description: The external identifier of the organization.
+          type: string
+          example: ext-org-123
+          maxLength: 100
+        parentOrganizationId:
+          description: The unique identifier of the parent organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174999
+        parentExternalId:
+          description: The external identifier of the parent organization.
+          type: string
+          example: ext-org-parent-456
+          maxLength: 100
+        name:
+          description: The name of the organization.
+          type: string
+          example: OneTrust
+          maxLength: 255
+        defaultApprover:
+          description: The email address of the default approver for the organization.
+          type: string
+          example: approver@onetrust.com
+          maxLength: 255
+          minLength: 5
+        defaultLanguageCode:
+          description: 'The ISO language code for the organization''s default language (for example: en, fr, de, es, zh).'
+          type: string
+          example: en
+          maxLength: 5
+          minLength: 2
+        description:
+          description: 'A brief description of the organization. '
+          type: string
+          example: Privacy, Security and Third-Party Risk Software
+          maxLength: 250
+        children:
+          description: The list of child organizations in the hierarchy.
+          type: array
+          items:
+            type: object
+            example:
+              children: []
+              defaultApprover: user2@onetrust.com
+              defaultLanguageCode: en
+              description: Global Privacy Compliance
+              externalId: ext-org-123
+              name: DataGuidance
+              parentExternalId: ext-org-parent-456
+      title: OrganizationExternalBasicDetailResponse
+    Platform-AccessManagement_OrganizationExternalRequest:
+      type: object
+      properties:
+        externalId:
+          description: The external identifier of the organization. Accepts alphanumeric characters, underscores, periods, colons, and hyphens.
+          type: string
+          example: ext-org-123
+          maxLength: 100
+          minLength: 1
+        parentExternalId:
+          description: The external identifier of the parent organization.
+          type: string
+          example: ext-org-parent-456
+          maxLength: 100
+        parentOrganizationId:
+          description: The unique identifier of the parent organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        defaultLanguageCode:
+          description: 'The ISO language code for the organization''s default language (for example: en, fr, de, es, zh).'
+          type: string
+          example: en
+          maxLength: 10
+          minLength: 2
+        name:
+          description: The name of the organization.
+          type: string
+          example: OneTrust
+          maxLength: 100
+          minLength: 1
+        defaultApprover:
+          description: The email address of the default approver for the organization.
+          type: string
+          format: email
+          example: approver@onetrust.com
+          maxLength: 77
+          minLength: 5
+        description:
+          description: 'A brief description of the organization. '
+          type: string
+          example: Privacy, Security and Third-Party Risk Software
+          maxLength: 250
+      required:
+      - defaultApprover
+      - externalId
+      - name
+  securitySchemes:
+    Platform-AccessManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            ORGANIZATION: Grants full access to manage organizations. This includes Create, Read, Update and Delete operations.
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+    AuditRecords_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            USER: Grants full access to manage Users, User Groups and User Group membership. This includes Create, Read, Update and Delete operations.
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

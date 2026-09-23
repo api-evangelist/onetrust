@@ -1,0 +1,1950 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Cookies API
+  version: '1.0'
+  description: 'Operations tagged Cookies across 2 of this provider''s published API definitions: onetrust-consent-preferences-cookie-consent-openapi.json, onetrust-consent-preferences-cookie-consent-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api/cookiemanager
+tags:
+- name: Cookies
+  description: The Cookies APIs are used to manage cookie definitions, categories, and their properties.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+paths:
+  /api/cmp/v1/cookies/categorized:
+    post:
+      operationId: getCategorizedCookies
+      summary: Get Categorized Cookies
+      description: Use this API to retrieve categorized cookies by domain.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategorizedCookiesRequestDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CookiepediaContribsDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/webscans/cookies:
+    put:
+      operationId: bulkEditCookies
+      summary: Edit Cookies
+      description: Use this API to edit existing cookies.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CookieUpdateRequestDto'
+              uniqueItems: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    post:
+      operationId: bulkAddCookies
+      summary: Add Cookies
+      description: Use this API to add cookies.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CookieCreationRequestDto'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDtoCookieEntityDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    delete:
+      operationId: bulkDeleteCookies
+      summary: Delete Cookies
+      description: Use this API to delete cookies by the specified cookie ID or filter criteria.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkCookieDeletionRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntityActionResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/webscans/languages/{language}/cookies/filter:
+    post:
+      operationId: getCookiesByFilter
+      summary: Get List of Cookies by Criteria
+      description: Use this API to retrieve a list of cookies by the specified filter criteria.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: language
+        in: path
+        description: The language code for localized content.
+        required: true
+        schema:
+          type: string
+          maxLength: 5
+          minLength: 2
+        example: en
+      - name: countryCode
+        in: query
+        description: The country code for regional settings.
+        required: false
+        schema:
+          type: string
+          maxLength: 2
+          minLength: 2
+        example: us
+      - name: cookieName
+        in: query
+        description: The name of the cookie.
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        example: cookie123
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - cookieName
+          - host
+          - category
+        example: cookieName
+      - name: direction
+        in: query
+        description: Sort direction
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+        example: desc
+      - name: page
+        in: query
+        description: The page number for pagination results, starting from 0.
+        required: false
+        schema:
+          type: integer
+          example: 1
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The number of items to return per page.
+        required: false
+        schema:
+          type: integer
+          example: 10
+          default: 10
+          maximum: 100
+          minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CookieFilters'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageCookieResponseDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+        - COOKIE_READ
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/cmp/v1/webscans/{scanId}/recategorize:
+    put:
+      operationId: recategorizeCookiesByScan
+      summary: Recategorize Cookies
+      description: Use this API to initiate cookie recategorization for a scan.
+      tags:
+      - Cookies
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-cookie-consent.json
+      parameters:
+      - name: scanId
+        in: path
+        description: The unique identifier of the scan.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - COOKIE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /v1/cookies:
+    post:
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the cookie.
+                  name:
+                    type: string
+                    description: Name of the cookie.
+                  description:
+                    type: string
+                    description: Purpose of the cookie.
+                  host:
+                    type: string
+                    description: Host of the cookie.
+                  path:
+                    type: string
+                    description: Path of the cookie.
+                  source:
+                    type: string
+                    description: The source from which the cookie is created.
+                    example: MANUAL
+                  cookieLifeSpan:
+                    type: string
+                    description: Lifespan of the cookie.
+                  httpOnly:
+                    type: boolean
+                    description: Flag indicating the cookie is Http only or not.
+                  secure:
+                    type: boolean
+                    default: false
+                    description: Flag indicating the cookie is secure or not.
+                  length:
+                    type: integer
+                    description: Length of the cookie lifespan.
+                  durationType:
+                    type: integer
+                    description: Unit of time for the cookie lifespan.
+        '400':
+          description: 'Bad Request.
+
+
+            **Possible reason**: Invalid or missing parameter passed.'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: 'Forbidden.
+
+
+            **Possible reasons**:
+
+            You do not have enough permissions to invoke this endpoint.'
+        '404':
+          description: Not Found
+        '500':
+          description: "Internal Server Error. \n\n**Possible reason**: Cookie with the same name and host already exists."
+      summary: Create Cookie
+      description: Use this API to create a new cookie.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cookieName:
+                  type: string
+                  description: Name of the cookie.
+                lifespan:
+                  type: string
+                  enum:
+                  - PERSISTENT
+                  - SESSION
+                  description: Lifespan of the cookie.
+                host:
+                  type: string
+                  description: Host of the cookie.
+                description:
+                  type: string
+                  description: Description of the cookie, It should be 1075 characters or less.
+                  default: '""'
+                customCategoryName:
+                  type: string
+                  description: Unique identifier of a cookie category (Cookie Category ID).
+                  example: C0001
+                length:
+                  type: integer
+                  description: Length of the cookie lifespan, enter a number greater than 0 if this is a persistent cookie, otherwise leave as 0.
+                  default: 0
+                durationType:
+                  type: integer
+                  enum:
+                  - 1
+                  - 7
+                  - 30
+                  - 365
+                  description: Unit of time for the cookie lifespan, enter 1 (for days), 7 (for weeks), 30 (for months), or 365 (for years) based on the time unit the cookie lifespan is measured in.
+                  example: 1, 7, 30, 365
+                domainCookieCategoryList:
+                  type: array
+                  default: []
+                  description: A list of domain level categorizations for the Cookie.
+                  items:
+                    type: object
+                    properties:
+                      domainId:
+                        type: string
+                        description: ID of the domain.
+                      customCategoryName:
+                        type: string
+                        description: ID of a cookie category (cookie category id).
+                      thirdParty:
+                        type: boolean
+                        description: Flag indicating if the cookie is third-party or first-party, use False if the cookie is first-Party.
+              required:
+              - cookieName
+              - lifespan
+              - host
+              - customCategoryName
+              - durationType
+        description: Configuration for the new cookie
+        x-examples:
+          application/json:
+            cookieName: AnotherTest Cookie
+            lifespan: SESSION
+            host: test.com
+            description: ''
+            customCategoryName: C0001
+            length: 0
+            durationType: 1
+            domainCookieCategoryList:
+            - domainId: 1f7d9ea1-3f02-4b0a-b1ba-19b3c8e0b38b
+              customCategoryName: C0002
+              thirdParty: true
+      operationId: createNewCookie
+      tags:
+      - Cookies
+      security:
+      - oauth2: []
+    put:
+      responses:
+        '200':
+          description: Update completed. Response may include error messages indicating what changes were not complete.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Status of the API.
+                  errorMessages:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: 'Bad Request.
+
+
+            **Possible reason**: Invalid cookieid, please check if cookieId passed is correct.'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: 'Forbidden.
+
+
+            **Possible reasons**:
+
+            You do not have enough permissions to invoke this endpoint. '
+        '404':
+          description: Not Found.
+        '409':
+          description: ''
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      summary: Update Cookie
+      operationId: updateCookie
+      tags:
+      - Cookies
+      security:
+      - oauth2:
+        - COOKIE
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cookieId:
+                  type: string
+                  description: ID of the cookie. This value is obtained from [Create Cookie](/onetrust/reference/createnewcookie) API.
+                cookieName:
+                  type: string
+                  description: Name of the cookie.
+                lifespan:
+                  type: string
+                  enum:
+                  - PERSISTENT
+                  - SESSION
+                  description: Lifespan of the cookie.
+                host:
+                  type: string
+                  description: Host of the cookie.
+                description:
+                  type: string
+                  description: Description of the cookie. or less
+                  default: '""'
+                thirdPartyDescription:
+                  type: string
+                  description: Short text describing the host’s purpose or description of the cookie. It should be 1075 characters or less.
+                  default: '""'
+                customCategoryName:
+                  type: string
+                  description: Unique identifier of a cookie category (Cookie Category ID).
+                  example: C0001
+                length:
+                  type: integer
+                  description: Length of the cookie lifespan, enter a number greater than 0 if this is a persistent cookie, otherwise leave as 0.
+                  default: 0
+                durationType:
+                  type: integer
+                  enum:
+                  - 1
+                  - 7
+                  - 30
+                  - 365
+                  description: Unit of time for the cookie lifespan, enter 1 (for days), 7 (for weeks), 30 (for months), or 365 (for years) based on the time unit the cookie lifespan is measured in.
+                  example: 1, 7, 30, 365
+                domainCookieCategoryList:
+                  type: array
+                  default: []
+                  description: A list of domain level categorizations for the cookie.
+                  items:
+                    type: object
+                    properties:
+                      domainId:
+                        type: string
+                        description: ID of a domain.
+                      customCategoryName:
+                        type: string
+                        description: Unique identifier of a cookie category (cookie category ID).
+                      thirdParty:
+                        type: boolean
+                        description: Flag indicating if the cookie is third-party or first-party, use false if the cookie is first-party.
+                domainToDeleteIds:
+                  default: []
+                  description: A list of domain IDs to be unassigned from cookie.
+                  type: array
+                  items:
+                    type: string
+                domainCookieSource:
+                  type: array
+                  description: Domain Cookie Source to be added.
+                  items:
+                    type: object
+                    properties:
+                      domainId:
+                        type: string
+                        description: Unique Identifier of a domain.
+                      domainCookieSourceRequestDtoList:
+                        type: array
+                        default: []
+                        items:
+                          type: object
+                          properties:
+                            ResourceUrl:
+                              type: string
+                              example: testUrl
+                domainCookieSourceToDelete:
+                  type: array
+                  description: Domain Cookie Source to be removed.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Unique Identifier of a domain cookie source.
+                descriptionTranslations:
+                  type: array
+                  description: Description translations
+                  items:
+                    type: object
+                    properties:
+                      langCode:
+                        type: string
+                        description: Language code.
+                        example: EN
+                      defaultDescription:
+                        type: string
+                        description: Short text describing what is the purpose of the cookie.
+                      thirdPartyDescription:
+                        type: string
+                        description: Short text describing the host’s purpose or description. of the cookie
+              required:
+              - cookieId
+        x-examples:
+          application/json:
+            cookieId: 5dd32a8b-de66-42d1-a4d8-0000b6a10b1a
+            cookieName: testing
+            host: test_host
+            description: this is for testing
+            customCategoryName: C0001
+            lifespan: '1'
+            length: '12'
+            domainToDeleteIds:
+            - 25699e98-dc06-4d1f-b7b7-8c528f768eb0
+            domainCookieCategoryList:
+            - domainId: c9e7cd88-1a25-4fff-b18b-000ec335782d
+              customCategoryName: '12312312312312321'
+            - domainId: 3bac22c5-b790-4dc5-9acf-00d7ad485c93
+            domainCookieSource:
+            - domainId: c9e7cd88-1a25-4fff-b18b-000ec335782d
+              domainCookieSourceRequestDtoList:
+              - ResourceUrl: testResourceUrl
+            domainCookieSourceToDelete:
+            - id: c9e7cd88-1a25-4fff-b18b-000ec335782d
+            descriptionTranslations:
+            - langCode: IT
+            - langCode: ES
+              defaultDescription: defaultDescription
+              thirdPartyDescription: thirdPartyDescription
+      description: 'Use this API to update an existing cookie.
+
+        > 🗒 Things to Know
+
+        >
+
+        > - There are two types of IDs for cookies: Cookie ID and Domain Cookie ID. The **Cookies Results All Domains** export can be downloaded from the Categorizations screen in the OneTrust application to select the ID for the `cookieId` parameter.
+
+        > - For manually created cookies, only `cookieName`, `lifespan`, an `host` will be updated.
+
+        > - Values must be passed in all the parameters within `descriptionTranslations` for a cookie translation to be updated.'
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+  /v2/cookie-reports/search:
+    post:
+      tags:
+      - Cookies
+      summary: Get List of Cookies by Criteria
+      description: 'Use this API to retrieve a list of all cookies by filter criteria.
+
+        > 🗒 Things to Know
+
+        >
+
+        > - If any of the available languages in the OneTrust application is entered as a value for the `language` parameter, cookie categories, descriptions, and third-party descriptions will be translated accordingly.
+
+        > - It is recommended to use the `page` and `size` parameters if the number of cookies is greater than 500.'
+      operationId: getCookieReportsUsingPOST
+      parameters:
+      - in: query
+        name: language
+        description: Name of the language.
+        example: en
+        schema:
+          type: string
+      - in: query
+        name: countryCode
+        description: Country specific code.
+        example: gb
+        schema:
+          type: string
+      - in: query
+        name: searchStr
+        description: Search string includes either cookie name or host name.
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number of the results list (0….N).
+        schema:
+          type: integer
+          format: int32
+      - name: size
+        in: query
+        required: false
+        description: Number of records per page (0…N).
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domains:
+                  type: array
+                  default: []
+                  items:
+                    type: string
+        description: List of domains separated by commmas.
+      responses:
+        '200':
+          description: 'OK
+
+
+            Cookie details retrieved successfully.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCookieResponseDTO'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      security:
+      - oauth2: []
+    servers:
+    - url: https://customer.my.onetrust.com/api/cookiemanager
+components:
+  schemas:
+    CookieSourceRequestDto:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        domainCookieSourceRequestDtoList:
+          description: The list of cookie source configuration requests for the domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieSourceRequestDto'
+          example:
+          - Id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            ResourceUrl: amazon.com
+            resourceType: MANUAL
+            resourceOrigin: MANUAL
+            resourceMatchType: URL
+            trackerType: cookie
+          maxItems: 1000
+          minItems: 0
+    DomainCookieCategoryRequestDto:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        customCategoryName:
+          description: The custom name assigned to the cookie category.
+          type: string
+          example: C0000
+          maxLength: 100
+          minLength: 1
+        thirdParty:
+          description: This flag indicates whether the cookie originates from a third-party source.
+          type: boolean
+          example: true
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: this cookies is used for targeting purposes only
+          maxLength: 1000
+          minLength: 1
+    CookieFilters:
+      type: object
+      properties:
+        status:
+          description: The current state or condition of the item.
+          type: array
+          items:
+            type: string
+            enum:
+            - NEW
+            - REVIEWED
+            - NOT_FOUND
+            - DELETED
+            - REVIEWED_NOT_FOUND
+            - ARCHIVED
+        source:
+          description: The source from which the data or cookie originated.
+          type: array
+          items:
+            type: string
+            enum:
+            - SCAN
+            - MANUAL
+            - EXTERNALSCANNER
+            - MANUALBULK
+            - TELEMETRYSCANNER
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: array
+          items:
+            type: string
+            enum:
+            - SESSION
+            - PERSISTENT
+        categories:
+          description: The cookie categories assigned to the item.
+          type: array
+          items:
+            type: string
+            format: uuid
+        domainCategoryOverrides:
+          description: The custom category assignments that override the default settings.
+          type: array
+          items:
+            type: string
+            format: uuid
+        domains:
+          description: The list of website domains.
+          type: array
+          items:
+            type: string
+            format: uuid
+    CookieResponseDto:
+      type: object
+      properties:
+        cookieId:
+          description: The unique identifier of the cookie.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        cookieName:
+          description: The name of the cookie.
+          type: string
+          example: cookie123
+          maxLength: 255
+          minLength: 1
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookies is used for functional purposes
+          maxLength: 1000
+          minLength: 1
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: string
+          example: PERSISTENT
+          enum:
+          - SESSION
+          - PERSISTENT
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        displayGroupId:
+          description: The unique identifier of the display group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        displayGroupName:
+          description: The name of the display group.
+          type: string
+          example: displayGroup1
+          maxLength: 255
+          minLength: 1
+        cookieSource:
+          description: The source from which the cookie originated.
+          type: string
+          example: MANUAL
+          enum:
+          - SCAN
+          - MANUAL
+          - EXTERNALSCANNER
+          - MANUALBULK
+          - TELEMETRYSCANNER
+        domains:
+          description: The list of website domains.
+          type: array
+          items:
+            type: string
+        domainCookieCategoryList:
+          description: The list of categories assigned to cookies for the specific domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieCategoryEntityDto'
+        length:
+          description: Cookie length. In combination with durationType it can be 5 weeks (length = 5 and durationType = WEEK)
+          type: integer
+          format: int32
+          example: 5
+        durationType:
+          description: The type of duration indicating whether the cookie is session-based or persistent.
+          type: string
+          example: MONTH
+          enum:
+          - DAY
+          - WEEK
+          - MONTH
+          - YEAR
+        categoryOverrides:
+          description: The custom category assignments.
+          type: array
+          items:
+            type: string
+        licenseType:
+          description: The type of software license.
+          type: integer
+          format: int64
+          example: 50
+        isCustomDesc:
+          description: This flag indicates whether a custom description is being used.
+          type: boolean
+          example: true
+        thirdParty:
+          description: This flag indicates whether the cookie originates from a third-party source.
+          type: boolean
+          example: true
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for third-party advertising
+          maxLength: 1000
+          minLength: 1
+        isThirdPartyCustomDesc:
+          description: This flag indicates whether a custom third-party description is being used.
+          type: boolean
+          example: true
+    CookiepediaContribsDto:
+      type: object
+      properties:
+        name:
+          description: The name of the item.
+          type: string
+          example: cookie123
+          maxLength: 255
+          minLength: 1
+        type:
+          description: The type or category classification of the item.
+          type: string
+          example: First Party
+          maxLength: 50
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        hostDescription:
+          description: The description of the host domain.
+          type: string
+          example: amazon.com is a website
+          maxLength: 1000
+          minLength: 1
+        description:
+          description: The description of the item and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        firstPartyDescription:
+          description: The description of first-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        patternKey:
+          description: The pattern key used for cookie identification and matching.
+          type: string
+          example: C1_
+          maxLength: 255
+          minLength: 1
+        thirdPartyKey:
+          description: The key identifier used for third-party cookie classification.
+          type: string
+          example: Cookie|cookie123
+          maxLength: 500
+          minLength: 1
+        firstPartyKey:
+          description: The key identifier used for first-party cookie classification.
+          type: string
+          example: Cookie|cookie123|amazon.com
+          maxLength: 500
+          minLength: 1
+        category:
+          description: The category assigned to the cookie for classification purposes.
+          type: string
+          example: Functionality
+          maxLength: 255
+          minLength: 1
+        domainCount:
+          description: No of domains where this cookie is active.
+          type: integer
+          format: int32
+          example: 0, 1, 2, ...
+    CookieCreationRequestDto:
+      type: object
+      properties:
+        cookieName:
+          description: The name of the cookie.
+          type: string
+          example: cookieName123
+          maxLength: 255
+          minLength: 1
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: string
+          example: SESSION
+          enum:
+          - SESSION
+          - PERSISTENT
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        length:
+          description: Length of the Cookie lifespan, enter a number greater than 0 if this is a PERSISTENT cookie, otherwise leave as 0
+          type: integer
+          format: int32
+          example: 5
+          default: '0'
+        durationType:
+          description: The type of duration indicating whether the cookie is session-based or persistent.
+          type: integer
+          format: int32
+          example: 1, 7 ,30, 365
+          default: '1'
+        cookieId:
+          description: The unique identifier of the cookie.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        customCategoryName:
+          description: The custom name assigned to the cookie category.
+          type: string
+          example: C0001
+          maxLength: 100
+          minLength: 1
+        domainCookieCategoryList:
+          description: The list of categories assigned to cookies for the specific domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieCategoryRequestDto'
+          example:
+          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            customCategoryName: C0000
+            thirdParty: true
+            description: this cookies is used for targeting purposes only
+          maxItems: 1000
+          minItems: 0
+      required:
+      - customCategoryName
+      - durationType
+      - lifespan
+    CategorizedCookiesRequestDto:
+      type: object
+      properties:
+        domain:
+          description: The website domain being managed.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        cookieIds:
+          description: The list of cookie identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - a1b2c3d4-e5f6-7890-abcd-ef1234567890
+          maxItems: 1000
+          minItems: 0
+        cookies:
+          description: The list of cookie objects containing detailed information about each cookie.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieRequestDto'
+          example:
+          - cookieName: session_id
+            host: example.com
+          - cookieName: user_token
+            host: test.com
+          maxItems: 1000
+          minItems: 0
+    EntityActionResponseDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          description: The main content or data payload of the response.
+          type: object
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    DescriptionTranslationDto:
+      type: object
+      properties:
+        langCode:
+          description: The language code used for localization purposes.
+          type: string
+          example: EN
+          maxLength: 10
+          minLength: 2
+        defaultDescription:
+          description: The standard description that is used when no translation is provided for a specific language.
+          type: string
+          example: This is an example
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This is an example
+          maxLength: 1000
+          minLength: 1
+    EntityActionResponseDtoCookieEntityDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          $ref: '#/components/schemas/CookieEntityDto'
+          description: The main content or data payload of the response.
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    CookieUpdateRequestDto:
+      type: object
+      properties:
+        cookieId:
+          description: The unique identifier of the cookie.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        cookieName:
+          description: The name of the cookie.
+          type: string
+          example: newCookieName123
+          maxLength: 512
+          minLength: 0
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: string
+          example: SESSION
+          enum:
+          - SESSION
+          - PERSISTENT
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: host.com
+          maxLength: 512
+          minLength: 0
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: this cookies is used for functional purposes only
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: this cookies is used for targeting purposes only
+          maxLength: 1000
+          minLength: 1
+        length:
+          description: Length of the Cookie lifespan, enter a number greater than 0 if this is a Persistent cookie, otherwise leave as 0
+          type: integer
+          format: int32
+          example: 5
+          minimum: 0
+        durationType:
+          description: The type of duration indicating whether the cookie is session-based or persistent.
+          type: integer
+          format: int32
+          example: 7
+          enum:
+          - '1'
+          - '7'
+          - '30'
+          - '365'
+        customCategoryName:
+          description: The custom name assigned to the cookie category.
+          type: string
+          example: C0001
+          maxLength: 100
+          minLength: 1
+        domainToDeleteIds:
+          description: The list of domain identifiers to be removed from the system.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - a1234567-b4b5-4042-8cb9-b78038cc4c47
+          maxItems: 1000
+          minItems: 0
+        domainCookieCategoryList:
+          description: The list of categories assigned to cookies for the specific domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieCategoryRequestDto'
+          example:
+          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            customCategoryName: C0001
+          maxItems: 1000
+          minItems: 0
+        domainCookieSource:
+          description: The source from which domain cookies originate.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieSourceRequestDto'
+          example:
+          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            domainCookieSourceRequestDtoList: []
+          maxItems: 1000
+          minItems: 0
+        domainCookieSourceToDelete:
+          description: The cookie sources that are marked for deletion.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieSourceRequestDto'
+          example:
+          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            sourceId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+          maxItems: 1000
+          minItems: 0
+        descriptionTranslations:
+          description: The translations of descriptions provided in different languages.
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptionTranslationDto'
+          example:
+          - language: fr
+            description: Ce cookie est utilisé à des fins fonctionnelles uniquement
+          maxItems: 1000
+          minItems: 0
+      required:
+      - cookieId
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
+          type: boolean
+    DomainCookieSourceRequestDto:
+      type: object
+      properties:
+        resourceType:
+          description: The type of web resource such as script, image, or stylesheet.
+          type: string
+          example: MANUAL
+          enum:
+          - MANUAL
+          - PATTERN
+          - SCRIPT
+          - MAIN_FRAME
+          maxLength: 255
+          minLength: 1
+        resourceOrigin:
+          description: resource origin type
+          type: string
+          example: MANUAL
+          enum:
+          - SCANNER
+          - MANUAL
+          - TELEMETRYSCANNER
+        resourceMatchType:
+          description: resource match type
+          type: string
+          example: URL
+          enum:
+          - URL
+          - SYSTEM_PATTERN
+          - CUSTOM_PATTERN
+        trackerType:
+          description: The category of tracking technology being used.
+          type: string
+          example: cookie
+          maxLength: 100
+          minLength: 1
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+        ResourceUrl:
+          description: The web address where the resource is located.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+    PageCookieResponseDto:
+      type: object
+      properties:
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+        size:
+          description: The number of items to return per page.
+          type: integer
+          format: int32
+        content:
+          description: The main content or data payload of the response.
+          items:
+            $ref: '#/components/schemas/CookieResponseDto'
+          type: array
+        number:
+          description: The numeric value or identifier.
+          type: integer
+          format: int32
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          description: The pagination configuration settings.
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          description: This flag indicates whether this is the first item in a sequence.
+          type: boolean
+        last:
+          description: This flag indicates whether this is the last item in a sequence.
+          type: boolean
+        numberOfElements:
+          description: The number of items in the current page.
+          type: integer
+          format: int32
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+    DomainCookieCategoryEntityDto:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        displayGroupId:
+          description: The unique identifier of the display group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        thirdParty:
+          description: This flag indicates whether the cookie originates from a third-party source.
+          type: boolean
+          example: false
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: used for advertising
+        vendorServiceId:
+          description: Vendor service GUID to link this cookie instance
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+    BulkCookieDeletionRequest:
+      type: object
+      properties:
+        cookieIds:
+          description: The list of cookie identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 100
+          minItems: 0
+        filters:
+          description: The criteria used to filter the results.
+          $ref: '#/components/schemas/CookieFilters'
+        language:
+          description: The language code for localized content.
+          type: string
+          example: en
+          maxLength: 10
+          minLength: 2
+        countryCode:
+          description: The country code for regional settings.
+          type: string
+          example: us
+          maxLength: 10
+          minLength: 2
+        deleteByFilterCriteria:
+          description: This flag indicates whether to delete items based on filter conditions rather than specific identifiers.
+          type: boolean
+          example: false
+          default: 'false'
+        cookieName:
+          description: The name of the cookie.
+          type: string
+          example: cookie123
+          maxLength: 255
+          minLength: 1
+      required:
+      - cookieIds
+      - filters
+    CookieRequestDto:
+      type: object
+      properties:
+        name:
+          description: The name of the cookie.
+          type: string
+          example: cookie123
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          minLength: 1
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    CookieEntityDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name or title of the item.
+          type: string
+          example: CookieName123__
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes.
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+        path:
+          description: The URL path where the cookie is active.
+          type: string
+          example: /
+        source:
+          description: The source from which the data or cookie originated.
+          type: string
+          example: MANUAL/SCAN
+          enum:
+          - SCAN
+          - MANUAL
+          - EXTERNALSCANNER
+          - MANUALBULK
+          - TELEMETRYSCANNER
+        cookieLifeSpan:
+          description: The duration for which the cookie remains valid.
+          type: string
+          example: SESSION
+          enum:
+          - SESSION
+          - PERSISTENT
+        httpOnly:
+          description: This flag indicates whether the cookie can only be accessed via HTTP requests.
+          type: boolean
+          example: true
+        secure:
+          description: This flag indicates whether the cookie requires a secure HTTPS connection.
+          type: boolean
+          example: true
+        length:
+          description: Length of the Cookie lifespan. This is used in combination with 'durationType'. If 'length' = 5 and 'durationType' = 7, that means 5 weeks.
+          type: integer
+          format: int32
+          example: 5
+        durationType:
+          description: The type of duration indicating whether the cookie is session-based or persistent.
+          type: integer
+          format: int32
+          example: 7
+    DomainCookieInfo:
+      type: object
+      properties:
+        cookieId:
+          type: string
+          description: Id of a cookie.
+        domainCookieId:
+          type: string
+          description: Id of domaincookie.
+        domainName:
+          type: string
+          description: Name of the domain.
+        displayGroupName:
+          type: string
+          description: Category name of cookie for that domain.
+        cookieCategoryID:
+          type: string
+          description: Category ID of the cookie.
+        thirdParty:
+          type: boolean
+          description: Indiactes the type of the cookie. If set to true, then third party cookie else first party cookie for that domain.
+        description:
+          type: string
+          description: Description of a cookie.
+      title: DomainCookieInfo
+      description: Domain level information for a cookie
+    CookieDetailsDto:
+      type: object
+      properties:
+        cookieName:
+          type: string
+          description: Name of a cookie.
+        lifespan:
+          type: string
+          description: Lifespan of a cookie.
+        host:
+          type: string
+          description: Host associated with a cookie.
+        defaultCategory:
+          type: string
+          description: Default category of a cookie.
+        cookieSource:
+          type: string
+          description: Source of a cookie (SCAN or MANUAL).
+        defaultDescription:
+          type: string
+          description: Description of a cookie.
+        defaultThirdPartyDescription:
+          type: string
+          description: Third party description of a cookie.
+        expiry:
+          type: string
+          description: Expiry duration of a cookie(For example, 4 weeks or 2 days or 5 months or 3 years).
+        thirdParty:
+          type: boolean
+          description: Indicates the type of a cookie. If set to true, then third party cookie else first party cookie.
+        domainCookieInfo:
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieInfo'
+      title: CookieDetailsDto
+      description: Cookie details with domain level info
+    PaginatedCookieResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of cookies with domain level information
+          items:
+            $ref: '#/components/schemas/CookieDetailsDto'
+        numberOfElements:
+          type: integer
+          format: int32
+          description: Total number of elements in the result list.
+        pageNumber:
+          type: integer
+          format: int32
+          description: Page number of the results list (0….N).
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of records per page (0…N).
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of cookie results found.
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages in the result.
+      title: PaginatedCookieResponseDTO
+      description: Paginated List of cookies with domain level info
+    Sort:
+      type: object
+      properties:
+        empty:
+          type: boolean
+          description: Flag to indicate if the results are empty or not.
+        sorted:
+          type: boolean
+          description: Flag to indicate if the results are sorted or not. If set to TRUE, the results are sorted.
+        unsorted:
+          type: boolean
+          description: Flag to indicate if the results are unsorted or not. If set to TRUE, the results are unsorted.
+      title: Sort
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            COOKIE: Cookie Scope gives the user access to read/write operations inside the Cookie Consent module.
+            COOKIE_READ: Cookie Read Scope gives the user read-only access to the Cookie Consent module.
+            COOKIE_FREE: Cookie free Scope gives free users access to apis having free scope associated to them inside the Cookie Consent module.
+x-refined-from:
+- onetrust-consent-preferences-cookie-consent-openapi.json
+- onetrust-consent-preferences-cookie-consent-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

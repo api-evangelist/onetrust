@@ -1,0 +1,607 @@
+openapi: 3.2.0
+info:
+  title: Consent & Preferences - Universal Consent & Preference…
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Universal Consent & Preference Management APIs are used to integrate external systems and streamline the flow of data with Universal Consent & Preference Management in the OneTrust Platform.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Deduplicate Data Subjects
+  description: The Deduplicate Data Subjects APIs are used to merge duplicate data subject profiles.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+  x-displayName: Deduplicate Data Subjects
+paths:
+  /api/consentmanager/v1/datasubjects/merge/{mergeRequestId}:
+    post:
+      operationId: mergeDatasubjectUsingPOST
+      summary: Deduplicate Data Subjects
+      description: 'Use this API to merge duplicate data subjects in order to consolidate existing Purpose statuses captured across the different identifiers into a single data subject profile.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The Create Scheduled Export API can be used to create scheduled exports of duplicate data subjects.
+
+        > - The Generate Export of Duplicate Data Subjects API can be used to generate exports that identify duplicate data subjects.
+
+
+        > 👍
+
+        >
+
+        > For more information, see Merging Data Subjects.'
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: mergeRequestId
+        in: path
+        description: The unique identifier of the merge request to process.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: f278e993-452a-4a0a-aee2-f7782597e406
+      responses:
+        '200':
+          description: OK - Merge request has been successfully processed.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+  /api/consentmanager/v1/export-duplicate-datasubject/{mergeRequestId}:
+    get:
+      operationId: exportduplicatedatasubject
+      summary: Generate Export of Duplicate Data Subjects
+      description: 'Use this API to generate an export of duplicate data subjects. Once generated, the Duplicate Data Subjects export will be sent to the user specified in the request as an .xlsx file and can be downloaded from the OneTrust application.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The Create Scheduled Export API can be used to create scheduled exports of duplicate data subjects.
+
+        > - The Merge Duplicate Data Subjects API can be used if data subjects should be merged upon review of the export.'
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: mergeRequestId
+        in: path
+        description: Unique identifier of the merge request.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 3fc32e2f-d229-4914-b73c-0e2488bd790e
+      - name: userGuid
+        in: header
+        description: Unique identifier of the user to receive the export.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 973bff19-733b-47f3-b879-a238f33acbab
+      responses:
+        '200':
+          description: OK - Successfully generated export.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+  /api/consentmanager/v1/scheduled-jobs/merge-request:
+    get:
+      operationId: getPagedMergeRequestUsingGET
+      summary: Get List of Scheduled Exports
+      description: Use this API to retrieve a list of all scheduled exports of duplicate data subjects. The response will include the merge request ID along with the associated merge request name, export frequency, and export status.
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: page
+        in: query
+        description: Page number (0-based)
+        required: true
+        schema:
+          type: integer
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page
+        required: true
+        schema:
+          type: integer
+          example: 20
+          maximum: 100
+      responses:
+        '200':
+          description: OK - Successfully retrieved list of scheduled exports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageMergeDSRequestDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+    post:
+      operationId: scheduleMergeRequestUsingPOST
+      summary: Create Scheduled Export of Duplicate Data Subjects
+      description: 'Use this API to create a scheduled export of duplicate data subjects.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - Once the scheduled export is created, you can retrieve the file using the Generate Export of Duplicate Data Subjects API.'
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto'
+      responses:
+        '200':
+          description: OK - Successfully created scheduled export
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+  /api/consentmanager/v1/scheduled-jobs/merge-request/{mergeRequestGuid}:
+    get:
+      operationId: getMergeRequestUsingGET
+      summary: Get Scheduled Export
+      description: Use this API to retrieve details of a specific scheduled export of duplicate data subjects. The response will include the associated merge request name, export frequency, and export status.
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: mergeRequestGuid
+        in: path
+        description: Unique identifier of the merge request.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 3fc32e2f-d229-4914-b73c-0e2488bd790e
+      responses:
+        '200':
+          description: OK - Successfully retrieved scheduled export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+    delete:
+      operationId: deleteMergeRequestUsingDELETE
+      summary: Delete Scheduled Export
+      description: Use this API to delete a scheduled export of duplicate data subjects.
+      tags:
+      - Deduplicate Data Subjects
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/consent-preferences-universal-consent-preference-management-oas.json
+      parameters:
+      - name: mergeRequestGuid
+        in: path
+        description: Unique identifier of the merge request to delete.
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 3fc32e2f-d229-4914-b73c-0e2488bd790e
+      responses:
+        '200':
+          description: OK - Successfully deleted scheduled export.
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+        - CONSENT
+components:
+  schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto:
+      type: object
+      properties:
+        mergeRequestId:
+          description: Unique identifier of the merge request
+          type: string
+          format: uuid
+          example: 8e453d7c-eb4f-4139-913a-3d1f93977665
+        mergeRequestName:
+          description: Name of the merge request which uniquely identifies the job
+          type: string
+          example: Monthly Duplicate Data Subjects Export
+        triggerTime:
+          description: The time at which triggers the job to find duplicate Data Subjects
+          type: string
+          format: date-time
+          example: '2025-10-01T00:00:00Z'
+        jobFrequency:
+          description: Frequency at which the job runs
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+          - CUSTOM
+        jobStatus:
+          description: Current status of the job
+          type: string
+          example: PENDING
+          enum:
+          - PENDING
+          - COMPLETED
+          - IN_PROGRESS
+          - MERGE_REPORT_IN_PROGRESS
+          - FAILED
+          - CANCELLED
+        mergeCondition:
+          description: Condition used to apply between Data Subject Elements when identifying duplicates
+          type: string
+          example: ANY
+          enum:
+          - ANY
+          - ALL
+        totalDataSubjectCount:
+          description: Total number of Data Subjects that match the given conditions
+          type: integer
+          format: int32
+          example: 150
+        duplicateDataSubjectCount:
+          description: Number of duplicate Data Subjects found based on the specified conditions
+          type: integer
+          format: int32
+          example: 25
+        customDataElementNames:
+          description: List of Data Element names for which the merge condition will be applied
+          type: array
+          items:
+            type: string
+          example:
+          - email
+          - phone
+          minItems: 1
+      required:
+      - customDataElementNames
+      - jobFrequency
+      - mergeCondition
+      - mergeRequestId
+      - mergeRequestName
+    ConsentPreferences-UniversalConsentPreferenceManag_PageMergeDSRequestDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+  securitySchemes:
+    ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    ConsentAPI_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+    DSPreferneceCache_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONSENT: Consent Scope gives the user access to read/write operations
+            CONSENT_READ: Consent Read Scope gives the user read-only access
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

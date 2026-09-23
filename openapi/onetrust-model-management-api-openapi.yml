@@ -1,0 +1,2049 @@
+openapi: 3.2.0
+info:
+  title: Platform - Object Manager Model Management API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Object Manager APIs are used to integrate external systems and streamline the flow of data for objects created via Object Manager in the OneTrust Platform.
+servers:
+- url: https://{hostname}/api/custom-entity
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Model Management
+  description: The Model Management APIs are used to conduct full management of Model objects.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+paths:
+  /api/custom-entity/v2/models:
+    post:
+      operationId: createModelUsingPOST
+      summary: Create Model Object
+      description: 'Use this API to create a new Model object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports creating Model objects via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelCreateRequest'
+            examples:
+              Basic Model:
+                summary: Basic AI model creation example
+                description: A simple model creation request with minimal required fields
+                value:
+                  name: kyutai/mimi
+                  description: Mimi is a high-fidelity audio codec leveraging neural networks.
+                  referenceLink: https://huggingface.co/kyutai/mimi
+                  biases: The model has been trained with a few safeguards to try to limit potential toxic usages.
+                  limitations: The model has been trained with a few safeguards to try to limit potential toxic usages.
+                  organization:
+                    id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                  entityDetail: []
+              Comprehensive Model:
+                summary: Detailed AI model creation example
+                description: A comprehensive model creation request with fairness metrics
+                value: "{\n \"name\": \"timm/mobilenetv3_small_100.lamb_in1k\",\n \"description\": \"A MobileNet-v3 image classification model.\",\n \"referenceLink\": \"https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k\"\n \"biases\": \"May have cultural bias based on training data\",\n \"limitations\": \"Requires high computational resources and may have latency issues for real-time processing\",\n \"demographicParityDifference\": \"0.05\",\n \"demographicParityRatio\": \"0.92\",\n \"equalizedOddsDifference\": \"0.07\",\n \"equalizedOddsRatio\": \"0.89\",\n \"modelVersion\": \"2.3.1\",\n \"additionalAttributes\": {\n \"generativeAI\": [{\n \"id\": \"de8c2b96-6393-42d3-bd0d-56c35cc18c7e\"\n }],\n \"framework\": [{\n \"id\": \"d1f9e973-8a10-4634-ac05-856ea71532e9\"\n }],\n \"hostingProvider\": [{\n \"id\": \"20841322-b61d-4b47-bfaf-f84d9699578a\"\n }],\n \"programmingLanguage\": [{\n \"id\": \"7d2d9553-677e-4902-94fc-3a56d2a14aeb\"\n }],\n \"typeofLearning\": [{\n \"id\": \"3c84bf17-5440-4010-ad8b-c721d9aa11c7\"\n }],\n \"taskType\": [{\n \"id\": \"55d5462e-58dc-4eb6-8e08-74aa0006b722\"\n }]\n },\n \"organization\": {\n \"id\": \"c9e5a35b-9be7-4dd6-adac-0bee7c02384f\"\n },\n \"entityDetail\": [{ \"owner\": \"41955b71-e581-4187-ab6c-d00d1403350c\"\n \"internalOrThirdParty\": \"da570b8b-6f52-4b67-b009-fd2e427da9ab\"\n }],\n}"
+      responses:
+        '201':
+          description: Model entity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Created Model Response:
+                  summary: Example of a successfully created model
+                  description: Response containing the details of the newly created model entity
+                  value:
+                    id: 75bb925e-1f3d-409c-8498-f62cbb09b1fc
+                    number: 119
+                    name: timm/mobilenetv3_small_100.lamb_in1k
+                    organization:
+                      id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                      name: PLTF REP
+                    schemaId: e09e39bc-fcd7-4fd1-865e-5bb8f224c542
+                    entityType:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    workflow:
+                      id: 3b640b0b-aa83-4c45-a42e-6dec169febbc
+                      name: Default Workflow
+                      nameKey: CE.Models.Workflow.Name
+                      type: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      workflowMode: null
+                    stage:
+                      id: 2920fe51-e469-4322-b027-96d4ea8cf208
+                      name: Ideation
+                      nameKey: CE.Workflow.Model.Stage.Ideation
+                      badgeColor: New
+                      sequence: null
+                    createdDate: '2025-06-09T07:38:26.141Z'
+                    lastModifiedDate: '2025-06-09T07:38:26.141Z'
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    hostingProvider:
+                    - id: 20841322-b61d-4b47-bfaf-f84d9699578a
+                      value: Amazon Web Services (AWS)
+                      valueKey: CE.Models.Attribute.HostingProvider.OptiAmazonWebServices
+                      disabled: false
+                    owner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    autonomyLevel:
+                    - id: dd4d3f0f-846c-4dc8-9375-8fa639f707bb
+                      value: Human Support
+                      valueKey: CE.Models.Attribute.AutonomyLevel.Option.HumanSupport
+                      disabled: false
+                    internalOrThirdParty:
+                    - id: da570b8b-6f52-4b67-b009-fd2e427da9ab
+                      value: Self-managed open source software
+                      valueKey: CE.Models.Attribute.InternalOrThirdParty.Option.SelfManagedOpenSourceSoftware
+                      disabled: false
+                    taskType:
+                    - id: 55d5462e-58dc-4eb6-8e08-74aa0006b722
+                      value: Image Classification
+                      valueKey: CE.Models.Attribute.TaskType.Option.ImageClassification
+                      disabled: false
+                    framework:
+                    - id: d1f9e973-8a10-4634-ac05-856ea71532e9
+                      value: AutoML
+                      valueKey: CE.Models.Attribute.Framework.Option.AutoML
+                      disabled: false
+                    typeofLearning:
+                    - id: 3c84bf17-5440-4010-ad8b-c721d9aa11c7
+                      value: Supervised
+                      valueKey: CE.Models.Attribute.TypeofLearning.OptioSupervised
+                      disabled: false
+                    generativeAI:
+                    - id: de8c2b96-6393-42d3-bd0d-56c35cc18c7e
+                      value: 'Yes'
+                      valueKey: CE.Models.Attribute.GenerativeAI.Option.Yes
+                      disabled: false
+                    programmingLanguage:
+                    - id: 7d2d9553-677e-4902-94fc-3a56d2a14aeb
+                      value: R Programming
+                      valueKey: CE.Models.Attribute.ProgrammingLanguage.RProgramming
+                      disabled: false
+                    equalizedOddsDifference:
+                    - id: null
+                      value: '0.07'
+                      disabled: false
+                    openItemsCount:
+                    - id: null
+                      value: '0'
+                      disabled: false
+                    modelVersion:
+                    - id: null
+                      value: 2.3.1
+                      disabled: false
+                    biases:
+                    - id: null
+                      value: text
+                      disabled: false
+                    equalizedOddsRatio:
+                    - id: null
+                      value: '0.89'
+                      disabled: false
+                    description:
+                    - id: null
+                      value: A MobileNet-v3 image classification model.
+                      disabled: false
+                    demographicParityRatio:
+                    - id: null
+                      value: '0.92'
+                      disabled: false
+                    referenceLink:
+                    - id: null
+                      value: https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k
+                      disabled: false
+                    demographicParityDifference:
+                    - id: null
+                      value: '0.05'
+                      disabled: false
+                    limitations:
+                    - id: null
+                      value: Requires high computational resources and may have latency issues for real-time processing
+                      disabled: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-write
+        - integration
+  /api/custom-entity/v2/models/basic-details/search:
+    post:
+      operationId: findModelBasicDetailsByQueryCriteriaUsingPOST
+      summary: Get Basic Model Object Details
+      description: 'Use this API to retrieve basic details for the specified Model object record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Model objects created via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityQueryRequest'
+            examples:
+              Query by name pattern:
+                summary: Query models with names starting with 'Customer'
+                description: Query by name pattern
+                value:
+                  query: name:Customer*
+              Query by version pattern:
+                summary: Query models with version 2.x
+                description: Query by version pattern
+                value:
+                  query: modelVersion:2.*
+              Query by multiple fairness metrics:
+                summary: Find models with specific fairness metric ranges
+                description: Query by multiple fairness metrics
+                value:
+                  query: demographicParityRatio:[0.9 TO 1.0] AND equalizedOddsRatio:[0.85 TO 1.0]
+              Query by model source and creation date:
+                summary: Find models from specific sources created recently
+                description: Query by model source and creation date
+                value:
+                  query: modelSource:("Internal Development" OR "Open Source") AND createdDate:[2025-01-01T00:00:00Z TO NOW]
+              Query models with specific limitations or biases:
+                summary: Find models that mention specific limitations in documentation
+                description: Query models with specific limitations or biases
+                value:
+                  query: limitations:*language* OR biases:*cultural*
+              Complex query with boolean logic:
+                summary: Advanced query combining multiple conditions with boolean operators
+                description: Complex query with boolean logic
+                value:
+                  query: (name:*Sentiment* OR name:*Classification*) AND modelVersion:2.* AND NOT modelSource:"Third Party" AND (hubReferenceId:SA-* OR hubReferenceId:CLS-*)
+      responses:
+        '200':
+          description: Successfully retrieved list of basic model details matching query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEntityIdentifierInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+  /api/custom-entity/v2/models/search:
+    post:
+      operationId: findModelsByListCriteriaUsingPOST
+      summary: Get Model Object Details
+      description: 'Use this API to retrieve all the details for the Model object record by key terms and filters.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Model objects created via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: page
+        in: query
+        description: The page number of the results.
+        schema:
+          description: Results page to be retrieved (0..N). Example- '?page=1
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: The number of results per page.
+        schema:
+          description: Number of records per page (1..50). Example- '?size=20
+          type: integer
+          format: int32
+          default: 10
+          maximum: 2000
+          minimum: 1
+        example: 50
+      - name: sort
+        in: query
+        description: The sort criteria that dictates the order of the results.
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+        example: name,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityListRequest'
+            examples:
+              Filter by name:
+                summary: Filter models by name
+                description: Filter by name
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: name
+                        value: DataRobot Model 15
+                        operator: EQUAL_TO
+              Filter by Autonomy Level:
+                summary: Filter models by Autonomy Level
+                description: Filter by Autonomy Level
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: autonomyLevel
+                        value:
+                        - dd4d3f0f-846c-4dc8-9375-8fa639f707bb
+                        operator: EQUAL_TO
+              Complex filters with multiple criteria:
+                summary: Filtering with multiple criteria
+                description: Complex filters with multiple criteria
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: generativeAI
+                        value:
+                        - de8c2b96-6393-42d3-bd0d-56c35cc18c7e
+                        operator: EQUAL_TO
+                      - field: modelVersion
+                        value: '2.0'
+                        operator: EQUAL_TO
+              filter by createdBy equal to:
+                summary: filter model by createdBy equal to
+                description: filter by createdBy equal to
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: createdBy
+                        value:
+                        - 41955b71-e581-4187-ab6c-d00d1403350c
+                        operator: EQUAL_TO
+              filter by createdBy not equal to:
+                summary: filter model by createdBy not equal to
+                description: filter by createdBy not equal to
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: createdBy
+                        value:
+                        - 41955b71-e581-4187-ab6c-d00d1403350c
+                        operator: NOT_EQUAL_TO
+              filter by created Date and operator as between:
+                summary: filter model by created Date and operator as between
+                description: filter by created Date and operator as between
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: createdDate
+                        value: '2025-06-06T18:30:00.000Z'
+                        toValue: '2025-06-09T18:30:00.000Z'
+                        operator: BETWEEN
+              filter by created Date and operator as less than:
+                summary: filter model by created Date and operator as less than
+                description: filter by created Date and operator as less than
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: createdDate
+                        value: '2025-06-08T18:30:00.000Z'
+                        operator: LESS_THAN
+              filter by created Date and operator as greater than:
+                summary: filter model by created Date and operator as greater than
+                description: filter by created Date and operator as greater than
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: createdDate
+                        value: '2025-06-04T18:30:00.000Z'
+                        operator: GREATER_THAN
+              Filter by biases:
+                summary: Filter by biases
+                description: Filter by biases
+                value:
+                  queryRequest:
+                    criteria:
+                      fullText: ''
+                      filters:
+                      - field: biases
+                        value: Biases check
+                        operator: EQUAL_TO
+      responses:
+        '200':
+          description: Successfully retrieved list of models matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageEntityInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+  /api/custom-entity/v2/models/{entityId}:
+    get:
+      operationId: getModelUsingGET
+      summary: Get Model Object
+      description: 'Use this API to retrieve a single Model object record by its unique identifier along with the associated attributes, module name, and created date.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Model objects created via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: b2c3d4e5-f6a7-8901-bcde-f2345678901a
+      responses:
+        '200':
+          description: Model entity details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Model Details Response:
+                  summary: Example of model entity details
+                  description: Response containing the comprehensive details of a model entity
+                  value:
+                    id: 75bb925e-1f3d-409c-8498-f62cbb09b1fc
+                    number: 119
+                    name: timm/mobilenetv3_small_100.lamb_in1k
+                    organization:
+                      id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                      name: PLTF REP
+                    schemaId: e09e39bc-fcd7-4fd1-865e-5bb8f224c542
+                    entityType:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    workflow:
+                      id: 3b640b0b-aa83-4c45-a42e-6dec169febbc
+                      name: Default Workflow
+                      nameKey: CE.Models.Workflow.Name
+                      type: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      workflowMode: null
+                    stage:
+                      id: 2920fe51-e469-4322-b027-96d4ea8cf208
+                      name: Ideation
+                      nameKey: CE.Workflow.Model.Stage.Ideation
+                      badgeColor: New
+                      sequence: null
+                    createdDate: '2025-06-09T07:38:26.143Z'
+                    lastModifiedDate: '2025-06-09T07:38:26.143Z'
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    hostingProvider:
+                    - id: 20841322-b61d-4b47-bfaf-f84d9699578a
+                      value: Amazon Web Services (AWS)
+                      valueKey: CE.Models.Attribute.HostingProvider.OptiAmazonWebServices
+                      disabled: false
+                    owner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    autonomyLevel:
+                    - id: dd4d3f0f-846c-4dc8-9375-8fa639f707bb
+                      value: Human Support
+                      valueKey: CE.Models.Attribute.AutonomyLevel.Option.HumanSupport
+                      disabled: false
+                    internalOrThirdParty:
+                    - id: da570b8b-6f52-4b67-b009-fd2e427da9ab
+                      value: Self-managed open source software
+                      valueKey: CE.Models.Attribute.InternalOrThirdParty.Option.SelfManagedOpenSourceSoftware
+                      disabled: false
+                    taskType:
+                    - id: 55d5462e-58dc-4eb6-8e08-74aa0006b722
+                      value: Image Classification
+                      valueKey: CE.Models.Attribute.TaskType.Option.ImageClassification
+                      disabled: false
+                    framework:
+                    - id: d1f9e973-8a10-4634-ac05-856ea71532e9
+                      value: AutoML
+                      valueKey: CE.Models.Attribute.Framework.Option.AutoML
+                      disabled: false
+                    typeofLearning:
+                    - id: 3c84bf17-5440-4010-ad8b-c721d9aa11c7
+                      value: Supervised
+                      valueKey: CE.Models.Attribute.TypeofLearning.OptioSupervised
+                      disabled: false
+                    generativeAI:
+                    - id: de8c2b96-6393-42d3-bd0d-56c35cc18c7e
+                      value: 'Yes'
+                      valueKey: CE.Models.Attribute.GenerativeAI.Option.Yes
+                      disabled: false
+                    programmingLanguage:
+                    - id: 7d2d9553-677e-4902-94fc-3a56d2a14aeb
+                      value: R Programming
+                      valueKey: CE.Models.Attribute.ProgrammingLanguage.RProgramming
+                      disabled: false
+                    equalizedOddsDifference:
+                    - id: null
+                      value: '0.07'
+                      disabled: false
+                    openItemsCount:
+                    - id: null
+                      value: '0'
+                      disabled: false
+                    modelVersion:
+                    - id: null
+                      value: 2.3.1
+                      disabled: false
+                    biases:
+                    - id: null
+                      value: text
+                      disabled: false
+                    equalizedOddsRatio:
+                    - id: null
+                      value: '0.89'
+                      disabled: false
+                    description:
+                    - id: null
+                      value: A MobileNet-v3 image classification model. Trained on ImageNet-1k in timm using recipe template described below.
+                      disabled: false
+                    demographicParityRatio:
+                    - id: null
+                      value: '0.92'
+                      disabled: false
+                    referenceLink:
+                    - id: null
+                      value: https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k
+                      disabled: false
+                    demographicParityDifference:
+                    - id: null
+                      value: '0.05'
+                      disabled: false
+                    limitations:
+                    - id: null
+                      value: Requires high computational resources and may have latency issues for real-time processing
+                      disabled: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-read
+        - object-manager-write
+        - integration
+    put:
+      operationId: updateModelUsingPUT
+      summary: Modify Model Object
+      description: 'Use this API to partially update an existing Model object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Model objects created via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: b2c3d4e5-f6a7-8901-bcde-f2345678901a
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityUpdateRequest'
+            examples:
+              Update Model Version:
+                summary: Update model version and metrics example
+                description: A request to update the version and performance metrics of a model
+                value:
+                  name: kyutai/mimi
+                  attributes:
+                    owner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: null
+                    description:
+                    - id: null
+                      value: 'Mimi is a high-fidelity audio codec leveraging neural networks.
+
+                        '
+                    internalOrThirdParty: null
+                    autonomyLevel: null
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    createdDate:
+                    - id: null
+                      value: '2025-06-09T07:18:55.173Z'
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    lastModifiedDate:
+                    - id: null
+                      value: '2025-06-09T07:18:55.173Z'
+                    referenceLink:
+                    - id: null
+                      value: https://huggingface.co/kyutai/mimi
+                    biases:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usagess.
+
+                        '
+                    limitations:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usages.
+
+                        '
+                    demographicParityDifference: null
+                    demographicParityRatio: null
+                    equalizedOddsDifference: null
+                    equalizedOddsRatio: null
+                    generativeAI: null
+                    framework: null
+                    hostingProvider: null
+                    modelVersion: null
+                    programmingLanguage: null
+                    typeofLearning: null
+                    taskType:
+                    - id: bfd749b3-3e68-4e11-b009-1b4b29e0f4eb
+                      value: Feature Extraction
+                  organization:
+                    id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+              Comprehensive Model Update:
+                summary: Detailed model update example
+                description: A comprehensive update to multiple aspects of a model
+                value:
+                  name: kyutai/mimi-01
+                  attributes:
+                    owner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    description:
+                    - id: null
+                      value: 'Mimi is a high-fidelity audio codec leveraging neural networks.
+
+                        '
+                    internalOrThirdParty:
+                    - id: da570b8b-6f52-4b67-b009-fd2e427da9ab
+                      value: Self-managed open source software
+                    autonomyLevel:
+                    - id: dd4d3f0f-846c-4dc8-9375-8fa639f707bb
+                      value: Human Support
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    createdDate:
+                    - id: null
+                      value: '2025-06-09T10:01:46.983Z'
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                    lastModifiedDate:
+                    - id: null
+                      value: '2025-06-09T10:01:46.983Z'
+                    referenceLink:
+                    - id: null
+                      value: https://huggingface.co/kyutai/mimi
+                    biases:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usages.
+
+                        '
+                    limitations:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usages.
+
+                        '
+                    demographicParityDifference:
+                    - id: null
+                      value: '0.9'
+                    demographicParityRatio:
+                    - id: null
+                      value: '0.8'
+                    equalizedOddsDifference:
+                    - id: null
+                      value: '0.84'
+                    equalizedOddsRatio:
+                    - id: null
+                      value: '0.09'
+                    generativeAI:
+                    - id: de8c2b96-6393-42d3-bd0d-56c35cc18c7e
+                      value: 'Yes'
+                    framework:
+                    - id: 082fbfc2-9be8-4c26-aa74-f5e4294c9f52
+                      value: AccelOnnx
+                    hostingProvider:
+                    - id: 6e36eddc-b8fc-4825-9e09-370f5c6c908b
+                      value: Google Cloud Platform (GCP)
+                    modelVersion:
+                    - id: null
+                      value: '2.0'
+                    programmingLanguage:
+                    - id: a39deb83-2444-472a-92cf-2d8a2c871c46
+                      value: Julia
+                    typeofLearning:
+                    - id: 3c84bf17-5440-4010-ad8b-c721d9aa11c7
+                      value: Supervised
+                    taskType:
+                    - id: bfd749b3-3e68-4e11-b009-1b4b29e0f4eb
+                      value: Feature Extraction
+                  organization:
+                    id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+      responses:
+        '200':
+          description: Model entity updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInformation'
+              examples:
+                Updated Model Response:
+                  summary: Example of a successfully updated model
+                  description: Response containing the details of the updated model entity
+                  value:
+                    id: 1aedc1bf-0045-472d-b27d-26127c241ce0
+                    number: 123
+                    name: kyutai/mimi-01
+                    organization:
+                      id: c9e5a35b-9be7-4dd6-adac-0bee7c02384f
+                      name: PLTF REP
+                    schemaId: e09e39bc-fcd7-4fd1-865e-5bb8f224c542
+                    entityType:
+                      id: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      name: models
+                      nameKey: CE.Models.Name
+                      seeded: true
+                      moduleName: CustomEntityManagement
+                      schemaName: models
+                    workflow:
+                      id: 3b640b0b-aa83-4c45-a42e-6dec169febbc
+                      name: Default Workflow
+                      nameKey: CE.Models.Workflow.Name
+                      type: 286aeb99-fe6c-4f01-baaa-e24b8e689a84
+                      workflowMode: null
+                    stage:
+                      id: 2920fe51-e469-4322-b027-96d4ea8cf208
+                      name: Ideation
+                      nameKey: CE.Workflow.Model.Stage.Ideation
+                      badgeColor: New
+                      sequence: null
+                    createdDate: '2025-06-09T10:01:46.983Z'
+                    lastModifiedDate: '2025-06-09T10:02:35.632Z'
+                    createdBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    lastModifiedBy:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    hostingProvider:
+                    - id: 6e36eddc-b8fc-4825-9e09-370f5c6c908b
+                      value: Google Cloud Platform (GCP)
+                      valueKey: CE.Models.Attribute.HostingProvider.OptiGoogleCloudPlatform
+                      disabled: false
+                    owner:
+                    - id: 41955b71-e581-4187-ab6c-d00d1403350c
+                      value: Arpita K
+                      disabled: false
+                    autonomyLevel:
+                    - id: dd4d3f0f-846c-4dc8-9375-8fa639f707bb
+                      value: Human Support
+                      valueKey: CE.Models.Attribute.AutonomyLevel.Option.HumanSupport
+                      disabled: false
+                    internalOrThirdParty:
+                    - id: da570b8b-6f52-4b67-b009-fd2e427da9ab
+                      value: Self-managed open source software
+                      valueKey: CE.Models.Attribute.InternalOrThirdParty.Option.SelfManagedOpenSourceSoftware
+                      disabled: false
+                    taskType:
+                    - id: bfd749b3-3e68-4e11-b009-1b4b29e0f4eb
+                      value: Feature Extraction
+                      disabled: false
+                    framework:
+                    - id: 082fbfc2-9be8-4c26-aa74-f5e4294c9f52
+                      value: AccelOnnx
+                      valueKey: CE.Models.Attribute.Framework.Option.AccelOnnx
+                      disabled: false
+                    typeofLearning:
+                    - id: 3c84bf17-5440-4010-ad8b-c721d9aa11c7
+                      value: Supervised
+                      valueKey: CE.Models.Attribute.TypeofLearning.OptioSupervised
+                      disabled: false
+                    generativeAI:
+                    - id: de8c2b96-6393-42d3-bd0d-56c35cc18c7e
+                      value: 'Yes'
+                      valueKey: CE.Models.Attribute.GenerativeAI.Option.Yes
+                      disabled: false
+                    programmingLanguage:
+                    - id: a39deb83-2444-472a-92cf-2d8a2c871c46
+                      value: Julia
+                      valueKey: CE.Models.Attribute.ProgrammingLanguage.Julia
+                      disabled: false
+                    equalizedOddsDifference:
+                    - id: null
+                      value: '0.84'
+                      disabled: false
+                    openItemsCount:
+                    - id: null
+                      value: '0'
+                      disabled: false
+                    modelVersion:
+                    - id: null
+                      value: '2.0'
+                      disabled: false
+                    biases:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usages.
+
+                        '
+                      disabled: false
+                    equalizedOddsRatio:
+                    - id: null
+                      value: '0.09'
+                      disabled: false
+                    description:
+                    - id: null
+                      value: 'Mimi is a high-fidelity audio codec leveraging neural networks.
+
+                        '
+                      disabled: false
+                    demographicParityRatio:
+                    - id: null
+                      value: '0.8'
+                      disabled: false
+                    referenceLink:
+                    - id: null
+                      value: https://huggingface.co/kyutai/mimi
+                      disabled: false
+                    demographicParityDifference:
+                    - id: null
+                      value: '0.9'
+                      disabled: false
+                    limitations:
+                    - id: null
+                      value: 'The model has been trained with a few safeguards to try to limit potential toxic usagess.
+
+                        '
+                      disabled: false
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - object-manager-write
+        - integration
+    delete:
+      operationId: deleteModelUsingDELETE
+      summary: Delete Model Object
+      description: 'Use this API to delete an existing Model object record.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - This API only supports Model objects created via Object Manager.'
+      tags:
+      - Model Management
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/platform-object-manager.json
+      parameters:
+      - name: entityId
+        in: path
+        description: The unique identifier of the object.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: b2c3d4e5-f6a7-8901-bcde-f2345678901a
+      responses:
+        '204':
+          description: Model entity deleted successfully
+          content:
+            '*/*':
+              examples:
+                Empty Response:
+                  summary: No content returned on successful deletion
+                  description: A successful deletion returns no content with a 204 status code
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - object-manager
+        - integration
+components:
+  schemas:
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: The details of the attribute.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    Sort:
+      type: object
+      properties:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+          example: true
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
+          type: boolean
+          example: false
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
+          type: boolean
+          example: false
+    EntityListRequest:
+      type: object
+      properties:
+        context:
+          description: The contextual details of the object.
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: The details of the filter, text, and organization search criteria.
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: The details of the non-required fields to include in the response.
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+    EntityUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The details of the organization responsible for the object.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Business Unit
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      example:
+        name: OneTrust Updated
+        attributes:
+          textAttributeName:
+          - value: New Text Value
+      title: Entity Update Request
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityQueryRequest:
+      type: object
+      properties:
+        criteria:
+          description: The details of the filter criteria.
+          example:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            searchQuery: privacy
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+        organizationTraversalStrategy:
+          description: The strategy used to return objects within the organizational hierarchy.
+          type: string
+          example: ancestors_and_descendants
+          enum:
+          - ancestors_and_descendants
+          - descendants
+          - all
+        requestedOrganizationId:
+          description: The unique identifier of the organization for the request.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction:
+          description: The action specifying the source of the API request.
+          type: string
+          example: ListEntity
+      example:
+        criteria:
+          filters:
+          - fieldName: name
+            operator: contains
+            value: OneTrust
+          - fieldName: entityStatus
+            operator: equals
+            value: Active
+          - fieldName: lastModifiedTimestamp
+            operator: greaterThan
+            value: '2024-01-01T00:00:00Z'
+          searchQuery: privacy
+          sort:
+          - fieldName: lastModifiedTimestamp
+            direction: DESC
+        organizationTraversalStrategy: ancestors_and_descendants
+        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction: ListEntity
+    EntityOrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the organization.
+          type: string
+          example: Business Unit
+      required:
+      - id
+    PageEntityIdentifierInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: Customer Entity
+            type: customer
+          items:
+            $ref: '#/components/schemas/EntityIdentifierInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 250
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 25
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 1
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+      example:
+        content:
+        - id: 123e4567-e89b-12d3-a456-426614174000
+          name: Customer Entity
+          type: customer
+          status: active
+        totalElements: 250
+        totalPages: 25
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The name of the attribute.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The color code associated with the attribute.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: The selection value of the attribute.
+          type: string
+          example: 3.5
+        displayLabel:
+          description: The display label for the attribute.
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: This flag indicates whether the attribute is disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    ModelCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the object.
+          type: string
+          example: Customer Sentiment Analysis Model
+          maxLength: 255
+          minLength: 3
+          title: Model Name
+        description:
+          description: The description of the object.
+          type: string
+          example: Deep learning model for analyzing customer feedback sentiment
+          maxLength: 1000
+          title: Model Description
+        modelVersion:
+          description: The version of the model.
+          type: string
+          example: 2.3.1
+          pattern: ^\d+\.\d+\.\d+$
+          title: Model Version
+        limitations:
+          description: The limitations of the model.
+          type: string
+          example: Limited accuracy for non-English languages and specialized industry terminology
+          maxLength: 2000
+          title: Model Limitations
+        biases:
+          description: The known biases of the model.
+          type: string
+          example: May have cultural bias based on training data predominantly from North American customers
+          maxLength: 2000
+          title: Model Biases
+        demographicParityDifference:
+          description: The demographic parity difference measurement.
+          type: string
+          format: decimal
+          example: 0.05
+          title: Demographic Parity Difference
+        demographicParityRatio:
+          description: The demographic parity ratio measurement.
+          type: string
+          format: decimal
+          example: 0.92
+          title: Demographic Parity Ratio
+        equalizedOddsDifference:
+          description: The equalized odds difference measurement.
+          type: string
+          format: decimal
+          example: 0.07
+          title: Equalized Odds Difference
+        equalizedOddsRatio:
+          description: The equalized odds ratio measurement.
+          type: string
+          format: decimal
+          example: 0.89
+          title: Equalized Odds Ratio
+        referenceLink:
+          description: The reference link or other URL.
+          type: string
+          format: uri
+          example: https://example.com/model-docs/sentiment-analysis
+          maxLength: 2048
+          title: Reference Link
+        hubReferenceId:
+          description: The hub reference identifier to cross-reference model repositories.
+          type: string
+          example: SA-MODEL-2025-001
+          maxLength: 100
+          title: Hub Reference ID
+        modelSource:
+          description: The source of the model.
+          type: string
+          example: Internal Development
+          default: Internal Development
+          enum:
+          - Internal Development
+          - Vendor
+          - Open Source
+          - Third Party
+          title: Model Source
+        additionalAttributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            algorithm:
+            - stringValue: BERT
+            accuracy:
+            - doubleValue: 0.95
+            f1Score:
+            - doubleValue: 0.93
+          additionalProperties: true
+          title: Additional Attributes
+        entityDetail:
+          description: The details of the object.
+          example:
+            extendedBaseAttributes:
+              location:
+              - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                value: New York
+                displayValue: New York
+              certifications:
+              - value: AWS Certified Solutions Architect
+            nameKey: OneTrust.CM.ModelNameKey
+          $ref: '#/components/schemas/EntityDetailRequest'
+          additionalProperties: true
+          title: Entity Details
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          format: uuid
+          example:
+            id: f8e7d6c5-b4a3-2019-8765-432109876543
+            name: Parent Org
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+          title: Organization Group ID
+      example:
+        name: Customer Sentiment Analysis Model
+        description: Model for analyzing customer feedback sentiment
+        modelVersion: 1.0.0
+        limitations: Limited accuracy for non-English languages
+        biases: May have cultural bias based on training data
+        modelSource: Internal Development
+        referenceLink: https://docs.example.com/models/sentiment-analysis
+      required:
+      - name
+      title: Model Creation Request
+    EntityFieldRequest:
+      type: object
+      properties:
+        fields:
+          description: The name of the field.
+          type: array
+          items:
+            type: string
+          example:
+          - textAttributeField1
+          - singleSelectAttributeField1
+        mode:
+          description: The mode in which non-required fields would be selected.
+          type: string
+          default: select_all
+          enum:
+          - select_all
+          - ignore_all
+          - specific
+        includeSelectedFullTextSearchFields:
+          description: This flag indicates whether to include selected full text search fields.
+          type: boolean
+          example: true
+        overriddenSearchFields:
+          description: The overridden search fields.
+          type: array
+          items:
+            type: string
+          example:
+          - name
+      required:
+      - mode
+    EntityIdentifierInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+      required:
+      - entityType
+      - id
+    EntityWorkflowInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow.
+          type: string
+          format: uuid
+          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Vendor On-Boarding Workflow
+        type:
+          description: The type of workflow.
+          type: string
+          example: Vendor
+        workflowMode:
+          description: The mode in which the workflow was created.
+          type: string
+          example: BASIC
+          enum:
+          - ADVANCED, BASIC
+        stageId:
+          description: The unique identifier of the workflow stage.
+          type: string
+          format: uuid
+          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName:
+          description: The name of the workflow stage.
+          type: string
+          example: Start On-Boarding
+      example:
+        id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name: Vendor On-Boarding Workflow
+        nameKey: Workflow.VendorOnBoarding.Name
+        type: Vendor
+        workflowMode: BASIC
+        stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName: Start On-Boarding
+        stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+        badgeColor: '#4287f5'
+      required:
+      - id
+      - name
+      - stageId
+      - stageName
+      - type
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    ContextInformation:
+      type: object
+      properties:
+        parameters:
+          description: This parameter can be used to store details in key value pairs.
+          additionalProperties:
+            type: object
+          type: object
+    PageEntityInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - entityType: Customer
+            idType: UUID
+            javaType: com.example.Customer
+          items:
+            $ref: '#/components/schemas/EntityInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 100
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 20
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+      example:
+        content:
+        - entityType: Customer
+          idType: UUID
+          javaType: com.example.Customer
+        totalElements: 100
+        totalPages: 10
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    EntityInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc2c46
+        schemaId:
+          description: The unique identifier of the schema.
+          type: string
+          format: uuid
+          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+          readOnly: true
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        workflowAndStage:
+          description: The details of the workflow and stage.
+          example:
+            id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+            name: Vendor On-Boarding Workflow
+            nameKey: Workflow.VendorOnBoarding.Name
+            type: Vendor
+            workflowMode: BASIC
+            stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+            stageName: Start On-Boarding
+            stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+            badgeColor: '#4287f5'
+          $ref: '#/components/schemas/EntityWorkflowInformation'
+        attributes:
+          description: The details of the associated attributes.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name: OneTrust
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc2c46
+          name: Vendor
+      required:
+      - entityType
+      - id
+      - name
+      - number
+      - schemaId
+      title: Entity Information
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            OBJECT_MANAGER: Grants full access to Object Manager related APIs.
+            OBJECT_MANAGER_READ: Grants read access to Object Manager related APIs
+            OBJECT_MANAGER_WRITE: Grants write access to Object Manager related APIs
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Object Manager'': ''https://my.onetrust.com/s/topic/0TO3q000000JPkQGAW/object-manager''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

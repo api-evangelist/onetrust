@@ -1,0 +1,3413 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Inventory API
+  version: '1.0'
+  description: 'Operations tagged Inventory across 2 of this provider''s published API definitions: onetrust-privacy-automation-data-mapping-automation-openapi.json, onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api
+tags:
+- name: Inventory
+  description: APIs used to create and manage inventory records for supported schema types (processing-activities, vendors, assets, entities).
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+paths:
+  /api/inventory/v2/inventories/{inventoryId}/attachments:
+    post:
+      operationId: addAttachmentsToInventoryUsingPOST
+      summary: Add Attachments to Inventory
+      description: Use this API to add existing attachments to inventory record. Users can see these attached documents under Documents tab of Inventory Details page.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: inventoryId
+        in: path
+        description: The unique identifier of the inventory to which the attachments will be added
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BasicInventoryAttachmentRequest'
+            example:
+            - attachmentId: c20b54ea-2787-487f-8bc3-94d38c22204b
+              description: ''
+              attachmentName: Policies.pdf
+              name: Policies.pdf
+              performAnalysis: false
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}:
+    get:
+      operationId: getListOfInventoriesUsingGET
+      summary: Get List of Inventories
+      description: Use this API to retrieve a paginated list of inventories for a given type.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema. The value can be obtained using the [Get Schemas](/onetrust/reference/getSchemas) API.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: filter
+        in: query
+        description: 'Filter string for searching inventories. Format: ''searchText=value''.'
+        required: false
+        schema:
+          type: string
+        example: searchText=Server
+      - name: markForDelete
+        in: query
+        description: Flag to include soft-deleted inventories.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      responses:
+        '200':
+          description: OK - Successfully retrieved inventory list.
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/VendorInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/AssetInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/EntityInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/InventoriesPaginatedListResponse'
+              examples:
+                vendors:
+                  summary: Vendor Inventories Paginated Response
+                  description: vendors
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Vendor Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      type:
+                        value: Operations
+                        id: a9e976c7-f643-4e3c-94c6-edec5d0279a9
+                        valueKey: VendorsTypeOperations
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 1
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                assets:
+                  summary: Asset Inventories Paginated Response
+                  description: assets
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Asset Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      location:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 2
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                processing-activities:
+                  summary: Processing Activity Inventories Paginated Response
+                  description: processing-activities
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Processing Activity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 3
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                entities:
+                  summary: Entity Inventories Paginated Response
+                  description: entities
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Entity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      primaryOperatingLocation:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 4
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    post:
+      operationId: createInventoryUsingPOST
+      summary: Create Inventory
+      description: Use this API to create an inventory of a particular type.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: generator
+        in: query
+        description: Optional generator type for the create operation.
+        required: false
+        schema:
+          type: string
+        example: API_INTEGRATION
+      - name: createAsMaster
+        in: query
+        description: Flag to create the inventory as a master record.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: sourceId
+        in: query
+        description: Optional source inventory UUID to copy from.
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              oneOf:
+              - $ref: '#/components/schemas/AssetInventoryCreateRequest'
+              - $ref: '#/components/schemas/VendorInventoryCreateRequest'
+              - $ref: '#/components/schemas/EntityInventoryCreateRequest'
+              - $ref: '#/components/schemas/PAInventoryCreateRequest'
+            examples:
+              vendors:
+                summary: Vendor Create Request
+                description: vendors
+                value:
+                  name: Test Vendor
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  type:
+                    id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+                    value: Regulatory
+                    seeded: true
+                    sequence: 0
+              assets:
+                summary: Asset Create Request
+                description: assets
+                value:
+                  name: Test Asset
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  location:
+                    value: US East
+                    id: b2c4d6e8-1234-5678-9abc-def012345678
+              entities:
+                summary: Entity Create Request
+                description: entities
+                value:
+                  name: Test Entity
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  primaryOperatingLocation:
+                    value: US East
+                    id: b2c4d6e8-1234-5678-9abc-def012345678
+              processing-activities:
+                summary: Processing Activity Create Request
+                description: processing-activities
+                value:
+                  name: Test Processing Activity
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+      responses:
+        '201':
+          description: Created - Inventory successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/OneTrustResponse'
+              example:
+                data:
+                  id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/business-key:
+    put:
+      operationId: upsertInventoryUsingPUT
+      summary: Update Inventory by External ID
+      description: 'Use this API to update the Inventory if already exists or create a new Inventory otherwise.
+
+
+        ### Example Request
+
+
+        `PUT https://{hostname}/api/inventory/v2/inventories/{type}/reference/{externalId}`
+
+
+        `PUT https://trial.onetrust.com/api/inventory/v2/inventories/vendors/reference/43fd3a8d-3f6b-464e-bf43-3f0c6c592442`'
+      tags:
+      - Inventory
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: generator
+        in: query
+        description: Optional generator type for the operation.
+        required: false
+        schema:
+          type: string
+        example: API_INTEGRATION
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: string
+              oneOf:
+              - $ref: '#/components/schemas/AssetInventoryCreateRequest'
+              - $ref: '#/components/schemas/VendorInventoryCreateRequest'
+              - $ref: '#/components/schemas/EntityInventoryCreateRequest'
+              - $ref: '#/components/schemas/PAInventoryCreateRequest'
+            examples:
+              vendors:
+                summary: Vendor Upsert Request
+                description: vendors
+                value:
+                  name: Test Vendor
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  type:
+                    id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+                    value: Regulatory
+                    seeded: true
+                    sequence: 0
+              assets:
+                summary: Asset Upsert Request
+                description: assets
+                value:
+                  name: Test Asset
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  location:
+                    value: US East
+                    id: b2c4d6e8-1234-5678-9abc-def012345678
+              entities:
+                summary: Entity Upsert Request
+                description: entities
+                value:
+                  name: Test Entity
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+                  primaryOperatingLocation:
+                    value: US East
+                    id: b2c4d6e8-1234-5678-9abc-def012345678
+              processing-activities:
+                summary: Processing Activity Upsert Request
+                description: processing-activities
+                value:
+                  name: Test Processing Activity
+                  organization:
+                    value: aws
+                    id: aebedb42-a4fe-4768-aac7-7be1b4c17184
+      responses:
+        '200':
+          description: OK - Inventory successfully created or updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpsertInventoryResponse'
+              example:
+                data:
+                  id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+                  name: Updated Inventory
+                  externalId: ext-123
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/criteria:
+    post:
+      operationId: getListOfInventoriesByFilterCriteriaUsingPOST
+      summary: Get List of Inventories by Criteria
+      description: Use this API to retrieve the list of inventories for a given type by filter criteria.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: markForDelete
+        in: query
+        description: Flag to include soft-deleted inventories.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicInventoryFilterRequest'
+      responses:
+        '200':
+          description: OK - Successfully retrieved filtered inventory list.
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/VendorInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/AssetInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/EntityInventoriesPaginatedListResponse'
+                - $ref: '#/components/schemas/InventoriesPaginatedListResponse'
+              examples:
+                vendors:
+                  summary: Vendor Inventories Paginated Response
+                  description: vendors
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Vendor Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      type:
+                        value: Operations
+                        id: a9e976c7-f643-4e3c-94c6-edec5d0279a9
+                        valueKey: VendorsTypeOperations
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 1
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                assets:
+                  summary: Asset Inventories Paginated Response
+                  description: assets
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Asset Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      location:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 2
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                processing-activities:
+                  summary: Processing Activity Inventories Paginated Response
+                  description: processing-activities
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Processing Activity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 3
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+                entities:
+                  summary: Entity Inventories Paginated Response
+                  description: entities
+                  value:
+                    data:
+                    - id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Entity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      primaryOperatingLocation:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 4
+                      isParent: false
+                    meta:
+                      page:
+                        first: true
+                        last: true
+                        number: 0
+                        size: 20
+                        totalElements: 1
+                        totalPages: 1
+                        sort:
+                        - direction: ASC
+                          property: name
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/reference/{externalId}:
+    get:
+      operationId: getInventoryByExternalIdUsingGET
+      summary: Get Inventory by External ID
+      description: Use this API to retrieve the inventory by external ID.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema. The value can be obtained using the [Get Schemas](/onetrust/reference/getSchemas) API.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: externalId
+        in: path
+        description: The external identifier of the inventory item.
+        required: true
+        schema:
+          type: string
+        example: vendor-ext-001
+      responses:
+        '200':
+          description: OK - Successfully retrieved inventory by external ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/OneTrustResponseOfVendorInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfAssetInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfEntityInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfInventory'
+              examples:
+                vendors:
+                  summary: Vendor Inventory Response
+                  description: vendors
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Vendor Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      type:
+                        value: Operations
+                        id: a9e976c7-f643-4e3c-94c6-edec5d0279a9
+                        valueKey: VendorsTypeOperations
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 1
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                assets:
+                  summary: Asset Inventory Response
+                  description: assets
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Asset Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      location:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 2
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                processing-activities:
+                  summary: Processing Activity Inventory Response
+                  description: processing-activities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Processing Activity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 3
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                entities:
+                  summary: Entity Inventory Response
+                  description: entities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Entity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      primaryOperatingLocation:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 4
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/{id}:
+    get:
+      operationId: getInventoryByIdUsingGET
+      summary: Get Inventory by ID
+      description: Use this API to retrieve the details of a specific inventory.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema. The value can be obtained using the [Get Schemas](/onetrust/reference/getSchemas) API.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record. The value can be obtained using the [List Inventories](/onetrust/reference/getInventoryList) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+      responses:
+        '200':
+          description: OK - Successfully retrieved inventory details.
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/OneTrustResponseOfVendorInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfAssetInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfEntityInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfInventory'
+              examples:
+                vendors:
+                  summary: Vendor Inventory Response
+                  description: vendors
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Vendor Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      type:
+                        value: Operations
+                        id: a9e976c7-f643-4e3c-94c6-edec5d0279a9
+                        valueKey: VendorsTypeOperations
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 1
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                assets:
+                  summary: Asset Inventory Response
+                  description: assets
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Asset Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      location:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 2
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                processing-activities:
+                  summary: Processing Activity Inventory Response
+                  description: processing-activities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Processing Activity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 3
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                entities:
+                  summary: Entity Inventory Response
+                  description: entities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Entity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      primaryOperatingLocation:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 4
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    put:
+      operationId: updateInventoryUsingPUT
+      summary: Update Inventory by ID
+      description: Use this API to update the existing inventory. The body of the update request should contain a single object with fields in the same format as the output of the inventory detail endpoint. Only include the fields that need to be updated.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+      - name: primaryEntity
+        in: query
+        description: Flag to indicate if this is a primary entity update.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInventoryRequest'
+            example:
+              inventoryIds:
+              - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+              inventoryRequest:
+                name: New Vendor
+                status: active
+      responses:
+        '200':
+          description: OK - Inventory successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                - $ref: '#/components/schemas/OneTrustResponseOfVendorInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfAssetInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfEntityInventory'
+                - $ref: '#/components/schemas/OneTrustResponseOfInventory'
+              examples:
+                vendors:
+                  summary: Vendor Inventory Response
+                  description: vendors
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Vendor Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      type:
+                        value: Operations
+                        id: a9e976c7-f643-4e3c-94c6-edec5d0279a9
+                        valueKey: VendorsTypeOperations
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 1
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                assets:
+                  summary: Asset Inventory Response
+                  description: assets
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Asset Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      location:
+                        value: US East
+                        id: b2c4d6e8-1234-5678-9abc-def012345678
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 2
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                processing-activities:
+                  summary: Processing Activity Inventory Response
+                  description: processing-activities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Processing Activity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 3
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+                entities:
+                  summary: Entity Inventory Response
+                  description: entities
+                  value:
+                    data:
+                      id: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+                      name: Entity Name
+                      organization:
+                        value: aws
+                        id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+                      isEditable: true
+                      isDeletable: true
+                      canViewDetails: true
+                      status:
+                        key: active
+                      number: 4
+                      isParent: false
+                      updatedBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdBy:
+                        id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+                      createdDate: '2023-05-29T12:06:35.787Z'
+                      updatedDate: '2023-06-02T06:29:44.717Z'
+                      owner:
+                      - id: dc60cf7c-d5f9-4a91-a0ef-2e23faea1d88
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteInventoryUsingDELETE
+      summary: Delete Inventory
+      description: Use this API to delete an Inventory record.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+      - name: deleteType
+        in: query
+        description: The type of deletion to perform. SOFT marks the record as deleted but retains it, HARD permanently deletes it.
+        required: false
+        schema:
+          type: string
+          default: SOFT
+          enum:
+          - SOFT
+          - HARD
+        example: SOFT
+      - name: deleteReason
+        in: query
+        description: An optional message for auditing indicating why the record was deleted.
+        required: false
+        schema:
+          type: string
+          default: Deleted via API Workflow
+        example: No longer needed
+      responses:
+        '200':
+          description: OK - Inventory successfully deleted.
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/{id}/copy:
+    post:
+      operationId: copyInventoryUsingPOST
+      summary: Copy Inventory
+      description: Use this API to create a copy of an existing inventory.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: id
+        in: path
+        description: The unique identifier of the inventory record to copy.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+      - name: inheritFromMaster
+        in: query
+        description: Flag to indicate if the copy should inherit attributes from the master inventory.
+        required: false
+        schema:
+          type: boolean
+          default: true
+        example: true
+      - name: copyRelated
+        in: query
+        description: Flag to indicate if related records should also be copied.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      - name: copyAsChild
+        in: query
+        description: Flag to indicate if the copy should be created as a child of the original inventory.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inventory'
+            example:
+              name: Copied Vendor
+              status:
+                key: active
+              description: Copy of vendor
+      responses:
+        '200':
+          description: OK - Inventory successfully copied.
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - COPY_INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/inventories/{schemaName}/{id}/status:
+    put:
+      operationId: updateInventoryStatusByIdUsingPUT
+      summary: Update Inventory Status
+      description: Use this API to change the existing status of an inventory.
+      tags:
+      - Inventory
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: schemaName
+        in: path
+        description: The `name` property of the schema.
+        required: true
+        schema:
+          type: string
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        example: vendors
+      - name: id
+        in: path
+        description: The unique identifier of an inventory record.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyNameDto'
+      responses:
+        '200':
+          description: OK - Inventory status successfully updated.
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+        - DATA_MAPPING_INVENTORY_CHANGE_STATUS
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /inventory/v2/schemas/attributes/{attributeId}/values/{valueId}:
+    get:
+      tags:
+      - Inventory
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      summary: Get Attribute Options
+      description: 'Use this API to support the editing of attribute option names.
+
+
+        ### Example Request
+
+
+        `PUT https://{hostname}/api/inventory/v2/api/inventory/v2/schemas/attributes/{attributeId}/values/{valueId}`
+
+
+        `PUT https://trial.onetrust.com/api/inventory/v2/schemas/attributes/bcb8c972-cd10-4c2a-9289-44f8cc78ac03/values/98ec8ebc-90e7-4c3e-869f-cb1b1506222c`'
+      parameters:
+      - name: attributeId
+        in: path
+        required: true
+        description: ID of an attribute. The value can be obtained using the [Get Inventory Schema](/onetrust/reference/getschemausingget_1) API.
+        schema:
+          type: string
+      - name: valueId
+        in: path
+        required: true
+        description: ID of a value. The value is obtained using the [Get Inventory Schema Details](/onetrust/reference/getschemadetailsusingfieldname) API.
+        schema:
+          type: string
+      security:
+      - oauth2: []
+      operationId: getInventoryV2SchemasAttributesByAttributeIdValuesByValueId
+      x-operation-id-source: derived
+    servers:
+    - url: https://customer.my.onetrust.com/api
+components:
+  schemas:
+    AssetInventoriesPaginatedListResponse:
+      type: object
+      properties:
+        data:
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetInventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    InventoryTypeReference:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+        value:
+          description: Display value
+          type: string
+          example: Regulatory
+        seeded:
+          description: Whether the value is seeded
+          type: boolean
+          example: true
+        sequence:
+          description: Sequence
+          type: integer
+          format: int32
+          example: 0
+        hint:
+          description: Optional hint
+          type: string
+          example: some-hint
+        hintKey:
+          description: Optional hint key
+          type: string
+          example: someHintKey
+    VendorInventory:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory item
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        organization:
+          description: Organization reference to which the inventory belongs
+          $ref: '#/components/schemas/ObjectReference'
+        canViewDetails:
+          description: Flag indicating if the current user can view inventory details
+          type: boolean
+          example: true
+        name:
+          description: Name of the inventory
+          type: string
+          example: Vendor XYZ
+        riskLevel:
+          description: Risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        riskScore:
+          description: Risk score of the inventory
+          type: number
+          example: 8.5
+        status:
+          description: Status of the inventory
+          example:
+            key: active
+            name: Active
+          $ref: '#/components/schemas/KeyNameDto'
+        externalId:
+          description: External identifier of the inventory
+          type: string
+          example: EXT-12345
+        createdDate:
+          description: Date and time when the inventory was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45.123Z'
+        createdBy:
+          description: Reference to the user who created the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        updatedDate:
+          description: Date and time when the inventory was last updated
+          type: string
+          format: date-time
+          example: '2023-02-20T14:15:30.456Z'
+        updatedBy:
+          description: Reference to the user who last updated the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        selectFields:
+          description: Map of select fields with their values
+          type: object
+          example:
+            data-residency:
+            - key: us
+              value: US
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        textFields:
+          description: Map of text fields with their values
+          type: object
+          example:
+            description: Sample description
+          additionalProperties:
+            type: string
+        number:
+          description: Sequence number of the inventory
+          type: integer
+          format: int64
+          example: 123
+        isParent:
+          description: Flag indicating if this inventory is a parent
+          type: boolean
+          example: true
+        inheritFromMaster:
+          description: Flag indicating if this inventory inherits from master
+          type: boolean
+          example: true
+        parentInventoryId:
+          description: ID of the parent inventory
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        masterRecord:
+          description: Reference to the master record
+          type: string
+          example: MASTER-001
+        workflow:
+          description: Reference to the workflow associated with this inventory
+          example:
+            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
+            value: Vendor Review Workflow
+          $ref: '#/components/schemas/ObjectReference'
+        workflowStage:
+          description: Current workflow stage of the inventory
+          example:
+            stage:
+              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
+              value: In Review
+            badgeColor: '#4CAF50'
+          $ref: '#/components/schemas/InventoryWorkflowStageDto'
+        inherentRiskLevel:
+          description: Inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        inherentRiskScore:
+          description: Inherent risk score of the inventory
+          type: number
+          example: 6.5
+        targetRiskLevel:
+          description: Target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        targetRiskScore:
+          description: Target risk score of the inventory
+          type: number
+          example: 3
+        totalHierarchyRiskLevel:
+          description: Total hierarchy risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyRiskScore:
+          description: Total hierarchy risk score of the inventory
+          type: number
+          example: 8
+        totalHierarchyInherentRiskLevel:
+          description: Total hierarchy inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyInherentRiskScore:
+          description: Total hierarchy inherent risk score of the inventory
+          type: number
+          example: 6
+        totalHierarchyTargetRiskLevel:
+          description: Total hierarchy target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyTargetRiskScore:
+          description: Total hierarchy target risk score of the inventory
+          type: number
+          example: 3
+        inventoryDeleteType:
+          description: Type of deletion for the inventory
+          type: string
+          example: SOFT
+          enum:
+          - HARD
+          - SOFT
+          - NONE
+        deletedReason:
+          description: Reason for deletion of the inventory
+          type: string
+          example: No longer required
+        deletedBy:
+          description: ID of the user who deleted the inventory
+          type: string
+          format: uuid
+          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+        deletedDate:
+          description: Date and time when the inventory was deleted
+          type: string
+          format: date-time
+          example: '2023-03-01T12:00:00.000Z'
+        isGlobalAttributeConfigurationEnabled:
+          description: Flag indicating if global attribute configuration is enabled
+          type: boolean
+          example: true
+        sourceId:
+          description: ID of the source inventory
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        integrationWorkflowId:
+          description: ID of the integration workflow
+          type: string
+          example: wf-123
+        sourceType:
+          description: Type of the source inventory
+          type: string
+          example: API_INTEGRATION
+        reviewType:
+          description: Type of review for the inventory
+          type: string
+          example: ANNUAL
+        similarRecord:
+          description: Similar record detail for the inventory
+          example:
+            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+            name: Vendor ABC
+            hasAccessToSimilarRecord: true
+          $ref: '#/components/schemas/SimilarRecordDetail'
+        detailsUri:
+          description: URI for viewing the inventory details page
+          type: string
+          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: array
+          items:
+            type: string
+          example:
+          - field1
+          - field2
+          uniqueItems: true
+        type:
+          description: Type reference
+          example:
+            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+            value: Regulatory
+          $ref: '#/components/schemas/ObjectReference'
+        editable:
+          type: boolean
+        deletable:
+          type: boolean
+    EntityInventoriesPaginatedListResponse:
+      type: object
+      properties:
+        data:
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityInventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    BasicInventoryAttachmentRequest:
+      type: object
+      properties:
+        AttachmentId:
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        Description:
+          type: string
+          example: Attachment Description
+      required:
+      - AttachmentId
+    UpdateInventoryRequest:
+      type: object
+      properties:
+        inventoryIds:
+          description: List of inventory record UUIDs to be updated.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+          minItems: 1
+        inventoryRequest:
+          description: The inventory update payload as a JSON object.
+          example:
+            name: New Vendor
+            status: active
+          $ref: '#/components/schemas/JsonNode'
+      example:
+        inventoryIds:
+        - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        inventoryRequest:
+          name: New Vendor
+          status: active
+    BulkUpsertInventoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        organization:
+          $ref: '#/components/schemas/ObjectReference'
+        businessOwners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectReference'
+        inventoryType:
+          type: string
+        number:
+          type: integer
+          format: int64
+        externalId:
+          type: string
+        isNew:
+          type: boolean
+        detailsUri:
+          type: string
+        new:
+          type: boolean
+      required:
+      - name
+      - organization
+    JsonNode:
+      type: object
+    OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage'
+    OneTrustResponseOfInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/Inventory'
+    InventoriesPaginatedListResponse:
+      type: object
+      properties:
+        data:
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/Inventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    EntityInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Entity
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+        primaryOperatingLocation:
+          description: Primary operating location reference (required for entities)
+          example:
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
+      required:
+      - name
+      - organization
+      - primaryOperatingLocation
+    VendorInventoriesPaginatedListResponse:
+      type: object
+      properties:
+        data:
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/VendorInventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    KeyNameDto:
+      type: object
+      properties:
+        key:
+          description: The key identifier
+          type: string
+          example: active
+        name:
+          description: The display name associated with the key
+          type: string
+          example: Active
+      required:
+      - key
+    OneTrustResponseOfAssetInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/AssetInventory'
+    OneTrustResponseOfVendorInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/VendorInventory'
+    InventoryWorkflowStageDto:
+      type: object
+      properties:
+        stage:
+          description: Reference to the workflow stage
+          $ref: '#/components/schemas/ObjectReference'
+        badgeColor:
+          description: Color code for the workflow stage badge
+          type: string
+          example: '#4CAF50'
+    PAInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Processing Activity
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+      required:
+      - name
+      - organization
+    InventoryValue:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory value
+          type: string
+          format: uuid
+          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
+        value:
+          description: The display value
+          type: string
+          example: High Risk
+        valueKey:
+          description: The key of the value
+          type: string
+          example: HIGH_RISK
+        colorCode:
+          description: Color code associated with the value
+          type: string
+          example: '#FF0000'
+        selectionValue:
+          description: Selection value
+          type: string
+          example: high
+    SimilarRecordDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        organization:
+          $ref: '#/components/schemas/ObjectReference'
+        location:
+          $ref: '#/components/schemas/ObjectReference'
+        hasAccessToSimilarRecord:
+          type: boolean
+    OneTrustResponseOfEntityInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/EntityInventory'
+    EntityInventory:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory item
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        organization:
+          description: Organization reference to which the inventory belongs
+          $ref: '#/components/schemas/ObjectReference'
+        canViewDetails:
+          description: Flag indicating if the current user can view inventory details
+          type: boolean
+          example: true
+        name:
+          description: Name of the inventory
+          type: string
+          example: Vendor XYZ
+        riskLevel:
+          description: Risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        riskScore:
+          description: Risk score of the inventory
+          type: number
+          example: 8.5
+        status:
+          description: Status of the inventory
+          example:
+            key: active
+            name: Active
+          $ref: '#/components/schemas/KeyNameDto'
+        externalId:
+          description: External identifier of the inventory
+          type: string
+          example: EXT-12345
+        createdDate:
+          description: Date and time when the inventory was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45.123Z'
+        createdBy:
+          description: Reference to the user who created the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        updatedDate:
+          description: Date and time when the inventory was last updated
+          type: string
+          format: date-time
+          example: '2023-02-20T14:15:30.456Z'
+        updatedBy:
+          description: Reference to the user who last updated the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        selectFields:
+          description: Map of select fields with their values
+          type: object
+          example:
+            data-residency:
+            - key: us
+              value: US
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        textFields:
+          description: Map of text fields with their values
+          type: object
+          example:
+            description: Sample description
+          additionalProperties:
+            type: string
+        number:
+          description: Sequence number of the inventory
+          type: integer
+          format: int64
+          example: 123
+        isParent:
+          description: Flag indicating if this inventory is a parent
+          type: boolean
+          example: true
+        inheritFromMaster:
+          description: Flag indicating if this inventory inherits from master
+          type: boolean
+          example: true
+        parentInventoryId:
+          description: ID of the parent inventory
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        masterRecord:
+          description: Reference to the master record
+          type: string
+          example: MASTER-001
+        workflow:
+          description: Reference to the workflow associated with this inventory
+          example:
+            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
+            value: Vendor Review Workflow
+          $ref: '#/components/schemas/ObjectReference'
+        workflowStage:
+          description: Current workflow stage of the inventory
+          example:
+            stage:
+              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
+              value: In Review
+            badgeColor: '#4CAF50'
+          $ref: '#/components/schemas/InventoryWorkflowStageDto'
+        inherentRiskLevel:
+          description: Inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        inherentRiskScore:
+          description: Inherent risk score of the inventory
+          type: number
+          example: 6.5
+        targetRiskLevel:
+          description: Target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        targetRiskScore:
+          description: Target risk score of the inventory
+          type: number
+          example: 3
+        totalHierarchyRiskLevel:
+          description: Total hierarchy risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyRiskScore:
+          description: Total hierarchy risk score of the inventory
+          type: number
+          example: 8
+        totalHierarchyInherentRiskLevel:
+          description: Total hierarchy inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyInherentRiskScore:
+          description: Total hierarchy inherent risk score of the inventory
+          type: number
+          example: 6
+        totalHierarchyTargetRiskLevel:
+          description: Total hierarchy target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyTargetRiskScore:
+          description: Total hierarchy target risk score of the inventory
+          type: number
+          example: 3
+        inventoryDeleteType:
+          description: Type of deletion for the inventory
+          type: string
+          example: SOFT
+          enum:
+          - HARD
+          - SOFT
+          - NONE
+        deletedReason:
+          description: Reason for deletion of the inventory
+          type: string
+          example: No longer required
+        deletedBy:
+          description: ID of the user who deleted the inventory
+          type: string
+          format: uuid
+          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+        deletedDate:
+          description: Date and time when the inventory was deleted
+          type: string
+          format: date-time
+          example: '2023-03-01T12:00:00.000Z'
+        isGlobalAttributeConfigurationEnabled:
+          description: Flag indicating if global attribute configuration is enabled
+          type: boolean
+          example: true
+        sourceId:
+          description: ID of the source inventory
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        integrationWorkflowId:
+          description: ID of the integration workflow
+          type: string
+          example: wf-123
+        sourceType:
+          description: Type of the source inventory
+          type: string
+          example: API_INTEGRATION
+        reviewType:
+          description: Type of review for the inventory
+          type: string
+          example: ANNUAL
+        similarRecord:
+          description: Similar record detail for the inventory
+          example:
+            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+            name: Vendor ABC
+            hasAccessToSimilarRecord: true
+          $ref: '#/components/schemas/SimilarRecordDetail'
+        detailsUri:
+          description: URI for viewing the inventory details page
+          type: string
+          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: array
+          items:
+            type: string
+          example:
+          - field1
+          - field2
+          uniqueItems: true
+        primaryOperatingLocation:
+          description: Primary operating location reference (required for entities)
+          example:
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
+        editable:
+          type: boolean
+        deletable:
+          type: boolean
+    InventoriesPaginatedListResponseSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          example: ASC
+        property:
+          type: string
+          example: name
+    BasicInventoryFilterRequest:
+      type: object
+      properties:
+        filters:
+          description: A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND.
+          type: array
+          items:
+            $ref: '#/components/schemas/CriteriaDefinition'
+          example:
+          - attributeKey: name
+            operator: CONTAINS
+            values:
+            - Server
+          - attributeKey: status.key
+            operator: EQUALS
+            values:
+            - active
+    CriteriaDefinition:
+      type: object
+      properties:
+        attributeKey:
+          description: The key or path of the attribute to filter on (e.g., 'name', 'status.key', 'customFields.someCustomField').
+          type: string
+          example: name
+        dataType:
+          description: 'The data type of the attribute being filtered. (Note: Consider replacing with a more descriptive enum or String if specific integer values have meanings, e.g., 0 for String, 1 for Number, 2 for Date). For now, assuming it''s an internal type identifier.'
+          type: integer
+          format: int32
+          example: 0
+          enum:
+          - '0'
+          - '1'
+          - '2'
+        operator:
+          description: The operator to use for comparing the attribute with the provided values (e.g., EQUALS, CONTAINS, GREATER_THAN).
+          type: string
+          example: CONTAINS
+          enum:
+          - FilterOperator.EQUAL_TO(description=Equal To)
+          - FilterOperator.NOT_EQUAL_TO(description=Not Equal To)
+          - FilterOperator.EQ(description=Equals)
+          - FilterOperator.LT(description=LessThan)
+          - FilterOperator.GT(description=GreaterThan)
+          - FilterOperator.LE(description=LessThanOrEquals)
+          - FilterOperator.GE(description=GreaterThanOrEquals)
+          - FilterOperator.IN_BETWEEN(description=InBetween)
+          - FilterOperator.CONTAINS(description=Contains)
+          - FilterOperator.DOES_NOT_CONTAIN(description=DoesNotContain)
+          - EQUAL_TO
+          - EQ
+          - LT
+          - GT
+          - LE
+          - GE
+          - IN_BETWEEN
+          - CONTAINS
+          - DOES_NOT_CONTAIN
+          - NOT_EQUAL_TO
+        values:
+          description: An array of string values to match against the attribute. For operators like 'IN', multiple values can be provided. For others, typically one value is used.
+          type: array
+          items:
+            type: string
+          example:
+          - Server Alpha
+          - Server Beta
+        date:
+          description: A DTO for specifying date values, used when the attribute is a date type and the operator requires date comparison (e.g., DATE_EQUALS, DATE_BETWEEN).
+          $ref: '#/components/schemas/DateDto'
+    InventoriesPaginatedListResponseMeta:
+      type: object
+      properties:
+        page:
+          description: Pagination information
+          $ref: '#/components/schemas/InventoriesPaginatedListResponsePage'
+    AssetInventory:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory item
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        organization:
+          description: Organization reference to which the inventory belongs
+          $ref: '#/components/schemas/ObjectReference'
+        canViewDetails:
+          description: Flag indicating if the current user can view inventory details
+          type: boolean
+          example: true
+        name:
+          description: Name of the inventory
+          type: string
+          example: Vendor XYZ
+        riskLevel:
+          description: Risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        riskScore:
+          description: Risk score of the inventory
+          type: number
+          example: 8.5
+        status:
+          description: Status of the inventory
+          example:
+            key: active
+            name: Active
+          $ref: '#/components/schemas/KeyNameDto'
+        externalId:
+          description: External identifier of the inventory
+          type: string
+          example: EXT-12345
+        createdDate:
+          description: Date and time when the inventory was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45.123Z'
+        createdBy:
+          description: Reference to the user who created the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        updatedDate:
+          description: Date and time when the inventory was last updated
+          type: string
+          format: date-time
+          example: '2023-02-20T14:15:30.456Z'
+        updatedBy:
+          description: Reference to the user who last updated the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        selectFields:
+          description: Map of select fields with their values
+          type: object
+          example:
+            data-residency:
+            - key: us
+              value: US
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        textFields:
+          description: Map of text fields with their values
+          type: object
+          example:
+            description: Sample description
+          additionalProperties:
+            type: string
+        number:
+          description: Sequence number of the inventory
+          type: integer
+          format: int64
+          example: 123
+        isParent:
+          description: Flag indicating if this inventory is a parent
+          type: boolean
+          example: true
+        inheritFromMaster:
+          description: Flag indicating if this inventory inherits from master
+          type: boolean
+          example: true
+        parentInventoryId:
+          description: ID of the parent inventory
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        masterRecord:
+          description: Reference to the master record
+          type: string
+          example: MASTER-001
+        workflow:
+          description: Reference to the workflow associated with this inventory
+          example:
+            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
+            value: Vendor Review Workflow
+          $ref: '#/components/schemas/ObjectReference'
+        workflowStage:
+          description: Current workflow stage of the inventory
+          example:
+            stage:
+              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
+              value: In Review
+            badgeColor: '#4CAF50'
+          $ref: '#/components/schemas/InventoryWorkflowStageDto'
+        inherentRiskLevel:
+          description: Inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        inherentRiskScore:
+          description: Inherent risk score of the inventory
+          type: number
+          example: 6.5
+        targetRiskLevel:
+          description: Target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        targetRiskScore:
+          description: Target risk score of the inventory
+          type: number
+          example: 3
+        totalHierarchyRiskLevel:
+          description: Total hierarchy risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyRiskScore:
+          description: Total hierarchy risk score of the inventory
+          type: number
+          example: 8
+        totalHierarchyInherentRiskLevel:
+          description: Total hierarchy inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyInherentRiskScore:
+          description: Total hierarchy inherent risk score of the inventory
+          type: number
+          example: 6
+        totalHierarchyTargetRiskLevel:
+          description: Total hierarchy target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyTargetRiskScore:
+          description: Total hierarchy target risk score of the inventory
+          type: number
+          example: 3
+        inventoryDeleteType:
+          description: Type of deletion for the inventory
+          type: string
+          example: SOFT
+          enum:
+          - HARD
+          - SOFT
+          - NONE
+        deletedReason:
+          description: Reason for deletion of the inventory
+          type: string
+          example: No longer required
+        deletedBy:
+          description: ID of the user who deleted the inventory
+          type: string
+          format: uuid
+          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+        deletedDate:
+          description: Date and time when the inventory was deleted
+          type: string
+          format: date-time
+          example: '2023-03-01T12:00:00.000Z'
+        isGlobalAttributeConfigurationEnabled:
+          description: Flag indicating if global attribute configuration is enabled
+          type: boolean
+          example: true
+        sourceId:
+          description: ID of the source inventory
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        integrationWorkflowId:
+          description: ID of the integration workflow
+          type: string
+          example: wf-123
+        sourceType:
+          description: Type of the source inventory
+          type: string
+          example: API_INTEGRATION
+        reviewType:
+          description: Type of review for the inventory
+          type: string
+          example: ANNUAL
+        similarRecord:
+          description: Similar record detail for the inventory
+          example:
+            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+            name: Vendor ABC
+            hasAccessToSimilarRecord: true
+          $ref: '#/components/schemas/SimilarRecordDetail'
+        detailsUri:
+          description: URI for viewing the inventory details page
+          type: string
+          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: array
+          items:
+            type: string
+          example:
+          - field1
+          - field2
+          uniqueItems: true
+        location:
+          description: Location reference (required for assets)
+          example:
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
+        editable:
+          type: boolean
+        deletable:
+          type: boolean
+    InventoriesPaginatedListResponsePage:
+      type: object
+      properties:
+        first:
+          type: boolean
+          example: true
+        last:
+          type: boolean
+          example: true
+        number:
+          type: integer
+          format: int32
+          example: 0
+        size:
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort information
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoriesPaginatedListResponseSort'
+    VendorInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Vendor
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+        type:
+          description: Type reference
+          example:
+            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+            value: Regulatory
+            seeded: true
+            sequence: 0
+          $ref: '#/components/schemas/InventoryTypeReference'
+      required:
+      - name
+      - organization
+      - type
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+    Inventory:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory item
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        organization:
+          description: Organization reference to which the inventory belongs
+          $ref: '#/components/schemas/ObjectReference'
+        canViewDetails:
+          description: Flag indicating if the current user can view inventory details
+          type: boolean
+          example: true
+        name:
+          description: Name of the inventory
+          type: string
+          example: Vendor XYZ
+        riskLevel:
+          description: Risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        riskScore:
+          description: Risk score of the inventory
+          type: number
+          example: 8.5
+        status:
+          description: Status of the inventory
+          example:
+            key: active
+            name: Active
+          $ref: '#/components/schemas/KeyNameDto'
+        externalId:
+          description: External identifier of the inventory
+          type: string
+          example: EXT-12345
+        createdDate:
+          description: Date and time when the inventory was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45.123Z'
+        createdBy:
+          description: Reference to the user who created the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        updatedDate:
+          description: Date and time when the inventory was last updated
+          type: string
+          format: date-time
+          example: '2023-02-20T14:15:30.456Z'
+        updatedBy:
+          description: Reference to the user who last updated the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        selectFields:
+          description: Map of select fields with their values
+          type: object
+          example:
+            data-residency:
+            - key: us
+              value: US
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        textFields:
+          description: Map of text fields with their values
+          type: object
+          example:
+            description: Sample description
+          additionalProperties:
+            type: string
+        number:
+          description: Sequence number of the inventory
+          type: integer
+          format: int64
+          example: 123
+        isParent:
+          description: Flag indicating if this inventory is a parent
+          type: boolean
+          example: true
+        inheritFromMaster:
+          description: Flag indicating if this inventory inherits from master
+          type: boolean
+          example: true
+        parentInventoryId:
+          description: ID of the parent inventory
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        masterRecord:
+          description: Reference to the master record
+          type: string
+          example: MASTER-001
+        workflow:
+          description: Reference to the workflow associated with this inventory
+          example:
+            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
+            value: Vendor Review Workflow
+          $ref: '#/components/schemas/ObjectReference'
+        workflowStage:
+          description: Current workflow stage of the inventory
+          example:
+            stage:
+              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
+              value: In Review
+            badgeColor: '#4CAF50'
+          $ref: '#/components/schemas/InventoryWorkflowStageDto'
+        inherentRiskLevel:
+          description: Inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        inherentRiskScore:
+          description: Inherent risk score of the inventory
+          type: number
+          example: 6.5
+        targetRiskLevel:
+          description: Target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        targetRiskScore:
+          description: Target risk score of the inventory
+          type: number
+          example: 3
+        totalHierarchyRiskLevel:
+          description: Total hierarchy risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyRiskScore:
+          description: Total hierarchy risk score of the inventory
+          type: number
+          example: 8
+        totalHierarchyInherentRiskLevel:
+          description: Total hierarchy inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyInherentRiskScore:
+          description: Total hierarchy inherent risk score of the inventory
+          type: number
+          example: 6
+        totalHierarchyTargetRiskLevel:
+          description: Total hierarchy target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyTargetRiskScore:
+          description: Total hierarchy target risk score of the inventory
+          type: number
+          example: 3
+        inventoryDeleteType:
+          description: Type of deletion for the inventory
+          type: string
+          example: SOFT
+          enum:
+          - HARD
+          - SOFT
+          - NONE
+        deletedReason:
+          description: Reason for deletion of the inventory
+          type: string
+          example: No longer required
+        deletedBy:
+          description: ID of the user who deleted the inventory
+          type: string
+          format: uuid
+          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+        deletedDate:
+          description: Date and time when the inventory was deleted
+          type: string
+          format: date-time
+          example: '2023-03-01T12:00:00.000Z'
+        isGlobalAttributeConfigurationEnabled:
+          description: Flag indicating if global attribute configuration is enabled
+          type: boolean
+          example: true
+        sourceId:
+          description: ID of the source inventory
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        integrationWorkflowId:
+          description: ID of the integration workflow
+          type: string
+          example: wf-123
+        sourceType:
+          description: Type of the source inventory
+          type: string
+          example: API_INTEGRATION
+        reviewType:
+          description: Type of review for the inventory
+          type: string
+          example: ANNUAL
+        similarRecord:
+          description: Similar record detail for the inventory
+          example:
+            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+            name: Vendor ABC
+            hasAccessToSimilarRecord: true
+          $ref: '#/components/schemas/SimilarRecordDetail'
+        detailsUri:
+          description: URI for viewing the inventory details page
+          type: string
+          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: array
+          items:
+            type: string
+          example:
+          - field1
+          - field2
+          uniqueItems: true
+        editable:
+          type: boolean
+        deletable:
+          type: boolean
+    AssetInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Asset
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+        location:
+          description: Location reference (required for assets)
+          example:
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
+      required:
+      - location
+      - name
+      - organization
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
+    DateDto:
+      type: object
+      properties:
+        fromDateValue:
+          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-01'
+          maxLength: 60
+          minLength: 0
+        toDateValue:
+          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-31'
+          maxLength: 60
+          minLength: 0
+      required:
+      - fromDateValue
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
+    OneTrustResponse:
+      type: object
+      properties:
+        data:
+          type: object
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY_READ: Read inventory records
+            INVENTORY_WRITE: Create and delete inventory records
+x-refined-from:
+- onetrust-privacy-automation-data-mapping-automation-openapi.json
+- onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

@@ -1,0 +1,877 @@
+openapi: 3.2.0
+info:
+  title: Tech Risk & Compliance - Audit Management Workpapers API
+  description: The Audit Management API provides comprehensive REST endpoints for managing enterprise audits, workpapers, and compliance assessments with OAuth2 security and advanced filtering capabilities.
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Workpapers
+  description: APIs to handle audit workpaper operations including testing results, sampling outcomes, interview findings, control assessments, and workpaper attribute management.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-audit-management.json
+paths:
+  /api/audit-management/v1/audit-workpapers/pages:
+    post:
+      operationId: getAuditWorkpaperListViewUsingPOST
+      summary: Get List of Workpapers
+      description: Use this API to retrieve a list of all workpapers by key terms and filters. The response will include details for each workpaper along with the associated audit, findings, and attributes.
+      tags:
+      - Workpapers
+      parameters:
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          example: 0
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          example: 20
+          default: 20
+          maximum: 2000
+          minimum: 1
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending.'
+        schema:
+          type: string
+          example: number,asc
+          default: number,asc
+          enum:
+          - number,asc
+          - number,desc
+          - name,asc
+          - name,desc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchCriteriaRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageWorkPaperListInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AUDIT_MANAGEMENT
+  /api/audit-management/v1/audit-workpapers/{workpaperId}:
+    put:
+      operationId: editWorkpaperDetailsUsingPOST
+      summary: Update Workpaper
+      description: 'Use this API to update the attributes of a specific workpaper.
+
+
+        > Note: Things to Know
+
+        >
+
+        > - Workpaper assignees must be updated using the Update Audit Scope API.'
+      tags:
+      - Workpapers
+      parameters:
+      - name: workpaperId
+        in: path
+        description: Workpaper identifier (UUID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkpaperDetailsUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkpaperDetailInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AUDIT_MANAGEMENT
+  /api/audit-management/v1/audit-workpapers/{workpaperId}/attribute-details:
+    get:
+      operationId: getWorkpaperResultUsingGET
+      summary: Get Workpaper Results
+      description: 'Use this API to retrieve the results and the attributes of a specific workpaper.
+
+
+        > Note: Things to Know
+
+        >
+
+        > - Workpaper control details can be retrieved using the Get Workpaper Control Details API.'
+      tags:
+      - Workpapers
+      parameters:
+      - name: workpaperId
+        in: path
+        description: Workpaper identifier (UUID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkpaperDetailInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AUDIT_MANAGEMENT
+  /api/audit-management/v1/audit-workpapers/{workpaperId}/control-details:
+    get:
+      operationId: getWorkpaperBasicDetailInformationUsingGET
+      summary: Get Workpaper Control Details
+      description: 'Use this API to retrieve the control details of a specific workpaper.
+
+
+        > Note: Things to Know
+
+        >
+
+        > - Workpaper attributes can be retrieved using the Get Workpaper Results API.'
+      tags:
+      - Workpapers
+      parameters:
+      - name: workpaperId
+        in: path
+        description: Workpaper identifier (UUID)
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlWorkpaperBasicInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - AUDIT_MANAGEMENT
+components:
+  schemas:
+    SearchCriteriaRequest:
+      type: object
+      properties:
+        filters:
+          description: Filters, which is a set of field name and value combinations to refine search results
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterInformation'
+          example:
+          - field: status
+            operator: EQUALS
+            value: IN_PROGRESS
+          uniqueItems: true
+        fullText:
+          description: Full text search term to find matching audits or workpapers
+          type: string
+          example: Security Compliance
+      title: SearchCriteriaRequest
+    WorkpaperListInformation:
+      type: object
+      properties:
+        workpaperId:
+          description: Workpaper identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Workpaper Number
+          type: integer
+          format: int64
+          example: 1001
+        auditId:
+          description: Audit Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        auditName:
+          description: Audit Name
+          type: string
+          example: Annual Security Compliance Audit
+          minLength: 1
+        scopeId:
+          description: Scope ID
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        orgGroup:
+          description: Organization Group
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174003
+            name: Finance Department
+          $ref: '#/components/schemas/BasicEntityDetail'
+        entityType:
+          description: Scope entity type
+          type: string
+          example: CONTROL
+          enum:
+          - CONTROL
+          - CONTROL_IMPLEMENTATION
+        entityDetail:
+          description: Scope Entity Detail
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174004
+            name: Data Protection Control
+          $ref: '#/components/schemas/BasicEntityDetail'
+        auditors:
+          description: Auditor Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174005
+            name: John Doe
+        approvers:
+          description: Approver Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174006
+            name: Jane Smith
+        stage:
+          description: Workpaper Stage
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174007
+            name: In Progress
+          $ref: '#/components/schemas/StageInformation'
+        workflow:
+          description: Workpaper Workflow
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174008
+            name: Standard Audit Workflow
+          $ref: '#/components/schemas/BasicEntityDetailTranslation'
+        countOfFindings:
+          description: Count of findings for Workpaer
+          type: integer
+          format: int64
+          example: 3
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            priority:
+            - value: High
+            status:
+            - value: In Progress
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      title: WorkpaperListInformation
+    StageInformation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+        nameKey:
+          description: Namekey of the entity for localization
+          type: string
+          example: workflow.stage.in_progress
+        badgeColor:
+          description: Workflow Stage Badge Color
+          type: string
+          example: blue
+      required:
+      - id
+      title: StageInformation
+    ControlAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Attribute option GUID.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        value:
+          description: Attribute option value.
+          type: string
+          example: Text value
+        valueKey:
+          description: Identifier used for translation of an attribute's option value.
+          type: string
+          example: attribute.option.valueKey
+    Sort:
+      type: object
+      title: Sort
+    PageWorkPaperListInformation:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page
+          items:
+            $ref: '#/components/schemas/WorkpaperListInformation'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+          maximum: 2000
+          minimum: 0
+    BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Sample Entity
+      required:
+      - id
+      title: BasicEntityDetail
+    WorkpaperDetailsUpdateRequest:
+      type: object
+      properties:
+        testingResult:
+          description: Workpaper testing result
+          type: string
+          example: Control is operating effectively
+        samplingResult:
+          description: Workpaper sampling result
+          type: string
+          example: Sample of 25 records reviewed
+        interviewResult:
+          description: Workpaper interview result
+          type: string
+          example: Confirmed with security team
+        name:
+          description: Workpaper Name
+          type: string
+          example: Updated Workpaper Name
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            status:
+            - value: COMPLETED
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      title: WorkpaperDetailsUpdateRequest
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    Pageable:
+      type: object
+      title: Pageable
+    ControlWorkpaperBasicInformation:
+      type: object
+      properties:
+        workpaperId:
+          description: Workpaper identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Workpaper Number
+          type: integer
+          format: int64
+          example: 12345
+        auditId:
+          description: Audit Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        auditName:
+          description: Audit Name
+          type: string
+          example: Annual Security Audit
+          minLength: 1
+        stage:
+          description: Workpaper Stage
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174002
+            name: In Progress
+          $ref: '#/components/schemas/BasicEntityDetailTranslation'
+        workflow:
+          description: Workpaper Workflow
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174003
+            name: Standard Workflow
+          $ref: '#/components/schemas/BasicEntityDetailTranslation'
+        controlDetail:
+          description: Control Detail
+          $ref: '#/components/schemas/ControlDetailInformation'
+      title: ControlWorkpaperBasicInformation
+    BasicEntityDetailTranslation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+        nameKey:
+          description: Namekey of the entity for localization
+          type: string
+          example: workflow.stage.in_progress
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: In Progress
+        nameKey: workflow.stage.in_progress
+      required:
+      - id
+      title: BasicEntityDetailTranslation
+    FilterInformation:
+      type: object
+      properties:
+        field:
+          description: Field name to filter on
+          type: string
+          example: status
+        operator:
+          description: Operator to apply for filtering (e.g., EQUAL_TO, CONTAINS, GREATER_THAN)
+          type: string
+          example: EQUAL_TO
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+      title: FilterInformation
+    ControlDetailInformation:
+      type: object
+      properties:
+        id:
+          description: The identifier of the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        identifier:
+          description: The identifier of the control.
+          type: string
+          example: A.5.1.1
+        name:
+          description: The name of the control.
+          type: string
+          example: Control Name
+        description:
+          description: Description of the control.
+          type: string
+          example: Test Controls for Privacy
+        orgGroupId:
+          description: The identifier of the organization the master control is linked to. In general, this is the top organization in the organization hierarchy.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        orgGroupName:
+          description: Organization Group Name of Control.
+          type: string
+          example: ABC Corp
+        frameworkId:
+          description: Identifier (GUID) of the framework on the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        frameworkName:
+          description: Framework Name of Control.
+          type: string
+          example: ISO/IEC 27017
+        frameworkNameKey:
+          description: Framework Name key for Translation.
+          type: string
+          example: framework.key.iso
+        categoryId:
+          description: Identifier (GUID) of the category on the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        categoryName:
+          description: Name of the category on the control.
+          type: string
+          example: Privacy
+        categoryNameKey:
+          description: Identifier used for translation of Category Name.
+          type: string
+          example: ControlName
+        seedControlId:
+          description: The identifier of control that was seeded to the Master Control.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        otControlIdentifier:
+          description: Unique OT identifier of Control.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        status:
+          description: The new status of the control. This can be Active, Archived, or Pending.
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Archived
+          - Pending
+        attributes:
+          description: Custom attributes for the control. These attributes are custom to the tenant.
+          type: object
+          additionalProperties:
+            type: array
+            description: Custom attributes for the control. These attributes are custom to the tenant.
+            items:
+              $ref: '#/components/schemas/ControlAttributeValueInformation'
+        implementationGuidance:
+          description: Implementation guidance of the control requirement.
+          type: string
+          example: Implementation guidance of the control requirement.
+        licensedContentMissing:
+          description: Flag which identify if any licensed content is missing and should obtain the license validation to view all content.
+          type: boolean
+          example: false
+        contentVersion:
+          description: Indicates the content version of this record.
+          type: string
+          example: '1.0'
+      required:
+      - id
+      - identifier
+      - name
+      - orgGroupId
+      - orgGroupName
+    WorkpaperDetailInformation:
+      type: object
+      properties:
+        testingResult:
+          description: Workpaper testing result
+          type: string
+          example: Control is operating effectively as designed
+        samplingResult:
+          description: Workpaper sampling result
+          type: string
+          example: Sample of 25 transactions were tested with no exceptions noted
+        interviewResult:
+          description: Workpaper interview result
+          type: string
+          example: Confirmed implementation with the security team
+        auditors:
+          description: Auditor Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: John Doe
+        approvers:
+          description: Approver Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174001
+            name: Jane Smith
+        entityDetail:
+          description: Scope Entity Detail
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174002
+            name: Access Control Policy
+          $ref: '#/components/schemas/BasicEntityDetail'
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            status:
+            - value: Completed
+            priority:
+            - value: High
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      title: WorkpaperDetailInformation
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            AUDIT_MANAGEMENT: Audit Management Scope gives the user access to read/write/delete operations used for Audit Management.
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+  links:
+  - '{''Audit Management Knowledge Base'': ''https://my.onetrust.com/s/topic/0TO1Q000000bHfvWAE/audit-management''}'
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false

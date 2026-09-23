@@ -1,0 +1,2242 @@
+openapi: 3.2.0
+info:
+  title: Tech Risk & Compliance - IT Risk Management Control…
+  description: The IT Risk Management API provides comprehensive REST endpoints for managing enterprise security controls, threats, vulnerabilities, and their implementations with OAuth2 security and extensive customization capabilities.
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Control Implementations
+  description: APIs to handle control implementation operations including creation, updates, entity associations, attachment management, and comprehensive search across multiple entity types.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+  x-displayName: Control Implementations
+paths:
+  /api/controls/v1/control-implementation-attributes/search:
+    post:
+      operationId: findAllControlImplementationsAttributesAndOptionsByUsingPOST
+      summary: Search Control Implementation Attributes
+      description: Use this API to search for control implementation attributes by key terms and filters.
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeQueryCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeInformation'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+  /api/controls/v1/control-implementations/pages:
+    post:
+      operationId: findAllControlImplementationsUsingPOST
+      summary: Get List of Control Implementations
+      description: Use this API to retrieve a list of all control implementations. The response will include relevant details for each control implementation, including framework and category details and associated attributes.
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - number,asc
+          - number,desc
+          - primaryEntityName,asc
+          - primaryEntityName,desc
+          - primaryEntityType,asc
+          - primaryEntityType,desc
+          - controlIdentifier,asc
+          - controlIdentifier,desc
+          - controlName,asc
+          - controlName,desc
+          - frameworkName,asc
+          - frameworkName,desc
+          - categoryName,asc
+          - categoryName,desc
+          - effectiveness,asc
+          - effectiveness,desc
+          - maturityName,asc
+          - maturityName,desc
+          - status,asc
+          - status,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+        example: number,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_PageControlImplementationDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+  /api/controls/v1/control-implementations/{guid}:
+    get:
+      operationId: getControlImplementationDetailsUsingGET
+      summary: Get Control Implementation
+      description: Use this API to retrieve a single control implementation by its unique identifier along with the associated attributes, category, and framework details.
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: guid
+        in: path
+        description: ID of the control entity implementation.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlImplementationDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+    put:
+      operationId: updateControlImplementationByImplementationIdUsingPUT
+      summary: Update Control Implementation
+      description: 'Use this API to update the attributes of a specific control implementation.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The Update Control API can be used to update the attributes of a control in the Controls Library.'
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: guid
+        in: path
+        description: ID of the control entity implementation.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlImplementationUpdateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlImplementationDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+    delete:
+      operationId: removeControlImplementationByEntityAndImplementationIdUsingDELETE
+      summary: Delete Control Implementation
+      description: Use this API to delete a control implementation from an entity.
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: entityId
+        in: query
+        description: ID of the entity. The value can be obtained using [Get List of Control Implementations by Entity](/onetrust/reference/findallcontrolimplementationsusingpost) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: guid
+        in: path
+        description: ID of the control implementation. The value can be obtained using [Get List of Control Implementations by Entity](/onetrust/reference/findallcontrolimplementationsusingpost) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+  /api/controls/v1/control-implementations/{guid}/attachments:
+    post:
+      operationId: addAttachmentsToImplementationUsingPOST
+      summary: Attach Files to Control Implementation
+      description: 'Use this API to attach a list of files to a specific control implementation.
+
+
+        > 🗒 Things to Know
+
+        >
+
+        > - The files must first be uploaded to the OneTrust application using the Upload File API. The `Id` and `Name` parameter values returned in the Upload File API response are required in the request body for this API.'
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: guid
+        in: path
+        description: ID of the control implementation. The value can be obtained using [Get List of Control Implementations by Entity](/onetrust/reference/findallcontrolimplementationsusingpost) API.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ImplementationAttachmentCreateRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+  /api/controls/v1/entities/{entityId}/control-implementations/pages:
+    post:
+      operationId: findAssociatedControlImplementationsUsingPOST
+      summary: Get List of Control Implementations by Entity
+      description: Use this API to retrieve a list of all control implementations by entity, such as by assets, processing activities, legal entities, risks, and vendors.
+      tags:
+      - Control Implementations
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/tech-risk-compliance-it-risk-management.json
+      parameters:
+      - name: entityId
+        in: path
+        description: ID of the entity. This value can be obtained using [Get Control Implementation](/onetrust/reference/getcontrolimplementationdetailsusingget) API.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 2000
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - number,asc
+          - number,desc
+          - entityName,asc
+          - entityName,desc
+          - entityType,asc
+          - entityType,desc
+          - controlIdentifier,asc
+          - controlIdentifier,desc
+          - controlName,asc
+          - controlName,desc
+          - frameworkName,asc
+          - frameworkName,desc
+          - categoryName,asc
+          - categoryName,desc
+          - effectiveness,asc
+          - effectiveness,desc
+          - maturityName,asc
+          - maturityName,desc
+          - status,asc
+          - status,desc
+          - primaryEntityName,asc
+          - primaryEntityName,desc
+          - primaryEntityType,asc
+          - primaryEntityType,desc
+          - createdDate,asc
+          - createdDate,desc
+          - lastModifiedDate,asc
+          - lastModifiedDate,desc
+        example: number,asc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_PageControlImplementationEntityDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - TechRiskCompliance-ITRiskManagement_OAUTH2:
+        - CONTROL
+components:
+  schemas:
+    TechRiskCompliance-ITRiskManagement_AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: Option Source Entity Type
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: Basic Url for the Option source Service
+          type: string
+          example: /api/location
+        optionUrl:
+          description: Api URL for the Drop Down Api
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
+        optionListUrl:
+          description: Api URL for the Drop Down Api. Complete List of entities
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
+        viewType:
+          description: This will help to identify the view type of list
+          type: string
+        optionType:
+          description: Option Type
+          type: string
+          example: BusinessLocations
+        permissions:
+          description: Permissions
+          type: array
+          items:
+            type: string
+          example: '[features.core-constructs.view]'
+        applicationUrl:
+          description: Application Url
+          type: string
+          example: /settings/location-management/location/Location
+    TechRiskCompliance-ITRiskManagement_PageControlImplementationEntityDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlImplementationEntityDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    TechRiskCompliance-ITRiskManagement_StageApproverBasicDetails:
+      type: object
+      properties:
+        id:
+          description: stage approver id.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174003
+        firstName:
+          description: stage approver first name.
+          type: string
+          example: John
+        lastName:
+          description: stage approver last name.
+          type: string
+          example: Doe
+        approvedTimeStamp:
+          description: approved time.
+          type: string
+          format: date-time
+          example: '2020-11-05T22:01:21.200+00:00'
+        status:
+          description: stage approved status.
+          type: string
+          example: approved
+    TechRiskCompliance-ITRiskManagement_BasicDetail:
+      type: object
+      properties:
+        id:
+          description: Identifier (GUID)
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        name:
+          description: Name
+          type: string
+          example: Entity Name
+    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
+      type: object
+      properties:
+        filters:
+          description: Filters used in search.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
+          uniqueItems: true
+        fullText:
+          description: Full text search terms.
+          type: string
+          example: firewall
+        excludeTotalRecordsCount:
+          type: boolean
+    TechRiskCompliance-ITRiskManagement_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    TechRiskCompliance-ITRiskManagement_ImplementationAttachmentCreateRequest:
+      type: object
+      properties:
+        controlAttachmentRequests:
+          description: List of attachment requests to be associated with the control implementation.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ImplementationAttachmentRequest'
+      required:
+      - controlAttachmentRequests
+    TechRiskCompliance-ITRiskManagement_ControlEntityInformation:
+      type: object
+      properties:
+        id:
+          description: The identifier (GUID) of the related entity.
+          type: string
+          format: uuid
+          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
+        name:
+          description: The name of the entity.
+          type: string
+          example: Asset 305
+        type:
+          description: The type of the related entity.
+          type: string
+          example: Risks
+          enum:
+          - Risks
+          - Assets
+          - ProcessingActivities
+          - Vendors
+          - Entities
+        controlEntityType:
+          description: The type of the related entity.
+          example:
+            id: Risks
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation'
+        organizationId:
+          description: The identifier (GUID) of the organization which contains the entity.
+          type: string
+          format: uuid
+          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
+        softInherited:
+          description: Indicates if this control is soft-inherited or not.
+          type: boolean
+          example: false
+        relationshipLabel:
+          description: The RelationshipType to the control entity.
+          type: string
+          example: IMPLEMENTED_ON
+          enum:
+          - IMPLEMENTED_ON
+          - MITIGATES
+          - LEVERAGED_BY
+          - INCLUDED_IN
+          - RELATED_TO
+        isPrimary:
+          description: Indicates if entity is primary.
+          type: boolean
+          example: true
+      required:
+      - controlEntityType
+      - id
+      - name
+      - type
+    TechRiskCompliance-ITRiskManagement_ImplementationEntityLinkDto:
+      type: object
+      properties:
+        id:
+          description: GUID of control implementation entity link.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        sourceId:
+          description: GUID of control implementation.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        sourceName:
+          description: Control implementation name.
+          type: string
+          example: Control name
+        sourceType:
+          description: Control implementation.
+          type: string
+          example: Control
+        targetId:
+          description: GUID of target entity.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5pe3
+        targetName:
+          description: Target entity name.
+          type: string
+          example: Asset124
+        targetType:
+          description: Target entity type.
+          type: string
+          example: Assets
+        organizationId:
+          description: GUID of organization.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        label:
+          description: Relationship label.
+          type: string
+          example: LEVERAGED_BY
+          enum:
+          - IMPLEMENTED_ON
+          - MITIGATES
+          - LEVERAGED_BY
+          - INCLUDED_IN
+          - RELATED_TO
+        primary:
+          type: boolean
+    TechRiskCompliance-ITRiskManagement_AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
+    TechRiskCompliance-ITRiskManagement_AbacBasicAssignmentInfo:
+      type: object
+      properties:
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+        policyStatus:
+          description: Policy status of the linked assignment
+          type: string
+          example: ACTIVE
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - PROCESSING
+          - FAILED
+    TechRiskCompliance-ITRiskManagement_ControlImplementationUpdateRequest:
+      type: object
+      properties:
+        status:
+          description: New status of implemented control.
+          type: string
+          example: Pending
+          enum:
+          - Pending
+          - Implemented
+          - NotDoing
+          - Retired
+          deprecated: true
+        effectiveness:
+          description: Effectiveness of implemented control.
+          type: string
+          example: Ineffective
+          enum:
+          - Effective
+          - Ineffective
+          - Planned
+          deprecated: true
+        effectivenessId:
+          description: Identifier of the effectiveness associated with control implementation.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174123
+        note:
+          description: Notes on implemented control.
+          type: string
+          example: Testing Control
+        deadline:
+          description: Deadline associated with the control implementation. Format (yyyy-MM-dd).
+          type: string
+          format: date
+          example: '2019-01-01'
+        controlOwnerId:
+          description: Identifier (UUID) of the owner of control implementation.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+          deprecated: true
+        maturityId:
+          description: Identifier of the maturity associated with control implementation.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        statusId:
+          description: Identifier of the control implementation Status.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        attributes:
+          description: Custom Attributes of control implementation.
+          type: object
+          example:
+            attributeTextValue.value1:
+            - id: 4e9ac165-7304-4c6e-a207-d32f22f4808b
+              value: '2020-11-12'
+              valueKey: OneTrustApp.CONTROLS.Control.Attributes.866e5e2d-916f-4ab7-b16f-448c9b44e815
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation'
+        controlOwnerIds:
+          description: List of Identifier (UUID) of the owners of control implementation.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 123e4567-e89b-12d3-a456-426614174000
+          - 456a4567-e89b-12d3-123e-426614174001
+          - 123e4567-e89b-12d3-a456-426614174002
+        controlApproverIds:
+          description: List of Identifier (UUID) of the approver of control implementation.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 123e4567-e89b-12d3-a456-426614174000
+          - 456a4567-e89b-12d3-123e-426614174001
+          - 123e4567-e89b-12d3-a456-426614174002
+        implementationCategoryId:
+          description: The identifier of the category tied to the control Implementation. Optional if no category needed or if category name provided.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        implementationDescription:
+          description: Description of the control implementation.
+          type: string
+          example: Testing Control Implementation
+          maxLength: 4000
+          minLength: 0
+        implementationGuidance:
+          description: Implementation Guidance of the control Implementation.
+          type: string
+          example: Testing Control guidance
+        implementationName:
+          description: The name of the control Implementation.
+          type: string
+          example: Control Implementation
+          maxLength: 300
+          minLength: 0
+        controlOwners:
+          description: List of owners of control implementation.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: User1
+        implementationCategoryName:
+          description: The name of the category tied to the control Implementation.
+          type: string
+          example: Implementation Custom Category
+      required:
+      - status
+    TechRiskCompliance-ITRiskManagement_ControlExtInformation:
+      type: object
+      properties:
+        id:
+          description: The identifier of the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        identifier:
+          description: The identifier of the control.
+          type: string
+          example: A.5.1.1
+        name:
+          description: The name of the control.
+          type: string
+          example: Control Name
+        description:
+          description: Description of the control.
+          type: string
+          example: Test Controls for Privacy
+        orgGroupId:
+          description: The identifier of the organization the master control is linked to. In general, this is the top organization in the organization hierarchy.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        orgGroupName:
+          description: Organization Group Name of Control.
+          type: string
+          example: ABC Corp
+        frameworkId:
+          description: Identifier (GUID) of the framework on the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        categoryId:
+          description: Identifier (GUID) of the category on the control.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        categoryName:
+          description: Name of the category on the control.
+          type: string
+          example: Privacy
+        categoryNameKey:
+          description: Identifier used for translation of Category Name.
+          type: string
+          example: ControlName
+        frameworkName:
+          description: Name of the framework of the control.
+          type: string
+          example: Framework 123
+        attributes:
+          description: Custom attributes for the control. These attributes are custom to the tenant.
+          type: object
+          additionalProperties:
+            type: array
+            description: Custom attributes for the control. These attributes are custom to the tenant.
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation'
+        implementationGuidance:
+          description: Implementation guidance of the control requirement.
+          type: string
+          example: Implementation guidance of the control requirement.
+      required:
+      - id
+      - identifier
+      - name
+      - orgGroupId
+      - orgGroupName
+    TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity type. This can be Assets, Entities, Custom Object GUID in the form of String.
+          type: string
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        label:
+          description: Name of the EntityType.
+          type: string
+          example: Assets
+        translationKey:
+          description: Translation Key of EntityType ID.
+          type: string
+          example: Assets
+        moduleName:
+          description: Module Name of EntityType.
+          type: string
+          example: DataMapping
+        seeded:
+          description: The parameter is true for Base Entity Type and false for Custom Object/Entity Types by default.
+          type: boolean
+          example: true
+      required:
+      - id
+    TechRiskCompliance-ITRiskManagement_AttributeFormulaDetail:
+      type: object
+      properties:
+        formula:
+          type: string
+        formulaType:
+          type: string
+    TechRiskCompliance-ITRiskManagement_BasicEntityReference:
+      type: object
+      properties:
+        id:
+          description: Identifier of the entity (UUID).
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the entity.
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Name of the entity used for translation.
+          type: string
+          example: EntityName
+      required:
+      - id
+      - name
+    TechRiskCompliance-ITRiskManagement_ControlImplementationDto:
+      type: object
+      properties:
+        id:
+          description: GUID of Control Implementation.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Numeric identifier for Control Implementation.
+          type: integer
+          format: int32
+          example: 123
+        organizationId:
+          description: The identifier (GUID) of the organization implementation.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        orgGroupName:
+          description: Organization name with which control implementation is created.
+          type: string
+          example: Organization1
+        primaryEntity:
+          description: Entity Details of the primary implementor.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityInformation'
+        control:
+          description: Implemented Control Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlExtInformation'
+        status:
+          description: The status of the control.
+          type: string
+          example: Implemented
+          enum:
+          - Pending
+          - Implemented
+          - NotDoing
+          - Suggested
+          deprecated: true
+        suggestion:
+          description: The suggestion status of the control. Used by Athena.
+          type: string
+          example: Suggested
+          enum:
+          - Suggested
+          - Accepted
+          - Rejected
+        effectiveness:
+          description: The effectiveness of the control.
+          type: string
+          example: Effective
+          enum:
+          - Effective
+          - Ineffective
+          - Planned
+          deprecated: true
+        effectivenessInfo:
+          description: Effectiveness details
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        note:
+          description: Notes used for the control. This is free text to contain any additional details which may be needed.
+          type: string
+          example: Testing control value
+        deadline:
+          description: The deadline for the control.
+          type: string
+          format: date
+          example: '2020-11-05'
+        maturity:
+          description: Maturity Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        statusInfo:
+          description: Status Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        owner:
+          description: Implemented Control Owner.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+          deprecated: true
+        owners:
+          description: List of Implemented Control Owners.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        approvers:
+          description: List of Implemented Control approvers.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        createdBy:
+          description: The user or operation the control was created by.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        createDt:
+          description: The date on which the control implementation was created.
+          type: string
+          format: date-time
+          example: '2020-11-05T22:01:21.200+00:00'
+        lastModifiedBy:
+          description: The user or process the control was last modified by (GUID).
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        lastModifiedDate:
+          description: The date the control was last modified.
+          type: string
+          format: date-time
+          example: 2020-11-05T22:01:21.200+00:0
+        controlObjectivesCount:
+          description: count of total control objectives linked.
+          type: integer
+          format: int64
+          example: 4
+        attributes:
+          description: Implemented Custom Attributes.
+          type: object
+          additionalProperties:
+            type: array
+            description: Implemented Custom Attributes.
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation'
+        entityLinks:
+          description: Entity Details of the implementation links.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityInformation'
+        workflow:
+          description: Control Implementation workflow basic details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicDetails'
+        workflowStage:
+          description: Control Implementation workflow stage basic details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_WorkflowStageBasicDetails'
+        deleteType:
+          description: Control implementation delete type.
+          type: string
+          example: SOFT
+          enum:
+          - SOFT
+        controlImplementationName:
+          description: Control Implementation Name of the implemented control.
+          type: string
+          example: Control Implementation name
+        controlImplementationDescription:
+          description: Control Implementation Description of the implemented control.
+          type: string
+          example: Control Implementation Description
+        controlImplementationGuidance:
+          description: Control Implementation Guidance of the implemented control.
+          type: string
+          example: Control Implementation Guidance
+        controlImplementationCategoryId:
+          description: Control Implementation Category of the implemented control.
+          type: string
+          format: uuid
+          example: Control Implementation Category Id
+        controlImplementationCategoryName:
+          description: Control Implementation Category Name of the implemented control.
+          type: string
+          example: Control Category Name
+        controlImplementationCategoryNameKey:
+          description: Control Implementation Name of the implemented control.
+          type: string
+          example: Control Category Name Key
+        controlImplementationOrigin:
+          description: Control Implementation Origin of the implemented control.
+          type: string
+          example: Control Implementation Origin
+        externalImplementationURL:
+          description: External ImplementationURL of the implemented control.
+          type: string
+          example: Control Implementation Link
+        externalControlImplementation:
+          description: is this an external control implementation.
+          type: boolean
+          example: true
+        duplicateEvidenceTaskImplPresent:
+          description: Duplicate evidence task implementation present.
+          type: boolean
+          example: true
+        hasMoreThanOneInvLinks:
+          description: Implementation has more than one inventory links.
+          type: boolean
+          example: true
+        inventoriesCount:
+          description: Related inventories count.
+          type: integer
+          format: int64
+          example: 3
+        risksCount:
+          description: Related risks count.
+          type: integer
+          format: int64
+          example: 1
+      required:
+      - control
+      - id
+      - number
+      - orgGroupName
+      - organizationId
+      - primaryEntity
+      - status
+    TechRiskCompliance-ITRiskManagement_AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
+    TechRiskCompliance-ITRiskManagement_IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+    TechRiskCompliance-ITRiskManagement_AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option Key which can be used for translation
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeOptionMetadata'
+      required:
+      - option
+    TechRiskCompliance-ITRiskManagement_AttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Attribute name
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: Attribute name key which can be used for translation
+          type: string
+          example: IM.Name
+          maxLength: 255
+        description:
+          description: Attribute description
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: Attribute description key which can be used for translation
+          type: string
+          example: IM.Name.Description
+          maxLength: 255
+        fieldName:
+          description: Attribute field name which can be used for uniquely identifying an attribute
+          type: string
+          example: nameOfRecord
+          maxLength: 100
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: name
+          maxLength: 100
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+          example: true
+          default: 'true'
+        required:
+          description: Indicator for mandatory attribute
+          type: boolean
+          example: false
+          default: 'false'
+        readOnly:
+          description: Indicator for read only attribute
+          type: boolean
+          example: false
+          default: 'false'
+        encrypted:
+          description: Indicate whether to encrypt the field value or not. Only supported for text, single select and multi select
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: Indicator for allowing user defined options for attribute
+          type: boolean
+          example: false
+          default: 'false'
+        baseAttribute:
+          description: Indicate if attribute is part of extendable entity and which cannot be modified
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: Response type for attribute
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        formula:
+          description: Formula for attribute
+          type: string
+          example: Default:Field4 + Default:Field3 + 100 + avg(CrossSchema:Field4 + Default:Field3)
+          maxLength: 4000
+        optionType:
+          description: Attribute Options value source type
+          type: string
+          example: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+        optionAllowed:
+          description: Indicate if attribute can have static options or not
+          type: boolean
+          example: false
+          default: 'false'
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: vendors
+          maxLength: 100
+        options:
+          description: Option's for given attribute based on response type
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeOptionInformation'
+        referenceCategories:
+          description: Categories for given attribute
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_CategoryInformation'
+        responseMaxLength:
+          description: Response max length
+          type: integer
+          format: int32
+          example: 4000
+          default: '4000'
+          maximum: 4000
+          minimum: 1
+        responseSubType:
+          description: Response sub type
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeInformation:
+          description: Associated attribute information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeInformation'
+        multiSelectMaxOptionValues:
+          description: MultiSelect max option values
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        hidden:
+          description: Hidden
+          type: boolean
+          example: false
+          default: 'false'
+        optionUrl:
+          description: OptionUrl
+          type: string
+          example: /api/risk-v2/risk-categories
+          maxLength: 255
+        intakeQuestion:
+          description: Attribute Intake Question Details
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_IntakeQuestion'
+        deleteMarker:
+          description: Indicate the status of an attribute's deletion process
+          type: string
+          example: MARKED_FOR_DELETE
+          enum:
+          - MARKED_FOR_DELETE
+          - DELETING
+          - DELETED
+        optionMetadata:
+          description: Option Metadata
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeOptionMetadataInformation'
+        validationRuleId:
+          description: Validation Rule configured for Attribute (e.g., email, URL)
+          type: string
+          example: email
+        abacBasicAssignmentInfo:
+          description: Contains the id, name and ObjectType of the linked assignment
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AbacBasicAssignmentInfo'
+        optionsByDomain:
+          description: Override options by Domain
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeDomainOptionOverrideInformation'
+        formulaByDomain:
+          description: Formula by Domain
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeFormulaDetail'
+        displayResponseType:
+          description: Display response type for UI - System attributes are displayed as SingleSelect or MultiSelect based on multiSelectMaxOptionValues
+          type: string
+          example: SingleSelect
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        associatedAttributeFieldName:
+          type: string
+      required:
+      - enabled
+      - fieldName
+      - name
+    TechRiskCompliance-ITRiskManagement_AttributeDomainOptionOverrideInformation:
+      type: object
+      properties:
+        id:
+          description: Override Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attributeDomainOptionId:
+          description: Domain Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
+        targetAttributeId:
+          description: Target Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        targetOptionId:
+          description: Target Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+        optionKey:
+          description: Option name key
+          type: string
+          example: TypeB
+        optionSelectionValue:
+          description: Option selection value
+          type: string
+          example: 10
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeOptionMetadata'
+        optionSelectionValueAsDouble:
+          type: number
+          format: double
+        optionAsDouble:
+          type: number
+          format: double
+    TechRiskCompliance-ITRiskManagement_WorkflowStageBasicDetails:
+      type: object
+      properties:
+        id:
+          description: Identifier (GUID) of the entity.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        name:
+          description: Name of the entity.
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Name Key of the entity.
+          type: string
+          example: EntityNameKey
+        currentStageApprovers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_StageApproverBasicDetails'
+          uniqueItems: true
+    TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Attribute option GUID.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        value:
+          description: Attribute option value.
+          type: string
+          example: Text value
+        valueKey:
+          description: Identifier used for translation of an attribute's option value.
+          type: string
+          example: attribute.option.valueKey
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+    TechRiskCompliance-ITRiskManagement_AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    TechRiskCompliance-ITRiskManagement_FilterInformation:
+      type: object
+      properties:
+        field:
+          description: Field to search on.
+          type: string
+          example: lastCollected
+        operator:
+          description: Operator for search.
+          type: string
+          example: GREATER_THAN
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          example: '2020-11-10'
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+      - value
+    TechRiskCompliance-ITRiskManagement_AssociatedAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Associated Attribute GUID
+          type: string
+          format: uuid
+        name:
+          description: Name
+          type: string
+          example: Count of members
+          minLength: 1
+        nameKey:
+          description: Name key
+          type: string
+          example: IM.CountOfMembersName
+        description:
+          description: Description
+          type: string
+          example: Provide details about count associated with this attribute
+        descriptionKey:
+          description: Description Key
+          type: string
+          example: IM.CountOfMembersDesc
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: risk
+        fieldName:
+          description: Attribute field name
+          type: string
+          example: countOfMembers
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: count
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+        responseType:
+          description: Response Type
+          type: string
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        responseSubType:
+          description: Response sub type
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          description: Formula for attribute
+          type: string
+          example: sum(1, 3)
+        options:
+          description: Attribute options
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeOptionInformation'
+        optionsByDomain:
+          description: Override options by Domain
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeDomainOptionOverrideInformation'
+      required:
+      - enabled
+      - fieldName
+      - id
+      - responseType
+    TechRiskCompliance-ITRiskManagement_PageControlImplementationDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlImplementationDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    TechRiskCompliance-ITRiskManagement_Pageable:
+      type: object
+      properties:
+        offset:
+          description: The page offset.
+          type: integer
+          format: int64
+          example: 0
+        pageNumber:
+          description: Page number of the results list (0….N).
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: Number of records per page (0…N).
+          type: integer
+          format: int32
+          example: 20
+        paged:
+          description: The flag to check if the result is paged or not.
+          type: boolean
+          example: true
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        unpaged:
+          description: The flag to check if the result is unpaged or not.
+          type: boolean
+          example: false
+      title: Pageable
+    TechRiskCompliance-ITRiskManagement_ImplementationAttachmentRequest:
+      type: object
+      properties:
+        attachmentId:
+          description: Attachment Id.
+          type: string
+          format: uuid
+          example: 2c2e9e4d-4d4d-4d4d-4d4d-2c2e9e4d4d4d
+        fileName:
+          description: Attachment Description.
+          type: string
+          example: Attachment file name
+          minLength: 1
+        fileDescription:
+          description: Attachment Name.
+          type: string
+          example: Attachment description
+        sourceId:
+          description: The Id of the source from which attachment is inherited.
+          type: string
+          format: uuid
+          example: 2c2e9e4d-4d4d-4d4d-4d4d-2c2e9e4d4d4d
+        sourceType:
+          description: The type of the source from which attachment is inherited.
+          type: string
+          example: Implementation
+        sourceName:
+          description: The name of the source from which attachment is inherited.
+          type: string
+          example: Control Implementation
+      required:
+      - attachmentId
+      - fileName
+    TechRiskCompliance-ITRiskManagement_Sort:
+      type: object
+      properties:
+        empty:
+          description: The flag to check if the result is empty or not.
+          type: boolean
+          example: false
+        sorted:
+          description: The flag to check if the result is sorted or not.
+          type: boolean
+          example: true
+        unsorted:
+          description: The flag to check if the result is unsorted or not.
+          type: boolean
+          example: false
+      title: Sort
+    TechRiskCompliance-ITRiskManagement_ControlImplementationEntityDto:
+      type: object
+      properties:
+        id:
+          description: GUID of Control Implementation Entity Link.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        implementationId:
+          description: GUID of Control Implementation.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        number:
+          description: Numeric identifier for Control Implementation.
+          type: integer
+          format: int64
+          example: 1
+        organizationId:
+          description: Organization GUID.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        control:
+          description: Implemented Control Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlExtInformation'
+        status:
+          description: Implemented Control Status.
+          type: string
+          example: Implemented
+          enum:
+          - Pending
+          - Implemented
+          - NotDoing
+          - Suggested
+          - Retired
+          - Archived
+          deprecated: true
+        statusInfo:
+          description: Status Details
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        effectiveness:
+          description: Implemented Control Effectiveness value.
+          type: string
+          example: Effective
+          enum:
+          - Effective
+          - Ineffective
+          - Planned
+          deprecated: true
+        effectivenessInfo:
+          description: Control Effectiveness Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        note:
+          description: Implemented Control Notes.
+          type: string
+          example: Testing Control
+        deadline:
+          description: Deadline
+          type: string
+          format: date
+          example: '2019-01-01'
+        maturity:
+          description: Maturity Details.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        owner:
+          description: Implemented Control Owner.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        owners:
+          description: List of Implemented Control Owner.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        approvers:
+          description: List of Implemented Control Approver.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_BasicEntityReference'
+        createdBy:
+          description: Created By.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        createDt:
+          description: Created Date.
+          type: string
+          format: date
+          example: '2019-01-01'
+        lastModifiedBy:
+          description: Last Modified By.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        lastModifiedDate:
+          description: Last Modified on Date.
+          type: string
+          format: date
+          example: '2019-01-01'
+        suggestion:
+          description: Suggestion
+          type: string
+          example: Suggested
+          enum:
+          - Suggested
+          - Accepted
+          - Rejected
+          deprecated: true
+        attributes:
+          description: Implemented Custom Attributes.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation'
+        entity:
+          description: Entity which control implementation is linked to.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityInformation'
+        inventoryRelationshipType:
+          description: Inventory hierarchy relationship.
+          type: string
+        deleteType:
+          description: Soft delete status.
+          type: string
+          enum:
+          - SOFT
+        controlImplementationName:
+          description: Control Implementation Name of the implemented control.
+          type: string
+          example: Control Implementation name
+        controlImplementationDescription:
+          description: Control Implementation Description of the implemented control.
+          type: string
+          example: Control Implementation Description
+        controlImplementationGuidance:
+          description: Control Implementation Guidance of the implemented control.
+          type: string
+          example: Control Implementation Guidance
+        controlImplementationCategoryId:
+          description: Control Implementation Category of the implemented control.
+          type: string
+          format: uuid
+          example: Control Implementation Category Id
+        controlImplementationCategoryName:
+          description: Control Implementation Category Name of the implemented control.
+          type: string
+          example: Control Category Name
+        controlImplementationCategoryNameKey:
+          description: Control Implementation Name of the implemented control.
+          type: string
+          example: Control Category Name Key
+        controlImplementationOrigin:
+          description: Control Implementation Origin of the implemented control.
+          type: string
+          example: Control Implementation Origin
+        externalImplementationURL:
+          description: External ImplementationURL of the implemented control.
+          type: string
+          example: Control Implementation Link
+        externalControlImplementation:
+          description: is this an external control implementation.
+          type: boolean
+          example: true
+        relatedEntities:
+          description: EntityLinks associated with control implementation.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ImplementationEntityLinkDto'
+        inventoriesCount:
+          description: Related inventories count.
+          type: integer
+          format: int64
+          example: 3
+        risksCount:
+          description: Related risks count.
+          type: integer
+          format: int64
+          example: 1
+      required:
+      - control
+      - id
+      - implementationId
+      - number
+      - organizationId
+      - status
+    TechRiskCompliance-ITRiskManagement_BasicDetails:
+      type: object
+      properties:
+        id:
+          description: Identifier (GUID) of the entity.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        name:
+          description: Name of the entity.
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Name Key of the entity.
+          type: string
+          example: EntityNameKey
+  securitySchemes:
+    TechRiskCompliance-ITRiskManagement_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            CONTROL: Access to Control Implementation operations for external systems
+            ITRM: Access to ITRM operations for external systems
+    TechRiskCompliance-RiskTemplate_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INTEGRATION: Integration Scope
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+    TechRiskCompliance-Risk_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            RISK: Risk Scope
+            RISK_READ: Risk read scope
+            INTEGRATION: Integration scope
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

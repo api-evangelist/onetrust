@@ -1,0 +1,935 @@
+openapi: 3.2.0
+info:
+  title: Data Use Governance - Data Discovery Scan Jobs API
+  version: '1.0'
+  contact:
+    name: OneTrust Support
+    url: https://my.onetrust.com/s/contactsupport
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: The Data Discovery API provides comprehensive REST endpoints for managing data discovery operations including data sources, scan profiles, credentials, and scan jobs with OAuth2 security and extensive filtering capabilities.
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+tags:
+- name: Scan Jobs
+  description: APIs to control scan job execution including creation, cancellation, status monitoring, and comprehensive job history retrieval with filtering and pagination support.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+  x-displayName: Scan Jobs
+paths:
+  /api/discovery-scan-config/v2/scan-job:
+    post:
+      operationId: createJobUsingPOST
+      summary: Create Scan Job
+      description: Use this API to create a new scan job in the specified data source.
+      tags:
+      - Scan Jobs
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScanJobTriggerV3Dto'
+      responses:
+        '201':
+          description: Scan job created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - DATA_DISCOVERY
+  /api/discovery-scan-config/v2/scan-job/datasource/{dataSourceId}:
+    get:
+      operationId: getScanJobsByDataSourceUsingGET_1
+      summary: Get List of Scan Jobs
+      description: Use this API to retrieve a list of all scan jobs in JSON format for the specified data source. The response will include relevant details for each scan job, including the corresponding scan job ID, created date, and cancelled date.
+      tags:
+      - Scan Jobs
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: dataSourceId
+        in: path
+        description: The unique identifier of the data source.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: d841a8dc-bd67-47cd-b5e3-418f7d243de7
+      - name: status
+        in: query
+        description: Status of the job scan
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - PENDING
+            - IN_PROGRESS
+            - COMPLETED
+        example:
+        - PENDING
+        - IN_PROGRESS
+        - COMPLETED
+      - name: scanLevel
+        in: query
+        description: Array of scan levels
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - CATALOG
+            - CATALOG_SCAN
+        example:
+        - CATALOG
+        - CATALOG_SCAN
+      - name: isManual
+        in: query
+        description: The flag to check if the retrieved jobs are Manual or Scheduled
+        required: false
+        schema:
+          type: boolean
+        example: true
+      - name: createdFrom
+        in: query
+        description: The date (yyyy-mm-dd) to filter the scan jobs created on or after the specified date. For example, including the parameter createdFrom=2022-06-06 will filter results to scan jobs on or after June 6th, 2022.
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2024-01-01T00:00:00Z'
+      - name: createdTo
+        in: query
+        description: The date (yyyy-mm-dd) to filter the scan jobs created on or before the specified date. For example, including the parameter createdTo=2022-06-06 would filter results to scan jobs on or before June 6th, 2022.
+        required: false
+        schema:
+          type: string
+          format: date-time
+        example: '2024-12-31T23:59:59Z'
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N).
+        schema:
+          description: Results page to be retrieved (0..N).
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 1
+      - name: size
+        in: query
+        description: Number of records per page (1..50). Maximum page size allowed is 50
+        schema:
+          description: Number of records per page (1..50). Maximum page size allowed is 50
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default is ascending.'
+        schema:
+          description: 'Sorting criteria in the format: property(,asc|desc). Default is ascending.'
+          type: string
+          default: createdDate,desc
+          enum:
+          - status,asc
+          - status,desc
+          - scanLevel,asc
+          - scanLevel,desc
+          - createdDate,asc
+          - createdDate,desc
+        example: status,desc
+      responses:
+        '200':
+          description: List of scan jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_PageWrapperMetadataScanJobDto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - INTEGRATIONS
+        - DATA_DISCOVERY
+  /api/discovery-scan-config/v2/scan-job/{jobId}:
+    get:
+      operationId: getJobByIdUsingGET
+      summary: Get Scan Job
+      description: Use this API to retrieve details of a specific scan job by its unique identifier. Returns comprehensive job information including status, progress, timestamps, metadata counts, scan profile used, and ingestion status.
+      tags:
+      - Scan Jobs
+      parameters:
+      - name: jobId
+        in: path
+        description: Unique identifier (UUID) of the scan job. Obtain from Create Scan Job API or Get List of Scan Jobs API. Must be a valid UUID format.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: ef5c9081-431e-4577-bd91-1ff8bbd40f96
+      responses:
+        '200':
+          description: Scan job details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - DATA_DISCOVERY
+  /api/discovery-scan-config/v2/scan-job/{jobId}/cancel:
+    patch:
+      operationId: cancelJobUsingPATCH
+      summary: Cancel Scan Job
+      description: Use this API to cancel an existing scan job by its unique identifier. The job must be in a cancellable state (PENDING, PROCESSING, PAUSING). Jobs that are already COMPLETED, FAILED, CANCELLED, or CANCELLING cannot be cancelled. The cancellation is asynchronous - the job status will change to CANCELLING immediately, then to CANCELLED once the worker node acknowledges the cancellation.
+      tags:
+      - Scan Jobs
+      parameters:
+      - name: jobId
+        in: path
+        description: Unique identifier (UUID) of the scan job to cancel. Obtain from Create Scan Job API or Get List of Scan Jobs API. Must be a valid UUID format.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: ef5c9081-431e-4577-bd91-1ff8bbd40f96
+      responses:
+        '202':
+          description: Scan job cancellation accepted and initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - DATA_DISCOVERY
+  /api/discovery-scan-config/v2/scanners/{scannerId}/jobs/{jobId}:
+    get:
+      operationId: getJobUsingGET_1
+      summary: Get Scan Job
+      description: Use this API to retrieve a single scan job in JSON format by its unique identifier.
+      tags:
+      - Scan Jobs
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: scannerId
+        in: path
+        description: The unique identifier of the scanner, which is an alias for the Worker Node ID running the scan job. The scannerId value from Get List of Scan Jobs API can be used for scannerId
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 5bb955f1-846f-4db9-a507-a534f1f3f07a
+      - name: jobId
+        in: path
+        description: The unique identifier of the scan job. The id value from Get List of Scan Jobs API can be used for jobId
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: ef5c9081-431e-4577-bd91-1ff8bbd40f96
+      responses:
+        '200':
+          description: Scan job details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - DATA_DISCOVERY
+  /api/discovery-scan-config/v2/scanners/{scannerId}/jobs/{jobId}/cancel:
+    patch:
+      operationId: cancelScanJob
+      summary: Cancel Scan Job
+      description: Use this API to cancel an existing scan job by its unique identifier.
+      tags:
+      - Scan Jobs
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/data-use-governance-data-discovery.json
+      parameters:
+      - name: scannerId
+        in: path
+        description: The unique identifier of the scanner, which is an alias for the Worker Node ID running the scan job. The scannerId value from Get List of Scan Jobs API can be used for scannerId.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 5bb955f1-846f-4db9-a507-a534f1f3f07a
+      - name: jobId
+        in: path
+        description: The unique identifier of the scan job. The id value from Get List of Scan Jobs API can be used for jobId.
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: ef5c9081-431e-4577-bd91-1ff8bbd40f96
+      responses:
+        '202':
+          description: Scan job cancellation accepted and initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - DataUseGovernance-DataDiscovery_OAUTH2:
+        - DATA_DISCOVERY
+components:
+  schemas:
+    DataUseGovernance-DataDiscovery_Sort:
+      type: object
+      properties:
+        sort:
+          type: array
+          items:
+            type: string
+    DataUseGovernance-DataDiscovery_Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
+    DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto:
+      type: object
+      properties:
+        name:
+          description: Name of Scan job
+          type: string
+          example: S3-DS-24thMarch
+          minLength: 1
+        sourceSystemId:
+          description: Source System ID for Scan job
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        scannerId:
+          description: Scanner ID for Scan Job
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        status:
+          description: Scan job scan status
+          type: string
+          example: Completed
+          enum:
+          - QUEUED
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - ABORTED
+          - STOPPED_AS_LOAD_ABORTED
+          - CANCELLED
+          - CANCELLING
+          - FAILED
+          - PAUSED
+          - PAUSING
+          - RESUMING
+        statusMessage:
+          description: Scan job status message
+          type: string
+          example: status message
+        scanLevel:
+          description: Scan Job scan level
+          type: string
+          example: CATALOG_SCAN
+          enum:
+          - INCREMENTAL_SCAN
+          - FULL_SCAN
+          - SCAN
+          - SOURCING
+          - CATALOG
+          - CATALOG_SCAN
+          - QUERY
+          - FILE_RETRIEVAL
+          - OFFSET_REPORT
+          - CATALOG_POLICY_SCAN
+          - ASSET_DISCOVERY
+          - DATA_ELEMENT_DISCOVERY
+          - POLICY_ORCHESTRATION_APPLY
+          - POLICY_ORCHESTRATION_UNAPPLY
+          - POLICY_ORCHESTRATION_EDIT
+          - POLICY_ORCHESTRATION_DELETE
+          - ROLE_INGESTION
+          - AI_ASSET_DISCOVERY
+          - GUARDRAIL_POLICY_ENFORCEMENT
+        isManual:
+          type: boolean
+          writeOnly: true
+        isVoyager:
+          type: boolean
+          writeOnly: true
+        jobContext:
+          type: object
+        expectedRecordCount:
+          description: Scan Job expected record count
+          type: integer
+          format: int64
+          example: 8
+        failedRecordCount:
+          description: Scan Job failed record count
+          type: integer
+          format: int64
+          example: 0
+        successRecordCount:
+          description: Scan Job success record count
+          type: integer
+          format: int64
+          example: 8
+        cancelledRecordCount:
+          description: Scan Job cancelled record count
+          type: integer
+          format: int64
+          example: 0
+        scannedMetadataCount:
+          description: Scan Job scanned metadata count
+          type: integer
+          format: int64
+          example: 38
+        uploadedMetadataCount:
+          description: Scan Job uploaded metadata count
+          type: integer
+          format: int64
+          example: 38
+        failedIngestionCount:
+          description: Scan Job failed ingestion count
+          type: integer
+          format: int64
+          example: 0
+        createdDate:
+          description: Scan Job creation date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:02.596+00:00'
+        createdBy:
+          description: User who created Scan Job
+          type: string
+          format: uuid
+          example: 2ae93388-bef6-4b84-a612-8a4904b78dac
+        jobProgress:
+          description: Scan Jobs progress
+          type: number
+          format: double
+          example: 100
+        updatedDate:
+          description: Scan Job updated date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:22.294+00:00'
+        updatedBy:
+          description: user who last updated scan job
+          type: string
+          format: uuid
+          example: 2ae93388-bef6-4b84-a612-8a4904b78dac
+        cancelledBy:
+          description: user who cancelled scan job
+          type: string
+          format: uuid
+          example: 2ae93388-bef6-4b84-a612-8a4904b78dac
+        cancelledDate:
+          description: Scan Job cancelled date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:22.294+00:00'
+        pausedBy:
+          description: user who paused scan job
+          type: string
+          format: uuid
+          example: 2ae93388-bef6-4b84-a612-8a4904b78dac
+        pausedDate:
+          description: Scan Job paused date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:22.294+00:00'
+        resumedBy:
+          description: user who resumed scan job
+          type: string
+          format: uuid
+          example: 2ae93388-bef6-4b84-a612-8a4904b78dac
+        resumedDate:
+          description: Scan Job resumed date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:22.294+00:00'
+        classifiedTermsCount:
+          description: Scan Job classified terms count
+          type: integer
+          format: int64
+          example: 7
+        ingestionStatus:
+          description: Scan Job ingestion status
+          type: string
+          example: PUBLISHED
+          enum:
+          - AWAITING
+          - PUBLISHING
+          - PUBLISHED
+          - NONE
+        ingestionDate:
+          description: Scan Job ingestion date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:33.803+00:00'
+        ingestedMetadataVolume:
+          description: Scan job ingestion metadata volume in bytes
+          type: integer
+          format: int64
+          example: 37734
+        scannedCount:
+          description: Scan Job Scan count
+          type: string
+          example:
+            S3_BUCKET: 3
+            Column: 14
+            File: 4
+            DataSource: 1
+        totalContentSize:
+          description: Scan Job total content size in bytes
+          type: integer
+          format: int64
+          example: 295454
+        scanProfile:
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScanProfileV2Dto'
+        retryAttempts:
+          description: Total Retry Attempts for scan job failures
+          type: integer
+          format: int32
+          example: 1
+        maxRetries:
+          description: Max Retries allowed for scan job failures
+          type: integer
+          format: int32
+          example: 3
+        idleScanDuration:
+          description: Idle time of scan when Paused (or) during retry
+          type: integer
+          format: int64
+          example: 377342131
+        scanDuration:
+          description: Actual Scan duration
+          type: integer
+          format: int64
+          example: 377342131
+        scanStartedDate:
+          description: Actual Scan start date
+          type: string
+          format: date-time
+          example: '2022-05-24T14:44:22.294+00:00'
+        id:
+          type: string
+          format: uuid
+        manual:
+          type: boolean
+        voyager:
+          type: boolean
+      example:
+      - id: 1
+        name: Item
+      required:
+      - scannerId
+      - sourceSystemId
+      - status
+    DataUseGovernance-DataDiscovery_ScanJobTriggerV3Dto:
+      type: object
+      properties:
+        dataSourceId:
+          description: Unique identifier of the data source to scan. This data source must exist and be active.
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        scanProfileId:
+          description: Optional scan profile ID to use for this scan job. If provided, must match the data source system type. If not provided, the data source's default scan profile will be used.
+          type: string
+          format: uuid
+          example: ad390cb4-9ce9-4976-8895-66d724493c7b
+        classificationProfileId:
+          description: Classification profile ID for the scan job. Used when classification v2 is disabled. Either this or detectorProfileId should be provided for classification scans.
+          type: string
+          format: uuid
+          example: cd490cb4-9ce9-4976-8895-66d724493c5d
+        detectorProfileId:
+          description: Detector profile ID for the scan job. Used when classification v2 is enabled. Either this or classificationProfileId should be provided for classification scans.
+          type: string
+          format: uuid
+          example: cd490cb4-9ce9-4976-8895-66d724493c5d
+      required:
+      - dataSourceId
+    DataUseGovernance-DataDiscovery_PageWrapperMetadataScanJobDto:
+      type: object
+      properties:
+        content:
+          description: The content of this page.
+          example:
+          - id: 1
+            name: Item
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+          type: array
+        number:
+          description: Current page number.
+          type: integer
+          format: int32
+          example: 0
+        size:
+          description: The size of the page (number of elements per page).
+          type: integer
+          format: int32
+          example: 20
+        numberOfElements:
+          description: The number of elements on the current page.
+          type: integer
+          format: int32
+          example: 15
+        totalElements:
+          description: The total number of elements across all pages.
+          type: integer
+          format: int32
+          example: 150
+        totalPages:
+          description: The total number of pages.
+          type: integer
+          format: int32
+          example: 8
+        first:
+          description: Indicates if this is the first page.
+          type: boolean
+          example: true
+        last:
+          description: Indicates if this is the last page.
+          type: boolean
+          example: false
+        empty:
+          description: Indicates if the page is empty.
+          type: boolean
+          example: false
+        sort:
+          description: Sorting information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
+        pageable:
+          description: Pagination information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
+    DataUseGovernance-DataDiscovery_ScanProfileV2Dto:
+      type: object
+      properties:
+        id:
+          description: Unique ID for Scan Profile
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        name:
+          description: Name of Scan Profile
+          type: string
+          example: My SQL Scan Profile
+        scanType:
+          description: Scan Type of Scan Profile
+          type: string
+          example: CATALOG
+          enum:
+          - CATALOG
+          - CATALOG_SCAN
+        sourceType:
+          description: Source of this Scan Profile
+          type: string
+          example: USER_DEFINED
+          enum:
+          - SEED
+          - USER_DEFINED
+        systemName:
+          description: System Name of Scan Profile
+          type: string
+          example: MySQL
+        scanProfileContext:
+          description: Properties of Scan Profile Specific to System
+          type: object
+          example:
+            type: MySQL
+            includes:
+            - database: OT
+              table: Employee
+              columns: Name
+            excludes:
+            - database: OT
+              table: Credential
+              columns: Id
+            samplingScan:
+              enableSampling: false
+            tableLimits:
+              randomize: false
+              maxCount: 10
+            tableTypes:
+            - TABLE
+            databaseLimits:
+              randomize: false
+              maxCount: 1
+        systemType:
+          description: System Type of Scan Profile
+          type: string
+          example: RELATIONAL_DATABASE
+          enum:
+          - RELATIONAL_DATABASE
+          - NON_RELATIONAL_DATABASE
+          - FILE
+          - API
+          - CUSTOM
+          - UNKNOWN
+          - CLOUD_PLATFORM
+          - MACHINE_LEARNING_PLATFORM
+        createdDate:
+          description: Creation Date of Scan Profile
+          type: string
+          format: date-time
+          example: '2021-09-11T01:41:50.143+00:00'
+        displayName:
+          description: Display Name for System Name of Scan Profile
+          type: string
+          example: Amazon Redshift
+      required:
+      - id
+      - name
+      - scanProfileContext
+      - scanType
+      - systemName
+      - systemType
+  securitySchemes:
+    DataUseGovernance-DataDiscovery_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_DISCOVERY: DATA_DISCOVERY scope for external systems
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            DATA_DISCOVERY: DATA_DISCOVERY scope for external systems
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
+x-onetrust:
+  spec-label: OpenAPI 3.1.0

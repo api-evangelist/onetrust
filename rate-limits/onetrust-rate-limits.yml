@@ -3,37 +3,149 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
 provider: OneTrust
 providerId: onetrust
+generated: '2026-08-27'
+method: searched
+source: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
+docs: https://developer.onetrust.com/onetrust/reference/rate-limits-overview
 created: '2026-05-08'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-08, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-08'
-reconciled: false
+modified: '2026-08-27'
+reconciled: true
 tags:
 - Privacy
 - GRC
-- Compliance
-- Consent
-- TPRM
 - Rate Limiting
 - Quotas
 - Throttling
-description: OneTrust does not publicly publish per-API rate limits. Server-Side CMP and Platform APIs
-  respond with HTTP 429 when throttled.
-notes: Tenant-specific limits; consult OneTrust support for exact thresholds.
-sources:
-- https://developer.onetrust.com/
-responseCodes:
-  throttled: 429
+description: >-
+  OneTrust publishes account-level and module-level rate limits in full, including the exhaustion
+  status code and the exact response headers it returns. The previous version of this artifact said
+  "not publicly documented" — that was wrong; the numbers were on the developer portal.
+limit_count: 12
+response:
+  status_on_exhaustion: 429
+  headers:
+  - name: Retry-After
+    description: Seconds after which requests will be allowed again.
+    standard: RFC 6585 / RFC 9110
+  - name: ot-ratelimit-event-id
+    description: Unique identifier for the rate-limiting event.
+  - name: ot-requests-allowed
+    description: Number of requests allowed within the specified period.
+  - name: ot-period
+    description: Unit of time the limit applies to (MINUTE or HOUR).
+  - name: ot-request-made
+    description: Number of requests made within the specified period.
+  note: >-
+    OneTrust does NOT emit X-RateLimit-* or the RFC 9331 RateLimit-* family. It emits its own ot-*
+    prefixed set, and only on the 429 response — there is no proactive budget header on a successful
+    call, so an agent cannot see how close it is until it is already throttled.
+evaluation: >-
+  A request must satisfy BOTH the account-level and the per-API limits. The hourly cap is account-wide;
+  the per-minute cap applies to each API endpoint individually.
 limits:
-- name: Default OneTrust Platform
-  scope: tenant
+- name: Default Hour Rule
+  scope: account
   metric: requests
-  limit: not publicly documented
-  notes: HTTP 429 returned when throttled.
+  limit: 200000
+  window: hour
+  environments: [Production, UAT, Trial]
+  on_violation: 429 with Retry-After
+- name: Default API Rate Limit
+  scope: per-endpoint
+  metric: requests
+  limit: 1000
+  window: minute
+  environments: [Production, UAT, Trial]
+  on_violation: 429 with Retry-After
+- name: Sandbox Default Hour Rule
+  scope: account
+  metric: requests
+  limit: 50000
+  window: hour
+  environments: [Sandbox]
+  on_violation: 429 with Retry-After
+- name: Sandbox Default API Rate Limit
+  scope: per-endpoint
+  metric: requests
+  limit: 250
+  window: minute
+  environments: [Sandbox]
+  on_violation: 429 with Retry-After
+- name: Default Integration Webhook Minute Rule
+  scope: per-endpoint
+  module: Integrations
+  metric: webhook calls
+  limit: 3000
+  window: minute
+  path: /integrationmanager/api/v1/webhook/*
+  on_violation: Traffic is blocked from the account for 1 minute.
+- name: Consent receipts 2k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 2000
+  window: minute
+  path: POST /request/v1/consentreceipts
+  on_violation: API will not perform at the published SLO level.
+- name: Preferences 3k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 3000
+  window: minute
+  path: GET /v1/preferences
+  on_violation: API will not perform at the published SLO level.
+- name: Data subjects basic-details 1k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 1000
+  window: minute
+  path: GET /v4/datasubjects/basic-details
+  on_violation: API will not perform at the published SLO level.
+- name: Data subjects details 1k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 1000
+  window: minute
+  path: GET /v4/datasubjects/details
+  on_violation: API will not perform at the published SLO level.
+- name: Data subjects ds-profiles 1k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 1000
+  window: minute
+  path: GET /v4/datasubjects/ds-profiles
+  on_violation: API will not perform at the published SLO level.
+- name: Data subjects profiles-by-purpose 1k Per Minute Rule
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 1000
+  window: minute
+  path: GET /v4/datasubjects/profiles/{purposeGuid}
+  on_violation: API will not perform at the published SLO level.
+- name: Default Consent Ingestion Provisioned
+  scope: per-endpoint
+  module: Universal Consent & Preference Management
+  metric: requests
+  limit: 3000
+  window: minute
+  path: POST /v1/consentreceipts/bulk
+  on_violation: API will not perform at the published SLO level.
 policies:
-- name: Backoff Strategy
-  description: Clients should implement exponential backoff with jitter and honor any Retry-After header.
+- name: Overrides
+  description: >-
+    Existing customer workloads that exceed default thresholds can be covered by approved overrides,
+    evaluated case by case. Overrides are not automatically provisioned for new implementations or
+    traffic increases. Requests to OneTrust Support must include tenant ID, API endpoint, request
+    volume and business justification.
+- name: Backoff
+  description: >-
+    OneTrust's published best practice is to honor Retry-After and implement exponential backoff. The
+    docs ship a Python example that reads all five ot-* headers.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

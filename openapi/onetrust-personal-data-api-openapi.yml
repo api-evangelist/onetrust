@@ -1,0 +1,1963 @@
+openapi: 3.2.0
+info:
+  title: Onetrust Personal Data API
+  version: '1.0'
+  description: 'Operations tagged Personal Data across 2 of this provider''s published API definitions: onetrust-privacy-automation-data-mapping-automation-openapi.json, onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://{hostname}
+  variables:
+    hostname:
+      default: hostname
+      description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+- url: https://customer.my.onetrust.com/api
+tags:
+- name: Personal Data
+  description: APIs used to list links to personal-data items for an inventory and update advanced attributes on those associations.
+  externalDocs:
+    description: OpenAPI 3.1.0 - Download Definition
+    url: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+paths:
+  /api/inventory/v2/data-categories:
+    get:
+      operationId: getDataCategoriesByPartialNameUsingGET
+      summary: Get List of Data Categories
+      description: Use this API to retrieve a list of all existing Data Categories.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: filter
+        in: query
+        description: Optional filter string to search data categories by name
+        required: false
+        schema:
+          type: string
+        example: Financial
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+          - createdDate,asc
+          - createdDate,desc
+        example: name,asc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/OneTrustResponseListDataCategoryResponse'
+                - $ref: '#/components/schemas/DataCategoryResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INTEGRATION
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    post:
+      operationId: createDataCategoryUsingPOST
+      summary: Create Data Category
+      description: Use this API to to create new Data Categories in Data Mapping Automation module.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: generator
+        in: query
+        description: Optional generator parameter
+        required: false
+        schema:
+          type: string
+        example: system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataCategoryCreateUpdateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataCategoryResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-categories/{id}:
+    get:
+      operationId: getDataCategoryUsingGET
+      summary: Get Data Category
+      description: Use this API to provide the details of a single Data Category by ID.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data category to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataCategoryResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteDataCategoryUsingDELETE
+      summary: Delete Data Category
+      description: Use this API to delete Data Categories within the Data Mapping Automation Module of OneTrust. To successfully delete a data category, there must be no data-elements assigned to the data category.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data category to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-classifications:
+    get:
+      operationId: listAllDataClassificationsUsingGET
+      summary: Get List of Data Classifications
+      description: 'Use this API to retrieve a list of all existing Data Classifications.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/data-classifications`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/data-classifications`'
+      tags:
+      - Personal Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataClassificationResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INTEGRATION
+    post:
+      operationId: createDataClassificationUsingPOST
+      summary: Create Data Classification
+      description: Use this API to create new Data Mapping Automation-Data Classification.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: generator
+        in: query
+        description: Optional generator parameter
+        required: false
+        schema:
+          type: string
+        example: system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataClassificationCreateUpdateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataClassificationResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-classifications/{id}:
+    get:
+      operationId: getDataClassificationUsingGET
+      summary: Get Data Classification
+      description: Use this API to retrieve the details of a single Data Classification by ID.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data classification to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataClassificationResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteDataClassificationUsingDELETE
+      summary: Delete Data Classification
+      description: Use this API to delete a data category, the Data Classification ID must be provided in the URL path.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data classification to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-elements:
+    get:
+      operationId: listAllDataElementsUsingGET
+      summary: Get List of Data Elements
+      description: 'Use this API to retrieve the list of all existing Data Elements.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/data-elements`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/data-elements`'
+      tags:
+      - Personal Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDetailedResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INTEGRATION
+    post:
+      operationId: createDataElementUsingPOST
+      summary: Create Data Element
+      description: Use this API to create new Data Elements in Data Mapping Automation module.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: generator
+        in: query
+        description: Optional generator parameter
+        required: false
+        schema:
+          type: string
+        example: system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataElementCreateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDetailedResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-elements/{id}:
+    get:
+      operationId: getDataElementUsingGET
+      summary: Get Data Element
+      description: Use this API to retrieve the details of a single Data Element by ID.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data element to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDetailedResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteDataElementUsingDELETE
+      summary: Delete Data Element
+      description: Use this API to delete a data element.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data element to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-subjects:
+    get:
+      operationId: getDataSubjectsByPartialNameUsingGET
+      summary: Get List of Data Subjects
+      description: Use this API to retrieve the list of all existing Data Subjects.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: objectType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: objectId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: relationshipContext
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: filter
+        in: query
+        description: Optional filter string to search data subjects by name
+        required: false
+        schema:
+          type: string
+        example: Customer
+      - name: page
+        in: query
+        description: Results page to be retrieved (0..N)
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: size
+        in: query
+        description: Number of records per page (1..50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          maximum: 50
+          minimum: 1
+        example: 20
+      - name: sort
+        in: query
+        description: 'Sorting criteria in the format: property(,asc|desc). Default sort order is ascending'
+        schema:
+          type: string
+          enum:
+          - name,asc
+          - name,desc
+          - createdDate,asc
+          - createdDate,desc
+        example: name,asc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/OneTrustResponseListDataSubjectResponse'
+                - $ref: '#/components/schemas/DataSubjectResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INTEGRATION
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    post:
+      operationId: createDataSubjectUsingPOST
+      summary: Create Data Subject
+      description: Use this API to create new Data Subject in the Data Mapping Automation Module.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: generator
+        in: query
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataSubjectCreateUpdateRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataSubjectResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_WRITE
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /api/inventory/v2/data-subjects/{id}:
+    get:
+      operationId: getDataSubjectUsingGET
+      summary: Get Data Subject
+      description: Use this API to retrieve the details of a single Data Subject by ID.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the Data Subject
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataSubjectResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+        - INVENTORY_READ
+        - INVENTORY_WRITE
+    delete:
+      operationId: deleteDataSubjectUsingDELETE
+      summary: Delete Data Subject
+      description: Use this API to delete a data element.
+      tags:
+      - Personal Data
+      x-onetrust:
+        spec-label: https://developer.onetrust.com/onetrust/openapi/privacy-automation-data-mapping-automation.json
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the data subject to delete
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: "Too Many Requests. \nFor more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview)."
+          headers:
+            Retry-After:
+              schema:
+                description: The number of seconds after which requests will be allowed again.
+                format: int32
+            ot-period:
+              schema:
+                description: The unit of time for which the rate limit applies
+                enum:
+                - HOUR
+                - MINUTE
+            ot-ratelimit-event-id:
+              schema:
+                description: The unique identifier for the rate-limiting event.
+                format: uuid
+            ot-request-made:
+              schema:
+                description: The number of requests made within the specified period.
+                format: int32
+            ot-requests-allowed:
+              schema:
+                description: The number of requests allowed within the specified period.
+                format: int32
+        '500':
+          description: Internal Server Error
+      security:
+      - OAUTH2:
+        - INVENTORY
+    servers:
+    - url: https://{hostname}
+      variables:
+        hostname:
+          default: hostname
+          description: The OneTrust hostname such as app.onetrust.com, app-eu.onetrust.com, app-de.onetrust.com, app-uk.onetrust.com, app-apac.onetrust.com, trial.onetrust.com, or uat.onetrust.com.
+  /inventory/v2/data-classifications:
+    get:
+      tags:
+      - Personal Data
+      summary: Get List of Data Classifications
+      operationId: listAllDataClassificationsUsingGET
+      parameters:
+      - name: page
+        in: query
+        description: The result page to be returned.
+        required: true
+        schema:
+          type: string
+          default: '0'
+      - name: size
+        in: query
+        description: "The number of elements to be returned in a page. \n(Note: The maximum size value may differ by API and is subject to change. If a number greater than the maximum is requested, the API will return the maximum allowed value.)"
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneTrustResponseListDataClassificationResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      description: 'Use this API to retrieve a list of all existing Data Classifications.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/data-classifications`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/data-classifications`'
+      security:
+      - oauth2: []
+    servers:
+    - url: https://customer.my.onetrust.com/api
+  /inventory/v2/data-elements:
+    get:
+      tags:
+      - Personal Data
+      summary: Get List of Data Elements
+      operationId: listAllDataElementsUsingGET
+      parameters:
+      - name: page
+        in: query
+        description: The result page to be returned.
+        required: true
+        schema:
+          type: number
+          default: '0'
+      - name: size
+        in: query
+        description: "The number of elements to be returned in a page. \n(Note: The maximum size value may differ by API and is subject to change. If a number greater than the maximum is requested, the API will return the maximum allowed value.)"
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneTrustResponseListDataElementDetailedResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: 'Too Many Requests
+
+            For more information, see [API Rate Limits](https://developer.onetrust.com/onetrust/reference/rate-limits-overview).'
+          headers:
+            Retry-After:
+              description: The number of seconds after which requests will be allowed again.
+              schema:
+                type: integer
+                format: int32
+            ot-ratelimit-event-id:
+              description: The unique identifier for the rate-limiting event.
+              schema:
+                type: string
+                format: uuid
+            ot-requests-allowed:
+              description: The number of requests allowed within the specified period.
+              schema:
+                type: integer
+                format: int32
+            ot-period:
+              description: The unit of time for which the rate limit applies.
+              schema:
+                type: string
+                enum:
+                - HOUR
+                - MINUTE
+            ot-request-made:
+              description: The number of requests made within the specified period.
+              schema:
+                type: integer
+                format: int32
+      description: 'Use this API to retrieve the list of all existing Data Elements.
+
+
+        ### Example Request
+
+
+        `GET https://{hostname}/api/inventory/v2/data-elements`
+
+
+        `GET https://trial.onetrust.com/api/inventory/v2/data-elements`'
+      security:
+      - oauth2: []
+    servers:
+    - url: https://customer.my.onetrust.com/api
+components:
+  schemas:
+    DataSubjectResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data subject
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+        visible:
+          type: boolean
+      required:
+      - id
+      - name
+      - nameKey
+    OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage'
+    DataCategoryResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data category
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+      required:
+      - id
+      - name
+      - nameKey
+    DataSubjectCreateUpdateRequest:
+      type: object
+      properties:
+        value:
+          description: Name of the personal data entity
+          type: string
+          example: Financial Data
+          maxLength: 400
+          minLength: 0
+        description:
+          description: Description of the personal data entity
+          type: string
+          example: Contains financial information of customers
+          maxLength: 2000
+          minLength: 0
+        status:
+          description: Status of the personal data entity
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+          maxLength: 50
+          minLength: 0
+        termId:
+          description: ID of the associated term
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        tagId:
+          description: ID of the associated tag
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      example:
+        value: Customer
+        description: End user of the service
+        status: Active
+      required:
+      - value
+    OneTrustResponseListDataSubjectResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSubjectResponse'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+    DataElementDetailedResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data element
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+        status:
+          description: Status of the data element
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+        dataSubjectTypes:
+          description: List of data subject types associated with this data element
+          type: array
+          items:
+            $ref: '#/components/schemas/BasePersonalDataResponse'
+        categories:
+          description: List of data categories associated with this data element
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCategoryResponse'
+        classifications:
+          description: List of data classifications associated with this data element
+          type: array
+          items:
+            $ref: '#/components/schemas/DataClassificationResponse'
+        visible:
+          type: boolean
+      required:
+      - categories
+      - id
+      - name
+      - nameKey
+    DataElementCreateRequest:
+      type: object
+      properties:
+        value:
+          description: Name of the personal data entity
+          type: string
+          example: Financial Data
+          maxLength: 400
+          minLength: 0
+        description:
+          description: Description of the personal data entity
+          type: string
+          example: Contains financial information of customers
+          maxLength: 2000
+          minLength: 0
+        status:
+          description: Status of the personal data entity
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+          maxLength: 50
+          minLength: 0
+        termId:
+          description: ID of the associated term
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        tagId:
+          description: ID of the associated tag
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        categories:
+          description: List of data categories to associate with the data element
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectReference'
+          minItems: 1
+        classifications:
+          description: List of data classifications to associate with the data element
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectReference'
+        subjects:
+          description: List of data subjects to associate with the data element
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectReference'
+        assignToAllSubjects:
+          description: Flag indicating whether to assign the data element to all subjects
+          type: boolean
+          default: 'false'
+      example:
+        value: Email Address
+        description: Customer email address
+        categories:
+        - id: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      required:
+      - categories
+      - value
+    OneTrustResponseListDataCategoryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCategoryResponse'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+    DataCategoryCreateUpdateRequest:
+      type: object
+      properties:
+        value:
+          description: Name of the personal data entity
+          type: string
+          example: Financial Data
+          maxLength: 400
+          minLength: 0
+        description:
+          description: Description of the personal data entity
+          type: string
+          example: Contains financial information of customers
+          maxLength: 2000
+          minLength: 0
+        status:
+          description: Status of the personal data entity
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+          maxLength: 50
+          minLength: 0
+        termId:
+          description: ID of the associated term
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        tagId:
+          description: ID of the associated tag
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      example:
+        value: Financial Data
+        description: Category for financial information
+        status: Active
+      required:
+      - value
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+    BasePersonalDataResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+      required:
+      - id
+      - name
+      - nameKey
+    DataClassificationCreateUpdateRequest:
+      type: object
+      properties:
+        value:
+          description: Name of the personal data entity
+          type: string
+          example: Financial Data
+          maxLength: 400
+          minLength: 0
+        description:
+          description: Description of the personal data entity
+          type: string
+          example: Contains financial information of customers
+          maxLength: 2000
+          minLength: 0
+        status:
+          description: Status of the personal data entity
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+          maxLength: 50
+          minLength: 0
+        termId:
+          description: ID of the associated term
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        tagId:
+          description: ID of the associated tag
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+      example:
+        value: Sensitive
+        description: Classification for sensitive information
+        status: Active
+      required:
+      - value
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
+    DataClassificationResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data classification
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+      required:
+      - id
+      - name
+      - nameKey
+    OneTrustMetadata_2:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage_2'
+      title: OneTrustMetadata
+    DataCategoryResponse_2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the Data Category.
+          example: Academic Background
+        descriptionKey:
+          type: string
+          description: Unique key for description of the Data Category.
+          example: DataCategoriesAcademicBackgroundDesc
+        id:
+          type: string
+          description: Unique Id for the Data Category.
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          type: string
+          description: Name of the Data Category.
+          example: Academic Background
+        nameKey:
+          type: string
+          description: Unique key for name of the Data Category.
+          example: DataCategoriesAcademicBackground
+      title: DataCategoryResponse
+    OneTrustResponseListDataClassificationResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataClassificationResponse_2'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata_2'
+      title: OneTrustResponseListDataClassificationResponse
+    DataElementDetailedResponse_2:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCategoryResponse_2'
+        classifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataClassificationResponse_2'
+        description:
+          type: string
+          description: Description of the Data Element.
+          example: Age
+        descriptionKey:
+          type: string
+          description: Unique key for description of the Data Element.
+          example: DataElementsAgeDesc
+        id:
+          type: string
+          description: Unique Id of the Data Element.
+          example: 54432905-eac2-4088-a48e-c02b0d66359b
+        name:
+          type: string
+          description: Name of the Data Element.
+          example: Age
+        nameKey:
+          type: string
+          description: Unique key for the name of the Data Element.
+          example: DataElementsAge
+      title: DataElementDetailedResponse
+    OneTrustSort_2:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+      title: OneTrustSort
+    OneTrustPage_2:
+      type: object
+      properties:
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+          example: '1'
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort_2'
+        totalElements:
+          type: integer
+          format: int64
+          example: '1'
+        totalPages:
+          type: integer
+          format: int64
+          example: '1'
+      title: OneTrustPage
+    OneTrustResponseListDataElementDetailedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataElementDetailedResponse_2'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata_2'
+      title: OneTrustResponseListDataElementDetailedResponse
+    DataClassificationResponse_2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the Data Classification.
+          example: Personal Data
+        descriptionKey:
+          type: string
+          description: Unique key for description of the Data Classification.
+          example: DataClassificationsPersonalDataDesc
+        id:
+          type: string
+          description: Unique Id of the Data Classification.
+          example: 9fad637c-8548-438e-9a6f-6e38eb2692de
+        name:
+          type: string
+          description: Name of the Data Classification.
+          example: Personal Data
+        nameKey:
+          type: string
+          description: Unique key for the name of the Data Classification.
+          example: DataClassificationsPersonalData
+      title: DataClassificationResponse
+  securitySchemes:
+    OAUTH2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{hostname}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY: Inventory Scope gives the user access to read/write operations
+            INVENTORY_READ: Inventory Read Scope gives the user read-only access
+            INVENTORY_WRITE: Inventory Write Scope gives the user write access
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{$$.env.host}/api/access/v1/oauth/token
+          scopes:
+            INVENTORY_READ: Read inventory records
+            INVENTORY_WRITE: Create and delete inventory records
+x-refined-from:
+- onetrust-privacy-automation-data-mapping-automation-openapi.json
+- onetrust-privacy-automation-data-mapping-automation-swagger-openapi.json
+x-onetrust:
+  spec-label: OpenAPI 3.1.0
+x-readme:
+  explorer-enabled: false
+  proxy-enabled: false
+  metrics-enabled: false
