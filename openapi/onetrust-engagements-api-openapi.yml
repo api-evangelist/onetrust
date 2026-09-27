@@ -901,495 +901,6 @@ paths:
         - VRM
 components:
   schemas:
-    PageEngagementListViewInformation:
-      type: object
-      properties:
-        content:
-          description: The array of engagement search results.
-          items:
-            $ref: '#/components/schemas/EngagementListViewInformation'
-          type: array
-        empty:
-          description: The flag indicating empty search results.
-          type: boolean
-        first:
-          description: The flag indicating first page of results.
-          type: boolean
-        last:
-          description: The flag indicating last page of results.
-          type: boolean
-        number:
-          description: The current page number of results.
-          type: integer
-          format: int32
-        numberOfElements:
-          description: The count of elements in current page.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The page size configuration for results.
-          type: integer
-          format: int32
-          example: 20
-        totalElements:
-          description: The total count across all pages.
-          type: integer
-          format: int64
-          example: 1
-        totalPages:
-          description: The total number of available pages.
-          type: integer
-          format: int32
-          example: 1
-        redacted:
-          description: Field names that should be redacted when user lacks advanced view access
-          type: object
-          example:
-            41aa71ae-0ace-4073-8947-e6941714bcf1:
-            - field1
-            - field2
-          additionalProperties:
-            type: array
-            items:
-              type: string
-            uniqueItems: true
-        sort:
-          description: The sorting configuration for results.
-          $ref: '#/components/schemas/SortObject'
-        pageable:
-          description: The pagination configuration and metadata.
-          type: object
-          example:
-            offset: 0
-            pageNumber: 0
-            pageSize: 20
-            paged: true
-            sort:
-            - ascending: true
-              descending: false
-              direction: ASC
-              ignoreCase: false
-              nullHandling: NATIVE
-              property: name
-            unpaged: false
-    AttributeFormulaDetail:
-      type: object
-      properties:
-        formula:
-          type: string
-        formulaType:
-          type: string
-    CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Category unique identifier
-          type: string
-          format: uuid
-        name:
-          description: Category name
-          type: string
-          example: Financial Category
-        nameKey:
-          description: Category nameKey for localization support
-          type: string
-          example: IM.FinancialCategoryName
-    ExternalEngagementCreateRequest:
-      type: object
-      properties:
-        name:
-          description: The name for new engagement creation.
-          type: string
-          example: Microsoft Azure Cloud Services 2025
-          maxLength: 500
-          minLength: 1
-        vendor:
-          description: The vendor for new engagement creation.
-          example:
-            id: 97e8d8d7-e05c-4e0a-beec-ef1458ea1ebc
-            name: Microsoft
-            orgGroupId: a41972ae-2050-4126-b314-1a58d08ea116
-            label: Microsoft
-          $ref: '#/components/schemas/Key'
-        orgGroupId:
-          description: The organization identifier for new engagement.
-          type: string
-          format: uuid
-          example: a41972ae-2050-4126-b314-1a58d08ea116
-        type:
-          description: The type for new engagement creation.
-          type: string
-          example: VendorEngagement
-          enum:
-          - VendorEngagement
-          - ProductEngagement
-          - ServiceEngagement
-        internalOwnerEmail:
-          description: The internal owner email for new engagement.
-          type: string
-          format: email
-          example: john.doe@company.com
-          maxLength: 255
-        externalContact:
-          description: The external contact for new engagement.
-          type: string
-          example: Jane Smith (jane.smith@microsoft.com, +1-555-123-4567)
-          maxLength: 500
-        notes:
-          description: The notes for new engagement creation.
-          type: string
-          example: This engagement covers all Microsoft Azure cloud services used by our IT department. Includes premium support package and training services.
-          maxLength: 4000
-        startDate:
-          description: The start date for new engagement.
-          type: string
-          format: date
-          example: '2025-01-15'
-        endDate:
-          description: The end date for new engagement.
-          type: string
-          format: date
-          example: '2026-01-14'
-        scope:
-          description: The scope for new engagement creation.
-          type: string
-          example: License agreement for Azure cloud services covering the IT business unit only. Includes 24/7 technical support and quarterly service reviews.
-          maxLength: 2000
-        attributeValues:
-          description: The custom attributes for new engagement.
-          type: object
-          example:
-            priority:
-            - id: c5c3167e-f8e2-4719-a0a1-491350507fee
-              value: High
-            department:
-            - id: d6d4278f-g9f3-5820-b1b2-592461608gff
-              value: IT
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - name
-      - vendor
-    EngagementListViewInformation:
-      type: object
-      properties:
-        name:
-          description: The Engagement name.
-          type: string
-          example: Microsoft Azure
-          minLength: 1
-        orgGroupId:
-          description: The GUID of the Engagement organization.
-          type: string
-          format: uuid
-          example: a83dac05-e170-4cbd-b0f1-c3591399f04e
-        internalOwnerId:
-          description: The user ID of the Engagement internal owner.
-          type: string
-          format: uuid
-          example: 20a61b02-482a-44b6-8bc3-be1d4c83331f
-        externalContact:
-          description: The engagement's external contact information.
-          type: string
-          example: Any external contact as its a text field
-        notes:
-          description: Notes
-          type: string
-        startDate:
-          description: Engagement Start Date.
-          type: string
-          format: date-time
-          example: '2020-10-12'
-        endDate:
-          description: Engagement End Date.
-          type: string
-          format: date-time
-          example: '2021-06-30'
-        scope:
-          description: Engagement Scope.
-          type: string
-          example: License agreement for the IT business unit only
-        engagementId:
-          description: The GUID of the Engagement. Can also be found via the engagement details page.
-          type: string
-          format: uuid
-          example: 41aa71ae-0ace-4073-8947-e6941714bcf1
-        number:
-          description: This field contains a unique identifier of a particular engagement record.
-          type: integer
-          format: int64
-          example: 12345
-          minimum: 1
-        internalOwnerUser:
-          description: The user full name of the Engagement's Internal owner.
-          type: string
-          example: John Smith
-          maxLength: 100
-          minLength: 1
-        internalOwnerEmail:
-          description: The user email of the Engagement's Internal owner.
-          type: string
-          format: email
-          example: test@example.com
-          maxLength: 255
-        vendor:
-          description: Vendor for which Engagement is being created
-          example:
-            id: 97e8d8d7-e05c-4e0a-beec-ef1458ea1ebc
-            name: Microsoft
-            orgGroupId: a41972ae-2050-4126-b314-1a58d08ea116
-            label: Microsoft
-          $ref: '#/components/schemas/Key'
-        orgGroupName:
-          description: The engagement's Organization Name.
-          type: string
-          example: Corporate
-          maxLength: 100
-          minLength: 1
-        type:
-          description: Engagement Type.
-          type: string
-          example: VendorEngagement
-          enum:
-          - VendorEngagement
-          - ProductEngagement
-          - ServiceEngagement
-        viewOnly:
-          description: The parameter to check if the user has view only access or not.
-          type: boolean
-          example: false
-        forceAbac:
-          description: Parameter to check if the engagement record is according to the org context or not.
-          type: boolean
-          example: false
-        workflow:
-          description: Workflow assigned to Engagement
-          example:
-            id: 8ac1bf26-fa0d-43d2-9a1b-81130673030c
-            nameKey: DefaultEngagementWorkflow
-            name: Default Engagement Workflow
-            stageId: c6ce7a8b-de4d-4707-924b-d283f273fe2c
-            stageNameKey: New
-            stageName: New
-            stageBadgeColor: New
-          $ref: '#/components/schemas/EngagementWorkflowInformation'
-        vendorViewOnly:
-          description: Vendor view only access
-          type: boolean
-          example: false
-        attributeValues:
-          description: Engagement custom attribute values.
-          type: object
-          example:
-            priority:
-            - id: c5c3167e-f8e2-4719-a0a1-491350507fee
-              value: High
-            department:
-            - id: d6d4278f-g9f3-5820-b1b2-592461608gff
-              value: IT
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        riskLevel:
-          description: Engagement's Risk Level.
-          type: string
-          example: MEDIUM
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-          - CRITICAL
-        riskScore:
-          description: Engagement's Risk Score.
-          type: number
-          example: 2.5
-          maximum: 5
-          minimum: 0
-        inherentRiskLevel:
-          description: Engagement's Inherent Risk Level.
-          type: string
-          example: HIGH
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-          - CRITICAL
-        inherentRiskScore:
-          description: Engagement's Inherent Risk Score.
-          type: number
-          example: 3.7
-          maximum: 5
-          minimum: 0
-        targetRiskLevel:
-          description: Engagement's Target Risk Level.
-          type: string
-          example: LOW
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-          - CRITICAL
-        targetRiskScore:
-          description: Engagement's Target Risk Score.
-          type: number
-          example: 1.2
-          maximum: 5
-          minimum: 0
-        engagementStatus:
-          description: Status of Engagement.
-          type: string
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - PENDING
-          - ARCHIVED
-        lastUpdatedDate:
-          description: LastUpdatedDate
-          type: string
-          format: date-time
-          example: '2023-05-10T14:30:00Z'
-        createdDate:
-          description: Created Date
-          type: string
-          format: date-time
-          example: '2023-01-15T09:20:00Z'
-        createdBy:
-          description: Created By
-          type: string
-          format: uuid
-          example: 8a732373-9713-4f93-98f6-cae431e61956
-        createdByUser:
-          description: Engagement created by user name
-          type: string
-          example: Admin User
-          maxLength: 100
-        updatedBy:
-          description: Updated By
-          type: string
-          format: uuid
-          example: 8a732373-9713-4f93-98f6-cae431e61956
-        updatedByUser:
-          description: Engagement updated by user name
-          type: string
-          example: Admin User
-          maxLength: 100
-        doraB07010120IdentificationOfAlternativeThirdParty:
-          description: Dora Identification Of Alternative ThirdParty
-          type: string
-          example: 'Alternative vendor identified: Oracle Cloud'
-          maxLength: 500
-        doraB02020100NoticePeriodFinancialEntity:
-          description: Dora Notice Period Financial Entity
-          type: string
-          example: 90
-          maxLength: 100
-        doraB02020110NoticePeriodThirdParty:
-          description: Dora Notice Period ThirdParty
-          type: string
-          example: 60
-          maxLength: 100
-    AttributeDomainOptionOverrideInformation:
-      type: object
-      properties:
-        id:
-          description: Override Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attributeDomainOptionId:
-          description: Domain Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        targetAttributeId:
-          description: Target Attribute GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        targetOptionId:
-          description: Target Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440003
-        option:
-          description: Option name
-          type: string
-          example: TypeA
-        optionKey:
-          description: Option name key
-          type: string
-          example: TypeB
-        optionSelectionValue:
-          description: Option selection value
-          type: string
-          example: 10
-        colorCode:
-          description: Color code for the option
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
-          type: boolean
-          example: true
-          default: 'true'
-        metadata:
-          description: Additional metadata for the attribute option
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-        optionSelectionValueAsDouble:
-          type: number
-          format: double
-        optionAsDouble:
-          type: number
-          format: double
-    AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: The associated option hint.
-          type: string
-        hintKey:
-          description: The associated option hint key.
-          type: string
-    AbacBasicAssignmentInfo:
-      type: object
-      properties:
-        assignmentId:
-          description: GUID of the linked assignment
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assignmentName:
-          description: Name of the linked assignment
-          type: string
-          example: Assignment1
-        policyStatus:
-          description: Policy status of the linked assignment
-          type: string
-          example: ACTIVE
-          enum:
-          - INACTIVE
-          - ACTIVE
-          - PROCESSING
-          - FAILED
-    ExternalEngagementPatchUpdateRequest:
-      type: object
-      example:
-        name: Microsoft Azure Cloud Services 2025
-        notes: Updated service agreement
-        startDate: '2025-01-15'
-        endDate: '2026-01-14'
     AttributeInformation:
       type: object
       properties:
@@ -1610,6 +1121,63 @@ components:
       - enabled
       - fieldName
       - name
+    FilterInformation:
+      type: object
+      properties:
+        field:
+          description: The field name for engagement filter.
+          type: string
+          example: contractTypeName
+          maxLength: 255
+          minLength: 1
+        operator:
+          description: The operator for engagement filter.
+          type: string
+          example: EQUAL_TO
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - LESS_THAN
+          - GREATER_THAN_EQUAL
+          - LESS_THAN_EQUAL
+          - LIKE
+          - NOT_LIKE
+          - IN
+          - NOT_IN
+          - IS_NULL
+          - IS_NOT_NULL
+          - BETWEEN
+        value:
+          description: The value for engagement filter.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value for engagement range filter.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+      example:
+      - field: contractTypeName
+        operator: EQUAL_TO
+        value:
+        - Privacy Policy
+      - field: status
+        operator: NOT_EQUAL_TO
+        value: EXPIRED
+      required:
+      - field
     AssociatedAttributeInformation:
       type: object
       properties:
@@ -1701,77 +1269,245 @@ components:
       - fieldName
       - id
       - responseType
-    EngagementWorkflowInformation:
+    AttributeOptionMetadata:
       type: object
       properties:
-        id:
-          description: The workflow identifier in results.
+        hint:
+          description: The associated option hint.
           type: string
-          format: uuid
-          example: 8ac1bf26-fa0d-43d2-9a1b-81130673030c
-        nameKey:
-          description: The workflow translation key in results.
+        hintKey:
+          description: The associated option hint key.
           type: string
-          example: DefaultEngagementWorkflow
-          maxLength: 100
-          minLength: 1
-        name:
-          description: The workflow name in results.
-          type: string
-          example: Default Engagement Workflow
-          maxLength: 100
-          minLength: 1
-        stageId:
-          description: The workflow stage identifier in results.
-          type: string
-          format: uuid
-          example: c6ce7a8b-de4d-4707-924b-d283f273fe2c
-        stageNameKey:
-          description: The workflow stage key in results.
-          type: string
-          example: New
-          maxLength: 100
-          minLength: 1
-        stageName:
-          description: The workflow stage name in results.
-          type: string
-          example: New
-          maxLength: 100
-          minLength: 1
-        stageBadgeColor:
-          description: The workflow stage color in results.
-          type: string
-          example: blue
-          maxLength: 50
-          minLength: 1
-    InventoryValue:
+    ExternalEngagementStatusUpdateRequest:
       type: object
       properties:
-        id:
-          description: The GUID of the Inventory Type.
+        status:
+          description: The new status for the engagement.
           type: string
-          format: uuid
-          example: 41aa71ae-0ace-4073-8947-e6941714bcf1
-        value:
-          description: The Value of the Inventory Type.
-          type: string
-          example: Technology
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: VendorsTypeTechnology
-    SortObject:
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - PENDING
+          - ARCHIVED
+          minLength: 1
+      example:
+        status: ACTIVE
+      required:
+      - status
+    PageEngagementListViewInformation:
       type: object
       properties:
+        content:
+          description: The array of engagement search results.
+          items:
+            $ref: '#/components/schemas/EngagementListViewInformation'
+          type: array
         empty:
-          description: The flag indicating no sorting applied.
+          description: The flag indicating empty search results.
           type: boolean
-        sorted:
-          description: The flag indicating sorted results.
+        first:
+          description: The flag indicating first page of results.
           type: boolean
-        unsorted:
-          description: The flag indicating unsorted results.
+        last:
+          description: The flag indicating last page of results.
           type: boolean
+        number:
+          description: The current page number of results.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The count of elements in current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The page size configuration for results.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total count across all pages.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The total number of available pages.
+          type: integer
+          format: int32
+          example: 1
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: object
+          example:
+            41aa71ae-0ace-4073-8947-e6941714bcf1:
+            - field1
+            - field2
+          additionalProperties:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+        sort:
+          description: The sorting configuration for results.
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          description: The pagination configuration and metadata.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: The question name key for schema.
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          description: The question name for schema.
+          type: string
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          description: The question description key for schema.
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          description: The question description for schema.
+          type: string
+          maxLength: 500
+          minLength: 0
+    AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option Key which can be used for translation
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      required:
+      - option
+    ExternalEngagementCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name for new engagement creation.
+          type: string
+          example: Microsoft Azure Cloud Services 2025
+          maxLength: 500
+          minLength: 1
+        vendor:
+          description: The vendor for new engagement creation.
+          example:
+            id: 97e8d8d7-e05c-4e0a-beec-ef1458ea1ebc
+            name: Microsoft
+            orgGroupId: a41972ae-2050-4126-b314-1a58d08ea116
+            label: Microsoft
+          $ref: '#/components/schemas/Key'
+        orgGroupId:
+          description: The organization identifier for new engagement.
+          type: string
+          format: uuid
+          example: a41972ae-2050-4126-b314-1a58d08ea116
+        type:
+          description: The type for new engagement creation.
+          type: string
+          example: VendorEngagement
+          enum:
+          - VendorEngagement
+          - ProductEngagement
+          - ServiceEngagement
+        internalOwnerEmail:
+          description: The internal owner email for new engagement.
+          type: string
+          format: email
+          example: john.doe@company.com
+          maxLength: 255
+        externalContact:
+          description: The external contact for new engagement.
+          type: string
+          example: Jane Smith (jane.smith@microsoft.com, +1-555-123-4567)
+          maxLength: 500
+        notes:
+          description: The notes for new engagement creation.
+          type: string
+          example: This engagement covers all Microsoft Azure cloud services used by our IT department. Includes premium support package and training services.
+          maxLength: 4000
+        startDate:
+          description: The start date for new engagement.
+          type: string
+          format: date
+          example: '2025-01-15'
+        endDate:
+          description: The end date for new engagement.
+          type: string
+          format: date
+          example: '2026-01-14'
+        scope:
+          description: The scope for new engagement creation.
+          type: string
+          example: License agreement for Azure cloud services covering the IT business unit only. Includes 24/7 technical support and quarterly service reviews.
+          maxLength: 2000
+        attributeValues:
+          description: The custom attributes for new engagement.
+          type: object
+          example:
+            priority:
+            - id: c5c3167e-f8e2-4719-a0a1-491350507fee
+              value: High
+            department:
+            - id: d6d4278f-g9f3-5820-b1b2-592461608gff
+              value: IT
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - name
+      - vendor
     AttributeValueInformation:
       type: object
       properties:
@@ -1812,164 +1548,152 @@ components:
           default: 'false'
       required:
       - value
-    Key:
+    ExternalEngagementUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The updated name of the engagement.
+          type: string
+          example: Microsoft Azure Cloud Services 2025 - Enterprise Agreement
+          maxLength: 500
+          minLength: 1
+        orgGroupId:
+          description: The organization identifier for engagement.
+          type: string
+          format: uuid
+          example: a41972ae-2050-4126-b314-1a58d08ea116
+        internalOwnerEmail:
+          description: The email of internal owner for engagement.
+          type: string
+          format: email
+          example: john.doe@company.com
+          maxLength: 255
+        externalContact:
+          description: The external contact for the engagement.
+          type: string
+          example: Jane Smith (jane.smith@microsoft.com, +1-555-123-4567)
+          maxLength: 500
+        notes:
+          description: The notes about the engagement.
+          type: string
+          example: This engagement covers all Microsoft Azure cloud services used by our IT department. Updated to include new security features and compliance requirements.
+          maxLength: 4000
+        startDate:
+          description: The start date of the engagement.
+          type: string
+          format: date
+          example: '2025-01-15'
+        endDate:
+          description: The end date of the engagement.
+          type: string
+          format: date
+          example: '2026-01-14'
+        scope:
+          description: The scope of the engagement.
+          type: string
+          example: License agreement for Azure cloud services covering the IT business unit only. Updated to include additional data centers and expanded support services.
+          maxLength: 2000
+        attributeValues:
+          description: The custom attributes for the engagement.
+          type: object
+          example:
+            priority:
+            - id: c5c3167e-f8e2-4719-a0a1-491350507fee
+              value: High
+            department:
+            - id: d6d4278f-g9f3-5820-b1b2-592461608gff
+              value: IT
+            complianceLevel:
+            - id: e7e5389g-h0g4-6931-c2c3-603572719hgg
+              value: Enterprise
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - name
+    AttributeDomainOptionOverrideInformation:
       type: object
       properties:
         id:
-          description: The vendor identifier in results.
+          description: Override Option GUID
           type: string
           format: uuid
-          example: cd7f767c-c849-412c-abbb-b59845cd5476
-        name:
-          description: The vendor name in results.
-          type: string
-          example: Microsoft
-        orgGroupId:
-          description: The vendor organization in results.
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attributeDomainOptionId:
+          description: Domain Option GUID
           type: string
           format: uuid
-          example: cd7f767c-c849-412c-abbb-b59845cd5476
-        orgGroupName:
-          description: The vendor organization name in results.
+          example: 550e8400-e29b-41d4-a716-446655440001
+        targetAttributeId:
+          description: Target Attribute GUID
           type: string
-          readOnly: true
-        vendorType:
-          description: Type of the Vendor.
-          $ref: '#/components/schemas/InventoryValue'
-      required:
-      - name
-      - orgGroupId
-    ExternalEngagementStatusUpdateRequest:
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        targetOptionId:
+          description: Target Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+        optionKey:
+          description: Option name key
+          type: string
+          example: TypeB
+        optionSelectionValue:
+          description: Option selection value
+          type: string
+          example: 10
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+        optionSelectionValueAsDouble:
+          type: number
+          format: double
+        optionAsDouble:
+          type: number
+          format: double
+    AbacBasicAssignmentInfo:
       type: object
       properties:
-        status:
-          description: The new status for the engagement.
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+        policyStatus:
+          description: Policy status of the linked assignment
           type: string
           example: ACTIVE
           enum:
+          - INACTIVE
           - ACTIVE
-          - PENDING
-          - ARCHIVED
-          minLength: 1
-      example:
-        status: ACTIVE
-      required:
-      - status
-    AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: The entity type for schema options.
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: The service path for schema options.
-          type: string
-          example: /api/location
-        optionUrl:
-          description: The option URL for schema options.
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
-        optionListUrl:
-          description: Api URL for the Drop Down Api. Complete List of entities
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
-        viewType:
-          description: The view type for schema options.
-          type: string
-        optionType:
-          description: Option Type
-          type: string
-          example: BusinessLocations
-        permissions:
-          description: Permissions
-          type: array
-          items:
-            type: string
-          example: '[features.core-constructs.view]'
-        applicationUrl:
-          description: Application Url
-          type: string
-          example: /settings/location-management/location/Location
-    FilterInformation:
-      type: object
-      properties:
-        field:
-          description: The field name for engagement filter.
-          type: string
-          example: contractTypeName
-          maxLength: 255
-          minLength: 1
-        operator:
-          description: The operator for engagement filter.
-          type: string
-          example: EQUAL_TO
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - LESS_THAN
-          - GREATER_THAN_EQUAL
-          - LESS_THAN_EQUAL
-          - LIKE
-          - NOT_LIKE
-          - IN
-          - NOT_IN
-          - IS_NULL
-          - IS_NOT_NULL
-          - BETWEEN
-        value:
-          description: The value for engagement filter.
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: The end value for engagement range filter.
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-      example:
-      - field: contractTypeName
-        operator: EQUAL_TO
-        value:
-        - Privacy Policy
-      - field: status
-        operator: NOT_EQUAL_TO
-        value: EXPIRED
-      required:
-      - field
-    AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: The associated identifier for new engagement.
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: The associated value for new engagement.
-          type: string
-          example: Text Value
-        valueKey:
-          description: The associated key for new engagement.
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: The associated color for new engagement.
-          type: string
-          example: red
-      required:
-      - value
+          - PROCESSING
+          - FAILED
     EngagementDetailInformation:
       type: object
       properties:
@@ -2214,94 +1938,300 @@ components:
           example: name
           maxLength: 100
           minLength: 1
-    AttributeOptionInformation:
+    EngagementWorkflowInformation:
       type: object
       properties:
         id:
-          description: Option GUID
+          description: The workflow identifier in results.
           type: string
           format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        option:
-          description: Option name
+          example: 8ac1bf26-fa0d-43d2-9a1b-81130673030c
+        nameKey:
+          description: The workflow translation key in results.
           type: string
-          example: TypeA
-          maxLength: 255
+          example: DefaultEngagementWorkflow
+          maxLength: 100
           minLength: 1
-        optionKey:
-          description: Option Key which can be used for translation
+        name:
+          description: The workflow name in results.
           type: string
-          example: IM.TypeA
-          maxLength: 255
-        colorCode:
-          description: Color code for the option
+          example: Default Engagement Workflow
+          maxLength: 100
+          minLength: 1
+        stageId:
+          description: The workflow stage identifier in results.
           type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
+          format: uuid
+          example: c6ce7a8b-de4d-4707-924b-d283f273fe2c
+        stageNameKey:
+          description: The workflow stage key in results.
+          type: string
+          example: New
+          maxLength: 100
+          minLength: 1
+        stageName:
+          description: The workflow stage name in results.
+          type: string
+          example: New
+          maxLength: 100
+          minLength: 1
+        stageBadgeColor:
+          description: The workflow stage color in results.
+          type: string
+          example: blue
+          maxLength: 50
+          minLength: 1
+    InventoryValue:
+      type: object
+      properties:
+        id:
+          description: The GUID of the Inventory Type.
+          type: string
+          format: uuid
+          example: 41aa71ae-0ace-4073-8947-e6941714bcf1
+        value:
+          description: The Value of the Inventory Type.
+          type: string
+          example: Technology
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: VendorsTypeTechnology
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: The flag indicating no sorting applied.
           type: boolean
-          example: true
-          default: 'true'
-        metadata:
-          description: Additional metadata for the attribute option
-          $ref: '#/components/schemas/AttributeOptionMetadata'
+        sorted:
+          description: The flag indicating sorted results.
+          type: boolean
+        unsorted:
+          description: The flag indicating unsorted results.
+          type: boolean
+    AttributeFormulaDetail:
+      type: object
+      properties:
+        formula:
+          type: string
+        formulaType:
+          type: string
+    ExternalEngagementPatchUpdateRequest:
+      type: object
+      example:
+        name: Microsoft Azure Cloud Services 2025
+        notes: Updated service agreement
+        startDate: '2025-01-15'
+        endDate: '2026-01-14'
+    AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: The entity type for schema options.
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: The service path for schema options.
+          type: string
+          example: /api/location
+        optionUrl:
+          description: The option URL for schema options.
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
+        optionListUrl:
+          description: Api URL for the Drop Down Api. Complete List of entities
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
+        viewType:
+          description: The view type for schema options.
+          type: string
+        optionType:
+          description: Option Type
+          type: string
+          example: BusinessLocations
+        permissions:
+          description: Permissions
+          type: array
+          items:
+            type: string
+          example: '[features.core-constructs.view]'
+        applicationUrl:
+          description: Application Url
+          type: string
+          example: /settings/location-management/location/Location
+    Key:
+      type: object
+      properties:
+        id:
+          description: The vendor identifier in results.
+          type: string
+          format: uuid
+          example: cd7f767c-c849-412c-abbb-b59845cd5476
+        name:
+          description: The vendor name in results.
+          type: string
+          example: Microsoft
+        orgGroupId:
+          description: The vendor organization in results.
+          type: string
+          format: uuid
+          example: cd7f767c-c849-412c-abbb-b59845cd5476
+        orgGroupName:
+          description: The vendor organization name in results.
+          type: string
+          readOnly: true
+        vendorType:
+          description: Type of the Vendor.
+          $ref: '#/components/schemas/InventoryValue'
       required:
-      - option
-    ExternalEngagementUpdateRequest:
+      - name
+      - orgGroupId
+    AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The associated identifier for new engagement.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The associated value for new engagement.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The associated key for new engagement.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The associated color for new engagement.
+          type: string
+          example: red
+      required:
+      - value
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    EngagementListViewInformation:
       type: object
       properties:
         name:
-          description: The updated name of the engagement.
+          description: The Engagement name.
           type: string
-          example: Microsoft Azure Cloud Services 2025 - Enterprise Agreement
-          maxLength: 500
+          example: Microsoft Azure
           minLength: 1
         orgGroupId:
-          description: The organization identifier for engagement.
+          description: The GUID of the Engagement organization.
           type: string
           format: uuid
-          example: a41972ae-2050-4126-b314-1a58d08ea116
+          example: a83dac05-e170-4cbd-b0f1-c3591399f04e
+        internalOwnerId:
+          description: The user ID of the Engagement internal owner.
+          type: string
+          format: uuid
+          example: 20a61b02-482a-44b6-8bc3-be1d4c83331f
+        externalContact:
+          description: The engagement's external contact information.
+          type: string
+          example: Any external contact as its a text field
+        notes:
+          description: Notes
+          type: string
+        startDate:
+          description: Engagement Start Date.
+          type: string
+          format: date-time
+          example: '2020-10-12'
+        endDate:
+          description: Engagement End Date.
+          type: string
+          format: date-time
+          example: '2021-06-30'
+        scope:
+          description: Engagement Scope.
+          type: string
+          example: License agreement for the IT business unit only
+        engagementId:
+          description: The GUID of the Engagement. Can also be found via the engagement details page.
+          type: string
+          format: uuid
+          example: 41aa71ae-0ace-4073-8947-e6941714bcf1
+        number:
+          description: This field contains a unique identifier of a particular engagement record.
+          type: integer
+          format: int64
+          example: 12345
+          minimum: 1
+        internalOwnerUser:
+          description: The user full name of the Engagement's Internal owner.
+          type: string
+          example: John Smith
+          maxLength: 100
+          minLength: 1
         internalOwnerEmail:
-          description: The email of internal owner for engagement.
+          description: The user email of the Engagement's Internal owner.
           type: string
           format: email
-          example: john.doe@company.com
+          example: test@example.com
           maxLength: 255
-        externalContact:
-          description: The external contact for the engagement.
+        vendor:
+          description: Vendor for which Engagement is being created
+          example:
+            id: 97e8d8d7-e05c-4e0a-beec-ef1458ea1ebc
+            name: Microsoft
+            orgGroupId: a41972ae-2050-4126-b314-1a58d08ea116
+            label: Microsoft
+          $ref: '#/components/schemas/Key'
+        orgGroupName:
+          description: The engagement's Organization Name.
           type: string
-          example: Jane Smith (jane.smith@microsoft.com, +1-555-123-4567)
-          maxLength: 500
-        notes:
-          description: The notes about the engagement.
+          example: Corporate
+          maxLength: 100
+          minLength: 1
+        type:
+          description: Engagement Type.
           type: string
-          example: This engagement covers all Microsoft Azure cloud services used by our IT department. Updated to include new security features and compliance requirements.
-          maxLength: 4000
-        startDate:
-          description: The start date of the engagement.
-          type: string
-          format: date
-          example: '2025-01-15'
-        endDate:
-          description: The end date of the engagement.
-          type: string
-          format: date
-          example: '2026-01-14'
-        scope:
-          description: The scope of the engagement.
-          type: string
-          example: License agreement for Azure cloud services covering the IT business unit only. Updated to include additional data centers and expanded support services.
-          maxLength: 2000
+          example: VendorEngagement
+          enum:
+          - VendorEngagement
+          - ProductEngagement
+          - ServiceEngagement
+        viewOnly:
+          description: The parameter to check if the user has view only access or not.
+          type: boolean
+          example: false
+        forceAbac:
+          description: Parameter to check if the engagement record is according to the org context or not.
+          type: boolean
+          example: false
+        workflow:
+          description: Workflow assigned to Engagement
+          example:
+            id: 8ac1bf26-fa0d-43d2-9a1b-81130673030c
+            nameKey: DefaultEngagementWorkflow
+            name: Default Engagement Workflow
+            stageId: c6ce7a8b-de4d-4707-924b-d283f273fe2c
+            stageNameKey: New
+            stageName: New
+            stageBadgeColor: New
+          $ref: '#/components/schemas/EngagementWorkflowInformation'
+        vendorViewOnly:
+          description: Vendor view only access
+          type: boolean
+          example: false
         attributeValues:
-          description: The custom attributes for the engagement.
+          description: Engagement custom attribute values.
           type: object
           example:
             priority:
@@ -2310,38 +2240,108 @@ components:
             department:
             - id: d6d4278f-g9f3-5820-b1b2-592461608gff
               value: IT
-            complianceLevel:
-            - id: e7e5389g-h0g4-6931-c2c3-603572719hgg
-              value: Enterprise
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - name
-    IntakeQuestion:
-      type: object
-      properties:
-        nameKey:
-          description: The question name key for schema.
+        riskLevel:
+          description: Engagement's Risk Level.
           type: string
+          example: MEDIUM
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+        riskScore:
+          description: Engagement's Risk Score.
+          type: number
+          example: 2.5
+          maximum: 5
+          minimum: 0
+        inherentRiskLevel:
+          description: Engagement's Inherent Risk Level.
+          type: string
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+        inherentRiskScore:
+          description: Engagement's Inherent Risk Score.
+          type: number
+          example: 3.7
+          maximum: 5
+          minimum: 0
+        targetRiskLevel:
+          description: Engagement's Target Risk Level.
+          type: string
+          example: LOW
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - CRITICAL
+        targetRiskScore:
+          description: Engagement's Target Risk Score.
+          type: number
+          example: 1.2
+          maximum: 5
+          minimum: 0
+        engagementStatus:
+          description: Status of Engagement.
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - PENDING
+          - ARCHIVED
+        lastUpdatedDate:
+          description: LastUpdatedDate
+          type: string
+          format: date-time
+          example: '2023-05-10T14:30:00Z'
+        createdDate:
+          description: Created Date
+          type: string
+          format: date-time
+          example: '2023-01-15T09:20:00Z'
+        createdBy:
+          description: Created By
+          type: string
+          format: uuid
+          example: 8a732373-9713-4f93-98f6-cae431e61956
+        createdByUser:
+          description: Engagement created by user name
+          type: string
+          example: Admin User
           maxLength: 100
-          minLength: 0
-        name:
-          description: The question name for schema.
+        updatedBy:
+          description: Updated By
           type: string
-          maxLength: 500
-          minLength: 0
-        descriptionKey:
-          description: The question description key for schema.
+          format: uuid
+          example: 8a732373-9713-4f93-98f6-cae431e61956
+        updatedByUser:
+          description: Engagement updated by user name
           type: string
+          example: Admin User
           maxLength: 100
-          minLength: 0
-        description:
-          description: The question description for schema.
+        doraB07010120IdentificationOfAlternativeThirdParty:
+          description: Dora Identification Of Alternative ThirdParty
           type: string
+          example: 'Alternative vendor identified: Oracle Cloud'
           maxLength: 500
-          minLength: 0
+        doraB02020100NoticePeriodFinancialEntity:
+          description: Dora Notice Period Financial Entity
+          type: string
+          example: 90
+          maxLength: 100
+        doraB02020110NoticePeriodThirdParty:
+          description: Dora Notice Period ThirdParty
+          type: string
+          example: 60
+          maxLength: 100
   securitySchemes:
     OAUTH2:
       type: oauth2

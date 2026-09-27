@@ -298,13 +298,7 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple:
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail:
       properties:
         name:
           type: string
@@ -317,7 +311,170 @@ components:
         options:
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail:
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple:
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple:
+      properties:
+        purposeId:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        retireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        createdDate:
+          description: Date when the purpose was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        publishedBy:
+          description: ID of the user who last published the purpose
+          type: string
+          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
+        publishedDate:
+          description: Date when the purpose was last published
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:00Z'
+        lastModifiedDate:
+          description: Date when the purpose was last modified
+          type: string
+          format: date-time
+          example: '2023-01-10T15:45:30Z'
+        versions:
+          description: List of all versions of the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple'
+        attributes:
+          description: Additional attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes attached to the purpose
+            items:
+              type: string
+              description: Additional attributes attached to the purpose
+      required:
+      - createdDate
+      - purposeId
+      - versions
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple:
       properties:
         label:
@@ -460,14 +617,6 @@ components:
       - purposeType
       - status
       - version
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2_Detail:
       properties:
         name:
@@ -497,20 +646,6 @@ components:
       required:
       - description
       - name
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail:
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Simple:
       properties:
         id:
@@ -542,226 +677,20 @@ components:
       - displayAs
       - id
       - name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple:
-      properties:
-        purposeId:
-          description: Unique identifier of the purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        retireOnDate:
-          description: Date when the purpose will be retired
-          type: string
-          format: date-time
-          example: '2025-12-31T23:59:59Z'
-        createdDate:
-          description: Date when the purpose was created
-          type: string
-          format: date-time
-          example: '2023-01-01T00:00:00Z'
-        publishedBy:
-          description: ID of the user who last published the purpose
-          type: string
-          example: 304F7D36-75A2-4967-81A5-5A7D604C6A19
-        publishedDate:
-          description: Date when the purpose was last published
-          type: string
-          format: date-time
-          example: '2023-01-15T10:30:00Z'
-        lastModifiedDate:
-          description: Date when the purpose was last modified
-          type: string
-          format: date-time
-          example: '2023-01-10T15:45:30Z'
-        versions:
-          description: List of all versions of the purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple'
-        attributes:
-          description: Additional attributes attached to the purpose
-          type: object
-          additionalProperties:
-            type: array
-            description: Additional attributes attached to the purpose
-            items:
-              type: string
-              description: Additional attributes attached to the purpose
-      required:
-      - createdDate
-      - purposeId
-      - versions
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail:
-      properties:
-        id:
-          description: Unique identifier of the purpose-topic relationship
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        transactionType:
-          description: Type of transaction associated with the topic
-          type: string
-          example: OPT_IN
-        name:
-          description: Name of the topic
-          type: string
-          example: Car Marketing
-        integrationKey:
-          description: Integration key formed by combining purpose and topic names
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        languages:
-          description: List of language-specific content for the topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail'
-        canDelete:
-          description: Indicates whether this topic can be deleted
-          type: boolean
-          example: true
-      required:
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple:
-      properties:
-        id:
-          description: Unique identifier of the purpose-topic relationship
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        transactionType:
-          description: Type of transaction associated with the topic
-          type: string
-          example: OPT_IN
-        name:
-          description: Name of the topic
-          type: string
-          example: Car Marketing
-        integrationKey:
-          description: Integration key formed by combining purpose and topic names
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        languages:
-          description: List of language-specific content for the topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple'
-        canDelete:
-          description: Indicates whether this topic can be deleted
-          type: boolean
-          example: true
-      required:
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple:
       properties:
         name:
+          type: string
+        description:
           type: string
         language:
           type: string
         default:
           type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail:
-      properties:
-        name:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail:
-      properties:
-        id:
-          description: Unique identifier of the purpose-custom preference relationship
-          type: string
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: Name of the custom preference
-          type: string
-          example: Email Frequency
-        displayAs:
-          description: Display type for rendering the custom preference in the UI
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        customPreferenceOptions:
-          description: List of available options for this custom preference
+        options:
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
-        languages:
-          description: List of language-specific content for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail'
-      required:
-      - displayAs
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeVersionsGroupedByGuid_Simple:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple'
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail:
-      properties:
-        id:
-          type: string
-        transactionType:
-          type: string
-        label:
-          type: string
-        order:
-          type: integer
-          format: int32
-        isDefault:
-          type: boolean
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_Detail:
       type: object
       properties:
@@ -920,23 +849,94 @@ components:
       - purposeType
       - status
       - version
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple:
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail:
       properties:
-        offset:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeVersionsGroupedByGuid_Simple:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
           type: integer
-          format: int64
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple'
         sort:
           $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
-        pageNumber:
+        totalPages:
+          description: Total number of pages in the result list.
           type: integer
           format: int32
-        pageSize:
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
           type: integer
           format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
+          example: 20
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

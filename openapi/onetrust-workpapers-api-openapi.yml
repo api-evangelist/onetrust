@@ -316,24 +316,57 @@ paths:
         - AUDIT_MANAGEMENT
 components:
   schemas:
-    SearchCriteriaRequest:
+    PageWorkPaperListInformation:
       type: object
       properties:
-        filters:
-          description: Filters, which is a set of field name and value combinations to refine search results
-          type: array
+        content:
+          description: The list of items for the current page
           items:
-            $ref: '#/components/schemas/FilterInformation'
-          example:
-          - field: status
-            operator: EQUALS
-            value: IN_PROGRESS
-          uniqueItems: true
-        fullText:
-          description: Full text search term to find matching audits or workpapers
-          type: string
-          example: Security Compliance
-      title: SearchCriteriaRequest
+            $ref: '#/components/schemas/WorkpaperListInformation'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+          maximum: 2000
+          minimum: 0
     WorkpaperListInformation:
       type: object
       properties:
@@ -427,247 +460,6 @@ components:
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
       title: WorkpaperListInformation
-    StageInformation:
-      type: object
-      properties:
-        id:
-          description: ID of the entity
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the Entity
-          type: string
-          example: Security Entity
-        nameKey:
-          description: Namekey of the entity for localization
-          type: string
-          example: workflow.stage.in_progress
-        badgeColor:
-          description: Workflow Stage Badge Color
-          type: string
-          example: blue
-      required:
-      - id
-      title: StageInformation
-    ControlAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Attribute option GUID.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        value:
-          description: Attribute option value.
-          type: string
-          example: Text value
-        valueKey:
-          description: Identifier used for translation of an attribute's option value.
-          type: string
-          example: attribute.option.valueKey
-    Sort:
-      type: object
-      title: Sort
-    PageWorkPaperListInformation:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page
-          items:
-            $ref: '#/components/schemas/WorkpaperListInformation'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/Pageable'
-        sort:
-          $ref: '#/components/schemas/Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-          maximum: 2000
-          minimum: 0
-    BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          description: ID of the entity
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the Entity
-          type: string
-          example: Security Entity
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: Sample Entity
-      required:
-      - id
-      title: BasicEntityDetail
-    WorkpaperDetailsUpdateRequest:
-      type: object
-      properties:
-        testingResult:
-          description: Workpaper testing result
-          type: string
-          example: Control is operating effectively
-        samplingResult:
-          description: Workpaper sampling result
-          type: string
-          example: Sample of 25 records reviewed
-        interviewResult:
-          description: Workpaper interview result
-          type: string
-          example: Confirmed with security team
-        name:
-          description: Workpaper Name
-          type: string
-          example: Updated Workpaper Name
-        attributes:
-          description: Custom Attributes
-          type: object
-          example:
-            status:
-            - value: COMPLETED
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      title: WorkpaperDetailsUpdateRequest
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    Pageable:
-      type: object
-      title: Pageable
-    ControlWorkpaperBasicInformation:
-      type: object
-      properties:
-        workpaperId:
-          description: Workpaper identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        number:
-          description: Workpaper Number
-          type: integer
-          format: int64
-          example: 12345
-        auditId:
-          description: Audit Identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        auditName:
-          description: Audit Name
-          type: string
-          example: Annual Security Audit
-          minLength: 1
-        stage:
-          description: Workpaper Stage
-          example:
-            id: 123e4567-e89b-12d3-a456-426614174002
-            name: In Progress
-          $ref: '#/components/schemas/BasicEntityDetailTranslation'
-        workflow:
-          description: Workpaper Workflow
-          example:
-            id: 123e4567-e89b-12d3-a456-426614174003
-            name: Standard Workflow
-          $ref: '#/components/schemas/BasicEntityDetailTranslation'
-        controlDetail:
-          description: Control Detail
-          $ref: '#/components/schemas/ControlDetailInformation'
-      title: ControlWorkpaperBasicInformation
-    BasicEntityDetailTranslation:
-      type: object
-      properties:
-        id:
-          description: ID of the entity
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the Entity
-          type: string
-          example: Security Entity
-        nameKey:
-          description: Namekey of the entity for localization
-          type: string
-          example: workflow.stage.in_progress
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: In Progress
-        nameKey: workflow.stage.in_progress
-      required:
-      - id
-      title: BasicEntityDetailTranslation
     FilterInformation:
       type: object
       properties:
@@ -710,6 +502,264 @@ components:
       required:
       - field
       title: FilterInformation
+    BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Sample Entity
+      required:
+      - id
+      title: BasicEntityDetail
+    Pageable:
+      type: object
+      title: Pageable
+    ControlAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Attribute option GUID.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        value:
+          description: Attribute option value.
+          type: string
+          example: Text value
+        valueKey:
+          description: Identifier used for translation of an attribute's option value.
+          type: string
+          example: attribute.option.valueKey
+    SearchCriteriaRequest:
+      type: object
+      properties:
+        filters:
+          description: Filters, which is a set of field name and value combinations to refine search results
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterInformation'
+          example:
+          - field: status
+            operator: EQUALS
+            value: IN_PROGRESS
+          uniqueItems: true
+        fullText:
+          description: Full text search term to find matching audits or workpapers
+          type: string
+          example: Security Compliance
+      title: SearchCriteriaRequest
+    WorkpaperDetailsUpdateRequest:
+      type: object
+      properties:
+        testingResult:
+          description: Workpaper testing result
+          type: string
+          example: Control is operating effectively
+        samplingResult:
+          description: Workpaper sampling result
+          type: string
+          example: Sample of 25 records reviewed
+        interviewResult:
+          description: Workpaper interview result
+          type: string
+          example: Confirmed with security team
+        name:
+          description: Workpaper Name
+          type: string
+          example: Updated Workpaper Name
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            status:
+            - value: COMPLETED
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      title: WorkpaperDetailsUpdateRequest
+    ControlWorkpaperBasicInformation:
+      type: object
+      properties:
+        workpaperId:
+          description: Workpaper identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        number:
+          description: Workpaper Number
+          type: integer
+          format: int64
+          example: 12345
+        auditId:
+          description: Audit Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        auditName:
+          description: Audit Name
+          type: string
+          example: Annual Security Audit
+          minLength: 1
+        stage:
+          description: Workpaper Stage
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174002
+            name: In Progress
+          $ref: '#/components/schemas/BasicEntityDetailTranslation'
+        workflow:
+          description: Workpaper Workflow
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174003
+            name: Standard Workflow
+          $ref: '#/components/schemas/BasicEntityDetailTranslation'
+        controlDetail:
+          description: Control Detail
+          $ref: '#/components/schemas/ControlDetailInformation'
+      title: ControlWorkpaperBasicInformation
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    StageInformation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+        nameKey:
+          description: Namekey of the entity for localization
+          type: string
+          example: workflow.stage.in_progress
+        badgeColor:
+          description: Workflow Stage Badge Color
+          type: string
+          example: blue
+      required:
+      - id
+      title: StageInformation
+    WorkpaperDetailInformation:
+      type: object
+      properties:
+        testingResult:
+          description: Workpaper testing result
+          type: string
+          example: Control is operating effectively as designed
+        samplingResult:
+          description: Workpaper sampling result
+          type: string
+          example: Sample of 25 transactions were tested with no exceptions noted
+        interviewResult:
+          description: Workpaper interview result
+          type: string
+          example: Confirmed implementation with the security team
+        auditors:
+          description: Auditor Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: John Doe
+        approvers:
+          description: Approver Names
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicEntityDetail'
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174001
+            name: Jane Smith
+        entityDetail:
+          description: Scope Entity Detail
+          example:
+            id: 123e4567-e89b-12d3-a456-426614174002
+            name: Access Control Policy
+          $ref: '#/components/schemas/BasicEntityDetail'
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            status:
+            - value: Completed
+            priority:
+            - value: High
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      title: WorkpaperDetailInformation
+    Sort:
+      type: object
+      title: Sort
+    BasicEntityDetailTranslation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+        nameKey:
+          description: Namekey of the entity for localization
+          type: string
+          example: workflow.stage.in_progress
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: In Progress
+        nameKey: workflow.stage.in_progress
+      required:
+      - id
+      title: BasicEntityDetailTranslation
     ControlDetailInformation:
       type: object
       properties:
@@ -809,56 +859,6 @@ components:
       - name
       - orgGroupId
       - orgGroupName
-    WorkpaperDetailInformation:
-      type: object
-      properties:
-        testingResult:
-          description: Workpaper testing result
-          type: string
-          example: Control is operating effectively as designed
-        samplingResult:
-          description: Workpaper sampling result
-          type: string
-          example: Sample of 25 transactions were tested with no exceptions noted
-        interviewResult:
-          description: Workpaper interview result
-          type: string
-          example: Confirmed implementation with the security team
-        auditors:
-          description: Auditor Names
-          type: array
-          items:
-            $ref: '#/components/schemas/BasicEntityDetail'
-          example:
-          - id: 123e4567-e89b-12d3-a456-426614174000
-            name: John Doe
-        approvers:
-          description: Approver Names
-          type: array
-          items:
-            $ref: '#/components/schemas/BasicEntityDetail'
-          example:
-          - id: 123e4567-e89b-12d3-a456-426614174001
-            name: Jane Smith
-        entityDetail:
-          description: Scope Entity Detail
-          example:
-            id: 123e4567-e89b-12d3-a456-426614174002
-            name: Access Control Policy
-          $ref: '#/components/schemas/BasicEntityDetail'
-        attributes:
-          description: Custom Attributes
-          type: object
-          example:
-            status:
-            - value: Completed
-            priority:
-            - value: High
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      title: WorkpaperDetailInformation
   securitySchemes:
     OAUTH2:
       type: oauth2

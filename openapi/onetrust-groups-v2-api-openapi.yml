@@ -350,55 +350,68 @@ paths:
         - INTEGRATION
 components:
   schemas:
-    Meta:
+    Member:
       type: object
       properties:
-        created:
-          description: The date and time when the resource was created
+        value:
+          description: The unique ID of the user that you want to add to the Group.
           type: string
-          format: date-time
-          example: '2022-05-27T15:28:14.298Z'
-        lastModified:
-          description: The date and time when the resource was last modified
+          format: uuid
+          example: 3da9fe38-7845-4658-a96e-00071fa20c2e
+        type:
+          description: The type of the resource.
           type: string
-          format: date-time
-          example: '2022-05-27T15:28:14.298Z'
-        location:
-          description: The URL for the resource
-          type: string
-          format: uri
-          example: /api/scim/v3/Users/53b1325c-081f-4f05-b41b-ba8cbdb7bae9
-          maxLength: 2083
-          minLength: 1
-        version:
-          description: The version of the resource
-          type: string
-          example: W/"f0f2a936"
-          maxLength: 100
-          minLength: 1
-        attributes:
-          type: array
-          items:
-            description: The set of attributes
-            example:
-            - active
-            - emails
-            - userName
-          uniqueItems: true
-        resourceType:
-          description: The resource type
-          type: string
-          example: Group
+          default: User
           enum:
           - User
-          - Group
-          - ResourceType
-          - ServiceProviderConfig
-          - Schema
+        $ref:
+          description: A hyperlink to the resource
+          type: string
+          format: url
+          example: /api/scim/v3/Users/1bd418b2-85dd-4f04-955f-e4870e119ef1"
+          readOnly: true
+      required:
+      - value
+      title: Member
+    Operation:
+      type: object
+      properties:
+        op:
+          description: The operation type
+          type: string
+          example: add
+          enum:
+          - add
+          - replace
+          - remove
+        path:
+          description: The path of the attribute being operated on
+          type: string
+          example: members
+        displayName:
+          description: The display name of the group
+          type: string
+          example: Admin Group
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+    Name:
+      type: object
+      properties:
+        familyName:
+          description: Family name (last name) of the user.
+          type: string
+          example: Smith
           maxLength: 100
           minLength: 1
-      readOnly: true
-      title: Meta
+        givenName:
+          description: Given name (first name) of the user.
+          type: string
+          example: John
+          maxLength: 100
+          minLength: 1
+      title: Name
     ResourceTypeResource:
       type: object
       properties:
@@ -442,22 +455,6 @@ components:
       - id
       - name
       - schema
-    Name:
-      type: object
-      properties:
-        familyName:
-          description: Family name (last name) of the user.
-          type: string
-          example: Smith
-          maxLength: 100
-          minLength: 1
-        givenName:
-          description: Given name (first name) of the user.
-          type: string
-          example: John
-          maxLength: 100
-          minLength: 1
-      title: Name
     GroupResource:
       type: object
       properties:
@@ -502,6 +499,59 @@ components:
       required:
       - displayName
       title: GroupResource
+    Email:
+      type: object
+      properties:
+        value:
+          description: Email of the user.
+          type: string
+          format: email
+          example: gpburdell@onetrust.com
+          minLength: 1
+        display:
+          description: Email of the user.
+          type: string
+          format: email
+          example: gpburdell@onetrust.com
+          readOnly: true
+        primary:
+          description: Is the email the user's primary. Always `true` in the OneTrust application.
+          type: boolean
+          example: true
+          default: 'true'
+          readOnly: true
+        $ref:
+          description: Reference for the attribute
+          type: string
+          format: string
+        type:
+          description: The type of the email. In the OneTrust application, type is always 'work'.
+          type: string
+          example: work
+          default: work
+      required:
+      - value
+    Supported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+    SchemaExtension:
+      type: object
+      properties:
+        schema:
+          description: The schema extension schema
+          type: string
+          example: urn:ietf:params:scim:schemas:onetrust:Group
+        required:
+          description: True if the schema extension is required
+          type: boolean
+          example: true
+      required:
+      - required
+      - schema
     AuthenticationScheme:
       type: object
       properties:
@@ -529,29 +579,152 @@ components:
           description: Indicates whether the authentication scheme is primary
           type: boolean
           example: true
-    Operation:
+    ServiceProviderConfig:
       type: object
       properties:
-        op:
-          description: The operation type
-          type: string
-          example: add
-          enum:
-          - add
-          - replace
-          - remove
-        path:
-          description: The path of the attribute being operated on
-          type: string
-          example: members
-        displayName:
-          description: The display name of the group
-          type: string
-          example: Admin Group
-        members:
+        schemas:
+          description: A collection of resource types supported by the service provider
           type: array
           items:
-            $ref: '#/components/schemas/Member'
+            type: string
+            description: A collection of resource types supported by the service provider
+            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
+          uniqueItems: true
+        patch:
+          $ref: '#/components/schemas/Supported'
+        bulk:
+          $ref: '#/components/schemas/BulkSupported'
+        filter:
+          $ref: '#/components/schemas/FilterSupported'
+        changePassword:
+          $ref: '#/components/schemas/Supported'
+        sort:
+          $ref: '#/components/schemas/Supported'
+        etag:
+          $ref: '#/components/schemas/Supported'
+        xmlDataFormat:
+          $ref: '#/components/schemas/Supported'
+        authenticationSchemes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthenticationScheme'
+        meta:
+          $ref: '#/components/schemas/Meta'
+          readOnly: true
+      title: ServiceProviderConfig
+    FilterSupported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+        maxResults:
+          type: integer
+          format: int32
+    ListResponse:
+      type: object
+      properties:
+        schemas:
+          type: array
+          items:
+            type: string
+            description: List of Schemas.
+            example: urn:ietf:params:scim:schemas:core:2.0:User
+          uniqueItems: true
+        totalResults:
+          description: The total number of results in the list.
+          type: integer
+          format: int32
+          example: 2
+          minimum: 0
+        startIndex:
+          description: TThe starting point of the result list.
+          type: integer
+          format: int32
+          example: 1
+          minimum: 1
+        itemsPerPage:
+          description: The number of items per results page.
+          type: integer
+          format: int32
+          example: 25
+          minimum: 0
+        Resources:
+          type: array
+          items:
+            type: object
+            anyOf:
+            - $ref: '#/components/schemas/GroupResource'
+            - $ref: '#/components/schemas/UserResource'
+            - $ref: '#/components/schemas/ResourceTypeResource'
+            - $ref: '#/components/schemas/ServiceProviderConfig'
+            description: Resources.
+    UserGroup:
+      type: object
+      properties:
+        value:
+          description: Unique identifier of a group in the application.
+          type: string
+          example: 5175be33-9b8d-4483-9d8b-1a9fb78bd97d
+        display:
+          description: Name of the User Group in the application.
+          type: string
+          example: R&D
+      readOnly: true
+      title: Group
+    PatchGroupResourceRequest:
+      allOf:
+      - $ref: '#/components/schemas/AbstractBaseResource'
+      - type: object
+        properties:
+          schemas:
+            type: array
+            items:
+              type: string
+              default: urn:ietf:params:scim:schemas:core:2.0:Group
+              description: A collection of attribute definitions that describe the contents of an entire or partial resource.
+              enum:
+              - urn:ietf:params:scim:schemas:core:2.0:Group
+              - urn:ietf:params:scim:schemas:onetrust:Group
+              example: urn:ietf:params:scim:schemas:core:2.0:Group
+            uniqueItems: true
+          displayName:
+            description: Display name of the group
+            type: string
+            example: Administrators
+            maxLength: 255
+            minLength: 1
+          members:
+            type: array
+            items:
+              $ref: '#/components/schemas/Member'
+              readOnly: true
+            readOnly: true
+          urn:ietf:params:scim:schemas:onetrust:Group:
+            $ref: '#/components/schemas/OneTrustGroup'
+          Operations:
+            type: array
+            items:
+              $ref: '#/components/schemas/Operation'
+    OneTrustGroup:
+      type: object
+      properties:
+        category:
+          description: The display name of the group
+          type: string
+          example: HR
+          maxLength: 255
+          minLength: 1
+        description:
+          description: The description of the group
+          type: string
+          example: HR User Group
+          maxLength: 255
+          minLength: 1
+      title: UserGroup
     UserResource:
       type: object
       allOf:
@@ -613,44 +786,55 @@ components:
       required:
       - name
       title: UserResource
-    ListResponse:
+    Meta:
       type: object
       properties:
-        schemas:
+        created:
+          description: The date and time when the resource was created
+          type: string
+          format: date-time
+          example: '2022-05-27T15:28:14.298Z'
+        lastModified:
+          description: The date and time when the resource was last modified
+          type: string
+          format: date-time
+          example: '2022-05-27T15:28:14.298Z'
+        location:
+          description: The URL for the resource
+          type: string
+          format: uri
+          example: /api/scim/v3/Users/53b1325c-081f-4f05-b41b-ba8cbdb7bae9
+          maxLength: 2083
+          minLength: 1
+        version:
+          description: The version of the resource
+          type: string
+          example: W/"f0f2a936"
+          maxLength: 100
+          minLength: 1
+        attributes:
           type: array
           items:
-            type: string
-            description: List of Schemas.
-            example: urn:ietf:params:scim:schemas:core:2.0:User
+            description: The set of attributes
+            example:
+            - active
+            - emails
+            - userName
           uniqueItems: true
-        totalResults:
-          description: The total number of results in the list.
-          type: integer
-          format: int32
-          example: 2
-          minimum: 0
-        startIndex:
-          description: TThe starting point of the result list.
-          type: integer
-          format: int32
-          example: 1
-          minimum: 1
-        itemsPerPage:
-          description: The number of items per results page.
-          type: integer
-          format: int32
-          example: 25
-          minimum: 0
-        Resources:
-          type: array
-          items:
-            type: object
-            anyOf:
-            - $ref: '#/components/schemas/GroupResource'
-            - $ref: '#/components/schemas/UserResource'
-            - $ref: '#/components/schemas/ResourceTypeResource'
-            - $ref: '#/components/schemas/ServiceProviderConfig'
-            description: Resources.
+        resourceType:
+          description: The resource type
+          type: string
+          example: Group
+          enum:
+          - User
+          - Group
+          - ResourceType
+          - ServiceProviderConfig
+          - Schema
+          maxLength: 100
+          minLength: 1
+      readOnly: true
+      title: Meta
     EnterpriseUser:
       type: object
       properties:
@@ -692,6 +876,42 @@ components:
           example: legacy manager
           maxLength: 255
       title: Additional Attributes
+    Manager:
+      type: object
+      properties:
+        value:
+          description: The manager's GUID or `id` in the OneTrust application. Leverage the [Get List of Users](/onetrust/reference/getusers) API to obtain a list of users. Use the manager's `id` to populate `value`.
+          type: string
+          example: 23498234-9283-4620-8204-652982504620
+          maxLength: 100
+          minLength: 1
+        displayName:
+          description: Manager's full name in the application.
+          type: string
+          example: John Doe
+          readOnly: true
+        $ref:
+          description: Reference URL to the user
+          type: string
+          format: url
+          example: /api/scim/v3/Users/23498234-9283-4620-8204-652982504620
+          readOnly: true
+      required:
+      - value
+      title: Manager
+    BulkSupported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+        maxOperations:
+          type: integer
+          format: int32
+        maxPayloadSize:
+          type: integer
+          format: int32
     AbstractBaseResource:
       type: object
       properties:
@@ -717,226 +937,6 @@ components:
           uniqueItems: true
           writeOnly: true
       title: AbstractBaseResource
-    Email:
-      type: object
-      properties:
-        value:
-          description: Email of the user.
-          type: string
-          format: email
-          example: gpburdell@onetrust.com
-          minLength: 1
-        display:
-          description: Email of the user.
-          type: string
-          format: email
-          example: gpburdell@onetrust.com
-          readOnly: true
-        primary:
-          description: Is the email the user's primary. Always `true` in the OneTrust application.
-          type: boolean
-          example: true
-          default: 'true'
-          readOnly: true
-        $ref:
-          description: Reference for the attribute
-          type: string
-          format: string
-        type:
-          description: The type of the email. In the OneTrust application, type is always 'work'.
-          type: string
-          example: work
-          default: work
-      required:
-      - value
-    ServiceProviderConfig:
-      type: object
-      properties:
-        schemas:
-          description: A collection of resource types supported by the service provider
-          type: array
-          items:
-            type: string
-            description: A collection of resource types supported by the service provider
-            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
-          example:
-          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
-          uniqueItems: true
-        patch:
-          $ref: '#/components/schemas/Supported'
-        bulk:
-          $ref: '#/components/schemas/BulkSupported'
-        filter:
-          $ref: '#/components/schemas/FilterSupported'
-        changePassword:
-          $ref: '#/components/schemas/Supported'
-        sort:
-          $ref: '#/components/schemas/Supported'
-        etag:
-          $ref: '#/components/schemas/Supported'
-        xmlDataFormat:
-          $ref: '#/components/schemas/Supported'
-        authenticationSchemes:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthenticationScheme'
-        meta:
-          $ref: '#/components/schemas/Meta'
-          readOnly: true
-      title: ServiceProviderConfig
-    OneTrustGroup:
-      type: object
-      properties:
-        category:
-          description: The display name of the group
-          type: string
-          example: HR
-          maxLength: 255
-          minLength: 1
-        description:
-          description: The description of the group
-          type: string
-          example: HR User Group
-          maxLength: 255
-          minLength: 1
-      title: UserGroup
-    Member:
-      type: object
-      properties:
-        value:
-          description: The unique ID of the user that you want to add to the Group.
-          type: string
-          format: uuid
-          example: 3da9fe38-7845-4658-a96e-00071fa20c2e
-        type:
-          description: The type of the resource.
-          type: string
-          default: User
-          enum:
-          - User
-        $ref:
-          description: A hyperlink to the resource
-          type: string
-          format: url
-          example: /api/scim/v3/Users/1bd418b2-85dd-4f04-955f-e4870e119ef1"
-          readOnly: true
-      required:
-      - value
-      title: Member
-    Supported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-    UserGroup:
-      type: object
-      properties:
-        value:
-          description: Unique identifier of a group in the application.
-          type: string
-          example: 5175be33-9b8d-4483-9d8b-1a9fb78bd97d
-        display:
-          description: Name of the User Group in the application.
-          type: string
-          example: R&D
-      readOnly: true
-      title: Group
-    FilterSupported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-        maxResults:
-          type: integer
-          format: int32
-    PatchGroupResourceRequest:
-      allOf:
-      - $ref: '#/components/schemas/AbstractBaseResource'
-      - type: object
-        properties:
-          schemas:
-            type: array
-            items:
-              type: string
-              default: urn:ietf:params:scim:schemas:core:2.0:Group
-              description: A collection of attribute definitions that describe the contents of an entire or partial resource.
-              enum:
-              - urn:ietf:params:scim:schemas:core:2.0:Group
-              - urn:ietf:params:scim:schemas:onetrust:Group
-              example: urn:ietf:params:scim:schemas:core:2.0:Group
-            uniqueItems: true
-          displayName:
-            description: Display name of the group
-            type: string
-            example: Administrators
-            maxLength: 255
-            minLength: 1
-          members:
-            type: array
-            items:
-              $ref: '#/components/schemas/Member'
-              readOnly: true
-            readOnly: true
-          urn:ietf:params:scim:schemas:onetrust:Group:
-            $ref: '#/components/schemas/OneTrustGroup'
-          Operations:
-            type: array
-            items:
-              $ref: '#/components/schemas/Operation'
-    BulkSupported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-        maxOperations:
-          type: integer
-          format: int32
-        maxPayloadSize:
-          type: integer
-          format: int32
-    SchemaExtension:
-      type: object
-      properties:
-        schema:
-          description: The schema extension schema
-          type: string
-          example: urn:ietf:params:scim:schemas:onetrust:Group
-        required:
-          description: True if the schema extension is required
-          type: boolean
-          example: true
-      required:
-      - required
-      - schema
-    Manager:
-      type: object
-      properties:
-        value:
-          description: The manager's GUID or `id` in the OneTrust application. Leverage the [Get List of Users](/onetrust/reference/getusers) API to obtain a list of users. Use the manager's `id` to populate `value`.
-          type: string
-          example: 23498234-9283-4620-8204-652982504620
-          maxLength: 100
-          minLength: 1
-        displayName:
-          description: Manager's full name in the application.
-          type: string
-          example: John Doe
-          readOnly: true
-        $ref:
-          description: Reference URL to the user
-          type: string
-          format: url
-          example: /api/scim/v3/Users/23498234-9283-4620-8204-652982504620
-          readOnly: true
-      required:
-      - value
-      title: Manager
   securitySchemes:
     OAUTH2:
       type: oauth2

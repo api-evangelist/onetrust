@@ -362,204 +362,6 @@ paths:
         - INTEGRATION
 components:
   schemas:
-    EntityDetailRequest:
-      type: object
-      properties:
-        extendedBaseAttributes:
-          description: The details of the attribute.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-    IdOrNameLinkType:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the relationship type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the relationship type.
-          type: string
-          example: Product/Service
-        idOrNamePresent:
-          description: This flag indicates whether the ID or name of the relationship type is present.
-          type: boolean
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last modified the record.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the record.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the record.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the record.
-          type: string
-          example: FL
-    BasicLinkTypeLabelInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the relationship type.
-          type: integer
-          format: int64
-          example: 1
-        entityType1ToEntityType2EntityLinkName:
-          description: The source object type's relationship to the target object type.
-          type: string
-          example: OneTrust provides GRC
-        entityType2ToEntityType1EntityLinkName:
-          description: The target object type's relationship to the source object type.
-          type: string
-          example: GRC belongs to OneTrust
-      required:
-      - id
-    LinkRequest:
-      type: object
-      properties:
-        attributes:
-          description: This parameter can be used to store attribute details in key value pairs.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        entity1:
-          description: The details of the source object in the relationship.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-        entity2:
-          description: The details of the target object in the relationship.
-          example:
-            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-      required:
-      - entity1
-      - entity2
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the attribute.
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: The name of the attribute.
-          type: string
-          example: Text Value
-        valueKey:
-          description: The name key of the attribute used for translation purposes.
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: The color code associated with the attribute.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: The selection value of the attribute.
-          type: string
-          example: 3.5
-        displayLabel:
-          description: The display label for the attribute.
-          type: string
-          example: United State | San Francisco
-        disabled:
-          description: This flag indicates whether the attribute is disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    LinkInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the relationship record.
-          type: string
-          format: uuid
-          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
-          readOnly: true
-        linkType:
-          description: The details of the relationship type.
-          example:
-            name: Related
-          $ref: '#/components/schemas/IdOrNameLinkType'
-        linkTypeLabel:
-          description: The display label for the relationship type.
-          example:
-            entityType1ToEntityType2EntityLinkName: Send Data To
-            entityType2ToEntityType1EntityLinkName: Receive Data From
-          $ref: '#/components/schemas/BasicLinkTypeLabelInformation'
-        entity1:
-          description: The details of the source object in the relationship.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-        entity2:
-          description: The details of the target object in the relationship.
-          example:
-            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-        schemaId:
-          description: The unique identifier of the schema.
-          type: string
-          format: uuid
-          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
-          readOnly: true
-        auditFields:
-          description: The activity details of when the record was created and last updated.
-          example:
-            createdBy: admin@example.com
-            createdTimestamp: '2023-01-15T10:30:45Z'
-            lastModifiedBy: system@example.com
-            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
-          $ref: '#/components/schemas/EntityRecordAuditInformation'
-          readOnly: true
-      example:
-        id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-        linkType:
-          name: Related
-      required:
-      - entity1
-      - entity2
-      - id
-      - linkType
-      title: Link Information
     LinkedEntityInformation:
       type: object
       properties:
@@ -631,6 +433,21 @@ components:
       - id
       - number
       title: Linked Entity Information
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: The details of the attribute.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
     EntityRecordAuditInformation:
       type: object
       properties:
@@ -658,6 +475,87 @@ components:
           $ref: '#/components/schemas/EntityBasicUserInformation'
       required:
       - createdDate
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    LinkInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship record.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        linkType:
+          description: The details of the relationship type.
+          example:
+            name: Related
+          $ref: '#/components/schemas/IdOrNameLinkType'
+        linkTypeLabel:
+          description: The display label for the relationship type.
+          example:
+            entityType1ToEntityType2EntityLinkName: Send Data To
+            entityType2ToEntityType1EntityLinkName: Receive Data From
+          $ref: '#/components/schemas/BasicLinkTypeLabelInformation'
+        entity1:
+          description: The details of the source object in the relationship.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The details of the target object in the relationship.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        schemaId:
+          description: The unique identifier of the schema.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        linkType:
+          name: Related
+      required:
+      - entity1
+      - entity2
+      - id
+      - linkType
+      title: Link Information
     BasicEntityTypeInformation:
       type: object
       properties:
@@ -698,6 +596,108 @@ components:
       required:
       - id
       - name
+    IdOrNameLinkType:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+        idOrNamePresent:
+          description: This flag indicates whether the ID or name of the relationship type is present.
+          type: boolean
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The name of the attribute.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The color code associated with the attribute.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: The selection value of the attribute.
+          type: string
+          example: 3.5
+        displayLabel:
+          description: The display label for the attribute.
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: This flag indicates whether the attribute is disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    BasicLinkTypeLabelInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: integer
+          format: int64
+          example: 1
+        entityType1ToEntityType2EntityLinkName:
+          description: The source object type's relationship to the target object type.
+          type: string
+          example: OneTrust provides GRC
+        entityType2ToEntityType1EntityLinkName:
+          description: The target object type's relationship to the source object type.
+          type: string
+          example: GRC belongs to OneTrust
+      required:
+      - id
+    LinkRequest:
+      type: object
+      properties:
+        attributes:
+          description: This parameter can be used to store attribute details in key value pairs.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        entity1:
+          description: The details of the source object in the relationship.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The details of the target object in the relationship.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+      required:
+      - entity1
+      - entity2
   securitySchemes:
     OAUTH2:
       type: oauth2

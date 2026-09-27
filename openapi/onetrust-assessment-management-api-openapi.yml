@@ -564,6 +564,26 @@ paths:
         - ASSESSMENT
 components:
   schemas:
+    PrivacyAutomation-AssessmentAutomation_AssessmentManualLinkRequest:
+      type: object
+      properties:
+        fromId:
+          description: The unique ID of the source assessment to create the link from
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        toIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 223e4567-e89b-12d3-a456-426614174001
+          maxItems: 2147483647
+          minItems: 1
+          uniqueItems: true
+      required:
+      - fromId
+      - toIds
     PrivacyAutomation-AssessmentAutomation_AssessmentBasicDetailsUpdateRequest:
       type: object
       properties:
@@ -617,26 +637,6 @@ components:
       required:
       - primaryRecordIds
       - primaryRecordType
-    PrivacyAutomation-AssessmentAutomation_AssessmentManualLinkRequest:
-      type: object
-      properties:
-        fromId:
-          description: The unique ID of the source assessment to create the link from
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        toIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 223e4567-e89b-12d3-a456-426614174001
-          maxItems: 2147483647
-          minItems: 1
-          uniqueItems: true
-      required:
-      - fromId
-      - toIds
   securitySchemes:
     PrivacyAutomation-AssessmentAutomation_OAUTH2:
       type: oauth2

@@ -827,471 +827,49 @@ paths:
         - COOKIE
 components:
   schemas:
-    ScanDeltaDetails:
+    PageScanInformationResponse:
       type: object
       properties:
-        addedCookies:
-          description: The cookies that were newly added.
-          type: array
-          items:
-            $ref: '#/components/schemas/CookieInformation'
-          example:
-          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            cookieName: session_id
-            host: example.com
-          maxItems: 1000
-          minItems: 0
-        removedCookies:
-          description: The cookies that were removed or deleted.
-          type: array
-          items:
-            $ref: '#/components/schemas/CookieInformation'
-          example:
-          - cookieId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-            cookieName: old_cookie
-            host: test.com
-          maxItems: 1000
-          minItems: 0
-        scanDeltaMetadata:
-          description: The metadata information about changes between scans.
-          $ref: '#/components/schemas/ScanDeltaMetadataDto'
-    StorageEntriesDto:
-      type: object
-      properties:
-        host:
-          description: Storage entry host
-          type: string
-          example: https://abcnews.go.com
-        key:
-          description: Storage entry key
-          type: string
-          example: abcnews314-volume
-        value:
-          description: Storage entry value
-          type: string
-        type:
-          description: Storage entry type. Can be 1 or 2 (local or session)
-          type: integer
-          format: int32
-          example: abcnews314-volume
-    TagDto:
-      type: object
-      properties:
-        id:
-          description: Tag identifier
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        host:
-          description: Tag host
-          type: string
-          example: abcnews.com
-        tagType:
-          description: Tag type
-          type: string
-          example: Script
-        src:
-          description: Tag source url
-          type: string
-          example: Script
-        params:
-          description: Tag parameters.
-          type: string
-          example: (720px 893px)
-        createdDate:
-          description: Date when the tag was created.
-          type: string
-          format: date-time
-          example: '2025-04-25T12:34:32Z'
-        status:
-          description: Tag status. Can be 1 or 2 (new or not found)
-          type: integer
-          format: int32
-          example: Script
-        age:
-          description: How many days the tag is old.
-          type: integer
-          format: int32
-          example: 133
-        parent:
-          description: Tag parent url.
-          type: string
-          example: amazon.com
-        children:
-          description: Tag child url.
-          type: string
-          example: amazon.com
-        firstParty:
-          description: Whether tag is first party
-          type: boolean
-          example: true
-        added:
-          description: Whether the tag was added since previous scan
-          type: boolean
-          example: true
-        removed:
-          description: Whether the tag was removed since previous scan
-          type: boolean
-          example: false
-        changeSincePreviousScan:
-          description: Changes in comparison to previous successful scan.
-          type: string
-          example: Added since previous scan (Feb 24, 2025 08:11 AM)
-    CookieInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the item.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name or title of the item.
-          type: string
-          example: snn_id
-          maxLength: 255
-          minLength: 1
-        host:
-          description: The domain or website that created the cookie.
-          type: string
-          example: amazon.com
-          maxLength: 255
-          minLength: 1
-        expiryDate:
-          description: The date and time when the cookie expires.
-          type: integer
-          format: int32
-          example: 30
-        expiryUnit:
-          description: The time unit used for cookie expiration.
-          type: integer
-          format: int32
-          example: 7
-        urlDomain:
-          description: The domain portion extracted from a URL.
-          type: string
-          example: domain.com
-          maxLength: 255
-          minLength: 1
-        path:
-          description: The URL path where the cookie is active.
-          type: string
-          example: /
-          maxLength: 500
-          minLength: 1
-        isSecure:
-          description: This flag indicates whether the cookie requires HTTPS.
-          type: boolean
-          example: true
-        isHttpOnly:
-          description: This flag indicates whether the cookie is accessible only via HTTP.
-          type: boolean
-          example: true
-        isSession:
-          description: This flag indicates whether the cookie is a session cookie.
-          type: boolean
-          example: true
-        isBehindLogin:
-          description: This flag indicates whether the cookie is found behind authentication.
-          type: boolean
-          example: true
-        hostDescription:
-          description: The description of the host domain.
-          type: string
-          example: domain.com is a website
-          maxLength: 1000
-          minLength: 1
-        thirdPartyDescription:
-          description: The description of third-party cookies and their usage.
-          type: string
-          example: This cookie is used for advertising purposes
-          maxLength: 1000
-          minLength: 1
-        description:
-          description: The description of the cookie and its intended purpose.
-          type: string
-          example: This cookie is used for advertising purposes
-          maxLength: 1000
-          minLength: 1
-        purpose:
-          description: The intended use or function of the cookie.
-          type: string
-          example: This cookie is used for advertising purposes
-          maxLength: 1000
-          minLength: 1
-        cookiepediaCategory:
-          description: The category assigned by Cookiepedia classification system.
-          type: string
-          example: Functionality
-          maxLength: 255
-          minLength: 1
-        firstParty:
-          description: This flag indicates whether the cookie is set by the visited website.
-          type: boolean
-          example: true
-        status:
-          description: The current state or condition of the item.
-          type: integer
-          format: int32
-          example: 1
-          enum:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-          - '5'
-        color:
-          description: The color code used for visual identification.
-          type: string
-          example: red
-          maxLength: 50
-          minLength: 1
-        isNewFound:
-          description: This flag indicates whether the cookie was newly discovered.
-          type: boolean
-          example: true
-        isNewlyAdded:
-          description: This flag indicates whether the item was recently added.
-          type: boolean
-          example: true
-        categoryId:
-          description: The unique identifier of the category.
-          type: string
-          example: C0001
-          maxLength: 100
-          minLength: 1
-        customCategoryId:
-          description: Custom category Id for cookie
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-    ScanResultEntityPageResponse:
-      type: object
-      properties:
-        content:
-          description: The main content or data payload of the response.
-          example:
-          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            cookieName: session_id
-            host: example.com
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CookieInformationDetailed'
-            - $ref: '#/components/schemas/PageDto'
-            - $ref: '#/components/schemas/TagDto'
-            - $ref: '#/components/schemas/FormDataGroupDto'
-            - $ref: '#/components/schemas/StorageEntriesDto'
-            - $ref: '#/components/schemas/ServiceProviderBasicDetails'
-          maxItems: 2000
-          minItems: 0
-          type: array
-        scanId:
-          description: Scan ID
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        domainId:
-          description: The unique identifier of the domain.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        totalElements:
-          description: The total number of items in the complete result set.
-          type: integer
-          format: int64
-          example: 100
         totalPages:
           description: The total number of pages in the paginated results.
           type: integer
           format: int32
-          example: 99
-        pageSize:
-          description: The number of items displayed per page.
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+        size:
+          description: The number of items to return per page.
           type: integer
           format: int32
-          example: 5
-        pageNumber:
-          description: The current page number in the pagination sequence.
+        content:
+          description: The main content or data payload of the response.
+          items:
+            $ref: '#/components/schemas/ScanInformationResponse'
+          type: array
+        number:
+          description: The numeric value or identifier.
           type: integer
           format: int32
-          example: 1
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          description: The pagination configuration settings.
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          description: This flag indicates whether this is the first item in a sequence.
+          type: boolean
+        last:
+          description: This flag indicates whether this is the last item in a sequence.
+          type: boolean
         numberOfElements:
           description: The number of items in the current page.
           type: integer
           format: int32
-          example: 5
-    FormDataDto:
-      type: object
-      properties:
-        fieldName:
-          description: Field name
-          type: string
-          example: username
-        formName:
-          description: Name of the form to which this field belongs
-          type: string
-          example: loginForm
-        type:
-          description: Type of data field. For example email/text/hidden.
-          type: string
-          example: text
-        title:
-          description: Field title
-          type: string
-          example: Username
-        label:
-          description: Field lable
-          type: string
-          example: E-mail
-        value:
-          description: Value of the field. Mostly this value is empty since the fields expect some input.
-          type: string
-          example: value123
-        personalData:
+        empty:
+          description: This flag indicates whether the result set is empty.
           type: boolean
-    EntityActionResponseDto:
-      type: object
-      properties:
-        entityId:
-          description: The unique identifier of the entity.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        entityType:
-          description: The type of entity such as cookie, tag, page, form, service, or storage.
-          type: string
-          example: SCAN
-          enum:
-          - SCAN
-          - DOMAIN
-          - COOKIE
-        action:
-          description: The action that was performed or is to be performed.
-          type: string
-          example: ARCHIVE
-          enum:
-          - ARCHIVE
-          - SCHEDULE
-          - SCHEDULE_CANCEL
-          - EDIT
-          - CREATE
-          - DELETE
-        message:
-          description: The message or notification text.
-          type: string
-          example: Scan queued for archival
-          maxLength: 500
-          minLength: 1
-        content:
-          description: The main content or data payload of the response.
-          type: object
-        success:
-          description: This flag indicates whether the operation completed successfully.
-          type: boolean
-    CookieInformationDetailed:
-      type: object
-      properties:
-        id:
-          description: Cookie identifier
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Cookie name
-          type: string
-          example: snn_id
-        host:
-          description: Host associated with the cookie
-          type: string
-          example: amazon.com
-        expiryDate:
-          description: Expiry date of the cookie
-          type: integer
-          format: int32
-        expiryUnit:
-          description: Expiry unit of the cookie.
-          type: string
-          example: WEEK
-          enum:
-          - DAY
-          - WEEK
-          - MONTH
-          - YEAR
-        urlDomain:
-          description: Domain url
-          type: string
-          example: amazon.com
-        path:
-          description: Cookie path
-          type: string
-          example: /
-        isSecure:
-          description: Whether cookie is secure
-          type: boolean
-          example: true
-        isHttpOnly:
-          description: Whether cookie is http only
-          type: boolean
-          example: true
-        isSession:
-          description: Whether cookie is a session cookie
-          type: boolean
-          example: true
-        isBehindLogin:
-          description: Whether cookie is behind login
-          type: boolean
-          example: true
-        hostDescription:
-          description: Host description
-          type: string
-          example: Amazon is a website
-        thirdPartyDescription:
-          description: Third party description
-          type: string
-          example: This cookie is used for advertising
-        description:
-          description: Cookie description
-          type: string
-          example: This cookie is used for advertising
-        purpose:
-          description: Cookie purpose
-          type: string
-          example: This cookie is used for advertising
-        cookiepediaCategory:
-          description: Cookie category name
-          type: string
-          example: Targeting
-        firstParty:
-          description: Whether cookies is first party
-          type: boolean
-          example: true
-        status:
-          description: Cookie status.
-          type: string
-          example: NOT_FOUND
-          enum:
-          - NEW
-          - REVIEWED
-          - NOT_FOUND
-          - DELETED
-          - REVIEWED_NOT_FOUND
-          - ARCHIVED
-        color:
-          description: Cookie color related to the category.
-          type: string
-          example: red
-        isNewFound:
-          description: Whether cookie is new found from this scan.
-          type: boolean
-          example: true
-        isNewlyAdded:
-          description: Whether cookie is newly added from this scan.
-          type: boolean
-          example: true
-        categoryId:
-          description: Cookie category identifier.
-          type: string
-          example: C0001
     ScanWebsiteRequest:
       type: object
       properties:
@@ -1365,133 +943,108 @@ components:
           minItems: 0
       required:
       - numberOfPages
-    ExposedScanWebsitePageResponseDto:
+    PageableObject:
       type: object
       properties:
-        content:
-          description: The main content or data payload of the response.
-          example:
-          - domainName: amazon.com
-            domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            status: SCANNING
-            lastScannedDate: '2025-04-01T12:34:32Z'
-            lastScannedTotalCookies: 15
-            uniqueCookiesFound: 10
-            lastScannedTotalPages: 400
-            maxPagesScanned: 123
-            scheduledDateOfNextScan: '2025-04-01T12:34:32Z'
-            consentPolicyName: as_georules
-            scanError: ABRUPT_SCAN_TERMINATION
-            orgName: org name
-            externalOrgId: orgnameid
-            overPageLimit: true
-          items:
-            $ref: '#/components/schemas/ExposedWebsiteDetailsDto'
-          maxItems: 2000
-          minItems: 0
-          type: array
-        totalElements:
-          description: The total number of items in the complete result set.
+        offset:
+          description: The starting position for paginated results.
           type: integer
           format: int64
-          example: 344
-        totalPages:
-          description: The total number of pages in the paginated results.
-          type: integer
-          format: int32
-          example: 35
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
         pageSize:
           description: The number of items displayed per page.
           type: integer
           format: int32
-          example: 10
         pageNumber:
           description: The current page number in the pagination sequence.
           type: integer
           format: int32
-          example: 3
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        numberOfElements:
-          description: The number of items in the current page.
-          type: integer
-          format: int32
-          example: 115
-    PageDto:
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    ExposedWebsiteDetailsDto:
       type: object
       properties:
-        id:
-          description: Page identifier
+        domainName:
+          description: The name of the website domain.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        domainId:
+          description: The unique identifier of the domain.
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        auditUrl:
-          description: Page url
+        status:
+          description: The current state or condition of the item.
           type: string
-          example: https://abcnews.go.com/
-        cookieCount:
-          description: Number of cookies found on page
-          type: integer
-          format: int64
-          example: 33
-        errorMessage:
-          description: Error message if something went wrong when scanning page.
-          type: string
-          example: 33
-        sourceUrl:
-          description: Source url.
-          type: string
-          example: https://abcnews.go.com/
-        scanOrder:
-          description: Source url.
-          type: integer
-          format: int32
-          example: https://abcnews.go.com/
-        isCookiePolicy:
-          type: number
-          format: double
-        isPrivacyPolicy:
-          type: number
-          format: double
-        isLoginForm:
-          description: Whether page has login form.
-          type: boolean
-          example: false
-        isBehindLogin:
-          description: Whether page is behind login.
-          type: boolean
-          example: false
-        hasVideo:
-          description: 'Whether the page has video content '
-          type: boolean
-          example: false
-    ScanDeltaMetadataDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the item.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        sourceScanId:
-          description: The unique identifier of the original scan.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        targetScanId:
-          description: The unique identifier of the comparison scan.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        targetScanDate:
-          description: The date and time when the comparison scan was performed.
+          example: SCANNING
+          maxLength: 50
+          minLength: 1
+        lastScannedDate:
+          description: The date and time when the domain was last scanned for cookies.
           type: string
           format: date-time
-          example: '2025-04-25T10:15:30Z'
-        targetScanDeleted:
-          description: This flag indicates whether the comparison scan was deleted.
+          example: '2025-04-01T12:34:32Z'
+        lastScannedTotalCookies:
+          description: The total number of cookies found during the last scan.
+          type: integer
+          format: int32
+          example: 15
+        uniqueCookiesFound:
+          description: The number of unique cookies discovered during scanning.
+          type: integer
+          format: int32
+          example: 10
+        lastScannedTotalPages:
+          description: The total number of pages scanned during the last scan.
+          type: integer
+          format: int32
+          example: 400
+        maxPagesScanned:
+          description: The maximum number of pages that can be scanned.
+          type: integer
+          format: int32
+          example: 123
+        scheduledDateOfNextScan:
+          description: The date and time when the next scan is scheduled to run.
+          type: string
+          format: date-time
+          example: '2025-04-01T12:34:32Z'
+        consentPolicyName:
+          description: The name of the consent policy that is applied.
+          type: string
+          example: as_georules
+          maxLength: 255
+          minLength: 1
+        scanError:
+          description: The error message if the scan operation failed.
+          type: string
+          example: ABRUPT_SCAN_TERMINATION
+          maxLength: 500
+          minLength: 1
+        orgName:
+          description: The name of the organization.
+          type: string
+          example: org name
+          maxLength: 255
+          minLength: 1
+        externalOrgId:
+          description: The external organization identifier.
+          type: string
+          example: orgnameid
+          maxLength: 255
+          minLength: 1
+        overPageLimit:
+          description: This flag indicates whether the scan exceeded the maximum page limit.
           type: boolean
+          example: true
     FormDataGroupDto:
       type: object
       properties:
@@ -1642,18 +1195,190 @@ components:
           - ARCHIVE_QUEUED
           - ERROR
           - NO_DATA_TO_EXPORT
-    SortObject:
+    FormDataDto:
       type: object
       properties:
-        empty:
-          description: This flag indicates whether the result set is empty.
+        fieldName:
+          description: Field name
+          type: string
+          example: username
+        formName:
+          description: Name of the form to which this field belongs
+          type: string
+          example: loginForm
+        type:
+          description: Type of data field. For example email/text/hidden.
+          type: string
+          example: text
+        title:
+          description: Field title
+          type: string
+          example: Username
+        label:
+          description: Field lable
+          type: string
+          example: E-mail
+        value:
+          description: Value of the field. Mostly this value is empty since the fields expect some input.
+          type: string
+          example: value123
+        personalData:
           type: boolean
-        sorted:
-          description: This flag indicates whether the results are sorted.
+    TagDto:
+      type: object
+      properties:
+        id:
+          description: Tag identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        host:
+          description: Tag host
+          type: string
+          example: abcnews.com
+        tagType:
+          description: Tag type
+          type: string
+          example: Script
+        src:
+          description: Tag source url
+          type: string
+          example: Script
+        params:
+          description: Tag parameters.
+          type: string
+          example: (720px 893px)
+        createdDate:
+          description: Date when the tag was created.
+          type: string
+          format: date-time
+          example: '2025-04-25T12:34:32Z'
+        status:
+          description: Tag status. Can be 1 or 2 (new or not found)
+          type: integer
+          format: int32
+          example: Script
+        age:
+          description: How many days the tag is old.
+          type: integer
+          format: int32
+          example: 133
+        parent:
+          description: Tag parent url.
+          type: string
+          example: amazon.com
+        children:
+          description: Tag child url.
+          type: string
+          example: amazon.com
+        firstParty:
+          description: Whether tag is first party
           type: boolean
-        unsorted:
-          description: This flag indicates whether the results are in unsorted order.
+          example: true
+        added:
+          description: Whether the tag was added since previous scan
           type: boolean
+          example: true
+        removed:
+          description: Whether the tag was removed since previous scan
+          type: boolean
+          example: false
+        changeSincePreviousScan:
+          description: Changes in comparison to previous successful scan.
+          type: string
+          example: Added since previous scan (Feb 24, 2025 08:11 AM)
+    ScanResultEntityPageResponse:
+      type: object
+      properties:
+        content:
+          description: The main content or data payload of the response.
+          example:
+          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            cookieName: session_id
+            host: example.com
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CookieInformationDetailed'
+            - $ref: '#/components/schemas/PageDto'
+            - $ref: '#/components/schemas/TagDto'
+            - $ref: '#/components/schemas/FormDataGroupDto'
+            - $ref: '#/components/schemas/StorageEntriesDto'
+            - $ref: '#/components/schemas/ServiceProviderBasicDetails'
+          maxItems: 2000
+          minItems: 0
+          type: array
+        scanId:
+          description: Scan ID
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        totalElements:
+          description: The total number of items in the complete result set.
+          type: integer
+          format: int64
+          example: 100
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+          example: 99
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+          example: 5
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+          example: 1
+        numberOfElements:
+          description: The number of items in the current page.
+          type: integer
+          format: int32
+          example: 5
+    ScanStatusResponse:
+      type: object
+      properties:
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        status:
+          description: The current state or condition of the item.
+          type: string
+          example: INPROGRESS
+          enum:
+          - QUEUED
+          - PENDING
+          - INPROGRESS
+          - MIGRATION_STARTED
+          - MIGRATION_COMPLETED
+          - CATEGORIZATION_STARTED
+          - CATEGORIZATION_FAILED
+          - COMPLETED
+          - ERROR
+          - CANCELLED
+          - SCANNING
+          - DATA_MOVE
+          - RETRY_BY_AUTO_CORRECT
+          - MS_IOS_SCAN_SUCCESS
+          - MS_IOS_SCAN_FAILED
+          - MS_EXPORT_XLS_STARTED
+          - MS_EXPORT_PDF_STARTED
+          - SCHEDULED
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan status found
+          maxLength: 500
+          minLength: 1
     ServiceProviderBasicDetails:
       type: object
       properties:
@@ -1693,6 +1418,272 @@ components:
           description: Changes in comparison to previous successful scan.
           type: string
           example: Added since previous scan (Feb 24, 2025 08:11 AM)
+    PageDto:
+      type: object
+      properties:
+        id:
+          description: Page identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        auditUrl:
+          description: Page url
+          type: string
+          example: https://abcnews.go.com/
+        cookieCount:
+          description: Number of cookies found on page
+          type: integer
+          format: int64
+          example: 33
+        errorMessage:
+          description: Error message if something went wrong when scanning page.
+          type: string
+          example: 33
+        sourceUrl:
+          description: Source url.
+          type: string
+          example: https://abcnews.go.com/
+        scanOrder:
+          description: Source url.
+          type: integer
+          format: int32
+          example: https://abcnews.go.com/
+        isCookiePolicy:
+          type: number
+          format: double
+        isPrivacyPolicy:
+          type: number
+          format: double
+        isLoginForm:
+          description: Whether page has login form.
+          type: boolean
+          example: false
+        isBehindLogin:
+          description: Whether page is behind login.
+          type: boolean
+          example: false
+        hasVideo:
+          description: 'Whether the page has video content '
+          type: boolean
+          example: false
+    CookieInformationDetailed:
+      type: object
+      properties:
+        id:
+          description: Cookie identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Cookie name
+          type: string
+          example: snn_id
+        host:
+          description: Host associated with the cookie
+          type: string
+          example: amazon.com
+        expiryDate:
+          description: Expiry date of the cookie
+          type: integer
+          format: int32
+        expiryUnit:
+          description: Expiry unit of the cookie.
+          type: string
+          example: WEEK
+          enum:
+          - DAY
+          - WEEK
+          - MONTH
+          - YEAR
+        urlDomain:
+          description: Domain url
+          type: string
+          example: amazon.com
+        path:
+          description: Cookie path
+          type: string
+          example: /
+        isSecure:
+          description: Whether cookie is secure
+          type: boolean
+          example: true
+        isHttpOnly:
+          description: Whether cookie is http only
+          type: boolean
+          example: true
+        isSession:
+          description: Whether cookie is a session cookie
+          type: boolean
+          example: true
+        isBehindLogin:
+          description: Whether cookie is behind login
+          type: boolean
+          example: true
+        hostDescription:
+          description: Host description
+          type: string
+          example: Amazon is a website
+        thirdPartyDescription:
+          description: Third party description
+          type: string
+          example: This cookie is used for advertising
+        description:
+          description: Cookie description
+          type: string
+          example: This cookie is used for advertising
+        purpose:
+          description: Cookie purpose
+          type: string
+          example: This cookie is used for advertising
+        cookiepediaCategory:
+          description: Cookie category name
+          type: string
+          example: Targeting
+        firstParty:
+          description: Whether cookies is first party
+          type: boolean
+          example: true
+        status:
+          description: Cookie status.
+          type: string
+          example: NOT_FOUND
+          enum:
+          - NEW
+          - REVIEWED
+          - NOT_FOUND
+          - DELETED
+          - REVIEWED_NOT_FOUND
+          - ARCHIVED
+        color:
+          description: Cookie color related to the category.
+          type: string
+          example: red
+        isNewFound:
+          description: Whether cookie is new found from this scan.
+          type: boolean
+          example: true
+        isNewlyAdded:
+          description: Whether cookie is newly added from this scan.
+          type: boolean
+          example: true
+        categoryId:
+          description: Cookie category identifier.
+          type: string
+          example: C0001
+    EntityActionResponseDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          description: The main content or data payload of the response.
+          type: object
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    ScanDeltaMetadataDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        sourceScanId:
+          description: The unique identifier of the original scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        targetScanId:
+          description: The unique identifier of the comparison scan.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        targetScanDate:
+          description: The date and time when the comparison scan was performed.
+          type: string
+          format: date-time
+          example: '2025-04-25T10:15:30Z'
+        targetScanDeleted:
+          description: This flag indicates whether the comparison scan was deleted.
+          type: boolean
+    StorageEntriesDto:
+      type: object
+      properties:
+        host:
+          description: Storage entry host
+          type: string
+          example: https://abcnews.go.com
+        key:
+          description: Storage entry key
+          type: string
+          example: abcnews314-volume
+        value:
+          description: Storage entry value
+          type: string
+        type:
+          description: Storage entry type. Can be 1 or 2 (local or session)
+          type: integer
+          format: int32
+          example: abcnews314-volume
+    ScanResultSummaryDto:
+      type: object
+      properties:
+        scannedPageUrls:
+          description: URL of all the pages scanned
+          type: array
+          items:
+            type: string
+          example:
+          - onetrust.com
+          - onetrust.com/robots.txt
+          maxItems: 1000
+          minItems: 0
+        numTags:
+          description: Number of tags associated with this scan.
+          type: integer
+          format: int32
+          example: 25
+        numCookies:
+          description: Number of cookies associated with this scan.
+          type: integer
+          format: int32
+          example: 150
+        numCookiesByCategory:
+          description: Number of cookies associated with this scan, grouped by cookiepedia category.
+          type: object
+          example: '{''Strictly Necessary'': 3, ''Functional'': 5, ...}'
+          additionalProperties:
+            type: integer
+            format: int64
     TargetPagesScanEntityDto:
       type: object
       properties:
@@ -1728,127 +1719,174 @@ components:
           example: https://service.braun.com/hr/en/products/6032
           maxLength: 5000
           minLength: 1
-    ExposedWebsiteDetailsDto:
+    SortObject:
       type: object
       properties:
-        domainName:
-          description: The name of the website domain.
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
+          type: boolean
+    ScanDeltaDetails:
+      type: object
+      properties:
+        addedCookies:
+          description: The cookies that were newly added.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieInformation'
+          example:
+          - cookieId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            cookieName: session_id
+            host: example.com
+          maxItems: 1000
+          minItems: 0
+        removedCookies:
+          description: The cookies that were removed or deleted.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieInformation'
+          example:
+          - cookieId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            cookieName: old_cookie
+            host: test.com
+          maxItems: 1000
+          minItems: 0
+        scanDeltaMetadata:
+          description: The metadata information about changes between scans.
+          $ref: '#/components/schemas/ScanDeltaMetadataDto'
+    CookieInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name or title of the item.
+          type: string
+          example: snn_id
+          maxLength: 255
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
           type: string
           example: amazon.com
           maxLength: 255
           minLength: 1
-        domainId:
-          description: The unique identifier of the domain.
+        expiryDate:
+          description: The date and time when the cookie expires.
+          type: integer
+          format: int32
+          example: 30
+        expiryUnit:
+          description: The time unit used for cookie expiration.
+          type: integer
+          format: int32
+          example: 7
+        urlDomain:
+          description: The domain portion extracted from a URL.
+          type: string
+          example: domain.com
+          maxLength: 255
+          minLength: 1
+        path:
+          description: The URL path where the cookie is active.
+          type: string
+          example: /
+          maxLength: 500
+          minLength: 1
+        isSecure:
+          description: This flag indicates whether the cookie requires HTTPS.
+          type: boolean
+          example: true
+        isHttpOnly:
+          description: This flag indicates whether the cookie is accessible only via HTTP.
+          type: boolean
+          example: true
+        isSession:
+          description: This flag indicates whether the cookie is a session cookie.
+          type: boolean
+          example: true
+        isBehindLogin:
+          description: This flag indicates whether the cookie is found behind authentication.
+          type: boolean
+          example: true
+        hostDescription:
+          description: The description of the host domain.
+          type: string
+          example: domain.com is a website
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        purpose:
+          description: The intended use or function of the cookie.
+          type: string
+          example: This cookie is used for advertising purposes
+          maxLength: 1000
+          minLength: 1
+        cookiepediaCategory:
+          description: The category assigned by Cookiepedia classification system.
+          type: string
+          example: Functionality
+          maxLength: 255
+          minLength: 1
+        firstParty:
+          description: This flag indicates whether the cookie is set by the visited website.
+          type: boolean
+          example: true
+        status:
+          description: The current state or condition of the item.
+          type: integer
+          format: int32
+          example: 1
+          enum:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+        color:
+          description: The color code used for visual identification.
+          type: string
+          example: red
+          maxLength: 50
+          minLength: 1
+        isNewFound:
+          description: This flag indicates whether the cookie was newly discovered.
+          type: boolean
+          example: true
+        isNewlyAdded:
+          description: This flag indicates whether the item was recently added.
+          type: boolean
+          example: true
+        categoryId:
+          description: The unique identifier of the category.
+          type: string
+          example: C0001
+          maxLength: 100
+          minLength: 1
+        customCategoryId:
+          description: Custom category Id for cookie
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        status:
-          description: The current state or condition of the item.
-          type: string
-          example: SCANNING
-          maxLength: 50
-          minLength: 1
-        lastScannedDate:
-          description: The date and time when the domain was last scanned for cookies.
-          type: string
-          format: date-time
-          example: '2025-04-01T12:34:32Z'
-        lastScannedTotalCookies:
-          description: The total number of cookies found during the last scan.
-          type: integer
-          format: int32
-          example: 15
-        uniqueCookiesFound:
-          description: The number of unique cookies discovered during scanning.
-          type: integer
-          format: int32
-          example: 10
-        lastScannedTotalPages:
-          description: The total number of pages scanned during the last scan.
-          type: integer
-          format: int32
-          example: 400
-        maxPagesScanned:
-          description: The maximum number of pages that can be scanned.
-          type: integer
-          format: int32
-          example: 123
-        scheduledDateOfNextScan:
-          description: The date and time when the next scan is scheduled to run.
-          type: string
-          format: date-time
-          example: '2025-04-01T12:34:32Z'
-        consentPolicyName:
-          description: The name of the consent policy that is applied.
-          type: string
-          example: as_georules
-          maxLength: 255
-          minLength: 1
-        scanError:
-          description: The error message if the scan operation failed.
-          type: string
-          example: ABRUPT_SCAN_TERMINATION
-          maxLength: 500
-          minLength: 1
-        orgName:
-          description: The name of the organization.
-          type: string
-          example: org name
-          maxLength: 255
-          minLength: 1
-        externalOrgId:
-          description: The external organization identifier.
-          type: string
-          example: orgnameid
-          maxLength: 255
-          minLength: 1
-        overPageLimit:
-          description: This flag indicates whether the scan exceeded the maximum page limit.
-          type: boolean
-          example: true
-    PageScanInformationResponse:
-      type: object
-      properties:
-        totalPages:
-          description: The total number of pages in the paginated results.
-          type: integer
-          format: int32
-        totalElements:
-          description: The total number of items in the complete result set.
-          type: integer
-          format: int64
-        size:
-          description: The number of items to return per page.
-          type: integer
-          format: int32
-        content:
-          description: The main content or data payload of the response.
-          items:
-            $ref: '#/components/schemas/ScanInformationResponse'
-          type: array
-        number:
-          description: The numeric value or identifier.
-          type: integer
-          format: int32
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        pageable:
-          description: The pagination configuration settings.
-          $ref: '#/components/schemas/PageableObject'
-        first:
-          description: This flag indicates whether this is the first item in a sequence.
-          type: boolean
-        last:
-          description: This flag indicates whether this is the last item in a sequence.
-          type: boolean
-        numberOfElements:
-          description: The number of items in the current page.
-          type: integer
-          format: int32
-        empty:
-          description: This flag indicates whether the result set is empty.
-          type: boolean
     ServiceResponseDto:
       type: object
       properties:
@@ -1885,97 +1923,59 @@ components:
         rescan:
           description: This flag indicates whether to perform the scan operation again.
           type: boolean
-    PageableObject:
+    ExposedScanWebsitePageResponseDto:
       type: object
       properties:
-        offset:
-          description: The starting position for paginated results.
+        content:
+          description: The main content or data payload of the response.
+          example:
+          - domainName: amazon.com
+            domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            status: SCANNING
+            lastScannedDate: '2025-04-01T12:34:32Z'
+            lastScannedTotalCookies: 15
+            uniqueCookiesFound: 10
+            lastScannedTotalPages: 400
+            maxPagesScanned: 123
+            scheduledDateOfNextScan: '2025-04-01T12:34:32Z'
+            consentPolicyName: as_georules
+            scanError: ABRUPT_SCAN_TERMINATION
+            orgName: org name
+            externalOrgId: orgnameid
+            overPageLimit: true
+          items:
+            $ref: '#/components/schemas/ExposedWebsiteDetailsDto'
+          maxItems: 2000
+          minItems: 0
+          type: array
+        totalElements:
+          description: The total number of items in the complete result set.
           type: integer
           format: int64
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          description: This flag indicates whether pagination is enabled.
-          type: boolean
+          example: 344
+        totalPages:
+          description: The total number of pages in the paginated results.
+          type: integer
+          format: int32
+          example: 35
         pageSize:
           description: The number of items displayed per page.
           type: integer
           format: int32
+          example: 10
         pageNumber:
           description: The current page number in the pagination sequence.
           type: integer
           format: int32
-        unpaged:
-          description: This flag indicates whether pagination is disabled.
-          type: boolean
-    ScanStatusResponse:
-      type: object
-      properties:
-        scanId:
-          description: The unique identifier of the scan.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        status:
-          description: The current state or condition of the item.
-          type: string
-          example: INPROGRESS
-          enum:
-          - QUEUED
-          - PENDING
-          - INPROGRESS
-          - MIGRATION_STARTED
-          - MIGRATION_COMPLETED
-          - CATEGORIZATION_STARTED
-          - CATEGORIZATION_FAILED
-          - COMPLETED
-          - ERROR
-          - CANCELLED
-          - SCANNING
-          - DATA_MOVE
-          - RETRY_BY_AUTO_CORRECT
-          - MS_IOS_SCAN_SUCCESS
-          - MS_IOS_SCAN_FAILED
-          - MS_EXPORT_XLS_STARTED
-          - MS_EXPORT_PDF_STARTED
-          - SCHEDULED
-        message:
-          description: The message or notification text.
-          type: string
-          example: Scan status found
-          maxLength: 500
-          minLength: 1
-    ScanResultSummaryDto:
-      type: object
-      properties:
-        scannedPageUrls:
-          description: URL of all the pages scanned
-          type: array
-          items:
-            type: string
-          example:
-          - onetrust.com
-          - onetrust.com/robots.txt
-          maxItems: 1000
-          minItems: 0
-        numTags:
-          description: Number of tags associated with this scan.
+          example: 3
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          description: The number of items in the current page.
           type: integer
           format: int32
-          example: 25
-        numCookies:
-          description: Number of cookies associated with this scan.
-          type: integer
-          format: int32
-          example: 150
-        numCookiesByCategory:
-          description: Number of cookies associated with this scan, grouped by cookiepedia category.
-          type: object
-          example: '{''Strictly Necessary'': 3, ''Functional'': 5, ...}'
-          additionalProperties:
-            type: integer
-            format: int64
+          example: 115
   securitySchemes:
     OAUTH2:
       type: oauth2

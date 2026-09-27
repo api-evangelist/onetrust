@@ -122,71 +122,55 @@ paths:
           description: The Domain or Application hasn't been published yet
 components:
   schemas:
-    Rule:
+    DomainResponse:
       type: object
       properties:
-        Id:
-          type: string
-          format: UUID
-        Name:
-          type: string
-        Countries:
-          type: array
-          items:
-            type: string
-        States:
-          type: object
-        LanguageSwitcherPlaceholder:
-          type: object
-        BannerPushesDown:
-          type: boolean
-        Default:
-          type: boolean
-        Global:
-          type: boolean
-      title: Rule
-    domain:
+        domain:
+          $ref: '#/components/schemas/domain'
+        culture:
+          $ref: '#/components/schemas/culture'
+    culture:
       properties:
-        CookieSPAEnabled:
-          type: boolean
-          description: Indicates if tenant has a CookieSPA feature toggle enabled.
-          example: false
-        UseV2:
-          type: boolean
-          description: Indicates if data is formatted to support new cookies flow.
-          example: true
-        MobileSDK:
-          type: boolean
-          description: Indicates if data was built as a Mobile Application or Website.
-          example: true
-        SkipGeolocation:
-          type: boolean
-          description: If false, only one geolocation rule exists so no need to call. geolocation API
-          example: false
-        ScriptType:
+        DomainData:
+          $ref: '#/components/schemas/DomainData'
+        CommonData:
+          $ref: '#/components/schemas/CommonData'
+    ConsentIntegration:
+      type: object
+      properties:
+        ConsentApi:
           type: string
-          description: Indicates if the script is a Test Script or Production Script.
-          example: Production
-        Version:
+        RequestInformation:
           type: string
-          description: Current OneTrust platform version. This does not indicate the version of this data.
-          example: 5.10.0
-        OptanonDataJSON:
+      title: ConsentIntegration
+    IabData:
+      type: object
+      properties:
+        cookieVersion:
           type: string
-          description: The Domain or Application ID. This should match the value passed into the header when making this call.
-          example: b97c9cf3-6801-4463-8cf8-f557a00a4052
-        GeolocationUrl:
+        createdTime:
           type: string
-          description: API that can be used to determine the user's geographic location based on IP lookup.
-          example: https://geolocation.1trust.app/cookieconsentpub/v1/geo/location
-        RuleSet:
-          type: array
-          items:
-            $ref: '#/components/schemas/Rule'
-        IabData:
-          $ref: '#/components/schemas/IabData'
-        ConsentIntegration:
-          $ref: '#/components/schemas/ConsentIntegration'
+        updatedTime:
+          type: string
+        cmpId:
+          type: string
+        cmpVersion:
+          type: string
+        consentScreen:
+          type: string
+        consentLanguage:
+          type: string
+        vendorListVersion:
+          type: integer
+        maxVendorId:
+          type: integer
+        encodingType:
+          type: string
+        iabVendorJson:
+          type: string
+        globalVendorListUrl:
+          type: string
+      title: IabData
     DomainData:
       properties:
         cctId:
@@ -480,13 +464,48 @@ components:
         PCFirstPartyCookieListText:
           type: string
           example: First Party Cookies
-    DomainResponse:
-      type: object
+    domain:
       properties:
-        domain:
-          $ref: '#/components/schemas/domain'
-        culture:
-          $ref: '#/components/schemas/culture'
+        CookieSPAEnabled:
+          type: boolean
+          description: Indicates if tenant has a CookieSPA feature toggle enabled.
+          example: false
+        UseV2:
+          type: boolean
+          description: Indicates if data is formatted to support new cookies flow.
+          example: true
+        MobileSDK:
+          type: boolean
+          description: Indicates if data was built as a Mobile Application or Website.
+          example: true
+        SkipGeolocation:
+          type: boolean
+          description: If false, only one geolocation rule exists so no need to call. geolocation API
+          example: false
+        ScriptType:
+          type: string
+          description: Indicates if the script is a Test Script or Production Script.
+          example: Production
+        Version:
+          type: string
+          description: Current OneTrust platform version. This does not indicate the version of this data.
+          example: 5.10.0
+        OptanonDataJSON:
+          type: string
+          description: The Domain or Application ID. This should match the value passed into the header when making this call.
+          example: b97c9cf3-6801-4463-8cf8-f557a00a4052
+        GeolocationUrl:
+          type: string
+          description: API that can be used to determine the user's geographic location based on IP lookup.
+          example: https://geolocation.1trust.app/cookieconsentpub/v1/geo/location
+        RuleSet:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+        IabData:
+          $ref: '#/components/schemas/IabData'
+        ConsentIntegration:
+          $ref: '#/components/schemas/ConsentIntegration'
     CommonData:
       properties:
         IabThirdPartyCookieUrl:
@@ -613,48 +632,29 @@ components:
         CookieListCustomoCss:
           type: string
           example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
-    IabData:
+    Rule:
       type: object
       properties:
-        cookieVersion:
+        Id:
           type: string
-        createdTime:
+          format: UUID
+        Name:
           type: string
-        updatedTime:
-          type: string
-        cmpId:
-          type: string
-        cmpVersion:
-          type: string
-        consentScreen:
-          type: string
-        consentLanguage:
-          type: string
-        vendorListVersion:
-          type: integer
-        maxVendorId:
-          type: integer
-        encodingType:
-          type: string
-        iabVendorJson:
-          type: string
-        globalVendorListUrl:
-          type: string
-      title: IabData
-    culture:
-      properties:
-        DomainData:
-          $ref: '#/components/schemas/DomainData'
-        CommonData:
-          $ref: '#/components/schemas/CommonData'
-    ConsentIntegration:
-      type: object
-      properties:
-        ConsentApi:
-          type: string
-        RequestInformation:
-          type: string
-      title: ConsentIntegration
+        Countries:
+          type: array
+          items:
+            type: string
+        States:
+          type: object
+        LanguageSwitcherPlaceholder:
+          type: object
+        BannerPushesDown:
+          type: boolean
+        Default:
+          type: boolean
+        Global:
+          type: boolean
+      title: Rule
 x-readme:
   explorer-enabled: false
   metrics-enabled: false

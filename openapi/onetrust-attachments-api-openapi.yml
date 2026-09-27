@@ -169,6 +169,69 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
+    AttachmentMultipartRequest:
+      type: object
+      properties:
+        attachment:
+          description: The details of the file.
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/AttachmentCreateRequestV2'
+          - type: string
+            format: application/json
+            example: '{"FileName":"document.pdf","Type":30,"RefIds":["beb90499-ea60-47aa-8ed8-966f2df5f2e8"],"IsInternal":true,"Name":"Important Document","Comments":"This is a confidential document"}'
+            title: Attachment JSON Object - Required Format
+        file:
+          description: The file to upload to the OneTrust Platform. The file must be 64MB or less.
+          type: string
+          format: binary
+          contentMediaType: application/octet-stream
+      required:
+      - attachment
+      - file
+    SharedAccessParams:
+      type: object
+      properties:
+        storageAccountName:
+          description: The name of the storage account for the file.
+          type: string
+          example: trialapp4533.blob.core.windows.net
+        containerName:
+          description: The name of the container where the file is stored.
+          type: string
+          example: stage
+        fileName:
+          description: The name of the file in storage.
+          type: string
+          example: d7facfb2-7906-435a-8e94-95a39232632b
+        signature:
+          description: The access token for the file.
+          type: string
+          example: sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
+    AttachmentProcessInitResponse:
+      type: object
+      properties:
+        requestType:
+          description: The status of the request.
+          type: string
+          example: CREATED
+          enum:
+          - CREATED
+          - RENEWED
+          - OVERRIDE
+          - RETRY
+          - DIRECTORY
+        uploadParams:
+          description: The details needed to access the file.
+          $ref: '#/components/schemas/SharedAccessParams'
+        statusUrl:
+          description: The URL to check the status of the request.
+          type: string
+          example: /document/v3/attachments/status/d7facfb2-7906-435a-8e94-95a39232632b
+        downloadUrl:
+          description: The URL to download the file.
+          type: string
+          example: https://trialapp4533.blob.core.windows.net/stage/d7facfb2-7906-435a-8e94-95a39232632b?sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
     AttachmentResponse:
       type: object
       properties:
@@ -281,50 +344,6 @@ components:
           description: This flag indicates whether the file is marked for internal use.
           type: boolean
           example: true
-    AttachmentProcessInitResponse:
-      type: object
-      properties:
-        requestType:
-          description: The status of the request.
-          type: string
-          example: CREATED
-          enum:
-          - CREATED
-          - RENEWED
-          - OVERRIDE
-          - RETRY
-          - DIRECTORY
-        uploadParams:
-          description: The details needed to access the file.
-          $ref: '#/components/schemas/SharedAccessParams'
-        statusUrl:
-          description: The URL to check the status of the request.
-          type: string
-          example: /document/v3/attachments/status/d7facfb2-7906-435a-8e94-95a39232632b
-        downloadUrl:
-          description: The URL to download the file.
-          type: string
-          example: https://trialapp4533.blob.core.windows.net/stage/d7facfb2-7906-435a-8e94-95a39232632b?sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
-    AttachmentMultipartRequest:
-      type: object
-      properties:
-        attachment:
-          description: The details of the file.
-          type: object
-          oneOf:
-          - $ref: '#/components/schemas/AttachmentCreateRequestV2'
-          - type: string
-            format: application/json
-            example: '{"FileName":"document.pdf","Type":30,"RefIds":["beb90499-ea60-47aa-8ed8-966f2df5f2e8"],"IsInternal":true,"Name":"Important Document","Comments":"This is a confidential document"}'
-            title: Attachment JSON Object - Required Format
-        file:
-          description: The file to upload to the OneTrust Platform. The file must be 64MB or less.
-          type: string
-          format: binary
-          contentMediaType: application/octet-stream
-      required:
-      - attachment
-      - file
     AttachmentCreateRequestV2:
       type: object
       properties:
@@ -421,25 +440,6 @@ components:
       - RefIds
       - Type
       title: Parameters & Descriptions - Reference Only
-    SharedAccessParams:
-      type: object
-      properties:
-        storageAccountName:
-          description: The name of the storage account for the file.
-          type: string
-          example: trialapp4533.blob.core.windows.net
-        containerName:
-          description: The name of the container where the file is stored.
-          type: string
-          example: stage
-        fileName:
-          description: The name of the file in storage.
-          type: string
-          example: d7facfb2-7906-435a-8e94-95a39232632b
-        signature:
-          description: The access token for the file.
-          type: string
-          example: sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
   securitySchemes:
     OAUTH2:
       type: oauth2

@@ -154,6 +154,146 @@ paths:
         - INTEGRATIONS
 components:
   schemas:
+    ScheduledTrigger:
+      allOf:
+      - $ref: '#/components/schemas/BaseTrigger'
+      - type: object
+        properties:
+          cronExpression:
+            type: string
+          dateTime:
+            $ref: '#/components/schemas/ScheduleDateTime'
+          runManual:
+            type: boolean
+          isRunManual:
+            type: boolean
+    ScheduleDateTimeField:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        cronExp:
+          type: string
+    AbstractExpression:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - AND_EXPRESSION
+          - OR_EXPRESSION
+          - NOT_EXPRESSION
+          - BINARY_EXPRESSION
+    ConfigTrigger:
+      allOf:
+      - $ref: '#/components/schemas/BaseTrigger'
+      - type: object
+        properties:
+          eventCode:
+            type: string
+    OrExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          expressions:
+            type: array
+            items:
+              $ref: '#/components/schemas/AbstractExpression'
+    AndExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          expressions:
+            type: array
+            items:
+              $ref: '#/components/schemas/AbstractExpression'
+    ScheduleDateTime:
+      type: object
+      properties:
+        seconds:
+          type: string
+        minutes:
+          type: string
+        hours:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        dayOfMonth:
+          type: string
+        month:
+          type: string
+        dayOfWeek:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        startMonth:
+          type: string
+        year:
+          type: string
+        frequency:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        frequencyIntervalTracker:
+          type: string
+    WorkflowTriggerDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for id.
+          type: string
+          format: uuid
+        name:
+          description: Trigger name.
+          type: string
+          example: New Customer Signup
+        workflowName:
+          description: Workflow name that this trigger belongs to.
+          type: string
+          example: Customer Onboarding
+        workflowId:
+          description: Workflow ID that this trigger belongs to.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        triggerType:
+          description: Trigger type.
+          type: string
+          example: EVENT
+          enum:
+          - EVENT
+          - SCHEDULED
+          - WEBHOOK
+          - SUBFLOW
+          - CONFIG
+        triggerContext:
+          description: Context payload specific to the trigger type.
+          oneOf:
+          - $ref: '#/components/schemas/BaseTrigger'
+          - $ref: '#/components/schemas/ConfigTrigger'
+          - $ref: '#/components/schemas/EventTrigger'
+          - $ref: '#/components/schemas/ScheduledTrigger'
+          - $ref: '#/components/schemas/SubflowTrigger'
+          - $ref: '#/components/schemas/WebHookTrigger'
+        description:
+          description: Trigger description.
+          type: string
+          example: Triggered when a new customer signs up
+        eventCode:
+          description: Event code that activates this workflow.
+          type: string
+          example: CUSTOMER_SIGNUP
+        schema:
+          description: JSON schema describing the expected trigger payload.
+          type: string
+        lookupFields:
+          description: Lookup fields used to find existing records.
+          $ref: '#/components/schemas/LookupFields'
+        sample:
+          description: Sample trigger payload.
+          type: string
+      required:
+      - name
+      - triggerType
+      - workflowId
     WebHookTrigger:
       allOf:
       - $ref: '#/components/schemas/BaseTrigger'
@@ -172,37 +312,15 @@ components:
           decryptionCredentialId:
             type: string
             format: uuid
-    ConfigTrigger:
+    SubflowTrigger:
       allOf:
       - $ref: '#/components/schemas/BaseTrigger'
       - type: object
         properties:
           eventCode:
             type: string
-    LookupFields:
-      type: object
-      properties:
-        fields:
-          description: List of fields.
-          type: array
-          items:
-            $ref: '#/components/schemas/FieldDescription'
-        step:
-          description: Value for step.
-          type: string
-    ScheduledTrigger:
-      allOf:
-      - $ref: '#/components/schemas/BaseTrigger'
-      - type: object
-        properties:
-          cronExpression:
+          referenceUrl:
             type: string
-          dateTime:
-            $ref: '#/components/schemas/ScheduleDateTime'
-          runManual:
-            type: boolean
-          isRunManual:
-            type: boolean
     FieldDescription:
       type: object
       properties:
@@ -227,23 +345,24 @@ components:
         displayName:
           description: Value for display name.
           type: string
-    BaseTrigger:
+    NotExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          operand:
+            $ref: '#/components/schemas/AbstractExpression'
+    LookupFields:
       type: object
       properties:
-        type:
+        fields:
+          description: List of fields.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldDescription'
+        step:
+          description: Value for step.
           type: string
-          enum:
-          - EVENT
-          - SCHEDULED
-          - WEBHOOK
-          - SUBFLOW
-          - CONFIG
-        webhook:
-          type: boolean
-        subFlow:
-          type: boolean
-        config:
-          type: boolean
     WorkflowActionsV2Request:
       type: object
       properties:
@@ -356,125 +475,6 @@ components:
       - name
       - trigger
       - workflowType
-    WorkflowTriggerDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for id.
-          type: string
-          format: uuid
-        name:
-          description: Trigger name.
-          type: string
-          example: New Customer Signup
-        workflowName:
-          description: Workflow name that this trigger belongs to.
-          type: string
-          example: Customer Onboarding
-        workflowId:
-          description: Workflow ID that this trigger belongs to.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        triggerType:
-          description: Trigger type.
-          type: string
-          example: EVENT
-          enum:
-          - EVENT
-          - SCHEDULED
-          - WEBHOOK
-          - SUBFLOW
-          - CONFIG
-        triggerContext:
-          description: Context payload specific to the trigger type.
-          oneOf:
-          - $ref: '#/components/schemas/BaseTrigger'
-          - $ref: '#/components/schemas/ConfigTrigger'
-          - $ref: '#/components/schemas/EventTrigger'
-          - $ref: '#/components/schemas/ScheduledTrigger'
-          - $ref: '#/components/schemas/SubflowTrigger'
-          - $ref: '#/components/schemas/WebHookTrigger'
-        description:
-          description: Trigger description.
-          type: string
-          example: Triggered when a new customer signs up
-        eventCode:
-          description: Event code that activates this workflow.
-          type: string
-          example: CUSTOMER_SIGNUP
-        schema:
-          description: JSON schema describing the expected trigger payload.
-          type: string
-        lookupFields:
-          description: Lookup fields used to find existing records.
-          $ref: '#/components/schemas/LookupFields'
-        sample:
-          description: Sample trigger payload.
-          type: string
-      required:
-      - name
-      - triggerType
-      - workflowId
-    OrExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          expressions:
-            type: array
-            items:
-              $ref: '#/components/schemas/AbstractExpression'
-    ScheduleDateTimeField:
-      type: object
-      properties:
-        label:
-          type: string
-        value:
-          type: string
-        cronExp:
-          type: string
-    AndExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          expressions:
-            type: array
-            items:
-              $ref: '#/components/schemas/AbstractExpression'
-    ScheduleDateTime:
-      type: object
-      properties:
-        seconds:
-          type: string
-        minutes:
-          type: string
-        hours:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        dayOfMonth:
-          type: string
-        month:
-          type: string
-        dayOfWeek:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        startMonth:
-          type: string
-        year:
-          type: string
-        frequency:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        frequencyIntervalTracker:
-          type: string
-    SubflowTrigger:
-      allOf:
-      - $ref: '#/components/schemas/BaseTrigger'
-      - type: object
-        properties:
-          eventCode:
-            type: string
-          referenceUrl:
-            type: string
     EventTrigger:
       allOf:
       - $ref: '#/components/schemas/BaseTrigger'
@@ -500,6 +500,23 @@ components:
             - $ref: '#/components/schemas/BinaryExpression'
             - $ref: '#/components/schemas/NotExpression'
             - $ref: '#/components/schemas/OrExpression'
+    BaseTrigger:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - EVENT
+          - SCHEDULED
+          - WEBHOOK
+          - SUBFLOW
+          - CONFIG
+        webhook:
+          type: boolean
+        subFlow:
+          type: boolean
+        config:
+          type: boolean
     BinaryExpression:
       allOf:
       - $ref: '#/components/schemas/AbstractExpression'
@@ -530,23 +547,6 @@ components:
             type: string
       required:
       - operator
-    NotExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          operand:
-            $ref: '#/components/schemas/AbstractExpression'
-    AbstractExpression:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - AND_EXPRESSION
-          - OR_EXPRESSION
-          - NOT_EXPRESSION
-          - BINARY_EXPRESSION
   securitySchemes:
     OAUTH2:
       type: oauth2

@@ -932,72 +932,6 @@ components:
             ruleName: Europe
           maxItems: 1000
           minItems: 0
-    DomainScriptDetailsPublicDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier (UUID).
-          type: string
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        url:
-          description: URL assigned to this domain
-          type: string
-          example: onetrust.com
-          maxLength: 255
-          minLength: 1
-        cdnUrl:
-          description: The CDN script to use for production
-          type: string
-          example: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
-          maxLength: 500
-          minLength: 1
-        geoRuleId:
-          description: Unique identifier of the geo rule.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        geoRuleName:
-          description: Name of the geo rule.
-          type: string
-          example: Europe Rule
-          maxLength: 255
-          minLength: 1
-        publishStatus:
-          description: The status of the script publication
-          type: string
-          example: PUBLISHED
-          enum:
-          - DRAFT
-          - PUBLISHED
-          - PUBLISHING
-          - FAILED
-          - WAITING
-        publishDate:
-          description: Date of this publish (timezone UTC)
-          type: string
-          format: date-time
-          example: '2024-01-15T14:30:45'
-        publishVersion:
-          description: Version of this script publish
-          type: string
-          example: 202212.1.0
-          maxLength: 50
-          minLength: 1
-        publishBy:
-          description: Tenant who triggered this publish
-          type: string
-          example: Adithya H.
-          maxLength: 255
-        webformIntegrationEnabled:
-          description: If webform integration is enabled
-          type: boolean
-          example: false
-        autoBlockingEnabled:
-          description: Is autoblocking enabled for this script
-          type: boolean
-          example: true
-        distinctSrcUrl:
-          type: boolean
     PublishScriptDto:
       type: object
       properties:
@@ -1144,6 +1078,72 @@ components:
           example: Global
           maxLength: 255
           minLength: 1
+    DomainScriptDetailsPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier (UUID).
+          type: string
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        url:
+          description: URL assigned to this domain
+          type: string
+          example: onetrust.com
+          maxLength: 255
+          minLength: 1
+        cdnUrl:
+          description: The CDN script to use for production
+          type: string
+          example: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+          maxLength: 500
+          minLength: 1
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        publishStatus:
+          description: The status of the script publication
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        publishDate:
+          description: Date of this publish (timezone UTC)
+          type: string
+          format: date-time
+          example: '2024-01-15T14:30:45'
+        publishVersion:
+          description: Version of this script publish
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        publishBy:
+          description: Tenant who triggered this publish
+          type: string
+          example: Adithya H.
+          maxLength: 255
+        webformIntegrationEnabled:
+          description: If webform integration is enabled
+          type: boolean
+          example: false
+        autoBlockingEnabled:
+          description: Is autoblocking enabled for this script
+          type: boolean
+          example: true
+        distinctSrcUrl:
+          type: boolean
     PublishScriptDto_2:
       type: object
       properties:

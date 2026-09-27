@@ -216,6 +216,30 @@ paths:
         - DATA_CATALOG_WRITE
 components:
   schemas:
+    DataUseGovernance-DataCatalog_OneTrustResponseOfTagTermResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagTermResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_OneTrustResponseOfTagResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_OneTrustResponseListOfTags:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+            example: Biometric
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
     DataUseGovernance-DataCatalog_OneTrustPage:
       type: object
       properties:
@@ -246,32 +270,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
-    DataUseGovernance-DataCatalog_OneTrustResponseOfTagTermResponse:
+    DataUseGovernance-DataCatalog_OneTrustMetadata:
       type: object
       properties:
-        data:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagTermResponse'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_OneTrustSort:
-      type: object
-      properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
-          type: string
-    DataUseGovernance-DataCatalog_OneTrustResponseOfTagResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
     DataUseGovernance-DataCatalog_TagTermResponse:
       type: object
       properties:
@@ -334,22 +338,18 @@ components:
           type: string
           format: uuid
           example: 754e4567-de34-12d3-a456-ddf414174777
-    DataUseGovernance-DataCatalog_OneTrustResponseListOfTags:
+    DataUseGovernance-DataCatalog_OneTrustSort:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            type: string
-            example: Biometric
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          description: The page number of the results.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
     DataUseGovernance-DataCatalog_TagRequestV2:
       type: object
       properties:

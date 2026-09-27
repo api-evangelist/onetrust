@@ -565,23 +565,38 @@ components:
           format: int32
         empty:
           type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2:
       properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
+        name:
+          description: The name of the data element
+          type: string
+          example: Work Email
+        linked:
+          description: Indicates whether this data element value is linked as an identifier
           type: boolean
-        unpaged:
+          example: true
+        value:
+          description: The value of the data element. Can be a single value or an array of values.
+          type: object
+          example: example@otprivacy.com
+        doNotCall:
+          description: Indicates if a phone number is listed in FCC's Do Not Call registry
           type: boolean
+          example: true
+      required:
+      - linked
+      - name
+      - value
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto:
+      properties:
+        name:
+          description: The name of the data element to search for
+          type: string
+          example: Work Email
+        value:
+          description: The value to match against the specified data element name
+          type: string
+          example: example@otprivacy.com
     ConsentAPI_DeleteDataSubjectByPurposeRequest:
       type: object
       properties:
@@ -604,14 +619,94 @@ components:
           type: boolean
           example: false
           default: 'false'
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+    ConsentPreferences-UniversalConsentPreferenceManag_DeletePurposeFromDataSubject:
       properties:
-        empty:
+        purposes:
+          description: The unique identifiers of the purposes.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Purpose ID
+            example: 550e8400-e29b-41d4-a716-446655440000
+        dataSubjects:
+          description: The list of GUIDS for the data subject identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Data Subject GUID
+            example: a9adf402-adcd-45be-b981-a56a5c0739ec
+        retainTransactions:
+          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
           type: boolean
-        sorted:
+          example: false
+        identifiers:
+          description: The list of data subject identifiers for the data subjects.
+          type: array
+          items:
+            type: string
+            description: Data Subject identifier (e.g., email, phone number)
+            example: user@example.com
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSearchDto:
+      type: object
+      properties:
+        id:
+          description: Filter Data Subject records by GUID
+          type: string
+          format: uuid
+          example: 2a95b8c1-e54f-49f0-906a-2f5880450999
+        identifier:
+          description: Filter Data Subject records by identifier (e.g., email, phone number)
+          type: string
+          example: example@otprivacy.com
+        updatedSince:
+          description: 'Filter Data Subject records updated on or after this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
+          type: string
+          example: '2023-01-01T00:00:00'
+        updatedUntil:
+          description: 'Filter Data Subject records updated on or before this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
+          type: string
+          example: '2023-12-31T23:59:59'
+        dataElements:
+          description: Filter Data Subject records by data elements with specific names and values
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto'
+        language:
+          description: Filter Data Subject records by preferred language code
+          type: string
+          example: en-us
+        includeCounts:
+          description: When false, the response will not include the total record count (improves performance for large result sets)
           type: boolean
-        unsorted:
+          example: true
+          default: true
+        linkTokens:
+          description: When true, includes link tokens in the response for magic link functionality
           type: boolean
+          example: false
+          default: false
+        linkedDS:
+          description: When true, includes additional linked Data Subject information in the response
+          type: boolean
+          example: false
+          default: false
+        ignoreDefaultSort:
+          description: When true, overrides the default sorting by last modified date
+          type: boolean
+          example: false
+          default: false
+        orgIds:
+          description: Filter Data Subject records by organization IDs (internal use only)
+          type: array
+          items:
+            type: string
+            format: uuid
+        includeDataSubjectsWithOutPurposeTransactions:
+          description: When true, includes Data Subjects that don't have any purpose transactions
+          type: boolean
+          example: false
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2:
       properties:
         id:
@@ -709,126 +804,31 @@ components:
           description: This flag indicates whether to remove PII data element values from receipts and transactions. This parameter must be used in conjunction with the `retainReceiptsTransactions` parameter.
           type: boolean
           example: false
-    ConsentPreferences-UniversalConsentPreferenceManag_DeletePurposeFromDataSubject:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
       properties:
-        purposes:
-          description: The unique identifiers of the purposes.
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Purpose ID
-            example: 550e8400-e29b-41d4-a716-446655440000
-        dataSubjects:
-          description: The list of GUIDS for the data subject identifiers.
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Data Subject GUID
-            example: a9adf402-adcd-45be-b981-a56a5c0739ec
-        retainTransactions:
-          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
           type: boolean
-          example: false
-        identifiers:
-          description: The list of data subject identifiers for the data subjects.
-          type: array
-          items:
-            type: string
-            description: Data Subject identifier (e.g., email, phone number)
-            example: user@example.com
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSearchDto:
-      type: object
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
       properties:
-        id:
-          description: Filter Data Subject records by GUID
-          type: string
-          format: uuid
-          example: 2a95b8c1-e54f-49f0-906a-2f5880450999
-        identifier:
-          description: Filter Data Subject records by identifier (e.g., email, phone number)
-          type: string
-          example: example@otprivacy.com
-        updatedSince:
-          description: 'Filter Data Subject records updated on or after this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
-          type: string
-          example: '2023-01-01T00:00:00'
-        updatedUntil:
-          description: 'Filter Data Subject records updated on or before this date (format: yyyy-MM-dd or yyyy-MM-ddTHH:mm:ss)'
-          type: string
-          example: '2023-12-31T23:59:59'
-        dataElements:
-          description: Filter Data Subject records by data elements with specific names and values
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto'
-        language:
-          description: Filter Data Subject records by preferred language code
-          type: string
-          example: en-us
-        includeCounts:
-          description: When false, the response will not include the total record count (improves performance for large result sets)
+        empty:
           type: boolean
-          example: true
-          default: true
-        linkTokens:
-          description: When true, includes link tokens in the response for magic link functionality
+        sorted:
           type: boolean
-          example: false
-          default: false
-        linkedDS:
-          description: When true, includes additional linked Data Subject information in the response
+        unsorted:
           type: boolean
-          example: false
-          default: false
-        ignoreDefaultSort:
-          description: When true, overrides the default sorting by last modified date
-          type: boolean
-          example: false
-          default: false
-        orgIds:
-          description: Filter Data Subject records by organization IDs (internal use only)
-          type: array
-          items:
-            type: string
-            format: uuid
-        includeDataSubjectsWithOutPurposeTransactions:
-          description: When true, includes Data Subjects that don't have any purpose transactions
-          type: boolean
-          example: false
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2:
-      properties:
-        name:
-          description: The name of the data element
-          type: string
-          example: Work Email
-        linked:
-          description: Indicates whether this data element value is linked as an identifier
-          type: boolean
-          example: true
-        value:
-          description: The value of the data element. Can be a single value or an array of values.
-          type: object
-          example: example@otprivacy.com
-        doNotCall:
-          description: Indicates if a phone number is listed in FCC's Do Not Call registry
-          type: boolean
-          example: true
-      required:
-      - linked
-      - name
-      - value
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto:
-      properties:
-        name:
-          description: The name of the data element to search for
-          type: string
-          example: Work Email
-        value:
-          description: The value to match against the specified data element name
-          type: string
-          example: example@otprivacy.com
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

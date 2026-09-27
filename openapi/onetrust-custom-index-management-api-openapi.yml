@@ -185,28 +185,6 @@ components:
           description: Status of the pipeline trigger
           type: string
           example: InProgress
-    ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun:
-      type: object
-      properties:
-        status:
-          description: Current status of the custom index creation
-          type: string
-          example: InProgress
-          enum:
-          - Submitted
-          - InProgress
-          - Success
-          - Failed
-          - Cancelled
-          - Pending
-        startTime:
-          description: Timestamp when the of the custom index creation started
-          type: string
-          format: date-time
-        endTime:
-          description: Timestamp when the the custom index creation ended.
-          type: string
-          format: date-time
     ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerRequest:
       type: object
       properties:
@@ -232,6 +210,28 @@ components:
       required:
       - operationName
       - parameters
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun:
+      type: object
+      properties:
+        status:
+          description: Current status of the custom index creation
+          type: string
+          example: InProgress
+          enum:
+          - Submitted
+          - InProgress
+          - Success
+          - Failed
+          - Cancelled
+          - Pending
+        startTime:
+          description: Timestamp when the of the custom index creation started
+          type: string
+          format: date-time
+        endTime:
+          description: Timestamp when the the custom index creation ended.
+          type: string
+          format: date-time
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

@@ -273,87 +273,162 @@ paths:
         - CONTROL
 components:
   schemas:
-    TechRiskCompliance-ITRiskManagement_EvidenceEntityInformation:
+    TechRiskCompliance-ITRiskManagement_PageEvidenceImplementationDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_EvidenceImplementationDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    TechRiskCompliance-ITRiskManagement_BasicDetail:
       type: object
       properties:
         id:
-          description: The identifier (GUID) of the related entity.
+          description: Identifier (GUID)
           type: string
           format: uuid
-          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
         name:
-          description: The name of the entity.
+          description: Name
           type: string
-          example: Asset 305
-        type:
-          description: The type of the related entity.
-          type: string
-          example: Risks
-          enum:
-          - ControlImplementations
-          - Risks
-          - Assets
-          - ProcessingActivities
-          - Vendors
-          - Entities
-          - Initiatives
-        evidenceEntityType:
-          description: The type of the related entity.
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation'
-        orgGroupId:
-          description: The identifier (GUID) of the organization which contains the entity.
-          type: string
-          format: uuid
-          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
-        controlEntityType:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation'
-      required:
-      - evidenceEntityType
-      - id
-      - name
-    TechRiskCompliance-ITRiskManagement_FilterInformation:
+          example: Entity Name
+    TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation:
       type: object
       properties:
-        field:
-          description: Field to search on.
+        id:
+          description: ID of the entity type. This can be Assets, Entities, Custom Object GUID in the form of String.
           type: string
-          example: lastCollected
-        operator:
-          description: Operator for search.
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        label:
+          description: Name of the EntityType.
           type: string
-          example: GREATER_THAN
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - BETWEEN
-          - GREATER_THAN
-          - LESS_THAN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
-          type: object
-          example: '2020-11-10'
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
+          example: Assets
+        translationKey:
+          description: Translation Key of EntityType ID.
+          type: string
+          example: Assets
+        moduleName:
+          description: Module Name of EntityType.
+          type: string
+          example: DataMapping
+        seeded:
+          description: The parameter is true for Base Entity Type and false for Custom Object/Entity Types by default.
+          type: boolean
+          example: true
       required:
-      - field
-      - value
+      - id
+    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentNoteRequest:
+      type: object
+      properties:
+        collectionDate:
+          description: The date that the attachment was collected.
+          type: string
+          format: date
+          example: '2021-01-01'
+        documentType:
+          description: The type of attachment.
+          type: string
+          example: FILE
+          enum:
+          - FILE
+          - NOTE
+          - LINK
+        note:
+          description: The note to attach.
+          type: string
+          example: Note
+        name:
+          description: The name of the attachment.
+          type: string
+          example: Attachment Name
+      required:
+      - collectionDate
+      - documentType
+      - name
+      - note
+    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentFileRequest:
+      type: object
+      properties:
+        collectionDate:
+          description: The date that the attachment was collected.
+          type: string
+          format: date
+          example: '2021-01-01'
+        documentType:
+          description: The type of attachment.
+          type: string
+          example: FILE
+          enum:
+          - FILE
+          - NOTE
+          - LINK
+        evidenceTaskImplementationDocumentRequests:
+          description: The list of files to attach.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationDocumentRequest'
+          minItems: 1
+      required:
+      - collectionDate
+      - documentType
+      - evidenceTaskImplementationDocumentRequests
+    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
+      type: object
+      properties:
+        filters:
+          description: Filters used in search.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
+          uniqueItems: true
+        fullText:
+          description: Full text search terms.
+          type: string
+          example: firewall
+        excludeTotalRecordsCount:
+          type: boolean
     TechRiskCompliance-ITRiskManagement_BasicEntityReference:
       type: object
       properties:
@@ -373,6 +448,69 @@ components:
       required:
       - id
       - name
+    TechRiskCompliance-ITRiskManagement_AiEvidenceAnalysisResult:
+      type: object
+      properties:
+        overallScore:
+          type: string
+        indicator:
+          type: string
+          enum:
+          - Success
+          - Warning
+          - Error
+          - Empty
+    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentLinkRequest:
+      type: object
+      properties:
+        collectionDate:
+          description: The date that the attachment was collected.
+          type: string
+          format: date
+          example: '2021-01-01'
+        documentType:
+          description: The type of attachment.
+          type: string
+          example: FILE
+          enum:
+          - FILE
+          - NOTE
+          - LINK
+        url:
+          description: The URL to attach.
+          type: string
+          format: url
+          example: https://example.com/link
+        description:
+          description: The description of the URL.
+          type: string
+          example: Link Description
+        name:
+          description: The name of the attachment.
+          type: string
+          example: Attachment Name
+      required:
+      - collectionDate
+      - description
+      - documentType
+      - name
+      - url
+    TechRiskCompliance-ITRiskManagement_Sort:
+      type: object
+      properties:
+        empty:
+          description: The flag to check if the result is empty or not.
+          type: boolean
+          example: false
+        sorted:
+          description: The flag to check if the result is sorted or not.
+          type: boolean
+          example: true
+        unsorted:
+          description: The flag to check if the result is unsorted or not.
+          type: boolean
+          example: false
+      title: Sort
     TechRiskCompliance-ITRiskManagement_EvidenceImplementationDto:
       type: object
       properties:
@@ -537,33 +675,6 @@ components:
           type: boolean
       required:
       - number
-    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationDocumentRequest:
-      type: object
-      properties:
-        attachmentId:
-          description: The unique identifier of the attachment.
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        name:
-          description: The name of the attachment.
-          type: string
-          example: Attachment Name
-      required:
-      - attachmentId
-      - name
-    TechRiskCompliance-ITRiskManagement_BasicDetail:
-      type: object
-      properties:
-        id:
-          description: Identifier (GUID)
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        name:
-          description: Name
-          type: string
-          example: Entity Name
     TechRiskCompliance-ITRiskManagement_Pageable:
       type: object
       properties:
@@ -593,213 +704,102 @@ components:
           type: boolean
           example: false
       title: Pageable
-    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
+    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationDocumentRequest:
       type: object
       properties:
-        filters:
-          description: Filters used in search.
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
-          uniqueItems: true
-        fullText:
-          description: Full text search terms.
+        attachmentId:
+          description: The unique identifier of the attachment.
           type: string
-          example: firewall
-        excludeTotalRecordsCount:
-          type: boolean
-    TechRiskCompliance-ITRiskManagement_Sort:
-      type: object
-      properties:
-        empty:
-          description: The flag to check if the result is empty or not.
-          type: boolean
-          example: false
-        sorted:
-          description: The flag to check if the result is sorted or not.
-          type: boolean
-          example: true
-        unsorted:
-          description: The flag to check if the result is unsorted or not.
-          type: boolean
-          example: false
-      title: Sort
-    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentNoteRequest:
-      type: object
-      properties:
-        collectionDate:
-          description: The date that the attachment was collected.
-          type: string
-          format: date
-          example: '2021-01-01'
-        documentType:
-          description: The type of attachment.
-          type: string
-          example: FILE
-          enum:
-          - FILE
-          - NOTE
-          - LINK
-        note:
-          description: The note to attach.
-          type: string
-          example: Note
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
         name:
           description: The name of the attachment.
           type: string
           example: Attachment Name
       required:
-      - collectionDate
-      - documentType
+      - attachmentId
       - name
-      - note
-    TechRiskCompliance-ITRiskManagement_PageEvidenceImplementationDto:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_EvidenceImplementationDto'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
-        sort:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentLinkRequest:
-      type: object
-      properties:
-        collectionDate:
-          description: The date that the attachment was collected.
-          type: string
-          format: date
-          example: '2021-01-01'
-        documentType:
-          description: The type of attachment.
-          type: string
-          example: FILE
-          enum:
-          - FILE
-          - NOTE
-          - LINK
-        url:
-          description: The URL to attach.
-          type: string
-          format: url
-          example: https://example.com/link
-        description:
-          description: The description of the URL.
-          type: string
-          example: Link Description
-        name:
-          description: The name of the attachment.
-          type: string
-          example: Attachment Name
-      required:
-      - collectionDate
-      - description
-      - documentType
-      - name
-      - url
-    TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation:
+    TechRiskCompliance-ITRiskManagement_EvidenceEntityInformation:
       type: object
       properties:
         id:
-          description: ID of the entity type. This can be Assets, Entities, Custom Object GUID in the form of String.
+          description: The identifier (GUID) of the related entity.
           type: string
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        label:
-          description: Name of the EntityType.
+          format: uuid
+          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
+        name:
+          description: The name of the entity.
           type: string
-          example: Assets
-        translationKey:
-          description: Translation Key of EntityType ID.
+          example: Asset 305
+        type:
+          description: The type of the related entity.
           type: string
-          example: Assets
-        moduleName:
-          description: Module Name of EntityType.
+          example: Risks
+          enum:
+          - ControlImplementations
+          - Risks
+          - Assets
+          - ProcessingActivities
+          - Vendors
+          - Entities
+          - Initiatives
+        evidenceEntityType:
+          description: The type of the related entity.
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation'
+        orgGroupId:
+          description: The identifier (GUID) of the organization which contains the entity.
           type: string
-          example: DataMapping
-        seeded:
-          description: The parameter is true for Base Entity Type and false for Custom Object/Entity Types by default.
-          type: boolean
-          example: true
+          format: uuid
+          example: 1ab2fff0-cb80-b560-99a1-4a3b527f61f5
+        controlEntityType:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation'
       required:
+      - evidenceEntityType
       - id
-    TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationAttachmentFileRequest:
+      - name
+    TechRiskCompliance-ITRiskManagement_FilterInformation:
       type: object
       properties:
-        collectionDate:
-          description: The date that the attachment was collected.
+        field:
+          description: Field to search on.
           type: string
-          format: date
-          example: '2021-01-01'
-        documentType:
-          description: The type of attachment.
+          example: lastCollected
+        operator:
+          description: Operator for search.
           type: string
-          example: FILE
+          example: GREATER_THAN
           enum:
-          - FILE
-          - NOTE
-          - LINK
-        evidenceTaskImplementationDocumentRequests:
-          description: The list of files to attach.
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_EvidenceTaskImplementationDocumentRequest'
-          minItems: 1
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          example: '2020-11-10'
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
       required:
-      - collectionDate
-      - documentType
-      - evidenceTaskImplementationDocumentRequests
-    TechRiskCompliance-ITRiskManagement_AiEvidenceAnalysisResult:
-      type: object
-      properties:
-        overallScore:
-          type: string
-        indicator:
-          type: string
-          enum:
-          - Success
-          - Warning
-          - Error
-          - Empty
+      - field
+      - value
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

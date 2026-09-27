@@ -396,230 +396,29 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
-    DataUseGovernance-DataDiscovery_Sort:
+    DataUseGovernance-DataDiscovery_OneTrustPage:
       type: object
       properties:
-        sort:
-          type: array
-          items:
-            type: string
-    DataUseGovernance-DataDiscovery_OneTrustResponseDataSourceDtoWrapper:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_DataSourceV2Dto'
-        errors:
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustMetadata'
-    DataUseGovernance-DataDiscovery_ScheduleDateTimeField:
-      type: object
-      properties:
-        label:
-          description: Label for the field, typically used for display purposes.
-          type: string
-          example: Every Hour
-        value:
-          description: Value representing the selected option for this field.
-          type: string
-          example: H
-        cronExp:
-          description: The cron expression fragment for this field.
-          type: string
-          example: 0 0/5 buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils ?
-    DataUseGovernance-DataDiscovery_PageWrapperDataSourceDto:
-      type: object
-      properties:
-        content:
-          description: The content of this page.
-          example:
-          - id: 1
-            name: Item
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_DataSourceV2Dto'
-          type: array
-        number:
-          description: Current page number.
-          type: integer
-          format: int32
-          example: 0
-        size:
-          description: The size of the page (number of elements per page).
-          type: integer
-          format: int32
-          example: 20
-        numberOfElements:
-          description: The number of elements on the current page.
-          type: integer
-          format: int32
-          example: 15
-        totalElements:
-          description: The total number of elements across all pages.
-          type: integer
-          format: int32
-          example: 150
-        totalPages:
-          description: The total number of pages.
-          type: integer
-          format: int32
-          example: 8
         first:
-          description: Indicates if this is the first page.
           type: boolean
-          example: true
         last:
-          description: Indicates if this is the last page.
           type: boolean
-          example: false
-        empty:
-          description: Indicates if the page is empty.
-          type: boolean
-          example: false
-        sort:
-          description: Sorting information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
-        pageable:
-          description: Pagination information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
-    DataUseGovernance-DataDiscovery_DataSourceSettingsV2Dto:
-      type: object
-      properties:
-        scannerId:
-          description: Scanner Id for Data Source
-          type: string
-          format: uuid
-          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
-        workerNodeName:
-          description: Worker Node Name
-          type: string
-          example: WN-24thAugust
-        scanProfileId:
-          description: ScanProfile ID for Data Source
-          type: string
-          format: uuid
-          example: 3f162d7c-a463-4bf1-a7c4-b7899f6dcdef
-        scanProfileName:
-          description: ScanProfile Name for Data Source
-          type: string
-          example: ScanProfile-Mysql
-        credentialId:
-          description: Credential ID for Data Source
-          type: string
-          format: uuid
-          example: 8f162d7c-a563-4bf1-a0c4-b7899f6dcdef
-        credentialName:
-          description: Credential Name for Data Source
-          type: string
-          example: Credential-Mysql
-        oneTrustAssetId:
-          description: Asset ID for Data Source
-          type: string
-          format: uuid
-          example: 860abcce-fbf3-4f32-a38b-df19f8c08eae
-        classificationProfileId:
-          description: ClassifiactionProfile ID for Data Source
-          type: string
-          format: uuid
-          example: 3f162d7c-a863-4bf1-a9c4-b7899f6dcdef
-        detectorProfileId:
-          description: DetectorProfile ID for Data Source
-          type: string
-          format: uuid
-          example: 3f162d7c-a863-4bf1-a9c4-b7899f6dcdef
-        metadataClassificationEnabled:
-          description: Metadata Classification Enabled/Disabled
-          type: boolean
-          example: false
-        id:
+        number:
           type: integer
           format: int64
-    DataUseGovernance-DataDiscovery_Pageable:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int32
-          minimum: 0
         size:
           type: integer
-          format: int32
-          minimum: 1
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
         sort:
           type: array
           items:
-            type: string
-    DataUseGovernance-DataDiscovery_OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustPage'
-    DataUseGovernance-DataDiscovery_ScheduleDateTime:
-      type: object
-      properties:
-        seconds:
-          description: Seconds field for the cron expression.
-          type: string
-          example: '1'
-        minutes:
-          description: Minutes field for the cron expression.
-          type: string
-          example: '1'
-        hours:
-          description: Hours field for the cron expression.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
-        dayOfMonth:
-          description: Day of month field for the cron expression.
-          type: string
-          example: '*'
-        month:
-          description: Month field for the cron expression.
-          type: string
-          example: '*'
-        dayOfWeek:
-          description: Day of week field for the cron expression.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
-        year:
-          description: Year field for the cron expression.
-          type: string
-          example: '*'
-        frequency:
-          description: Frequency configuration.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
-        frequencyIntervalTracker:
-          description: Frequency interval tracker information.
-          type: string
-          example: '5'
-    DataUseGovernance-DataDiscovery_OneTrustSort:
-      type: object
-      properties:
-        direction:
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          type: string
-    DataUseGovernance-DataDiscovery_DataSourceTriggerDto:
-      type: object
-      properties:
-        cronExpression:
-          description: Cron expression to define the schedule in standard cron format.
-          type: string
-          example: 0 0/5 buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils ?
-        dateTime:
-          description: Specific date and time configuration for scheduling.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTime'
-        isRunManual:
-          description: Flag to indicate whether the trigger should run manually.
-          type: boolean
-          example: false
-        id:
-          type: integer
-          format: int64
-        runManual:
-          type: boolean
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustSort'
     DataUseGovernance-DataDiscovery_DataSourceV2Dto:
       type: object
       properties:
@@ -787,29 +586,230 @@ components:
         id:
           type: string
           format: uuid
-    DataUseGovernance-DataDiscovery_OneTrustPage:
+    DataUseGovernance-DataDiscovery_OneTrustResponseDataSourceDtoWrapper:
       type: object
       properties:
-        first:
-          type: boolean
-        last:
-          type: boolean
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_DataSourceV2Dto'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustMetadata'
+    DataUseGovernance-DataDiscovery_OneTrustSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+    DataUseGovernance-DataDiscovery_PageWrapperDataSourceDto:
+      type: object
+      properties:
+        content:
+          description: The content of this page.
+          example:
+          - id: 1
+            name: Item
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_DataSourceV2Dto'
+          type: array
         number:
+          description: Current page number.
           type: integer
-          format: int64
+          format: int32
+          example: 0
         size:
+          description: The size of the page (number of elements per page).
           type: integer
-          format: int64
+          format: int32
+          example: 20
+        numberOfElements:
+          description: The number of elements on the current page.
+          type: integer
+          format: int32
+          example: 15
         totalElements:
+          description: The total number of elements across all pages.
           type: integer
-          format: int64
+          format: int32
+          example: 150
         totalPages:
+          description: The total number of pages.
           type: integer
-          format: int64
+          format: int32
+          example: 8
+        first:
+          description: Indicates if this is the first page.
+          type: boolean
+          example: true
+        last:
+          description: Indicates if this is the last page.
+          type: boolean
+          example: false
+        empty:
+          description: Indicates if the page is empty.
+          type: boolean
+          example: false
+        sort:
+          description: Sorting information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
+        pageable:
+          description: Pagination information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
+    DataUseGovernance-DataDiscovery_Sort:
+      type: object
+      properties:
         sort:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustSort'
+            type: string
+    DataUseGovernance-DataDiscovery_ScheduleDateTimeField:
+      type: object
+      properties:
+        label:
+          description: Label for the field, typically used for display purposes.
+          type: string
+          example: Every Hour
+        value:
+          description: Value representing the selected option for this field.
+          type: string
+          example: H
+        cronExp:
+          description: The cron expression fragment for this field.
+          type: string
+          example: 0 0/5 buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils ?
+    DataUseGovernance-DataDiscovery_ScheduleDateTime:
+      type: object
+      properties:
+        seconds:
+          description: Seconds field for the cron expression.
+          type: string
+          example: '1'
+        minutes:
+          description: Minutes field for the cron expression.
+          type: string
+          example: '1'
+        hours:
+          description: Hours field for the cron expression.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
+        dayOfMonth:
+          description: Day of month field for the cron expression.
+          type: string
+          example: '*'
+        month:
+          description: Month field for the cron expression.
+          type: string
+          example: '*'
+        dayOfWeek:
+          description: Day of week field for the cron expression.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
+        year:
+          description: Year field for the cron expression.
+          type: string
+          example: '*'
+        frequency:
+          description: Frequency configuration.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTimeField'
+        frequencyIntervalTracker:
+          description: Frequency interval tracker information.
+          type: string
+          example: '5'
+    DataUseGovernance-DataDiscovery_DataSourceTriggerDto:
+      type: object
+      properties:
+        cronExpression:
+          description: Cron expression to define the schedule in standard cron format.
+          type: string
+          example: 0 0/5 buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils buildMR_Jenkinsfile getApiSpec.sh specVariationChecker_Jenkinsfile tryCatch.sh utils ?
+        dateTime:
+          description: Specific date and time configuration for scheduling.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScheduleDateTime'
+        isRunManual:
+          description: Flag to indicate whether the trigger should run manually.
+          type: boolean
+          example: false
+        id:
+          type: integer
+          format: int64
+        runManual:
+          type: boolean
+    DataUseGovernance-DataDiscovery_OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_OneTrustPage'
+    DataUseGovernance-DataDiscovery_DataSourceSettingsV2Dto:
+      type: object
+      properties:
+        scannerId:
+          description: Scanner Id for Data Source
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        workerNodeName:
+          description: Worker Node Name
+          type: string
+          example: WN-24thAugust
+        scanProfileId:
+          description: ScanProfile ID for Data Source
+          type: string
+          format: uuid
+          example: 3f162d7c-a463-4bf1-a7c4-b7899f6dcdef
+        scanProfileName:
+          description: ScanProfile Name for Data Source
+          type: string
+          example: ScanProfile-Mysql
+        credentialId:
+          description: Credential ID for Data Source
+          type: string
+          format: uuid
+          example: 8f162d7c-a563-4bf1-a0c4-b7899f6dcdef
+        credentialName:
+          description: Credential Name for Data Source
+          type: string
+          example: Credential-Mysql
+        oneTrustAssetId:
+          description: Asset ID for Data Source
+          type: string
+          format: uuid
+          example: 860abcce-fbf3-4f32-a38b-df19f8c08eae
+        classificationProfileId:
+          description: ClassifiactionProfile ID for Data Source
+          type: string
+          format: uuid
+          example: 3f162d7c-a863-4bf1-a9c4-b7899f6dcdef
+        detectorProfileId:
+          description: DetectorProfile ID for Data Source
+          type: string
+          format: uuid
+          example: 3f162d7c-a863-4bf1-a9c4-b7899f6dcdef
+        metadataClassificationEnabled:
+          description: Metadata Classification Enabled/Disabled
+          type: boolean
+          example: false
+        id:
+          type: integer
+          format: int64
+    DataUseGovernance-DataDiscovery_Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
   securitySchemes:
     DataUseGovernance-DataDiscovery_OAUTH2:
       type: oauth2

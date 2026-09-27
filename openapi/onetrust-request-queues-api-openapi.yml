@@ -1201,161 +1201,6 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto:
-      type: object
-      properties:
-        StartDate:
-          description: Start date for filter, provide in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format
-          type: string
-          example: '2019-05-31T12:43:24.173Z'
-        EndDate:
-          description: End date for filter, provide in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format
-          type: string
-          example: '2019-05-31T12:44:24.173Z'
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2StageUpdateRequest:
-      type: object
-      properties:
-        nextStage:
-          description: The name of the workflow stage to which the request will be moved.
-          type: string
-          example: Rejected
-        resolutionTitle:
-          description: The `titleTranslation` parameter value of the resolution. This value should be the translation that corresponds to the language code defined in the `language` parameter of this payload, if available. This value is obtained using the [Get List of Resolutions API](https://developer.onetrust.com/onetrust/reference/getallv2resolutionsusingget). This parameter is only used when the `nextStage` parameter is set to `REJECTED`.
-          type: string
-          example: Not a privacy-related request
-        comments:
-          description: The comments to add when rejecting the request. This parameter is only used when the `nextStage` parameter is set to `REJECTED`.
-          type: string
-          example: Any comment
-        isInternalComment:
-          description: This flag indicates whether the comment added when rejecting a request is for internal use only and will not appear in the Privacy Portal.
-          type: boolean
-          example: true
-      required:
-      - nextStage
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_UploadDataDto:
-      type: object
-      properties:
-        refId:
-          type: string
-          format: uuid
-        filename:
-          type: string
-        fileSize:
-          type: integer
-          format: int64
-        contentType:
-          type: string
-        qualifiedName:
-          type: string
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueBulkDeleteV2Dto:
-      type: object
-      properties:
-        RequestIDs:
-          description: An array of 10-character Unique IDs of the Request(s) to be deleted.
-          type: array
-          items:
-            type: string
-          example:
-          - 8KDL2A4JAM
-          - S62QF8K5PJ
-          maxItems: 2000
-          minItems: 0
-        CreatedDateRange:
-          description: A date range for outlining start date and end date. All requests with a Created Date within this range will be deleted.
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
-        EndDateRange:
-          description: A date range for outlining start date and end date. All requests with an End Date within this range will be deleted.
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
-        ModifiedDateRange:
-          description: A date range for outlining start date and end date. All requests with a Modified Date within this range will be deleted.
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
-        Status:
-          description: Filter requests by the Stage name. Only requests in this stage will be deleted.
-          type: string
-          example: EXPIRED
-        Organization:
-          description: Filter requests by Organization. Only requests in this organization will be deleted.
-          type: string
-          example: BRAND A
-        Country:
-          description: Filter requests by Country code. Only requests with this Country selected will be deleted.
-          type: string
-          example: US
-        WorkflowID:
-          description: Filter requests by Workflow ID. Only requests using this workflow will be deleted.
-          type: string
-          example: 4f068b73-4edc-4920-a00c-9f39cd01c5f6
-        WebformID:
-          description: Filter requests by Web Form ID. Only requests using this web form will be deleted.
-          type: string
-          example: 0388dd81-0c41-4181-a47c-1e2777727b73
-        RequestType:
-          description: Filter requests by Request Type. Only requests with the Request Type will be deleted.
-          type: string
-          example: Opt Out
-        SubjectType:
-          description: Filter requests by Subject Type. Only requests with the Subject Type will be deleted.
-          type: string
-          example: Employee
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentResponse:
-      type: object
-      properties:
-        Id:
-          type: string
-          format: uuid
-        Name:
-          type: string
-        FileName:
-          type: string
-        FileSize:
-          type: integer
-          format: int64
-        CreatedById:
-          type: string
-          format: uuid
-        CreatedBy:
-          type: string
-        Type:
-          type: integer
-          format: int32
-        RefId:
-          type: string
-          format: uuid
-        IsInternal:
-          type: boolean
-        Location:
-          type: string
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2StageUpdateDto:
-      type: object
-      properties:
-        requestQueueId:
-          description: The 10-character unique identifier of the request.
-          type: string
-        currentStage:
-          description: The name of the current workflow stage.
-          type: string
-        statusCode:
-          description: 'The numeric identifier for the resolution code. '
-          type: integer
-          format: int64
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_LinkV2Request:
-      type: object
-      properties:
-        LinkRequests:
-          type: array
-          items:
-            type: string
-          writeOnly: true
-        UnlinkRequests:
-          type: array
-          items:
-            type: string
-          writeOnly: true
-        comment:
-          description: A comment to accompany the current action of linking/ unlinking requests
-          type: string
-          minLength: 1
     PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueListDto:
       type: object
       properties:
@@ -1516,58 +1361,6 @@ components:
           type: boolean
         taskMode:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2AttachmentDto:
-      type: object
-      properties:
-        fileName:
-          type: string
-        fileId:
-          type: string
-          format: uuid
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2CommentDto:
-      type: object
-      properties:
-        commentString:
-          type: string
-        commentId:
-          type: string
-          format: uuid
-        commentStatus:
-          type: integer
-          format: int64
-        commentAuthor:
-          type: string
-        commentTimeStamp:
-          type: string
-          format: date-time
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2AttachmentDto'
-        internalComment:
-          type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestAuditInfoResponse:
-      type: object
-      properties:
-        description:
-          description: The description of the request attribute audited.
-          type: string
-        changeDateTime:
-          description: The timestamp when the change was done.
-          type: string
-          format: date-time
-          example: '2020-12-04T15:52:41.954300Z'
-        recordedDateTime:
-          description: The timestamp when the audit was recorded.
-          type: string
-          format: date-time
-          example: '2020-12-04T15:52:41.954300Z'
-        userDetail:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_BasicTenantUserInfoResponse'
-        changes:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditRecordDetail'
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DeletionCertificateV2DTO:
       type: object
       properties:
@@ -1602,31 +1395,6 @@ components:
           type: string
           format: uuid
           example: de8bf5bd-4c24-4aa6-a2c6-0e537bc06e36
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditRecordDetail:
-      type: object
-      properties:
-        description:
-          description: The description of the request attribute audited.
-          type: string
-        fieldName:
-          description: The name of the request attribute audited.
-          type: string
-          example: Country
-        oldValue:
-          description: The old of attribute value.
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue'
-        newValue:
-          description: The value of attribute audited.
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue'
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        unsorted:
-          type: boolean
-        sorted:
-          type: boolean
     PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueWorkflowDetailDto:
       type: object
       properties:
@@ -1638,11 +1406,311 @@ components:
           type: boolean
         allowDeadlineEdit:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_UploadDataDto:
       type: object
       properties:
-        name:
+        refId:
           type: string
+          format: uuid
+        filename:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+        contentType:
+          type: string
+        qualifiedName:
+          type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2AttachmentDto:
+      type: object
+      properties:
+        fileName:
+          type: string
+        fileId:
+          type: string
+          format: uuid
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2StageUpdateRequest:
+      type: object
+      properties:
+        nextStage:
+          description: The name of the workflow stage to which the request will be moved.
+          type: string
+          example: Rejected
+        resolutionTitle:
+          description: The `titleTranslation` parameter value of the resolution. This value should be the translation that corresponds to the language code defined in the `language` parameter of this payload, if available. This value is obtained using the [Get List of Resolutions API](https://developer.onetrust.com/onetrust/reference/getallv2resolutionsusingget). This parameter is only used when the `nextStage` parameter is set to `REJECTED`.
+          type: string
+          example: Not a privacy-related request
+        comments:
+          description: The comments to add when rejecting the request. This parameter is only used when the `nextStage` parameter is set to `REJECTED`.
+          type: string
+          example: Any comment
+        isInternalComment:
+          description: This flag indicates whether the comment added when rejecting a request is for internal use only and will not appear in the Privacy Portal.
+          type: boolean
+          example: true
+      required:
+      - nextStage
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2CommentDto:
+      type: object
+      properties:
+        commentString:
+          type: string
+        commentId:
+          type: string
+          format: uuid
+        commentStatus:
+          type: integer
+          format: int64
+        commentAuthor:
+          type: string
+        commentTimeStamp:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2AttachmentDto'
+        internalComment:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueV2Dto:
+      type: object
+      properties:
+        requestQueueRefId:
+          description: Reference ID of the request. This is a 10-character ID that is unique to each request.
+          type: string
+          example: SL244HWD6D
+        requestQueueId:
+          description: The request GUID
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        firstName:
+          description: First name of the data subject.
+          type: string
+          example: Jonny
+        lastName:
+          description: Last name of the data subject.
+          type: string
+          example: Sardar
+        organization:
+          description: Organization to which this request is assigned.
+          type: string
+          example: my own org
+        status:
+          description: 'Current stage of the request. Various stages in the order of progression are: New, Verifying identity, In progress, Rejected, Complete.'
+          type: string
+          example: NEW
+        requestTypes:
+          description: Request types selected while submitting the request.
+          type: array
+          items:
+            type: string
+          example:
+          - Data Portability, Update Data
+        deadline:
+          description: Deadline for the request.
+          type: string
+          format: date-time
+          example: '2019-09-08T12:49:47.920Z'
+        isExtended:
+          description: Returns true if the request complete time is being extended.
+          type: boolean
+          example: false
+        dateCreated:
+          description: Date on which request is submitted.
+          type: string
+          format: date-time
+          example: '2019-08-09T12:49:47.983Z'
+        dateUpdated:
+          description: Last activity date on the request.
+          type: string
+          format: date-time
+          example: '2019-09-25T06:50:15.470Z'
+        subjectTypes:
+          description: 'Subject types selected while submitting the request. Subject type can be: Prospective Employee, Student, Customer, Contractor, Employee, Patient.'
+          type: array
+          items:
+            type: string
+          example:
+          - Student
+        approver:
+          description: Approver or assignee for the request.
+          type: string
+          example: Jonny Sardar Sadmin
+        language:
+          description: Language in which the request is created.
+          type: string
+          example: en-us
+        countryCode:
+          description: The code for the country as per ISO 3166. e.g. US for the United States, DE for Germany.
+          type: string
+          example: DZ
+        countryName:
+          description: Name of the country.
+          type: string
+          example: Algeria
+        email:
+          description: Email provided while submitting the request.
+          type: string
+          example: abcd@gmail.com
+        workflow:
+          description: Name of the request workflow.
+          type: string
+          example: Default Workflow
+        webform:
+          description: Name of the webform.
+          type: string
+          example: '!! Nikki'
+        dateCompleted:
+          description: Date on which the request is completed.
+          type: string
+          format: date-time
+          example: '2019-05-31T12:43:24.173Z'
+        resolution:
+          description: Resolution selected if the request is rejected.
+          type: string
+          example: Not a privacy-related request
+        remainingDaysForMaxDeadline:
+          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
+          type: integer
+          format: int32
+          example: 30
+        maxDeadlineExtensionDate:
+          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
+          type: string
+          format: date-time
+          example: '2023-09-08T12:49:47.920Z'
+        assignedToGroup:
+          description: Indicates if the request reviewer is assigned to a usergroup or not.
+          type: boolean
+          example: false
+        additionalStatuses:
+          description: Status of the request timer, such as PAUSED or ACTIVE.
+          type: string
+          example: PAUSED
+          enum:
+          - '0'
+          - '10'
+        legalDeadLineInfo:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueListDto'
+          writeOnly: true
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_ResultsSummaryDataCountDto:
+      type: object
+      properties:
+        dataPoints:
+          type: integer
+          format: int32
+        unstructuredData:
+          type: integer
+          format: int32
+        attachments:
+          type: integer
+          format: int32
+        excluded:
+          type: integer
+          format: int32
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
+      type: object
+      properties:
+        fileName:
+          description: Attached file name
+          type: string
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          description: ID of attached file
+          type: string
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        statusId:
+          description: Status ID of the attachment
+          type: integer
+          format: int64
+          example: 10
+        resourcePath:
+          description: Resource path of the attachment
+          type: string
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+      required:
+      - fileId
+      - fileName
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueBulkDeleteResponseDto:
+      type: object
+      properties:
+        requestsDeleted:
+          description: Number of requests which are deleted in the API call (up to a maximum of 50 requests).
+          type: integer
+          format: int32
+        requestsPending:
+          description: Number of requests which match the filter criteria which have not been deleted in this call.API should be called again to delete additional requests.
+          type: integer
+          format: int32
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_CreateRequestQueue:
+      type: object
+      properties:
+        firstName:
+          description: First name of the respondent.
+          type: string
+          example: Test
+        lastName:
+          description: Last name of the respondent.
+          type: string
+          example: User
+        email:
+          description: Email address of the respondent.
+          type: string
+          example: testuser@onetrust.com
+        language:
+          description: 'The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc.'
+          type: string
+          example: en-us
+          minLength: 1
+        additionalData:
+          description: Additional fields in key value format, required for request processing. These could be webform or non webform fields
+          type: object
+          example:
+            key: value
+          additionalProperties:
+            type: string
+        requestTypes:
+          description: Respondents privacy request type. This should match with the webform request type.
+          type: array
+          items:
+            type: string
+          example: '['
+        subjectTypes:
+          description: Respondents subject type or relation ship with tenant. This should match with the webform subject type.
+          type: array
+          items:
+            type: string
+          example: '['
+        multiselectFields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        requestTraceId:
+          description: Unique trace id for request. This can be used to avoid creating duplicate request.
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        attachments:
+          description: File attachment details for request.
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
     PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestByIdV2Dto:
       type: object
       properties:
@@ -1807,6 +1875,249 @@ components:
           example: Address = Bangalore
           additionalProperties:
             type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_CreateRequestLogDto:
+      type: object
+      properties:
+        requestTraceID:
+          type: string
+          format: uuid
+        creationstatus:
+          type: string
+        exceptionDescription:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        requestRefId:
+          type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue:
+      type: object
+      properties:
+        name:
+          type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_BasicTenantUserInfoResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        fullName:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        internal:
+          type: boolean
+        disabled:
+          type: boolean
+        deleted:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueBulkDeleteV2Dto:
+      type: object
+      properties:
+        RequestIDs:
+          description: An array of 10-character Unique IDs of the Request(s) to be deleted.
+          type: array
+          items:
+            type: string
+          example:
+          - 8KDL2A4JAM
+          - S62QF8K5PJ
+          maxItems: 2000
+          minItems: 0
+        CreatedDateRange:
+          description: A date range for outlining start date and end date. All requests with a Created Date within this range will be deleted.
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
+        EndDateRange:
+          description: A date range for outlining start date and end date. All requests with an End Date within this range will be deleted.
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
+        ModifiedDateRange:
+          description: A date range for outlining start date and end date. All requests with a Modified Date within this range will be deleted.
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto'
+        Status:
+          description: Filter requests by the Stage name. Only requests in this stage will be deleted.
+          type: string
+          example: EXPIRED
+        Organization:
+          description: Filter requests by Organization. Only requests in this organization will be deleted.
+          type: string
+          example: BRAND A
+        Country:
+          description: Filter requests by Country code. Only requests with this Country selected will be deleted.
+          type: string
+          example: US
+        WorkflowID:
+          description: Filter requests by Workflow ID. Only requests using this workflow will be deleted.
+          type: string
+          example: 4f068b73-4edc-4920-a00c-9f39cd01c5f6
+        WebformID:
+          description: Filter requests by Web Form ID. Only requests using this web form will be deleted.
+          type: string
+          example: 0388dd81-0c41-4181-a47c-1e2777727b73
+        RequestType:
+          description: Filter requests by Request Type. Only requests with the Request Type will be deleted.
+          type: string
+          example: Opt Out
+        SubjectType:
+          description: Filter requests by Subject Type. Only requests with the Subject Type will be deleted.
+          type: string
+          example: Employee
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_CommentV2Request:
+      type: object
+      properties:
+        comment:
+          description: Comment if any.
+          type: string
+          example: This is a test comment
+        internalComment:
+          description: Comments on the request can be internal or public. This flag determines if the comment is internal or public.
+          type: boolean
+          example: false
+        language:
+          description: 'This is the ISO language code for OneTrust supported languages.
+
+
+            The language code provided here informs the language of the comment.
+
+
+            Examples: en-us for English, de for German, fr for French, etc'
+          type: string
+          example: en-us
+        isInternalComment:
+          type: boolean
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
+      required:
+      - comment
+      - internalComment
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto:
+      type: object
+      properties:
+        StartDate:
+          description: Start date for filter, provide in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format
+          type: string
+          example: '2019-05-31T12:43:24.173Z'
+        EndDate:
+          description: End date for filter, provide in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format
+          type: string
+          example: '2019-05-31T12:44:24.173Z'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditRecordDetail:
+      type: object
+      properties:
+        description:
+          description: The description of the request attribute audited.
+          type: string
+        fieldName:
+          description: The name of the request attribute audited.
+          type: string
+          example: Country
+        oldValue:
+          description: The old of attribute value.
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue'
+        newValue:
+          description: The value of attribute audited.
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditFieldValue'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentResponse:
+      type: object
+      properties:
+        Id:
+          type: string
+          format: uuid
+        Name:
+          type: string
+        FileName:
+          type: string
+        FileSize:
+          type: integer
+          format: int64
+        CreatedById:
+          type: string
+          format: uuid
+        CreatedBy:
+          type: string
+        Type:
+          type: integer
+          format: int32
+        RefId:
+          type: string
+          format: uuid
+        IsInternal:
+          type: boolean
+        Location:
+          type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_LinkV2Request:
+      type: object
+      properties:
+        LinkRequests:
+          type: array
+          items:
+            type: string
+          writeOnly: true
+        UnlinkRequests:
+          type: array
+          items:
+            type: string
+          writeOnly: true
+        comment:
+          description: A comment to accompany the current action of linking/ unlinking requests
+          type: string
+          minLength: 1
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SearchResultPage:
+      type: object
+      properties:
+        content:
+          items:
+            type: object
+          type: array
+        pageable:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject'
+        searchTime:
+          type: integer
+          format: int64
+        totalTime:
+          type: integer
+          format: int64
+        searchTerms:
+          type: object
+          additionalProperties:
+            type: string
+        last:
+          type: boolean
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestV2StageUpdateDto:
+      type: object
+      properties:
+        requestQueueId:
+          description: The 10-character unique identifier of the request.
+          type: string
+        currentStage:
+          description: The name of the current workflow stage.
+          type: string
+        statusCode:
+          description: 'The numeric identifier for the resolution code. '
+          type: integer
+          format: int64
     PrivacyAutomation-DataSubjectRequestDSRAutomation_PauseDeadlineV2Request:
       type: object
       properties:
@@ -1831,128 +2142,28 @@ components:
           example: en-us
       required:
       - pauseDeadline
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueV2Dto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestAuditInfoResponse:
       type: object
       properties:
-        requestQueueRefId:
-          description: Reference ID of the request. This is a 10-character ID that is unique to each request.
+        description:
+          description: The description of the request attribute audited.
           type: string
-          example: SL244HWD6D
-        requestQueueId:
-          description: The request GUID
+        changeDateTime:
+          description: The timestamp when the change was done.
           type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        firstName:
-          description: First name of the data subject.
+          format: date-time
+          example: '2020-12-04T15:52:41.954300Z'
+        recordedDateTime:
+          description: The timestamp when the audit was recorded.
           type: string
-          example: Jonny
-        lastName:
-          description: Last name of the data subject.
-          type: string
-          example: Sardar
-        organization:
-          description: Organization to which this request is assigned.
-          type: string
-          example: my own org
-        status:
-          description: 'Current stage of the request. Various stages in the order of progression are: New, Verifying identity, In progress, Rejected, Complete.'
-          type: string
-          example: NEW
-        requestTypes:
-          description: Request types selected while submitting the request.
+          format: date-time
+          example: '2020-12-04T15:52:41.954300Z'
+        userDetail:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_BasicTenantUserInfoResponse'
+        changes:
           type: array
           items:
-            type: string
-          example:
-          - Data Portability, Update Data
-        deadline:
-          description: Deadline for the request.
-          type: string
-          format: date-time
-          example: '2019-09-08T12:49:47.920Z'
-        isExtended:
-          description: Returns true if the request complete time is being extended.
-          type: boolean
-          example: false
-        dateCreated:
-          description: Date on which request is submitted.
-          type: string
-          format: date-time
-          example: '2019-08-09T12:49:47.983Z'
-        dateUpdated:
-          description: Last activity date on the request.
-          type: string
-          format: date-time
-          example: '2019-09-25T06:50:15.470Z'
-        subjectTypes:
-          description: 'Subject types selected while submitting the request. Subject type can be: Prospective Employee, Student, Customer, Contractor, Employee, Patient.'
-          type: array
-          items:
-            type: string
-          example:
-          - Student
-        approver:
-          description: Approver or assignee for the request.
-          type: string
-          example: Jonny Sardar Sadmin
-        language:
-          description: Language in which the request is created.
-          type: string
-          example: en-us
-        countryCode:
-          description: The code for the country as per ISO 3166. e.g. US for the United States, DE for Germany.
-          type: string
-          example: DZ
-        countryName:
-          description: Name of the country.
-          type: string
-          example: Algeria
-        email:
-          description: Email provided while submitting the request.
-          type: string
-          example: abcd@gmail.com
-        workflow:
-          description: Name of the request workflow.
-          type: string
-          example: Default Workflow
-        webform:
-          description: Name of the webform.
-          type: string
-          example: '!! Nikki'
-        dateCompleted:
-          description: Date on which the request is completed.
-          type: string
-          format: date-time
-          example: '2019-05-31T12:43:24.173Z'
-        resolution:
-          description: Resolution selected if the request is rejected.
-          type: string
-          example: Not a privacy-related request
-        remainingDaysForMaxDeadline:
-          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
-          type: integer
-          format: int32
-          example: 30
-        maxDeadlineExtensionDate:
-          description: Legal Deadline + Maximum Number of Extension Days based on country of request + Total Pause days.
-          type: string
-          format: date-time
-          example: '2023-09-08T12:49:47.920Z'
-        assignedToGroup:
-          description: Indicates if the request reviewer is assigned to a usergroup or not.
-          type: boolean
-          example: false
-        additionalStatuses:
-          description: Status of the request timer, such as PAUSED or ACTIVE.
-          type: string
-          example: PAUSED
-          enum:
-          - '0'
-          - '10'
-        legalDeadLineInfo:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueListDto'
-          writeOnly: true
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AuditRecordDetail'
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DSARRequestDto:
       type: object
       properties:
@@ -2014,51 +2225,11 @@ components:
             type: array
             items:
               type: string
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_CreateRequestLogDto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SearchV2Request:
       type: object
       properties:
-        requestTraceID:
+        term:
           type: string
-          format: uuid
-        creationstatus:
-          type: string
-        exceptionDescription:
-          type: string
-        createdDate:
-          type: string
-          format: date-time
-        requestRefId:
-          type: string
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_CommentV2Request:
-      type: object
-      properties:
-        comment:
-          description: Comment if any.
-          type: string
-          example: This is a test comment
-        internalComment:
-          description: Comments on the request can be internal or public. This flag determines if the comment is internal or public.
-          type: boolean
-          example: false
-        language:
-          description: 'This is the ISO language code for OneTrust supported languages.
-
-
-            The language code provided here informs the language of the comment.
-
-
-            Examples: en-us for English, de for German, fr for French, etc'
-          type: string
-          example: en-us
-        isInternalComment:
-          type: boolean
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
-      required:
-      - comment
-      - internalComment
     PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject:
       type: object
       properties:
@@ -2077,177 +2248,6 @@ components:
           format: int32
         unpaged:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_BasicTenantUserInfoResponse:
-      type: object
-      properties:
-        email:
-          type: string
-        fullName:
-          type: string
-        userId:
-          type: string
-          format: uuid
-        internal:
-          type: boolean
-        disabled:
-          type: boolean
-        deleted:
-          type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SearchResultPage:
-      type: object
-      properties:
-        content:
-          items:
-            type: object
-          type: array
-        pageable:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject'
-        searchTime:
-          type: integer
-          format: int64
-        totalTime:
-          type: integer
-          format: int64
-        searchTerms:
-          type: object
-          additionalProperties:
-            type: string
-        last:
-          type: boolean
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SearchV2Request:
-      type: object
-      properties:
-        term:
-          type: string
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_CreateRequestQueue:
-      type: object
-      properties:
-        firstName:
-          description: First name of the respondent.
-          type: string
-          example: Test
-        lastName:
-          description: Last name of the respondent.
-          type: string
-          example: User
-        email:
-          description: Email address of the respondent.
-          type: string
-          example: testuser@onetrust.com
-        language:
-          description: 'The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc.'
-          type: string
-          example: en-us
-          minLength: 1
-        additionalData:
-          description: Additional fields in key value format, required for request processing. These could be webform or non webform fields
-          type: object
-          example:
-            key: value
-          additionalProperties:
-            type: string
-        requestTypes:
-          description: Respondents privacy request type. This should match with the webform request type.
-          type: array
-          items:
-            type: string
-          example: '['
-        subjectTypes:
-          description: Respondents subject type or relation ship with tenant. This should match with the webform subject type.
-          type: array
-          items:
-            type: string
-          example: '['
-        multiselectFields:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-        requestTraceId:
-          description: Unique trace id for request. This can be used to avoid creating duplicate request.
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        attachments:
-          description: File attachment details for request.
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
-      type: object
-      properties:
-        fileName:
-          description: Attached file name
-          type: string
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
-          description: ID of attached file
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        statusId:
-          description: Status ID of the attachment
-          type: integer
-          format: int64
-          example: 10
-        resourcePath:
-          description: Resource path of the attachment
-          type: string
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-      required:
-      - fileId
-      - fileName
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_ResultsSummaryDataCountDto:
-      type: object
-      properties:
-        dataPoints:
-          type: integer
-          format: int32
-        unstructuredData:
-          type: integer
-          format: int32
-        attachments:
-          type: integer
-          format: int32
-        excluded:
-          type: integer
-          format: int32
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_RequestQueueBulkDeleteResponseDto:
-      type: object
-      properties:
-        requestsDeleted:
-          description: Number of requests which are deleted in the API call (up to a maximum of 50 requests).
-          type: integer
-          format: int32
-        requestsPending:
-          description: Number of requests which match the filter criteria which have not been deleted in this call.API should be called again to delete additional requests.
-          type: integer
-          format: int32
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

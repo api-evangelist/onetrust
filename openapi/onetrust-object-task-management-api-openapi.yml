@@ -536,81 +536,219 @@ paths:
         - INTEGRATION
 components:
   schemas:
-    TaskTypeInformation:
+    AttributeValue:
       type: object
       properties:
-        name:
-          description: The name of the task type.
+        valueKey:
+          description: The name key of the attribute used for translation purposes.
           type: string
-          example: DOCUMENT_REVIEW
-          maxLength: 100
-          minLength: 1
-        nameKey:
-          description: The name key of the task type used for translation purposes.
-          type: string
-          example: TaskRegistry.TaskType.DocumentReview
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
           maxLength: 255
           minLength: 1
-        module:
-          description: The source product of the task type.
+        value:
+          description: The name of the attribute.
+          type: string
+          example: Document Review Team
+          maxLength: 255
+          minLength: 1
+      example:
+        valueKey: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        value: Document Review Team
+      required:
+      - value
+      - valueKey
+    TaskCreateRequest:
+      type: object
+      properties:
+        parentEntityId:
+          description: The unique identifier of the parent record where the task was created.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        taskName:
+          description: The name of the task.
+          type: string
+          example: Review document
+          maxLength: 512
+          minLength: 1
+        description:
+          description: The description of the task.
+          type: string
+          example: Please review the attached document and provide feedback
+          maxLength: 2000
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the task.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        taskTypeNameKey:
+          description: The name key of the task type used for translation purposes.
+          type: string
+          example: REVIEW_TASK
+          maxLength: 100
+          minLength: 1
+        assigneeId:
+          description: The unique identifier of the user assigned as an assignee on the task.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        assigneeEmail:
+          description: The email address of the user assigned as an assignee on the task.
+          type: string
+          example: user@example.com
+          maxLength: 255
+          minLength: 5
+        collaborators:
+          description: The details of the collaborators assigned to the task.
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskCollaboratorDto'
+        deadline:
+          description: The date and time by which the task should be completed.
+          type: string
+          format: date-time
+          example: '2023-12-31T23:59:59'
+        context:
+          description: The contextual details of the task.
+          $ref: '#/components/schemas/TaskContextInformation'
+        isActive:
+          description: This flag indicates whether the task is active.
+          type: boolean
+          example: true
+          default: 'false'
+        sourceType:
+          description: The type of source that created the task.
+          type: string
+          example: RULES
+          maxLength: 16
+        sourceId:
+          description: The unique identifier of the source that created the task.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        resourceId:
+          description: The unique identifier of the parent record where the task was created.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        resourceTypeNameKey:
+          description: The key used to identify the type of resource.
           type: string
           example: ASSESSMENT
           maxLength: 100
           minLength: 1
-        moduleNameTranslationKey:
-          description: The name key of the product used for translation purposes.
+        moduleSource:
+          description: The source product of the task.
           type: string
-          example: TaskRegistry.Module.Assessment
-          maxLength: 255
-          minLength: 1
-        id:
-          description: The unique identifier of the task type.
+          enum:
+          - assessment
+          - audit-mgmt
+          - cyber-risk
+          - data-mapping
+          - data-governance
+          - esg
+          - erm
+          - incident
+          - issue
+          - itrm
+          - program-benchmarking
+          - maturity-planning
+          - risk
+          - vendor
+          - vendor-portal
+          - compliance-automation
+          - SpeakUp
+          - EntityScoping
+          - ControlObjective
+          - exception
+        priority:
+          description: The priority level of the task.
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        label:
-          description: The display label of the task type.
-          type: string
-          example: Document Review
-          maxLength: 255
-          minLength: 1
-        icon:
-          description: The icon of the task type.
-          type: string
-          example: document-check
-          maxLength: 50
-          minLength: 1
+          example: MEDIUM
+          default: MEDIUM
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        isRequired:
+          description: This flag indicates whether the task is required.
+          type: boolean
+          example: false
+          default: 'false'
       example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: DOCUMENT_REVIEW
-        nameKey: TaskRegistry.TaskType.DocumentReview
-        module: ASSESSMENT
-        moduleNameTranslationKey: TaskRegistry.Module.Assessment
-        label: Document Review
-        icon: document-check
+        parentEntityId: 123e4567-e89b-12d3-a456-426614174000
+        taskName: Review document
+        description: Please review the attached document and provide feedback
+        orgGroupId: 123e4567-e89b-12d3-a456-426614174000
+        taskTypeNameKey: REVIEW_TASK
+        assigneeId: 123e4567-e89b-12d3-a456-426614174000
+        deadline: '2023-12-31T23:59:59'
+        priority: MEDIUM
       required:
-      - id
-      - label
-      - module
-      - moduleNameTranslationKey
-      - name
-      - nameKey
-    UserInfo:
+      - orgGroupId
+      - parentEntityId
+      - taskName
+      - taskTypeNameKey
+    DueDateInfo:
       type: object
       properties:
-        name:
-          description: The name of the user or user group.
+        date:
+          description: The date and time that the task is due.
           type: string
-          example: John Doe
-        nameWithAttributes:
-          description: The name of the user or user group with additional attributes.
+          format: date-time
+          example: '2023-12-31T23:59:59Z'
+        color:
+          description: The color code for displaying the task due date.
           type: string
-          example: 'John Doe (Admin, Department: IT)'
+          example: '#FF0000'
+          maxLength: 7
+          minLength: 1
+        icon:
+          description: The icon of the task due date.
+          type: string
+          example: clock-warning
+          maxLength: 50
+          minLength: 1
+        textKey:
+          description: The text key to display with the task due date used for translation purposes.
+          type: string
+          example: TaskRegistry.DueDate.Overdue
+          maxLength: 255
+          minLength: 1
+        numberOfDays:
+          description: The number of days until or past the task due date.
+          type: integer
+          format: int64
+          example: 5
       example:
-        name: John Doe
-        nameWithAttributes: 'John Doe (Admin, Department: IT)'
+        date: '2023-12-31T23:59:59Z'
+        color: '#FF0000'
+        icon: clock-warning
+        textKey: TaskRegistry.DueDate.Overdue
+        numberOfDays: 5
       required:
-      - name
+      - color
+      - date
+      - icon
+      - numberOfDays
+      - textKey
+    TaskContextInformation:
+      type: object
+      properties:
+        parameters:
+          description: This parameter can be used to store details in key value pairs.
+          additionalProperties:
+            type: object
+          example:
+            taskId: 123e4567-e89b-12d3-a456-426614174000
+            priority: HIGH
+            assignedTo: john.doe@example.com
+          type: object
+      example:
+        parameters:
+          assignedTo: john.doe@example.com
+          priority: HIGH
+          taskId: 123e4567-e89b-12d3-a456-426614174000
     TaskInformation:
       type: object
       properties:
@@ -908,23 +1046,6 @@ components:
       - status
       - taskName
       - taskType
-    TaskContextInformation:
-      type: object
-      properties:
-        parameters:
-          description: This parameter can be used to store details in key value pairs.
-          additionalProperties:
-            type: object
-          example:
-            taskId: 123e4567-e89b-12d3-a456-426614174000
-            priority: HIGH
-            assignedTo: john.doe@example.com
-          type: object
-      example:
-        parameters:
-          assignedTo: john.doe@example.com
-          priority: HIGH
-          taskId: 123e4567-e89b-12d3-a456-426614174000
     TaskCollaboratorDto:
       type: object
       properties:
@@ -952,138 +1073,100 @@ components:
         type: USER
       required:
       - type
-    TaskCreateRequest:
+    TaskTypeInformation:
       type: object
       properties:
-        parentEntityId:
-          description: The unique identifier of the parent record where the task was created.
+        name:
+          description: The name of the task type.
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        taskName:
-          description: The name of the task.
-          type: string
-          example: Review document
-          maxLength: 512
-          minLength: 1
-        description:
-          description: The description of the task.
-          type: string
-          example: Please review the attached document and provide feedback
-          maxLength: 2000
-        orgGroupId:
-          description: The unique identifier of the organization responsible for the task.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        taskTypeNameKey:
-          description: The name key of the task type used for translation purposes.
-          type: string
-          example: REVIEW_TASK
+          example: DOCUMENT_REVIEW
           maxLength: 100
           minLength: 1
-        assigneeId:
-          description: The unique identifier of the user assigned as an assignee on the task.
+        nameKey:
+          description: The name key of the task type used for translation purposes.
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        assigneeEmail:
-          description: The email address of the user assigned as an assignee on the task.
-          type: string
-          example: user@example.com
+          example: TaskRegistry.TaskType.DocumentReview
           maxLength: 255
-          minLength: 5
-        collaborators:
-          description: The details of the collaborators assigned to the task.
-          type: array
-          items:
-            $ref: '#/components/schemas/TaskCollaboratorDto'
-        deadline:
-          description: The date and time by which the task should be completed.
-          type: string
-          format: date-time
-          example: '2023-12-31T23:59:59'
-        context:
-          description: The contextual details of the task.
-          $ref: '#/components/schemas/TaskContextInformation'
-        isActive:
-          description: This flag indicates whether the task is active.
-          type: boolean
-          example: true
-          default: 'false'
-        sourceType:
-          description: The type of source that created the task.
-          type: string
-          example: RULES
-          maxLength: 16
-        sourceId:
-          description: The unique identifier of the source that created the task.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        resourceId:
-          description: The unique identifier of the parent record where the task was created.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        resourceTypeNameKey:
-          description: The key used to identify the type of resource.
+          minLength: 1
+        module:
+          description: The source product of the task type.
           type: string
           example: ASSESSMENT
           maxLength: 100
           minLength: 1
-        moduleSource:
-          description: The source product of the task.
+        moduleNameTranslationKey:
+          description: The name key of the product used for translation purposes.
           type: string
-          enum:
-          - assessment
-          - audit-mgmt
-          - cyber-risk
-          - data-mapping
-          - data-governance
-          - esg
-          - erm
-          - incident
-          - issue
-          - itrm
-          - program-benchmarking
-          - maturity-planning
-          - risk
-          - vendor
-          - vendor-portal
-          - compliance-automation
-          - SpeakUp
-          - EntityScoping
-          - ControlObjective
-          - exception
-        priority:
-          description: The priority level of the task.
+          example: TaskRegistry.Module.Assessment
+          maxLength: 255
+          minLength: 1
+        id:
+          description: The unique identifier of the task type.
           type: string
-          example: MEDIUM
-          default: MEDIUM
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        label:
+          description: The display label of the task type.
+          type: string
+          example: Document Review
+          maxLength: 255
+          minLength: 1
+        icon:
+          description: The icon of the task type.
+          type: string
+          example: document-check
+          maxLength: 50
+          minLength: 1
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: DOCUMENT_REVIEW
+        nameKey: TaskRegistry.TaskType.DocumentReview
+        module: ASSESSMENT
+        moduleNameTranslationKey: TaskRegistry.Module.Assessment
+        label: Document Review
+        icon: document-check
+      required:
+      - id
+      - label
+      - module
+      - moduleNameTranslationKey
+      - name
+      - nameKey
+    TaskAssignmentInformation:
+      type: object
+      properties:
+        userInfo:
+          description: The details of the users or user groups responsible for the task.
+          $ref: '#/components/schemas/UserInfo'
+        assigneeId:
+          description: The unique identifier of the user or user group assigned to the task.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        type:
+          description: 'The type of assignee or collaborator. '
+          type: string
+          example: USER
           enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-        isRequired:
-          description: This flag indicates whether the task is required.
+          - USER
+          - GROUP
+        isCollaborator:
+          description: This flag indicates whether the user or user group was added as a collaborator.
           type: boolean
           example: false
           default: 'false'
       example:
-        parentEntityId: 123e4567-e89b-12d3-a456-426614174000
-        taskName: Review document
-        description: Please review the attached document and provide feedback
-        orgGroupId: 123e4567-e89b-12d3-a456-426614174000
-        taskTypeNameKey: REVIEW_TASK
+        taskId: 123e4567-e89b-12d3-a456-426614174000
+        userInfo:
+          id: 123e4567-e89b-12d3-a456-426614174001
+          name: John Doe
         assigneeId: 123e4567-e89b-12d3-a456-426614174000
-        deadline: '2023-12-31T23:59:59'
-        priority: MEDIUM
+        type: USER
+        isCollaborator: false
       required:
-      - orgGroupId
-      - parentEntityId
-      - taskName
-      - taskTypeNameKey
+      - assigneeId
+      - isCollaborator
+      - type
     TaskUpdateRequest:
       type: object
       properties:
@@ -1163,105 +1246,22 @@ components:
         priority: MEDIUM
       required:
       - taskName
-    AttributeValue:
+    UserInfo:
       type: object
       properties:
-        valueKey:
-          description: The name key of the attribute used for translation purposes.
+        name:
+          description: The name of the user or user group.
           type: string
-          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
-          maxLength: 255
-          minLength: 1
-        value:
-          description: The name of the attribute.
+          example: John Doe
+        nameWithAttributes:
+          description: The name of the user or user group with additional attributes.
           type: string
-          example: Document Review Team
-          maxLength: 255
-          minLength: 1
+          example: 'John Doe (Admin, Department: IT)'
       example:
-        valueKey: f47ac10b-58cc-4372-a567-0e02b2c3d479
-        value: Document Review Team
+        name: John Doe
+        nameWithAttributes: 'John Doe (Admin, Department: IT)'
       required:
-      - value
-      - valueKey
-    DueDateInfo:
-      type: object
-      properties:
-        date:
-          description: The date and time that the task is due.
-          type: string
-          format: date-time
-          example: '2023-12-31T23:59:59Z'
-        color:
-          description: The color code for displaying the task due date.
-          type: string
-          example: '#FF0000'
-          maxLength: 7
-          minLength: 1
-        icon:
-          description: The icon of the task due date.
-          type: string
-          example: clock-warning
-          maxLength: 50
-          minLength: 1
-        textKey:
-          description: The text key to display with the task due date used for translation purposes.
-          type: string
-          example: TaskRegistry.DueDate.Overdue
-          maxLength: 255
-          minLength: 1
-        numberOfDays:
-          description: The number of days until or past the task due date.
-          type: integer
-          format: int64
-          example: 5
-      example:
-        date: '2023-12-31T23:59:59Z'
-        color: '#FF0000'
-        icon: clock-warning
-        textKey: TaskRegistry.DueDate.Overdue
-        numberOfDays: 5
-      required:
-      - color
-      - date
-      - icon
-      - numberOfDays
-      - textKey
-    TaskAssignmentInformation:
-      type: object
-      properties:
-        userInfo:
-          description: The details of the users or user groups responsible for the task.
-          $ref: '#/components/schemas/UserInfo'
-        assigneeId:
-          description: The unique identifier of the user or user group assigned to the task.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        type:
-          description: 'The type of assignee or collaborator. '
-          type: string
-          example: USER
-          enum:
-          - USER
-          - GROUP
-        isCollaborator:
-          description: This flag indicates whether the user or user group was added as a collaborator.
-          type: boolean
-          example: false
-          default: 'false'
-      example:
-        taskId: 123e4567-e89b-12d3-a456-426614174000
-        userInfo:
-          id: 123e4567-e89b-12d3-a456-426614174001
-          name: John Doe
-        assigneeId: 123e4567-e89b-12d3-a456-426614174000
-        type: USER
-        isCollaborator: false
-      required:
-      - assigneeId
-      - isCollaborator
-      - type
+      - name
   securitySchemes:
     OAUTH2:
       type: oauth2

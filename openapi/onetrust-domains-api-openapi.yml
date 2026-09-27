@@ -501,25 +501,43 @@ paths:
     - url: https://customer.my.onetrust.com/api/cookiemanager
 components:
   schemas:
-    DomainGroupRequestDto:
+    DomainBrandingAttributesRequestDTO:
       type: object
       properties:
-        removeExisting:
-          description: This flag indicates whether to remove existing configurations before applying new ones.
-          type: boolean
-          example: false
-        urls:
-          description: The list of URLs to be processed or managed.
+        attributes:
+          description: 'List of branding attributes. Allowed attributes (key: description)'
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
           example:
-          - example.com
-          - test.com
-          - onetrust.com
-          maxItems: 1000
-          minItems: 0
-      title: DomainGroupRequestDto
+          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: dPCenterCookiePolicyLinkScreenReader
+            value: Cookie Policy
+            type: STRING
+          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            name: dPCenterButtonColor
+            value: '#FFFFFF'
+            type: STRING
+    DomainBrandingAttributesResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Domain ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        resourceName:
+          description: Resource name (Domain name)
+          type: string
+          example: www.example.com
+          maxLength: 255
+          minLength: 1
+        attributes:
+          description: Map of branding attributes keyed by attribute name
+          type: object
+          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
+          additionalProperties:
+            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
     EntityActionResponseDto:
       type: object
       properties:
@@ -559,26 +577,6 @@ components:
         success:
           description: This flag indicates whether the operation completed successfully.
           type: boolean
-    DomainBrandingAttributesResponseDTO:
-      type: object
-      properties:
-        id:
-          description: Resource ID (Domain ID)
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        resourceName:
-          description: Resource name (Domain name)
-          type: string
-          example: www.example.com
-          maxLength: 255
-          minLength: 1
-        attributes:
-          description: Map of branding attributes keyed by attribute name
-          type: object
-          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
-          additionalProperties:
-            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
     PublicDomainBrandingAttributeDTO:
       type: object
       properties:
@@ -721,6 +719,25 @@ components:
           - LONG
           - BOOLEAN
           - UUID
+    DomainGroupRequestDto:
+      type: object
+      properties:
+        removeExisting:
+          description: This flag indicates whether to remove existing configurations before applying new ones.
+          type: boolean
+          example: false
+        urls:
+          description: The list of URLs to be processed or managed.
+          type: array
+          items:
+            type: string
+          example:
+          - example.com
+          - test.com
+          - onetrust.com
+          maxItems: 1000
+          minItems: 0
+      title: DomainGroupRequestDto
     DomainScheduleRequest:
       type: object
       properties:
@@ -765,23 +782,6 @@ components:
       - geoLocation
       - intervalType
       - timeInterval
-    DomainBrandingAttributesRequestDTO:
-      type: object
-      properties:
-        attributes:
-          description: 'List of branding attributes. Allowed attributes (key: description)'
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
-          example:
-          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: dPCenterCookiePolicyLinkScreenReader
-            value: Cookie Policy
-            type: STRING
-          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-            name: dPCenterButtonColor
-            value: '#FFFFFF'
-            type: STRING
     BrandingAttributesUpdateResponseDTO:
       type: object
       properties:

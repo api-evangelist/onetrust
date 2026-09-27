@@ -198,42 +198,88 @@ paths:
         - COOKIE_READ
 components:
   schemas:
-    SortObject:
-      type: object
-      properties:
-        empty:
-          description: This flag indicates whether the result set is empty.
-          type: boolean
-        sorted:
-          description: This flag indicates whether the results are sorted.
-          type: boolean
-        unsorted:
-          description: This flag indicates whether the results are in unsorted order.
-          type: boolean
-    IABSourceIllustrationsDto:
+    AttributeDto:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        displayGroupId:
-          description: Unique identifier of the display group.
+        name:
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        illustration:
-          description: Illustration text.
-          type: string
-          example: This is an example illustration
-          maxLength: 1000
-          minLength: 1
-        sequence:
-          description: Sequence order of the illustration.
-          type: integer
-          format: int32
-          example: 1
-        custom:
+        value:
+          type: object
+        audit:
+          description: Indicates if this attribute should be audited
           type: boolean
+          example: true
+        translatable:
+          description: Indicates if this attribute is translatable
+          type: boolean
+          example: false
+        type:
+          type: string
+          enum:
+          - STRING
+          - LONG
+          - BOOLEAN
+          - UUID
+        customized:
+          description: Indicates if this attribute is customized
+          type: boolean
+          example: false
+    TemplateDetailDto:
+      type: object
+      properties:
+        template:
+          description: Template details
+          $ref: '#/components/schemas/TemplateDto'
+        pcAdvancedConfig:
+          description: Root display group tree
+          $ref: '#/components/schemas/DisplayGroupTreeDto'
+        bannerAttributes:
+          description: Map of branding attributes keyed by attribute name - For Banner
+          type: object
+          example:
+            dBannerButtonColor:
+              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: dBannerButtonColor
+              value: '#000000'
+              type: STRING
+              section: BANNER
+              important: false
+            dBannerPosition:
+              id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+              name: dBannerPosition
+              value: bottom
+              type: STRING
+              section: BANNER
+              important: false
+          additionalProperties:
+            $ref: '#/components/schemas/BrandingAttributeDTO'
+        pcAttributes:
+          description: Map of branding attributes keyed by attribute name - For Preferences Center
+          type: object
+          example:
+            dPCButtonColor:
+              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: dPCButtonColor
+              value: '#0066FF'
+              type: STRING
+              section: PREFERENCE_CENTER
+              important: false
+            dPCShowCookieList:
+              id: b2c3d4e5-f6g7-8901-bcde-f12345678901
+              name: dPCShowCookieList
+              value: true
+              type: BOOLEAN
+              section: PREFERENCE_CENTER
+              important: false
+          additionalProperties:
+            $ref: '#/components/schemas/BrandingAttributeDTO'
+        clistattributes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BrandingAttributeDTO'
     TemplateDto:
       type: object
       properties:
@@ -348,59 +394,36 @@ components:
         unpaged:
           description: This flag indicates whether pagination is disabled.
           type: boolean
-    TemplateDetailDto:
+    DisplayGroupTreeDto:
       type: object
       properties:
-        template:
-          description: Template details
-          $ref: '#/components/schemas/TemplateDto'
-        pcAdvancedConfig:
-          description: Root display group tree
-          $ref: '#/components/schemas/DisplayGroupTreeDto'
-        bannerAttributes:
-          description: Map of branding attributes keyed by attribute name - For Banner
+        nodeId:
+          description: Unique identifier of the tree node.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        sequence:
+          description: Sequence order of the node within its level.
+          type: integer
+          format: int32
+          example: 1
+        attributes:
+          description: Map of attributes associated with this display group node.
           type: object
           example:
-            dBannerButtonColor:
-              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: dBannerButtonColor
-              value: '#000000'
-              type: STRING
-              section: BANNER
-              important: false
-            dBannerPosition:
-              id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-              name: dBannerPosition
-              value: bottom
-              type: STRING
-              section: BANNER
-              important: false
-          additionalProperties:
-            $ref: '#/components/schemas/BrandingAttributeDTO'
-        pcAttributes:
-          description: Map of branding attributes keyed by attribute name - For Preferences Center
-          type: object
-          example:
-            dPCButtonColor:
-              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: dPCButtonColor
-              value: '#0066FF'
-              type: STRING
-              section: PREFERENCE_CENTER
-              important: false
-            dPCShowCookieList:
-              id: b2c3d4e5-f6g7-8901-bcde-f12345678901
-              name: dPCShowCookieList
+            showBanner:
               value: true
               type: BOOLEAN
-              section: PREFERENCE_CENTER
-              important: false
           additionalProperties:
-            $ref: '#/components/schemas/BrandingAttributeDTO'
-        clistattributes:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/BrandingAttributeDTO'
+            $ref: '#/components/schemas/AttributeDto'
+        displayGroup:
+          description: Display group entity details associated with this node.
+          $ref: '#/components/schemas/DisplayGroupEntityDto'
+        cookiepediaCategoryId:
+          description: Cookiepedia category ID associated with this display group.
+          type: integer
+          format: int32
+          example: 123
     BrandingAttributeDTO:
       type: object
       properties:
@@ -432,36 +455,62 @@ components:
           description: Attribute is important
           type: boolean
           example: false
-    DisplayGroupTreeDto:
+    PageTemplateDto:
       type: object
       properties:
-        nodeId:
-          description: Unique identifier of the tree node.
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/TemplateDto'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    IABSourceIllustrationsDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        displayGroupId:
+          description: Unique identifier of the display group.
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        illustration:
+          description: Illustration text.
+          type: string
+          example: This is an example illustration
+          maxLength: 1000
+          minLength: 1
         sequence:
-          description: Sequence order of the node within its level.
+          description: Sequence order of the illustration.
           type: integer
           format: int32
           example: 1
-        attributes:
-          description: Map of attributes associated with this display group node.
-          type: object
-          example:
-            showBanner:
-              value: true
-              type: BOOLEAN
-          additionalProperties:
-            $ref: '#/components/schemas/AttributeDto'
-        displayGroup:
-          description: Display group entity details associated with this node.
-          $ref: '#/components/schemas/DisplayGroupEntityDto'
-        cookiepediaCategoryId:
-          description: Cookiepedia category ID associated with this display group.
-          type: integer
-          format: int32
-          example: 123
+        custom:
+          type: boolean
     DisplayGroupEntityDto:
       type: object
       properties:
@@ -594,66 +643,17 @@ components:
           type: boolean
         iabPurpose:
           type: boolean
-    AttributeDto:
+    SortObject:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        value:
-          type: object
-        audit:
-          description: Indicates if this attribute should be audited
-          type: boolean
-          example: true
-        translatable:
-          description: Indicates if this attribute is translatable
-          type: boolean
-          example: false
-        type:
-          type: string
-          enum:
-          - STRING
-          - LONG
-          - BOOLEAN
-          - UUID
-        customized:
-          description: Indicates if this attribute is customized
-          type: boolean
-          example: false
-    PageTemplateDto:
-      type: object
-      properties:
-        totalPages:
-          type: integer
-          format: int32
-        totalElements:
-          type: integer
-          format: int64
-        size:
-          type: integer
-          format: int32
-        content:
-          items:
-            $ref: '#/components/schemas/TemplateDto'
-          type: array
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
         empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
           type: boolean
   securitySchemes:
     OAUTH2:

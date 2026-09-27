@@ -431,14 +431,6 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto:
       type: object
       properties:
@@ -573,6 +565,14 @@ components:
         paged:
           type: boolean
         unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
           type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:

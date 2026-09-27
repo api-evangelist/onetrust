@@ -286,67 +286,6 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata:
-      type: object
-      properties:
-        attachmentId:
-          type: string
-          format: uuid
-        emlSubject:
-          type: string
-        senderName:
-          type: string
-        sendDate:
-          type: string
-          format: date-time
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupResultV2Dto:
-      type: object
-      properties:
-        groupName:
-          description: Name of the group.
-          type: string
-          example: Salesforce Customer Data
-        groupOrder:
-          description: Order in which group has been created.
-          type: integer
-          format: int64
-        groupId:
-          description: Unique Identifier of the group.
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_UnStructuredData:
-      type: object
-      properties:
-        type:
-          description: The type of unstructured data (e.g., document, image, email).
-          type: string
-          example: document
-        status:
-          description: The processing status of the unstructured data.
-          type: string
-          example: processed
-        key:
-          description: A unique identifier or name for the unstructured data item.
-          type: string
-          example: contract_2023
-        value:
-          description: The content or reference to the unstructured data.
-          type: string
-          example: https://storage.example.com/documents/contract_2023.pdf
-        isRedact:
-          description: Indicates whether the data should be redacted in the response.
-          type: boolean
-          example: true
-        attributes:
-          description: Additional attributes or metadata associated with the unstructured data.
-          type: object
-          additionalProperties:
-            type: string
-      required:
-      - key
-      - type
-      - value
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto:
       type: object
       properties:
@@ -398,26 +337,6 @@ components:
           $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject'
         empty:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryResultsV2Dto:
-      type: object
-      properties:
-        id:
-          description: Unique Identifier for field Id.
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        fieldName:
-          description: The name for a data field in the results summary
-          type: string
-          example: firstname
-        value:
-          description: This is the actual data element.
-          type: string
-          example: John
-        system:
-          description: Displays the name of the source of a particular data element.
-          type: string
-          example: Salesforce
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupV2Dto:
       type: object
       properties:
@@ -436,6 +355,54 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentListDto'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_UnStructuredData:
+      type: object
+      properties:
+        type:
+          description: The type of unstructured data (e.g., document, image, email).
+          type: string
+          example: document
+        status:
+          description: The processing status of the unstructured data.
+          type: string
+          example: processed
+        key:
+          description: A unique identifier or name for the unstructured data item.
+          type: string
+          example: contract_2023
+        value:
+          description: The content or reference to the unstructured data.
+          type: string
+          example: https://storage.example.com/documents/contract_2023.pdf
+        isRedact:
+          description: Indicates whether the data should be redacted in the response.
+          type: boolean
+          example: true
+        attributes:
+          description: Additional attributes or metadata associated with the unstructured data.
+          type: object
+          additionalProperties:
+            type: string
+      required:
+      - key
+      - type
+      - value
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupResultV2Dto:
+      type: object
+      properties:
+        groupName:
+          description: Name of the group.
+          type: string
+          example: Salesforce Customer Data
+        groupOrder:
+          description: Order in which group has been created.
+          type: integer
+          format: int64
+        groupId:
+          description: Unique Identifier of the group.
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupDto:
       type: object
       properties:
@@ -461,15 +428,19 @@ components:
             $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto'
       required:
       - system
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata:
       type: object
       properties:
-        empty:
-          type: boolean
-        unsorted:
-          type: boolean
-        sorted:
-          type: boolean
+        attachmentId:
+          type: string
+          format: uuid
+        emlSubject:
+          type: string
+        senderName:
+          type: string
+        sendDate:
+          type: string
+          format: date-time
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentListDto:
       type: object
       properties:
@@ -497,6 +468,35 @@ components:
           writeOnly: true
         sharable:
           type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryResultsV2Dto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier for field Id.
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        fieldName:
+          description: The name for a data field in the results summary
+          type: string
+          example: firstname
+        value:
+          description: This is the actual data element.
+          type: string
+          example: John
+        system:
+          description: Displays the name of the source of a particular data element.
+          type: string
+          example: Salesforce
     PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject:
       type: object
       properties:

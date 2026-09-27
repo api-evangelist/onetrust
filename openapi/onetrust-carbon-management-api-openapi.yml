@@ -331,114 +331,81 @@ paths:
         - ESG_READ
 components:
   schemas:
-    EntityBasicUserInformation:
+    PageableObject:
       type: object
       properties:
-        id:
-          description: The unique identifier of the user.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The full name of the user.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials for the first and last name of the user.
-          type: string
-          example: FL
-      example:
-        id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-        name: Name
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field name used to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - LESS_THAN
-          - BETWEEN
-        value:
-          description: The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter.
-          type: array
-          items:
-            type: string
-        toValue:
-          description: The field value for the end of the range. This field should be used in conjunction with the `value` parameter.
-          type: array
-          items:
-            type: string
-      required:
-      - field
-    EntityListRequest:
-      type: object
-      properties:
-        queryRequest:
-          $ref: '#/components/schemas/EntityQueryRequest'
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
     EmissionFactorEntityDetailRequest:
       type: object
       properties:
         data:
           $ref: '#/components/schemas/EmissionFactorCreateRequest'
-    BasicEntityDetail:
+    EmissionTransactionEntityDetailRequest:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/EmissionTransactionDataCreateRequest'
+    EmissionFactorCreateRequest:
+      type: object
+      properties:
+        unitOfMeasure:
+          description: The measurement unit for the emission factor.
+          type: string
+          example: miles
+        intensity:
+          description: The intensity of the emission factor per unit of the emission transaction.
+          type: number
+          example: 30
+        source:
+          description: The source for the emission factor.
+          type: string
+          example: EPA
+        scope:
+          description: The scope associated with the emission factor.
+          type: string
+          enum:
+          - SCOPE1
+          - SCOPE2
+          - SCOPE3
+        category:
+          description: The category for the emission factor.
+          type: string
+          example: Business Travel
+      required:
+      - intensity
+      - scope
+      - unitOfMeasure
+    EntityOrganizationInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the entity.
+          description: The unique identifier of the organization.
           type: string
           format: uuid
-          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
         name:
-          description: The name of the entity.
+          description: The name of the organization.
           type: string
-          example: Emission Factor-1
-    AttributeQueryCriteria:
-      type: object
-      properties:
-        filters:
-          description: The fields and values used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The key terms for the search criteria.
-          type: string
-          maxLength: 500
-          minLength: 0
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the entity was last created.
-          type: string
-          format: date-time
-        lastUpdatedDate:
-          description: The date and time that the entity was last updated.
-          type: string
-          format: date-time
-        createdBy:
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          $ref: '#/components/schemas/EntityBasicUserInformation'
+          example: Business Unit
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name: Organization Name
       required:
-      - createdDate
-    EntityQueryRequest:
-      type: object
-      properties:
-        criteria:
-          $ref: '#/components/schemas/AttributeQueryCriteria'
+      - id
     EmissionTransactionBaseEntityCreateRequest:
       type: object
       properties:
@@ -470,98 +437,51 @@ components:
       required:
       - entityDetail
       - organization
-    SortObject:
+    EntityListRequest:
       type: object
       properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    EmissionTransactionEntityDetailRequest:
+        queryRequest:
+          $ref: '#/components/schemas/EntityQueryRequest'
+    EntityRecordAuditInformation:
       type: object
       properties:
-        data:
-          $ref: '#/components/schemas/EmissionTransactionDataCreateRequest'
-    EntityOrganizationInformation:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+        createdBy:
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityBasicUserInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the organization.
+          description: The unique identifier of the user.
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
         name:
-          description: The name of the organization.
+          description: The full name of the user.
           type: string
-          example: Business Unit
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
       example:
-        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name: Organization Name
-      required:
-      - id
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: The attribute option GUID.
-          type: string
-          format: uuid
-        value:
-          description: The attribute option value.
-          type: string
-        valueKey:
-          description: The attribute option value key for translation.
-          type: string
-        colorCode:
-          description: The attribute option color code.
-          type: string
-        optionSelectionValue:
-          description: The attribute option selection value.
-          type: string
-      example:
-        textAttributeName:
-        - value: Text
-        optionBasedAttributeName:
-        - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-    EntityWorkflowInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the workflow.
-          type: string
-          format: uuid
-          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
-        name:
-          description: The name of the workflow.
-          type: string
-          example: Vendor On-Boarding Workflow
-        type:
-          description: The type of workflow.
-          type: string
-          example: Vendor
-        workflowMode:
-          description: This parameter indicates whether the workflow mode is null, basic, or advanced.
-          type: string
-          example: BASIC
-          enum:
-          - ADVANCED, BASIC
-        stageId:
-          description: The unique identifier of the workflow stage.
-          type: string
-          format: uuid
-          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
-        stageName:
-          description: The name of the workflow stage.
-          type: string
-          example: Start On-Boarding
-      required:
-      - id
-      - name
-      - stageId
-      - stageName
-      - type
+        id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+        name: Name
     BasicEntityTypeInformation:
       type: object
       properties:
@@ -592,118 +512,11 @@ components:
       required:
       - id
       - name
-    EmissionFactorCreateRequest:
+    EntityQueryRequest:
       type: object
       properties:
-        unitOfMeasure:
-          description: The measurement unit for the emission factor.
-          type: string
-          example: miles
-        intensity:
-          description: The intensity of the emission factor per unit of the emission transaction.
-          type: number
-          example: 30
-        source:
-          description: The source for the emission factor.
-          type: string
-          example: EPA
-        scope:
-          description: The scope associated with the emission factor.
-          type: string
-          enum:
-          - SCOPE1
-          - SCOPE2
-          - SCOPE3
-        category:
-          description: The category for the emission factor.
-          type: string
-          example: Business Travel
-      required:
-      - intensity
-      - scope
-      - unitOfMeasure
-    EmissionFactorBaseEntityCreateRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the entity.
-          type: string
-          example: Air travel
-        organization:
-          $ref: '#/components/schemas/EntityOrganizationInformation'
-        entityDetail:
-          $ref: '#/components/schemas/EmissionFactorEntityDetailRequest'
-        attributes:
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            description: The custom attributes of the entity.
-            example:
-              textAttributeName:
-              - value: Text
-              optionBasedAttributeName:
-              - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - entityDetail
-      - name
-      - organization
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    PageEntityInformation:
-      type: object
-      properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          items:
-            $ref: '#/components/schemas/EntityInformation'
-          type: array
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        numberOfElements:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        last:
-          type: boolean
-        first:
-          type: boolean
-        empty:
-          type: boolean
+        criteria:
+          $ref: '#/components/schemas/AttributeQueryCriteria'
     EmissionTransactionDataCreateRequest:
       type: object
       properties:
@@ -726,6 +539,30 @@ components:
           example: 01/23/2022
       required:
       - emissionFactorId
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The attribute option GUID.
+          type: string
+          format: uuid
+        value:
+          description: The attribute option value.
+          type: string
+        valueKey:
+          description: The attribute option value key for translation.
+          type: string
+        colorCode:
+          description: The attribute option color code.
+          type: string
+        optionSelectionValue:
+          description: The attribute option selection value.
+          type: string
+      example:
+        textAttributeName:
+        - value: Text
+        optionBasedAttributeName:
+        - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
     EntityInformation:
       type: object
       properties:
@@ -780,6 +617,169 @@ components:
       - id
       - number
       - schemaId
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    EntityWorkflowInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow.
+          type: string
+          format: uuid
+          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Vendor On-Boarding Workflow
+        type:
+          description: The type of workflow.
+          type: string
+          example: Vendor
+        workflowMode:
+          description: This parameter indicates whether the workflow mode is null, basic, or advanced.
+          type: string
+          example: BASIC
+          enum:
+          - ADVANCED, BASIC
+        stageId:
+          description: The unique identifier of the workflow stage.
+          type: string
+          format: uuid
+          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName:
+          description: The name of the workflow stage.
+          type: string
+          example: Start On-Boarding
+      required:
+      - id
+      - name
+      - stageId
+      - stageName
+      - type
+    EmissionFactorBaseEntityCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the entity.
+          type: string
+          example: Air travel
+        organization:
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        entityDetail:
+          $ref: '#/components/schemas/EmissionFactorEntityDetailRequest'
+        attributes:
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            description: The custom attributes of the entity.
+            example:
+              textAttributeName:
+              - value: Text
+              optionBasedAttributeName:
+              - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - entityDetail
+      - name
+      - organization
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - LESS_THAN
+          - BETWEEN
+        value:
+          description: The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter.
+          type: array
+          items:
+            type: string
+        toValue:
+          description: The field value for the end of the range. This field should be used in conjunction with the `value` parameter.
+          type: array
+          items:
+            type: string
+      required:
+      - field
+    PageEntityInformation:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/EntityInformation'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        last:
+          type: boolean
+        first:
+          type: boolean
+        empty:
+          type: boolean
+    BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+        name:
+          description: The name of the entity.
+          type: string
+          example: Emission Factor-1
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
   securitySchemes:
     oauth2:
       type: oauth2

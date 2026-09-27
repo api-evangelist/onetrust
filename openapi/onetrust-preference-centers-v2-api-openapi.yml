@@ -264,329 +264,19 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_PagePreferenceCenterSummaryDtoV2:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_PagePublicAPI:
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI:
       properties:
         id:
-          description: Unique identifier of the element
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        order:
-          description: Display order of the element within the section
-          type: integer
-          format: int64
-          example: 1
-        languages:
-          description: Available translations for the element's content
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
-        label:
-          description: Name of the purpose
-          type: string
-          example: Marketing Communications
-        description:
-          description: Detailed description of the purpose
-          type: string
-          example: Collect customer emails for marketing purposes
-        implicitConsentConfirmDesc:
-          description: Description shown for the implicit consent confirmation checkbox
-          type: string
-          example: I agree to receive marketing communications
-        version:
-          description: Version number of the purpose
-          type: integer
-          format: int64
-          example: 2
-        topics:
-          description: List of topics associated with this purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI'
-        customPreferences:
-          description: List of custom preferences associated with this purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI'
-        visibility:
-          description: Visibility settings for the purpose in the preference center
-          type: string
-          enum:
-          - VISIBLE_TO_ALL
-          - VISIBLE_TO_CONSENTED
-          - VISIBLE_TO_PRIOR_CONSENTED
-    ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI:
-      properties:
-        name:
-          description: Translated name of the item
-          type: string
-          example: Comunicaciones de marketing
-        description:
-          description: Translated description of the item
-          type: string
-          example: Recopilar correos electrónicos de clientes con fines de marketing
-        implicitConsentConfirmDesc:
-          description: Translated text for implicit consent confirmation
-          type: string
-          example: I can confirm
-        content:
-          description: Translated rich text content (may include HTML)
-          example: <p>bloque de texto</p>
-          type: string
-        language:
-          description: Language code for this translation (ISO 639-1)
-          type: string
-          example: es
-        isDefault:
-          description: Indicates if this is the default translation
-          type: boolean
-          example: false
-      required:
-      - language
-    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI:
-      properties:
-        id:
-          description: Unique identifier of the custom preference
+          description: Unique identifier of the topic-purpose relationship
           type: string
           format: uuid
           example: 497c4383-2c61-4906-aed0-660e3fd03ef0
         name:
-          description: Name of the custom preference
+          description: Name of the topic
           type: string
-          example: Email Frequency
-        description:
-          description: Detailed description of the custom preference
-          type: string
-          example: Options for different frequencies to receive emails
-        selectionType:
-          description: Type of selection allowed for this preference
-          type: string
-          example: SINGLE_CHOICE
-          enum:
-          - SINGLE_CHOICE
-          - MULTI_CHOICE
-        displayAs:
-          description: How the preference options should be displayed
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        required:
-          description: Whether a selection is required for this preference
-          type: boolean
-          example: false
-          default: false
+          example: Car Marketing
         languages:
-          description: List of translations for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
-        customPreferenceOptions:
-          description: List of available options for this custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI:
-      properties:
-        id:
-          description: Unique identifier of the custom preference
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        name:
-          description: Name of the custom preference
-          type: string
-          example: Email Frequency
-        description:
-          description: Detailed description of the custom preference
-          type: string
-          example: Options for different frequencies to receive emails
-        selectionType:
-          description: Type of selection allowed for this preference
-          type: string
-          example: SINGLE_CHOICE
-          enum:
-          - SINGLE_CHOICE
-          - MULTI_CHOICE
-        displayAs:
-          description: How the preference options should be displayed
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        required:
-          description: Whether a selection is required for this preference
-          type: boolean
-          example: false
-          default: false
-        languages:
-          description: List of translations for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
-        customPreferenceOptions:
-          description: List of available options for this custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_PagePublicAPI:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the Preference Center Page
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        order:
-          description: Order of Preference Center Page
-          type: integer
-          format: int64
-          example: 1
-        isHidden:
-          description: Indicates if the Preference Center page header is hidden
-          type: boolean
-          example: false
-        navigationEnabled:
-          description: Indicates if the Preference Center page navigation is enabled
-          type: boolean
-          example: false
-        displaySubscribeSettings:
-          description: Indicates if Subscribe settings should be displayed on the page
-          type: boolean
-          example: false
-        displayUnsubscribeAll:
-          description: Indicates if the 'Unsubscribe All' option should be displayed on the page
-          type: boolean
-          example: false
-        displaySubscribeAll:
-          description: Indicates if the 'Subscribe All' option should be displayed on the page
-          type: boolean
-          example: false
-        sections:
-          description: List of sections contained within this Preference Center page
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSectionDto_PagePublicAPI'
-        languages:
-          description: List of available language translations for this page
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI:
-      properties:
-        id:
-          description: Unique identifier of the option
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        label:
-          description: Display label for the option
-          type: string
-          example: Weekly
-        order:
-          description: Display order of the option (0-based index)
-          type: integer
-          format: int32
-          example: 1
-        isDefault:
-          description: Indicates if this option is selected by default
-          type: boolean
-          example: true
-        languages:
-          description: List of translations for the option label
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI:
-      properties:
-        id:
-          description: Unique identifier of the option
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        label:
-          description: Display label for the option
-          type: string
-          example: Weekly
-        order:
-          description: Display order of the option (0-based index)
-          type: integer
-          format: int32
-          example: 1
-        isDefault:
-          description: Indicates if this option is selected by default
-          type: boolean
-          example: true
-        languages:
-          description: List of translations for the option label
+          description: List of translations for the topic's name
           type: array
           items:
             $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
@@ -634,52 +324,7 @@ components:
           description: Indicates if this is the system-managed subscription settings section
           type: boolean
           example: false
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2:
-      properties:
-        id:
-          description: Unique identifier of the Preference Center
-          type: string
-          format: uuid
-          example: 09ccd1b9-84a0-4bcb-a167-f761391ebffa
-        name:
-          description: Name of the Preference Center
-          type: string
-          example: Email Communication Preferences
-        organizationName:
-          description: Name of the organization that owns the Preference Center
-          type: string
-          example: OneTrust
-        template:
-          description: Template type used for the Preference Center
-          type: string
-          enum:
-          - ORIGINAL
-          - ENHANCED
-          - MULTIPAGE
-        publishedDate:
-          description: Date and time when the Preference Center was published
-          type: string
-          format: date-time
-        status:
-          description: Current status of the Preference Center
-          type: string
-          enum:
-          - DRAFT
-          - ACTIVE
-          - RETIRED
-          - INACTIVE
-        createdDate:
-          description: Date and time when the Preference Center was created
-          type: string
-          format: date-time
-      required:
-      - createdDate
-      - id
-      - name
-      - organizationName
-      - status
-      - template
-    ConsentPreferences-UniversalConsentPreferenceManag_ElementDto_PagePublicAPI:
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_RootPublicAPI:
       properties:
         id:
           description: Unique identifier of the element
@@ -695,47 +340,154 @@ components:
           description: Available translations for the element's content
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI:
-      properties:
-        id:
-          description: Unique identifier of the topic-purpose relationship
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+        label:
+          description: Name of the purpose
           type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        name:
-          description: Name of the topic
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose
           type: string
-          example: Car Marketing
-        languages:
-          description: List of translations for the topic's name
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description shown for the implicit consent confirmation checkbox
+          type: string
+          example: I agree to receive marketing communications
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        topics:
+          description: List of topics associated with this purpose
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI'
+        customPreferences:
+          description: List of custom preferences associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI'
+        visibility:
+          description: Visibility settings for the purpose in the preference center
+          type: string
+          enum:
+          - VISIBLE_TO_ALL
+          - VISIBLE_TO_CONSENTED
+          - VISIBLE_TO_PRIOR_CONSENTED
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI:
       properties:
         id:
-          description: Unique identifier of the topic-purpose relationship
+          description: Unique identifier of the option
           type: string
           format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        name:
-          description: Name of the topic
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        label:
+          description: Display label for the option
           type: string
-          example: Car Marketing
+          example: Weekly
+        order:
+          description: Display order of the option (0-based index)
+          type: integer
+          format: int32
+          example: 1
+        isDefault:
+          description: Indicates if this option is selected by default
+          type: boolean
+          example: true
         languages:
-          description: List of translations for the topic's name
+          description: List of translations for the option label
           type: array
           items:
             $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI:
       properties:
-        empty:
+        id:
+          description: Unique identifier of the custom preference
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        description:
+          description: Detailed description of the custom preference
+          type: string
+          example: Options for different frequencies to receive emails
+        selectionType:
+          description: Type of selection allowed for this preference
+          type: string
+          example: SINGLE_CHOICE
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        displayAs:
+          description: How the preference options should be displayed
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        required:
+          description: Whether a selection is required for this preference
           type: boolean
-        sorted:
+          example: false
+          default: false
+        languages:
+          description: List of translations for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the custom preference
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        description:
+          description: Detailed description of the custom preference
+          type: string
+          example: Options for different frequencies to receive emails
+        selectionType:
+          description: Type of selection allowed for this preference
+          type: string
+          example: SINGLE_CHOICE
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        displayAs:
+          description: How the preference options should be displayed
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        required:
+          description: Whether a selection is required for this preference
           type: boolean
-        unsorted:
-          type: boolean
+          example: false
+          default: false
+        languages:
+          description: List of translations for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI'
     ConsentPreferences-UniversalConsentPreferenceManag_AdvancedPreferenceCenterDto_RootPublicAPI:
       type: object
       properties:
@@ -797,6 +549,162 @@ components:
           description: Boolean flag that denotes if 'update not opted-out' to 'active' status is enabled for the Preference center
           type: boolean
           example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the Preference Center
+          type: string
+          format: uuid
+          example: 09ccd1b9-84a0-4bcb-a167-f761391ebffa
+        name:
+          description: Name of the Preference Center
+          type: string
+          example: Email Communication Preferences
+        organizationName:
+          description: Name of the organization that owns the Preference Center
+          type: string
+          example: OneTrust
+        template:
+          description: Template type used for the Preference Center
+          type: string
+          enum:
+          - ORIGINAL
+          - ENHANCED
+          - MULTIPAGE
+        publishedDate:
+          description: Date and time when the Preference Center was published
+          type: string
+          format: date-time
+        status:
+          description: Current status of the Preference Center
+          type: string
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+          - INACTIVE
+        createdDate:
+          description: Date and time when the Preference Center was created
+          type: string
+          format: date-time
+      required:
+      - createdDate
+      - id
+      - name
+      - organizationName
+      - status
+      - template
+    ConsentPreferences-UniversalConsentPreferenceManag_PagePreferenceCenterSummaryDtoV2:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSummaryDtoV2'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI:
+      properties:
+        name:
+          description: Translated name of the item
+          type: string
+          example: Comunicaciones de marketing
+        description:
+          description: Translated description of the item
+          type: string
+          example: Recopilar correos electrónicos de clientes con fines de marketing
+        implicitConsentConfirmDesc:
+          description: Translated text for implicit consent confirmation
+          type: string
+          example: I can confirm
+        content:
+          description: Translated rich text content (may include HTML)
+          example: <p>bloque de texto</p>
+          type: string
+        language:
+          description: Language code for this translation (ISO 639-1)
+          type: string
+          example: es
+        isDefault:
+          description: Indicates if this is the default translation
+          type: boolean
+          example: false
+      required:
+      - language
+    ConsentPreferences-UniversalConsentPreferenceManag_ElementDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the element
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        order:
+          description: Display order of the element within the section
+          type: integer
+          format: int64
+          example: 1
+        languages:
+          description: Available translations for the element's content
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
     ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_RootPublicAPI:
       properties:
         id:
@@ -863,6 +771,30 @@ components:
           description: Whether the element is required
           type: boolean
           example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the topic-purpose relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        languages:
+          description: List of translations for the topic's name
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PCSectionTranslationDto_PagePublicAPI:
       properties:
         name:
@@ -919,7 +851,32 @@ components:
           example: false
       required:
       - language
-    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_RootPublicAPI:
+    ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceOptionDto_PagePublicAPI:
+      properties:
+        id:
+          description: Unique identifier of the option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        label:
+          description: Display label for the option
+          type: string
+          example: Weekly
+        order:
+          description: Display order of the option (0-based index)
+          type: integer
+          format: int32
+          example: 1
+        isDefault:
+          description: Indicates if this option is selected by default
+          type: boolean
+          example: true
+        languages:
+          description: List of translations for the option label
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
+    ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeDto_PagePublicAPI:
       properties:
         id:
           description: Unique identifier of the element
@@ -935,7 +892,7 @@ components:
           description: Available translations for the element's content
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_RootPublicAPI'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
         label:
           description: Name of the purpose
           type: string
@@ -957,12 +914,12 @@ components:
           description: List of topics associated with this purpose
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_RootPublicAPI'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCPurposeTopicDto_PagePublicAPI'
         customPreferences:
           description: List of custom preferences associated with this purpose
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_RootPublicAPI'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PCCustomPreferenceDto_PagePublicAPI'
         visibility:
           description: Visibility settings for the purpose in the preference center
           type: string
@@ -970,6 +927,49 @@ components:
           - VISIBLE_TO_ALL
           - VISIBLE_TO_CONSENTED
           - VISIBLE_TO_PRIOR_CONSENTED
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPageDto_PagePublicAPI:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the Preference Center Page
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        order:
+          description: Order of Preference Center Page
+          type: integer
+          format: int64
+          example: 1
+        isHidden:
+          description: Indicates if the Preference Center page header is hidden
+          type: boolean
+          example: false
+        navigationEnabled:
+          description: Indicates if the Preference Center page navigation is enabled
+          type: boolean
+          example: false
+        displaySubscribeSettings:
+          description: Indicates if Subscribe settings should be displayed on the page
+          type: boolean
+          example: false
+        displayUnsubscribeAll:
+          description: Indicates if the 'Unsubscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        displaySubscribeAll:
+          description: Indicates if the 'Subscribe All' option should be displayed on the page
+          type: boolean
+          example: false
+        sections:
+          description: List of sections contained within this Preference Center page
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterSectionDto_PagePublicAPI'
+        languages:
+          description: List of available language translations for this page
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TranslationDto_PagePublicAPI'
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

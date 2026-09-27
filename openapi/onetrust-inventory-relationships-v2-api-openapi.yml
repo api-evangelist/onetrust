@@ -1028,17 +1028,71 @@ paths:
         - INVENTORY_WRITE
 components:
   schemas:
-    SearchCriteria:
+    PersonalDataDetailedResponse:
       type: object
       properties:
-        filters:
+        dataElement:
+          $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataCategories:
           type: array
           items:
-            $ref: '#/components/schemas/FilterInformation'
-          uniqueItems: true
-        searchText:
+            $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataClassifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataSubjectType:
+          $ref: '#/components/schemas/BasePersonalDataResponse'
+        source:
           type: string
-        blank:
+        dateLinked:
+          type: string
+          format: date-time
+    FilterInformation:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          type: string
+          enum:
+          - EQ
+          - EQUAL_TO
+          - IN_BETWEEN
+        value:
+          type: array
+          items:
+            type: string
+        date:
+          $ref: '#/components/schemas/DateDto'
+      required:
+      - field
+    BaseContextualEntityInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: integer
+          format: int64
+        sourceEntityType:
+          $ref: '#/components/schemas/ObjectReference'
+        targetEntityType:
+          $ref: '#/components/schemas/ObjectReference'
+        source:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        target:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        processingActivity:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        contextEntityType:
+          $ref: '#/components/schemas/ObjectReference'
+        relationshipTypeDetail:
+          $ref: '#/components/schemas/RelationshipType'
+        pendingForReview:
+          type: boolean
+        contextual:
           type: boolean
     ContextualLinkUpdateRequest:
       type: object
@@ -1055,159 +1109,13 @@ components:
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
           writeOnly: true
-    InventoryIdentifier:
+    DateDto:
       type: object
       properties:
-        id:
+        fromDateValue:
           type: string
-          format: uuid
-        name:
+        toDateValue:
           type: string
-        organization:
-          $ref: '#/components/schemas/ObjectReference'
-        inventoryType:
-          type: string
-        identifierKey:
-          type: string
-    BasePersonalDataResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        nameKey:
-          type: string
-        description:
-          type: string
-        descriptionKey:
-          type: string
-      required:
-      - id
-      - name
-      - nameKey
-    RelationshipLabelInformation:
-      type: object
-      properties:
-        name:
-          description: Relationship label name
-          type: string
-          example: sends data to
-        isContextual:
-          description: Flag to identify if relationship type is direct parent child or contextual
-          type: boolean
-          example: true
-        nameKey:
-          description: Relationship label name key
-          type: string
-          example: sends_data_to
-      example:
-        name: sends data to
-        isContextual: true
-        nameKey: sends_data_to
-    RelationshipType:
-      type: object
-      properties:
-        id:
-          description: RelationshipType ID
-          type: string
-          format: uuid
-        name:
-          description: RelationshipType Name
-          type: string
-        nameKey:
-          description: RelationshipType NameKey
-          type: string
-    LinkRequestDto:
-      type: object
-      properties:
-        sourceInventory:
-          description: Associated Source Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            type: assets
-          $ref: '#/components/schemas/EntityIdAndType'
-        targetInventory:
-          description: Associated Target Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            type: assets
-          $ref: '#/components/schemas/EntityIdAndType'
-        contextProcess:
-          description: Associated Source Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: PA Name
-          $ref: '#/components/schemas/BasicEntityIdAndName'
-        attributes:
-          description: Custom Attributes based on schema defined for given link type
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        linkTypeName:
-          description: Link type identifier
-          type: string
-          example:
-            linkTypeName: Data Transfer
-        linkTypeLabel:
-          description: Link type label
-          type: string
-          example:
-            linkTypeLabel: Sends Data To
-      required:
-      - linkTypeLabel
-      - linkTypeName
-      - sourceInventory
-      - targetInventory
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field name used to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
     EntityListRequest:
       type: object
       properties:
@@ -1248,118 +1156,6 @@ components:
           specificCustomFields:
           - vendor_tier
           - risk_score
-    BaseContextualEntityInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        number:
-          type: integer
-          format: int64
-        sourceEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        targetEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        source:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        target:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        processingActivity:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        contextEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        relationshipTypeDetail:
-          $ref: '#/components/schemas/RelationshipType'
-        pendingForReview:
-          type: boolean
-        contextual:
-          type: boolean
-    PersonalDataLinkRequest:
-      type: object
-      properties:
-        dataElementId:
-          description: ID of the data element to link/unlink
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        dataSubjectTypeId:
-          description: ID of the data subject type to link/unlink
-          type: string
-          format: uuid
-          example: a1b2c3d4-e5f6-4042-8cb9-b78038cc4c46
-      example:
-        dataElementId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        dataSubjectTypeId: a1b2c3d4-e5f6-4042-8cb9-b78038cc4c46
-    AttributeQueryCriteria:
-      type: object
-      properties:
-        filters:
-          description: The fields and values used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The key terms for the search criteria.
-          type: string
-    RelationshipTypeInformation:
-      type: object
-      properties:
-        id:
-          description: Relationship type ID
-          type: string
-          format: uuid
-          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
-        name:
-          description: Relationship type name
-          type: string
-          example: Data Transfer
-        nameKey:
-          description: Relationship type name key
-          type: string
-          example: data_transfer
-        seeded:
-          description: Whether the relationship type is seeded
-          type: boolean
-          example: true
-        schemaName:
-          description: Schema name
-          type: string
-          example: inventory_linking
-        moduleName:
-          description: Module name
-          type: string
-          example: inventory
-        forwardRelationshipLabel:
-          description: Forward relationship label information
-          example:
-            name: sends data to
-            isContextual: true
-            nameKey: sends_data_to
-          $ref: '#/components/schemas/RelationshipLabelInformation'
-        reverseRelationshipLabel:
-          description: Reverse relationship label information
-          example:
-            name: receives data from
-            isContextual: true
-            nameKey: receives_data_from
-          $ref: '#/components/schemas/RelationshipLabelInformation'
-      example:
-        id: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
-        name: Data Transfer
-        nameKey: data_transfer
-        seeded: true
-        schemaName: inventory_linking
-        moduleName: inventory
-        forwardRelationshipLabel:
-          name: sends data to
-          isContextual: true
-          nameKey: sends_data_to
-        reverseRelationshipLabel:
-          name: receives data from
-          isContextual: true
-          nameKey: receives_data_from
     EntityQueryRequest:
       type: object
       properties:
@@ -1411,6 +1207,27 @@ components:
         organizationTraversalStrategy: ancestors_and_descendants
         requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
         queryAction: ListEntity
+    EntityIdAndType:
+      type: object
+      properties:
+        id:
+          description: Entity id
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        type:
+          description: Entity type
+          type: string
+          enum:
+          - assets
+          - processing-activities
+          - vendors
+          - entities
+          - data-elements
+          - data-subjects
+      required:
+      - id
+      - type
     AttributeValueInformation:
       type: object
       properties:
@@ -1451,58 +1268,6 @@ components:
           default: 'false'
       required:
       - value
-    EntityFieldRequest:
-      type: object
-      properties:
-        fields:
-          description: The requested non-base fields.
-          type: array
-          items:
-            type: string
-          example:
-          - textAttributeField1
-          - singleSelectAttributeField1
-        mode:
-          description: The mode based on which required non-base fields would be selected.
-          type: string
-          default: select_all
-          enum:
-          - select_all
-          - ignore_all
-          - specific
-        includeSelectedFullTextSearchFields:
-          description: The full text search mode would only includes passed "fields" of Text/Date/NumericalText/DateTime response type.
-          type: boolean
-          example: true
-        overriddenSearchFields:
-          description: The caller can override search (system) fields which need to included.
-          type: array
-          items:
-            type: string
-          example:
-          - name
-      required:
-      - mode
-    PersonalDataDetailedResponse:
-      type: object
-      properties:
-        dataElement:
-          $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataCategories:
-          type: array
-          items:
-            $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataClassifications:
-          type: array
-          items:
-            $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataSubjectType:
-          $ref: '#/components/schemas/BasePersonalDataResponse'
-        source:
-          type: string
-        dateLinked:
-          type: string
-          format: date-time
     RelationshipInformation:
       type: object
       properties:
@@ -1585,46 +1350,295 @@ components:
           dataTransferType: Cross-Border
           dataTransferDate: '2025-07-21'
           dataTransferPurpose: Business Operations
-    FilterInformation:
+    LinkRequestDto:
       type: object
       properties:
-        field:
+        sourceInventory:
+          description: Associated Source Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: assets
+          $ref: '#/components/schemas/EntityIdAndType'
+        targetInventory:
+          description: Associated Target Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: assets
+          $ref: '#/components/schemas/EntityIdAndType'
+        contextProcess:
+          description: Associated Source Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: PA Name
+          $ref: '#/components/schemas/BasicEntityIdAndName'
+        attributes:
+          description: Custom Attributes based on schema defined for given link type
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        linkTypeName:
+          description: Link type identifier
           type: string
-        operator:
+          example:
+            linkTypeName: Data Transfer
+        linkTypeLabel:
+          description: Link type label
           type: string
-          enum:
-          - EQ
-          - EQUAL_TO
-          - IN_BETWEEN
-        value:
-          type: array
-          items:
-            type: string
-        date:
-          $ref: '#/components/schemas/DateDto'
+          example:
+            linkTypeLabel: Sends Data To
       required:
-      - field
-    EntityIdAndType:
+      - linkTypeLabel
+      - linkTypeName
+      - sourceInventory
+      - targetInventory
+    RelationshipTypeInformation:
       type: object
       properties:
         id:
-          description: Entity id
+          description: Relationship type ID
+          type: string
+          format: uuid
+          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+        name:
+          description: Relationship type name
+          type: string
+          example: Data Transfer
+        nameKey:
+          description: Relationship type name key
+          type: string
+          example: data_transfer
+        seeded:
+          description: Whether the relationship type is seeded
+          type: boolean
+          example: true
+        schemaName:
+          description: Schema name
+          type: string
+          example: inventory_linking
+        moduleName:
+          description: Module name
+          type: string
+          example: inventory
+        forwardRelationshipLabel:
+          description: Forward relationship label information
+          example:
+            name: sends data to
+            isContextual: true
+            nameKey: sends_data_to
+          $ref: '#/components/schemas/RelationshipLabelInformation'
+        reverseRelationshipLabel:
+          description: Reverse relationship label information
+          example:
+            name: receives data from
+            isContextual: true
+            nameKey: receives_data_from
+          $ref: '#/components/schemas/RelationshipLabelInformation'
+      example:
+        id: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+        name: Data Transfer
+        nameKey: data_transfer
+        seeded: true
+        schemaName: inventory_linking
+        moduleName: inventory
+        forwardRelationshipLabel:
+          name: sends data to
+          isContextual: true
+          nameKey: sends_data_to
+        reverseRelationshipLabel:
+          name: receives data from
+          isContextual: true
+          nameKey: receives_data_from
+    PersonalDataLinkRequest:
+      type: object
+      properties:
+        dataElementId:
+          description: ID of the data element to link/unlink
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        type:
-          description: Entity type
+        dataSubjectTypeId:
+          description: ID of the data subject type to link/unlink
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-4042-8cb9-b78038cc4c46
+      example:
+        dataElementId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        dataSubjectTypeId: a1b2c3d4-e5f6-4042-8cb9-b78038cc4c46
+    RelationshipLabelInformation:
+      type: object
+      properties:
+        name:
+          description: Relationship label name
+          type: string
+          example: sends data to
+        isContextual:
+          description: Flag to identify if relationship type is direct parent child or contextual
+          type: boolean
+          example: true
+        nameKey:
+          description: Relationship label name key
+          type: string
+          example: sends_data_to
+      example:
+        name: sends data to
+        isContextual: true
+        nameKey: sends_data_to
+    EntityFieldRequest:
+      type: object
+      properties:
+        fields:
+          description: The requested non-base fields.
+          type: array
+          items:
+            type: string
+          example:
+          - textAttributeField1
+          - singleSelectAttributeField1
+        mode:
+          description: The mode based on which required non-base fields would be selected.
+          type: string
+          default: select_all
+          enum:
+          - select_all
+          - ignore_all
+          - specific
+        includeSelectedFullTextSearchFields:
+          description: The full text search mode would only includes passed "fields" of Text/Date/NumericalText/DateTime response type.
+          type: boolean
+          example: true
+        overriddenSearchFields:
+          description: The caller can override search (system) fields which need to included.
+          type: array
+          items:
+            type: string
+          example:
+          - name
+      required:
+      - mode
+    RelationshipType:
+      type: object
+      properties:
+        id:
+          description: RelationshipType ID
+          type: string
+          format: uuid
+        name:
+          description: RelationshipType Name
+          type: string
+        nameKey:
+          description: RelationshipType NameKey
+          type: string
+    ContextInformation:
+      type: object
+      properties:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
           type: string
           enum:
-          - assets
-          - processing-activities
-          - vendors
-          - entities
-          - data-elements
-          - data-subjects
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    BasicEntityIdAndName:
+      type: object
+      properties:
+        id:
+          description: Entity identifier
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Entity name
+          type: string
+          example: Sample Entity Name
+    SearchCriteria:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterInformation'
+          uniqueItems: true
+        searchText:
+          type: string
+        blank:
+          type: boolean
+    BasePersonalDataResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameKey:
+          type: string
+        description:
+          type: string
+        descriptionKey:
+          type: string
       required:
       - id
-      - type
+      - name
+      - nameKey
+    InventoryIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        organization:
+          $ref: '#/components/schemas/ObjectReference'
+        inventoryType:
+          type: string
+        identifierKey:
+          type: string
     AssociatedAttributeValueInformation:
       type: object
       properties:
@@ -1647,32 +1661,6 @@ components:
           example: red
       required:
       - value
-    BasicEntityIdAndName:
-      type: object
-      properties:
-        id:
-          description: Entity identifier
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Entity name
-          type: string
-          example: Sample Entity Name
-    DateDto:
-      type: object
-      properties:
-        fromDateValue:
-          type: string
-        toDateValue:
-          type: string
-    ContextInformation:
-      type: object
-      properties:
-        parameters:
-          additionalProperties:
-            type: object
-          type: object
     ObjectReference:
       type: object
       properties:
@@ -1682,6 +1670,18 @@ components:
         value:
           type: string
         valueKey:
+          type: string
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
           type: string
   securitySchemes:
     OAUTH2:

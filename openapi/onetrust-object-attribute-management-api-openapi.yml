@@ -590,228 +590,6 @@ paths:
         - OBJECT_MANAGER_WRITE
 components:
   schemas:
-    AttributeCreateRequest:
-      type: object
-      properties:
-        fieldName:
-          description: The fieldName parameter value of the attribute.
-          type: string
-          example: nameOfRecord
-          maxLength: 100
-        name:
-          description: The name of the attribute.
-          type: string
-          example: Type of the Record
-          maxLength: 255
-          minLength: 1
-        nameKey:
-          description: The name key of the attribute used for translation purposes.
-          type: string
-          example: IM.Name
-          maxLength: 255
-        description:
-          description: The description of the attribute.
-          type: string
-          example: Gather Type for the record - provide some value related to nature of record
-          maxLength: 1000
-        descriptionKey:
-          description: The description key of the attribute used for translation purposes.
-          type: string
-          example: IM.Name.Description
-          maxLength: 255
-        required:
-          description: This flag indicates whether the attribute is required.
-          type: boolean
-          example: false
-          default: 'false'
-        allowOther:
-          description: This flag indicates whether Other can be selected as an option for the attribute value.
-          type: boolean
-          example: false
-          default: 'false'
-        responseType:
-          description: The type of response associated with the attribute value.
-          type: string
-          example: Text
-          enum:
-          - Text
-          - SingleSelect
-          - MultiSelect
-          - Date
-          - Formula
-          - Score
-          - Level
-          - Range
-        optionType:
-          description: The type of system list used to source the attribute options.
-          type: string
-          example: None
-          default: None
-          enum:
-          - None
-          - Static
-          - Dynamic
-          maxLength: 50
-        options:
-          description: The options for the attribute.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-        referenceCategoryIds:
-          description: The list of category identifiers of the attribute.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 550e8400-e29b-41d4-a716-446655440000
-        formula:
-          description: The mathematical formula containing functions and other numerical attributes that is used to calculate the attribute value.
-          type: string
-          example: Default:Field4 + Default:Field3 + 100
-          maxLength: 4000
-        context:
-          description: The contextual details of the attribute.
-          $ref: '#/components/schemas/AttributeContext'
-        source:
-          description: The source of the attribute.
-          type: string
-          example: system
-          maxLength: 50
-        responseSubType:
-          description: The type of scoring method associated with the attribute value.
-          type: string
-          example: STANDARD
-          enum:
-          - STANDARD
-          - FORMULA
-          - MATRIX
-        associatedAttributeRequest:
-          description: The attributes to add to the schema.
-          $ref: '#/components/schemas/AssociatedAttributeRequest'
-        maxMultiSelectAllowedOptionValues:
-          description: The maximum number of options that can be selected for the attribute.
-          type: integer
-          format: int32
-          example: 10
-          maximum: 100
-          minimum: 1
-        encrypted:
-          description: This flag indicates whether the attribute is encrypted.
-          type: boolean
-          example: false
-          default: 'false'
-        metadata:
-          description: The metadata details of the attribute option.
-          type: string
-          example:
-            sortable: true
-            filterOperators:
-            - EQUAL_TO
-            - NOT_EQUAL_TO
-        intakeQuestion:
-          description: The details of the attribute intake question.
-          $ref: '#/components/schemas/IntakeQuestion'
-        validationRuleId:
-          description: The validation rule configured for the attribute.
-          type: string
-          example: email
-          maxLength: 255
-      required:
-      - fieldName
-      - name
-      - responseType
-    AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: The hint of the attribute option.
-          type: string
-        hintKey:
-          description: The hint key of the attribute option used for translation purposes.
-          type: string
-    AttributeOptionRequest:
-      type: object
-      properties:
-        option:
-          description: The name of the attribute option.
-          type: string
-          example: Example Option
-          maxLength: 255
-          minLength: 1
-        optionKey:
-          description: The name key of the attribute option used for translation purposes.
-          type: string
-          example: example_option
-          maxLength: 255
-        optionSelectionValue:
-          description: The selection value of an option for the attribute.
-          type: string
-          example: value1
-          maxLength: 255
-        colorCode:
-          description: The color code associated with the attribute option.
-          type: string
-          example: '#FFFFFF'
-          enum:
-          - '#000000'
-          - '#FFFFFF'
-          - '#FF0000'
-          - '#00FF00'
-          - '#0000FF'
-          maxLength: 7
-          minLength: 4
-          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
-        metadata:
-          description: The metadata details of the attribute option.
-          example:
-            hint: This option provides additional information about the attribute
-            hintKey: attribute.option.hint.key
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-      example:
-        option: Example Option
-        optionKey: example_option
-        optionSelectionValue: value1
-        colorCode: '#FFFFFF'
-      required:
-      - option
-      title: Attribute Option Request
-    AssociatedAttributeRequest:
-      type: object
-      properties:
-        associatedAttributes:
-          description: The details of the associated attributes.
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttribute'
-      required:
-      - associatedAttributes
-    AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: The type of system list used to source the attribute option.
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: The base path of the API URL used to source the attribute option.
-          type: string
-          example: /api/location
-        optionUrl:
-          description: The API URL path used to source the attribute option.
-          type: string
-          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
-        viewType:
-          description: The display format of the attribute option.
-          type: string
-    AttributeContext:
-      type: object
-      properties:
-        parameters:
-          description: This parameter can be used to store attribute details in key value pairs.
-          additionalProperties:
-            type: object
-          type: object
     AttributeInformation:
       type: object
       properties:
@@ -996,6 +774,252 @@ components:
       - enabled
       - fieldName
       - name
+    AttributeOptionRequest:
+      type: object
+      properties:
+        option:
+          description: The name of the attribute option.
+          type: string
+          example: Example Option
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: The name key of the attribute option used for translation purposes.
+          type: string
+          example: example_option
+          maxLength: 255
+        optionSelectionValue:
+          description: The selection value of an option for the attribute.
+          type: string
+          example: value1
+          maxLength: 255
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: '#FFFFFF'
+          enum:
+          - '#000000'
+          - '#FFFFFF'
+          - '#FF0000'
+          - '#00FF00'
+          - '#0000FF'
+          maxLength: 7
+          minLength: 4
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+        metadata:
+          description: The metadata details of the attribute option.
+          example:
+            hint: This option provides additional information about the attribute
+            hintKey: attribute.option.hint.key
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      example:
+        option: Example Option
+        optionKey: example_option
+        optionSelectionValue: value1
+        colorCode: '#FFFFFF'
+      required:
+      - option
+      title: Attribute Option Request
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+        name:
+          description: The name of the attribute.
+          type: string
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+      required:
+      - name
+      - options
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: The details of the associated attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+      required:
+      - associatedAttributes
+    AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: The type of system list used to source the attribute option.
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: The base path of the API URL used to source the attribute option.
+          type: string
+          example: /api/location
+        optionUrl:
+          description: The API URL path used to source the attribute option.
+          type: string
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: The display format of the attribute option.
+          type: string
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: The name key of the attribute intake question used for translation purposes.
+          type: string
+        name:
+          description: The name of the attribute intake question.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute intake question used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute intake question.
+          type: string
+    AttributeCreateRequest:
+      type: object
+      properties:
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+          example: nameOfRecord
+          maxLength: 100
+        name:
+          description: The name of the attribute.
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name
+          maxLength: 255
+        description:
+          description: The description of the attribute.
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+          example: IM.Name.Description
+          maxLength: 255
+        required:
+          description: This flag indicates whether the attribute is required.
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: This flag indicates whether Other can be selected as an option for the attribute value.
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: The type of response associated with the attribute value.
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        optionType:
+          description: The type of system list used to source the attribute options.
+          type: string
+          example: None
+          default: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+          maxLength: 50
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+        referenceCategoryIds:
+          description: The list of category identifiers of the attribute.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+        formula:
+          description: The mathematical formula containing functions and other numerical attributes that is used to calculate the attribute value.
+          type: string
+          example: Default:Field4 + Default:Field3 + 100
+          maxLength: 4000
+        context:
+          description: The contextual details of the attribute.
+          $ref: '#/components/schemas/AttributeContext'
+        source:
+          description: The source of the attribute.
+          type: string
+          example: system
+          maxLength: 50
+        responseSubType:
+          description: The type of scoring method associated with the attribute value.
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeRequest:
+          description: The attributes to add to the schema.
+          $ref: '#/components/schemas/AssociatedAttributeRequest'
+        maxMultiSelectAllowedOptionValues:
+          description: The maximum number of options that can be selected for the attribute.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        encrypted:
+          description: This flag indicates whether the attribute is encrypted.
+          type: boolean
+          example: false
+          default: 'false'
+        metadata:
+          description: The metadata details of the attribute option.
+          type: string
+          example:
+            sortable: true
+            filterOperators:
+            - EQUAL_TO
+            - NOT_EQUAL_TO
+        intakeQuestion:
+          description: The details of the attribute intake question.
+          $ref: '#/components/schemas/IntakeQuestion'
+        validationRuleId:
+          description: The validation rule configured for the attribute.
+          type: string
+          example: email
+          maxLength: 255
+      required:
+      - fieldName
+      - name
+      - responseType
     AttributeOptionInformation:
       type: object
       properties:
@@ -1037,62 +1061,6 @@ components:
           $ref: '#/components/schemas/AttributeOptionMetadata'
       required:
       - option
-    IntakeQuestion:
-      type: object
-      properties:
-        nameKey:
-          description: The name key of the attribute intake question used for translation purposes.
-          type: string
-        name:
-          description: The name of the attribute intake question.
-          type: string
-        descriptionKey:
-          description: The description key of the attribute intake question used for translation purposes.
-          type: string
-        description:
-          description: The description of the attribute intake question.
-          type: string
-    AssociatedAttribute:
-      type: object
-      properties:
-        fieldName:
-          description: The fieldName parameter value of the attribute.
-          type: string
-        name:
-          description: The name of the attribute.
-          type: string
-        nameKey:
-          description: The name key of the attribute used for translation purposes.
-          type: string
-        description:
-          description: The description of the attribute.
-          type: string
-        descriptionKey:
-          description: The description key of the attribute used for translation purposes.
-          type: string
-        options:
-          description: The options for the attribute.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-      required:
-      - name
-      - options
-    CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the category.
-          type: string
-          format: uuid
-        name:
-          description: The name of the category.
-          type: string
-          example: Financial Category
-        nameKey:
-          description: The name key of the category used for translation purposes.
-          type: string
-          example: IM.FinancialCategoryName
     AssociatedAttributeInformation:
       type: object
       properties:
@@ -1176,6 +1144,38 @@ components:
       - id
       - name
       - responseType
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the category.
+          type: string
+          format: uuid
+        name:
+          description: The name of the category.
+          type: string
+          example: Financial Category
+        nameKey:
+          description: The name key of the category used for translation purposes.
+          type: string
+          example: IM.FinancialCategoryName
+    AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: The hint of the attribute option.
+          type: string
+        hintKey:
+          description: The hint key of the attribute option used for translation purposes.
+          type: string
+    AttributeContext:
+      type: object
+      properties:
+        parameters:
+          description: This parameter can be used to store attribute details in key value pairs.
+          additionalProperties:
+            type: object
+          type: object
   securitySchemes:
     OAUTH2:
       type: oauth2

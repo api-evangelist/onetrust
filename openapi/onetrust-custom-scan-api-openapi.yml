@@ -236,93 +236,6 @@ paths:
                 format: int32
 components:
   schemas:
-    SchemaMetadata:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/BaseMetadata'
-      - type: object
-        properties:
-          Version:
-            type: integer
-            format: int32
-      required:
-      - 'Entity Name '
-      - entityType
-    BaseMetadata:
-      type: object
-      properties:
-        'Entity Name ':
-          type: string
-        entityType:
-          description: Entity Type
-          type: string
-          example: DATABASE
-        Content Type:
-          type: string
-        Children Count:
-          type: integer
-          format: int64
-          example: 2
-        Description:
-          type: string
-      discriminator:
-        propertyName: entityType
-        mapping:
-          DATABASE: '#/components/schemas/DatabaseMetadata'
-          SCHEMA: '#/components/schemas/SchemaMetadata'
-          CATALOG: '#/components/schemas/SchemaMetadata'
-          TABLE: '#/components/schemas/TableMetadata'
-          COLUMN: '#/components/schemas/ColumnMetadata'
-          FOLDER: '#/components/schemas/FileMetadata'
-          FILE: '#/components/schemas/FileMetadata'
-      required:
-      - 'Entity Name '
-      - entityType
-    ColumnMetadata:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/BaseMetadata'
-      - type: object
-        properties:
-          Column Index:
-            type: integer
-            format: int32
-          Nullable:
-            type: boolean
-          Encryption:
-            type: string
-          Estimated Size:
-            type: integer
-            format: int64
-          Calculated Average Size:
-            type: integer
-            format: int32
-          Timestamp when Size was calculated:
-            type: integer
-            format: int64
-          Column Description:
-            type: string
-      required:
-      - 'Entity Name '
-      - entityType
-    DatabaseMetadata:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/BaseMetadata'
-      - type: object
-        properties:
-          Owner:
-            type: string
-          Product Version:
-            type: string
-          Product Name:
-            type: string
-          Product Family:
-            type: string
-            example: oracle
-      required:
-      - 'Entity Name '
-      - entityType
     MetadataRequest:
       type: object
       properties:
@@ -372,103 +285,68 @@ components:
       - datasourceId
       - jobId
       - metadataList
-    FileMetadata:
+    JobStatusRequest:
+      type: object
+      properties:
+        status:
+          description: Status to which the job should be updated.
+          type: string
+          example: IN_PROGRESS
+          enum:
+          - CREATED
+          - IN_PROGRESS
+          - COMPLETED
+          - FAILED
+          - CANCELLED
+          - PAUSED
+        errorMessage:
+          description: Error message that indicates the reason for using a status of FAILED.
+          type: string
+          example: Connection Error
+      required:
+      - status
+    SchemaMetadata:
       type: object
       allOf:
       - $ref: '#/components/schemas/BaseMetadata'
       - type: object
         properties:
-          Size on Disk:
+          Version:
             type: integer
-            format: int64
-          Data Extraction Size:
-            type: integer
-            format: int64
-          Last Modified Date:
-            type: integer
-            format: int64
-          Last Modified by User:
-            type: string
-          Created At Timestamp:
-            type: integer
-            format: int64
-          Created By Timestamp:
-            type: string
-          Last Accessed Timestamp:
-            type: integer
-            format: int64
-          File Owner:
-            type: string
-          Encryption:
-            type: string
-          Shared Access:
-            type: string
-            enum:
-            - SHARED_EXTERNAL
-            - SHARED_INTERNAL
-            - SHARED_PRIVATE
-            - OPEN_ACCESS
-            - SHARED_ACCESS
-          Resource URL:
-            type: string
-          etag:
-            type: string
+            format: int32
       required:
       - 'Entity Name '
       - entityType
-    JobDetails:
+    BaseMetadata:
       type: object
       properties:
-        jobId:
-          description: jobId
+        'Entity Name ':
+          type: string
+        entityType:
+          description: Entity Type
+          type: string
+          example: DATABASE
+        Content Type:
+          type: string
+        Children Count:
           type: integer
           format: int64
-          example: 140
-        datasourceId:
-          description: datasourceId
+          example: 2
+        Description:
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426655440000
-        jobClass:
-          description: jobClass
-          type: string
-          example: CUSTOM
-        jobType:
-          description: jobType
-          type: string
-          example: CATALOG_SCAN
-    ClassificationRequest:
-      type: object
-      properties:
-        jobId:
-          description: The custom connector scan job's identifier. This value can be obtained using the [Get List of Scan Jobs](/onetrust/reference/geteligiblejobsusingget) API.
-          type: integer
-          format: int64
-          example: 10
-          minimum: 1
-        datasourceId:
-          description: The data source's identifier. This value can be obtained using the [Get Data Sources](/onetrust/reference/getallusingget_1) API.
-          type: string
-          example: 123e4567-e89b-12d3-a456-426655440000
-        structured:
-          description: Flag to determine whether the data source is a structured or unstructured source.
-          type: boolean
-          example: true
-        totalCount:
-          description: Total Count of rows or lines sent for a given column/file.
-          type: integer
-          format: int64
-          example: 100
-          minimum: 1
-        content:
-          description: List of content details from the data source.
-          items:
-            $ref: '#/components/schemas/ContentDetails'
-          type: array
+      discriminator:
+        propertyName: entityType
+        mapping:
+          DATABASE: '#/components/schemas/DatabaseMetadata'
+          SCHEMA: '#/components/schemas/SchemaMetadata'
+          CATALOG: '#/components/schemas/SchemaMetadata'
+          TABLE: '#/components/schemas/TableMetadata'
+          COLUMN: '#/components/schemas/ColumnMetadata'
+          FOLDER: '#/components/schemas/FileMetadata'
+          FILE: '#/components/schemas/FileMetadata'
       required:
-      - content
-      - datasourceId
-      - jobId
+      - 'Entity Name '
+      - entityType
     ContentDetails:
       type: object
       properties:
@@ -526,26 +404,6 @@ components:
       - entityType
       - parentEntityType
       - parentXpath
-    JobStatusRequest:
-      type: object
-      properties:
-        status:
-          description: Status to which the job should be updated.
-          type: string
-          example: IN_PROGRESS
-          enum:
-          - CREATED
-          - IN_PROGRESS
-          - COMPLETED
-          - FAILED
-          - CANCELLED
-          - PAUSED
-        errorMessage:
-          description: Error message that indicates the reason for using a status of FAILED.
-          type: string
-          example: Connection Error
-      required:
-      - status
     MetadataRequests:
       type: object
       properties:
@@ -553,6 +411,95 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MetadataRequest'
+    DatabaseMetadata:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseMetadata'
+      - type: object
+        properties:
+          Owner:
+            type: string
+          Product Version:
+            type: string
+          Product Name:
+            type: string
+          Product Family:
+            type: string
+            example: oracle
+      required:
+      - 'Entity Name '
+      - entityType
+    ColumnMetadata:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseMetadata'
+      - type: object
+        properties:
+          Column Index:
+            type: integer
+            format: int32
+          Nullable:
+            type: boolean
+          Encryption:
+            type: string
+          Estimated Size:
+            type: integer
+            format: int64
+          Calculated Average Size:
+            type: integer
+            format: int32
+          Timestamp when Size was calculated:
+            type: integer
+            format: int64
+          Column Description:
+            type: string
+      required:
+      - 'Entity Name '
+      - entityType
+    FileMetadata:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BaseMetadata'
+      - type: object
+        properties:
+          Size on Disk:
+            type: integer
+            format: int64
+          Data Extraction Size:
+            type: integer
+            format: int64
+          Last Modified Date:
+            type: integer
+            format: int64
+          Last Modified by User:
+            type: string
+          Created At Timestamp:
+            type: integer
+            format: int64
+          Created By Timestamp:
+            type: string
+          Last Accessed Timestamp:
+            type: integer
+            format: int64
+          File Owner:
+            type: string
+          Encryption:
+            type: string
+          Shared Access:
+            type: string
+            enum:
+            - SHARED_EXTERNAL
+            - SHARED_INTERNAL
+            - SHARED_PRIVATE
+            - OPEN_ACCESS
+            - SHARED_ACCESS
+          Resource URL:
+            type: string
+          etag:
+            type: string
+      required:
+      - 'Entity Name '
+      - entityType
     TableMetadata:
       type: object
       allOf:
@@ -582,6 +529,59 @@ components:
       required:
       - 'Entity Name '
       - entityType
+    ClassificationRequest:
+      type: object
+      properties:
+        jobId:
+          description: The custom connector scan job's identifier. This value can be obtained using the [Get List of Scan Jobs](/onetrust/reference/geteligiblejobsusingget) API.
+          type: integer
+          format: int64
+          example: 10
+          minimum: 1
+        datasourceId:
+          description: The data source's identifier. This value can be obtained using the [Get Data Sources](/onetrust/reference/getallusingget_1) API.
+          type: string
+          example: 123e4567-e89b-12d3-a456-426655440000
+        structured:
+          description: Flag to determine whether the data source is a structured or unstructured source.
+          type: boolean
+          example: true
+        totalCount:
+          description: Total Count of rows or lines sent for a given column/file.
+          type: integer
+          format: int64
+          example: 100
+          minimum: 1
+        content:
+          description: List of content details from the data source.
+          items:
+            $ref: '#/components/schemas/ContentDetails'
+          type: array
+      required:
+      - content
+      - datasourceId
+      - jobId
+    JobDetails:
+      type: object
+      properties:
+        jobId:
+          description: jobId
+          type: integer
+          format: int64
+          example: 140
+        datasourceId:
+          description: datasourceId
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+        jobClass:
+          description: jobClass
+          type: string
+          example: CUSTOM
+        jobType:
+          description: jobType
+          type: string
+          example: CATALOG_SCAN
 x-onetrust:
   spec-label: OpenAPI 3.0.1
   links:

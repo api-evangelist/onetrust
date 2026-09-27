@@ -490,28 +490,6 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
-    DataUseGovernance-DataDiscovery_Sort:
-      type: object
-      properties:
-        sort:
-          type: array
-          items:
-            type: string
-    DataUseGovernance-DataDiscovery_Pageable:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int32
-          minimum: 0
-        size:
-          type: integer
-          format: int32
-          minimum: 1
-        sort:
-          type: array
-          items:
-            type: string
     DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto:
       type: object
       properties:
@@ -751,85 +729,6 @@ components:
       - scannerId
       - sourceSystemId
       - status
-    DataUseGovernance-DataDiscovery_ScanJobTriggerV3Dto:
-      type: object
-      properties:
-        dataSourceId:
-          description: Unique identifier of the data source to scan. This data source must exist and be active.
-          type: string
-          format: uuid
-          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
-        scanProfileId:
-          description: Optional scan profile ID to use for this scan job. If provided, must match the data source system type. If not provided, the data source's default scan profile will be used.
-          type: string
-          format: uuid
-          example: ad390cb4-9ce9-4976-8895-66d724493c7b
-        classificationProfileId:
-          description: Classification profile ID for the scan job. Used when classification v2 is disabled. Either this or detectorProfileId should be provided for classification scans.
-          type: string
-          format: uuid
-          example: cd490cb4-9ce9-4976-8895-66d724493c5d
-        detectorProfileId:
-          description: Detector profile ID for the scan job. Used when classification v2 is enabled. Either this or classificationProfileId should be provided for classification scans.
-          type: string
-          format: uuid
-          example: cd490cb4-9ce9-4976-8895-66d724493c5d
-      required:
-      - dataSourceId
-    DataUseGovernance-DataDiscovery_PageWrapperMetadataScanJobDto:
-      type: object
-      properties:
-        content:
-          description: The content of this page.
-          example:
-          - id: 1
-            name: Item
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
-          type: array
-        number:
-          description: Current page number.
-          type: integer
-          format: int32
-          example: 0
-        size:
-          description: The size of the page (number of elements per page).
-          type: integer
-          format: int32
-          example: 20
-        numberOfElements:
-          description: The number of elements on the current page.
-          type: integer
-          format: int32
-          example: 15
-        totalElements:
-          description: The total number of elements across all pages.
-          type: integer
-          format: int32
-          example: 150
-        totalPages:
-          description: The total number of pages.
-          type: integer
-          format: int32
-          example: 8
-        first:
-          description: Indicates if this is the first page.
-          type: boolean
-          example: true
-        last:
-          description: Indicates if this is the last page.
-          type: boolean
-          example: false
-        empty:
-          description: Indicates if the page is empty.
-          type: boolean
-          example: false
-        sort:
-          description: Sorting information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
-        pageable:
-          description: Pagination information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
     DataUseGovernance-DataDiscovery_ScanProfileV2Dto:
       type: object
       properties:
@@ -912,6 +811,107 @@ components:
       - scanType
       - systemName
       - systemType
+    DataUseGovernance-DataDiscovery_Sort:
+      type: object
+      properties:
+        sort:
+          type: array
+          items:
+            type: string
+    DataUseGovernance-DataDiscovery_ScanJobTriggerV3Dto:
+      type: object
+      properties:
+        dataSourceId:
+          description: Unique identifier of the data source to scan. This data source must exist and be active.
+          type: string
+          format: uuid
+          example: 4f162d7c-a563-4bf1-a7c4-b7899f6dcdef
+        scanProfileId:
+          description: Optional scan profile ID to use for this scan job. If provided, must match the data source system type. If not provided, the data source's default scan profile will be used.
+          type: string
+          format: uuid
+          example: ad390cb4-9ce9-4976-8895-66d724493c7b
+        classificationProfileId:
+          description: Classification profile ID for the scan job. Used when classification v2 is disabled. Either this or detectorProfileId should be provided for classification scans.
+          type: string
+          format: uuid
+          example: cd490cb4-9ce9-4976-8895-66d724493c5d
+        detectorProfileId:
+          description: Detector profile ID for the scan job. Used when classification v2 is enabled. Either this or classificationProfileId should be provided for classification scans.
+          type: string
+          format: uuid
+          example: cd490cb4-9ce9-4976-8895-66d724493c5d
+      required:
+      - dataSourceId
+    DataUseGovernance-DataDiscovery_PageWrapperMetadataScanJobDto:
+      type: object
+      properties:
+        content:
+          description: The content of this page.
+          example:
+          - id: 1
+            name: Item
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_MetadataScanJobV2Dto'
+          type: array
+        number:
+          description: Current page number.
+          type: integer
+          format: int32
+          example: 0
+        size:
+          description: The size of the page (number of elements per page).
+          type: integer
+          format: int32
+          example: 20
+        numberOfElements:
+          description: The number of elements on the current page.
+          type: integer
+          format: int32
+          example: 15
+        totalElements:
+          description: The total number of elements across all pages.
+          type: integer
+          format: int32
+          example: 150
+        totalPages:
+          description: The total number of pages.
+          type: integer
+          format: int32
+          example: 8
+        first:
+          description: Indicates if this is the first page.
+          type: boolean
+          example: true
+        last:
+          description: Indicates if this is the last page.
+          type: boolean
+          example: false
+        empty:
+          description: Indicates if the page is empty.
+          type: boolean
+          example: false
+        sort:
+          description: Sorting information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
+        pageable:
+          description: Pagination information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
+    DataUseGovernance-DataDiscovery_Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
   securitySchemes:
     DataUseGovernance-DataDiscovery_OAUTH2:
       type: oauth2

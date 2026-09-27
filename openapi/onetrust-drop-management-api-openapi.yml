@@ -148,33 +148,24 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DROPManagement_AttachmentV2Dto:
+    PrivacyAutomation-DROPManagement_DropUpdateRequest:
       type: object
       properties:
-        statusId:
-          type: integer
-          format: int64
-          description: Status ID of the attachment
-          example: 10
-        resourcePath:
+        status:
           type: string
-          description: Resource path of the attachment
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-        fileName:
-          type: string
-          description: Attached file name
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
+          description: 'DROP status to update. Valid values: PENDING, EXEMPTED, DELETED, OPTED_OUT, NOT_FOUND. The status must be different from the current status.'
+          enum:
+          - PENDING
+          - EXEMPTED
+          - DELETED
+          - OPTED_OUT
+          - NOT_FOUND
+          example: DELETED
+        dsarRequestId:
           type: string
           format: uuid
-          description: ID of attached file
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-      required:
-      - fileId
-      - fileName
+          description: DSAR request ID to link with the DROP record. Used to associate the DROP with a DSAR request.
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
     PrivacyAutomation-DROPManagement_RequestQueueV2Dto:
       type: object
       properties:
@@ -374,24 +365,33 @@ components:
       - dropRequestType
       - language
       - templateId
-    PrivacyAutomation-DROPManagement_DropUpdateRequest:
+    PrivacyAutomation-DROPManagement_AttachmentV2Dto:
       type: object
       properties:
-        status:
+        statusId:
+          type: integer
+          format: int64
+          description: Status ID of the attachment
+          example: 10
+        resourcePath:
           type: string
-          description: 'DROP status to update. Valid values: PENDING, EXEMPTED, DELETED, OPTED_OUT, NOT_FOUND. The status must be different from the current status.'
-          enum:
-          - PENDING
-          - EXEMPTED
-          - DELETED
-          - OPTED_OUT
-          - NOT_FOUND
-          example: DELETED
-        dsarRequestId:
+          description: Resource path of the attachment
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+        fileName:
+          type: string
+          description: Attached file name
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
           type: string
           format: uuid
-          description: DSAR request ID to link with the DROP record. Used to associate the DROP with a DSAR request.
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+          description: ID of attached file
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+      required:
+      - fileId
+      - fileName
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

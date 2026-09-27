@@ -951,104 +951,38 @@ paths:
     - url: https://customer.my.onetrust.com/api/cookiemanager
 components:
   schemas:
-    CookieSourceRequestDto:
+    CategorizedCookiesRequestDto:
       type: object
       properties:
-        domainId:
-          description: The unique identifier of the domain.
+        domain:
+          description: The website domain being managed.
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        domainCookieSourceRequestDtoList:
-          description: The list of cookie source configuration requests for the domain.
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        cookieIds:
+          description: The list of cookie identifiers.
           type: array
           items:
-            $ref: '#/components/schemas/DomainCookieSourceRequestDto'
+            type: string
+            format: uuid
           example:
-          - Id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            ResourceUrl: amazon.com
-            resourceType: MANUAL
-            resourceOrigin: MANUAL
-            resourceMatchType: URL
-            trackerType: cookie
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - a1b2c3d4-e5f6-7890-abcd-ef1234567890
           maxItems: 1000
           minItems: 0
-    DomainCookieCategoryRequestDto:
-      type: object
-      properties:
-        domainId:
-          description: The unique identifier of the domain.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        customCategoryName:
-          description: The custom name assigned to the cookie category.
-          type: string
-          example: C0000
-          maxLength: 100
-          minLength: 1
-        thirdParty:
-          description: This flag indicates whether the cookie originates from a third-party source.
-          type: boolean
-          example: true
-        description:
-          description: The description of the cookie and its intended purpose.
-          type: string
-          example: this cookies is used for targeting purposes only
-          maxLength: 1000
-          minLength: 1
-    CookieFilters:
-      type: object
-      properties:
-        status:
-          description: The current state or condition of the item.
+        cookies:
+          description: The list of cookie objects containing detailed information about each cookie.
           type: array
           items:
-            type: string
-            enum:
-            - NEW
-            - REVIEWED
-            - NOT_FOUND
-            - DELETED
-            - REVIEWED_NOT_FOUND
-            - ARCHIVED
-        source:
-          description: The source from which the data or cookie originated.
-          type: array
-          items:
-            type: string
-            enum:
-            - SCAN
-            - MANUAL
-            - EXTERNALSCANNER
-            - MANUALBULK
-            - TELEMETRYSCANNER
-        lifespan:
-          description: The duration for which the cookie remains active before expiring.
-          type: array
-          items:
-            type: string
-            enum:
-            - SESSION
-            - PERSISTENT
-        categories:
-          description: The cookie categories assigned to the item.
-          type: array
-          items:
-            type: string
-            format: uuid
-        domainCategoryOverrides:
-          description: The custom category assignments that override the default settings.
-          type: array
-          items:
-            type: string
-            format: uuid
-        domains:
-          description: The list of website domains.
-          type: array
-          items:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/CookieRequestDto'
+          example:
+          - cookieName: session_id
+            host: example.com
+          - cookieName: user_token
+            host: test.com
+          maxItems: 1000
+          minItems: 0
     CookieResponseDto:
       type: object
       properties:
@@ -1155,284 +1089,76 @@ components:
           description: This flag indicates whether a custom third-party description is being used.
           type: boolean
           example: true
-    CookiepediaContribsDto:
+    PageableObject:
       type: object
       properties:
-        name:
-          description: The name of the item.
-          type: string
-          example: cookie123
-          maxLength: 255
-          minLength: 1
-        type:
-          description: The type or category classification of the item.
-          type: string
-          example: First Party
-          maxLength: 50
-          minLength: 1
-        host:
-          description: The domain or website that created the cookie.
-          type: string
-          example: amazon.com
-          maxLength: 255
-          minLength: 1
-        hostDescription:
-          description: The description of the host domain.
-          type: string
-          example: amazon.com is a website
-          maxLength: 1000
-          minLength: 1
-        description:
-          description: The description of the item and its intended purpose.
-          type: string
-          example: This cookie is used for advertising purposes.
-          maxLength: 1000
-          minLength: 1
-        firstPartyDescription:
-          description: The description of first-party cookies and their usage.
-          type: string
-          example: This cookie is used for advertising purposes.
-          maxLength: 1000
-          minLength: 1
-        thirdPartyDescription:
-          description: The description of third-party cookies and their usage.
-          type: string
-          example: This cookie is used for advertising purposes.
-          maxLength: 1000
-          minLength: 1
-        patternKey:
-          description: The pattern key used for cookie identification and matching.
-          type: string
-          example: C1_
-          maxLength: 255
-          minLength: 1
-        thirdPartyKey:
-          description: The key identifier used for third-party cookie classification.
-          type: string
-          example: Cookie|cookie123
-          maxLength: 500
-          minLength: 1
-        firstPartyKey:
-          description: The key identifier used for first-party cookie classification.
-          type: string
-          example: Cookie|cookie123|amazon.com
-          maxLength: 500
-          minLength: 1
-        category:
-          description: The category assigned to the cookie for classification purposes.
-          type: string
-          example: Functionality
-          maxLength: 255
-          minLength: 1
-        domainCount:
-          description: No of domains where this cookie is active.
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
           type: integer
           format: int32
-          example: 0, 1, 2, ...
-    CookieCreationRequestDto:
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    DomainCookieSourceRequestDto:
       type: object
       properties:
-        cookieName:
-          description: The name of the cookie.
+        resourceType:
+          description: The type of web resource such as script, image, or stylesheet.
           type: string
-          example: cookieName123
-          maxLength: 255
-          minLength: 1
-        lifespan:
-          description: The duration for which the cookie remains active before expiring.
-          type: string
-          example: SESSION
+          example: MANUAL
           enum:
-          - SESSION
-          - PERSISTENT
-        host:
-          description: The domain or website that created the cookie.
-          type: string
-          example: amazon.com
+          - MANUAL
+          - PATTERN
+          - SCRIPT
+          - MAIN_FRAME
           maxLength: 255
           minLength: 1
-        description:
-          description: The description of the cookie and its intended purpose.
+        resourceOrigin:
+          description: resource origin type
           type: string
-          example: This cookie is used for advertising purposes.
-          maxLength: 1000
-          minLength: 1
-        thirdPartyDescription:
-          description: The description of third-party cookies and their usage.
+          example: MANUAL
+          enum:
+          - SCANNER
+          - MANUAL
+          - TELEMETRYSCANNER
+        resourceMatchType:
+          description: resource match type
           type: string
-          example: This cookie is used for advertising purposes.
-          maxLength: 1000
-          minLength: 1
-        length:
-          description: Length of the Cookie lifespan, enter a number greater than 0 if this is a PERSISTENT cookie, otherwise leave as 0
-          type: integer
-          format: int32
-          example: 5
-          default: '0'
-        durationType:
-          description: The type of duration indicating whether the cookie is session-based or persistent.
-          type: integer
-          format: int32
-          example: 1, 7 ,30, 365
-          default: '1'
-        cookieId:
-          description: The unique identifier of the cookie.
+          example: URL
+          enum:
+          - URL
+          - SYSTEM_PATTERN
+          - CUSTOM_PATTERN
+        trackerType:
+          description: The category of tracking technology being used.
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        customCategoryName:
-          description: The custom name assigned to the cookie category.
-          type: string
-          example: C0001
+          example: cookie
           maxLength: 100
           minLength: 1
-        domainCookieCategoryList:
-          description: The list of categories assigned to cookies for the specific domain.
-          type: array
-          items:
-            $ref: '#/components/schemas/DomainCookieCategoryRequestDto'
-          example:
-          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            customCategoryName: C0000
-            thirdParty: true
-            description: this cookies is used for targeting purposes only
-          maxItems: 1000
-          minItems: 0
-      required:
-      - customCategoryName
-      - durationType
-      - lifespan
-    CategorizedCookiesRequestDto:
-      type: object
-      properties:
-        domain:
-          description: The website domain being managed.
+        id:
+          description: The unique identifier of the item.
+          type: string
+          format: uuid
+        ResourceUrl:
+          description: The web address where the resource is located.
           type: string
           example: amazon.com
           maxLength: 255
           minLength: 1
-        cookieIds:
-          description: The list of cookie identifiers.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - f2229953-b4b5-4042-8cb9-b78038cc4c46
-          - a1b2c3d4-e5f6-7890-abcd-ef1234567890
-          maxItems: 1000
-          minItems: 0
-        cookies:
-          description: The list of cookie objects containing detailed information about each cookie.
-          type: array
-          items:
-            $ref: '#/components/schemas/CookieRequestDto'
-          example:
-          - cookieName: session_id
-            host: example.com
-          - cookieName: user_token
-            host: test.com
-          maxItems: 1000
-          minItems: 0
-    EntityActionResponseDto:
-      type: object
-      properties:
-        entityId:
-          description: The unique identifier of the entity.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        entityType:
-          description: The type of entity such as cookie, tag, page, form, service, or storage.
-          type: string
-          example: SCAN
-          enum:
-          - SCAN
-          - DOMAIN
-          - COOKIE
-        action:
-          description: The action that was performed or is to be performed.
-          type: string
-          example: ARCHIVE
-          enum:
-          - ARCHIVE
-          - SCHEDULE
-          - SCHEDULE_CANCEL
-          - EDIT
-          - CREATE
-          - DELETE
-        message:
-          description: The message or notification text.
-          type: string
-          example: Scan queued for archival
-          maxLength: 500
-          minLength: 1
-        content:
-          description: The main content or data payload of the response.
-          type: object
-        success:
-          description: This flag indicates whether the operation completed successfully.
-          type: boolean
-    DescriptionTranslationDto:
-      type: object
-      properties:
-        langCode:
-          description: The language code used for localization purposes.
-          type: string
-          example: EN
-          maxLength: 10
-          minLength: 2
-        defaultDescription:
-          description: The standard description that is used when no translation is provided for a specific language.
-          type: string
-          example: This is an example
-          maxLength: 1000
-          minLength: 1
-        thirdPartyDescription:
-          description: The description of third-party cookies and their usage.
-          type: string
-          example: This is an example
-          maxLength: 1000
-          minLength: 1
-    EntityActionResponseDtoCookieEntityDto:
-      type: object
-      properties:
-        entityId:
-          description: The unique identifier of the entity.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        entityType:
-          description: The type of entity such as cookie, tag, page, form, service, or storage.
-          type: string
-          example: SCAN
-          enum:
-          - SCAN
-          - DOMAIN
-          - COOKIE
-        action:
-          description: The action that was performed or is to be performed.
-          type: string
-          example: ARCHIVE
-          enum:
-          - ARCHIVE
-          - SCHEDULE
-          - SCHEDULE_CANCEL
-          - EDIT
-          - CREATE
-          - DELETE
-        message:
-          description: The message or notification text.
-          type: string
-          example: Scan queued for archival
-          maxLength: 500
-          minLength: 1
-        content:
-          $ref: '#/components/schemas/CookieEntityDto'
-          description: The main content or data payload of the response.
-        success:
-          description: This flag indicates whether the operation completed successfully.
-          type: boolean
     CookieUpdateRequestDto:
       type: object
       properties:
@@ -1547,6 +1273,273 @@ components:
           minItems: 0
       required:
       - cookieId
+    CookieFilters:
+      type: object
+      properties:
+        status:
+          description: The current state or condition of the item.
+          type: array
+          items:
+            type: string
+            enum:
+            - NEW
+            - REVIEWED
+            - NOT_FOUND
+            - DELETED
+            - REVIEWED_NOT_FOUND
+            - ARCHIVED
+        source:
+          description: The source from which the data or cookie originated.
+          type: array
+          items:
+            type: string
+            enum:
+            - SCAN
+            - MANUAL
+            - EXTERNALSCANNER
+            - MANUALBULK
+            - TELEMETRYSCANNER
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: array
+          items:
+            type: string
+            enum:
+            - SESSION
+            - PERSISTENT
+        categories:
+          description: The cookie categories assigned to the item.
+          type: array
+          items:
+            type: string
+            format: uuid
+        domainCategoryOverrides:
+          description: The custom category assignments that override the default settings.
+          type: array
+          items:
+            type: string
+            format: uuid
+        domains:
+          description: The list of website domains.
+          type: array
+          items:
+            type: string
+            format: uuid
+    DomainCookieCategoryRequestDto:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        customCategoryName:
+          description: The custom name assigned to the cookie category.
+          type: string
+          example: C0000
+          maxLength: 100
+          minLength: 1
+        thirdParty:
+          description: This flag indicates whether the cookie originates from a third-party source.
+          type: boolean
+          example: true
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: this cookies is used for targeting purposes only
+          maxLength: 1000
+          minLength: 1
+    EntityActionResponseDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          description: The main content or data payload of the response.
+          type: object
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    CookieRequestDto:
+      type: object
+      properties:
+        name:
+          description: The name of the cookie.
+          type: string
+          example: cookie123
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          minLength: 1
+    CookiepediaContribsDto:
+      type: object
+      properties:
+        name:
+          description: The name of the item.
+          type: string
+          example: cookie123
+          maxLength: 255
+          minLength: 1
+        type:
+          description: The type or category classification of the item.
+          type: string
+          example: First Party
+          maxLength: 50
+          minLength: 1
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        hostDescription:
+          description: The description of the host domain.
+          type: string
+          example: amazon.com is a website
+          maxLength: 1000
+          minLength: 1
+        description:
+          description: The description of the item and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        firstPartyDescription:
+          description: The description of first-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        patternKey:
+          description: The pattern key used for cookie identification and matching.
+          type: string
+          example: C1_
+          maxLength: 255
+          minLength: 1
+        thirdPartyKey:
+          description: The key identifier used for third-party cookie classification.
+          type: string
+          example: Cookie|cookie123
+          maxLength: 500
+          minLength: 1
+        firstPartyKey:
+          description: The key identifier used for first-party cookie classification.
+          type: string
+          example: Cookie|cookie123|amazon.com
+          maxLength: 500
+          minLength: 1
+        category:
+          description: The category assigned to the cookie for classification purposes.
+          type: string
+          example: Functionality
+          maxLength: 255
+          minLength: 1
+        domainCount:
+          description: No of domains where this cookie is active.
+          type: integer
+          format: int32
+          example: 0, 1, 2, ...
+    EntityActionResponseDtoCookieEntityDto:
+      type: object
+      properties:
+        entityId:
+          description: The unique identifier of the entity.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The type of entity such as cookie, tag, page, form, service, or storage.
+          type: string
+          example: SCAN
+          enum:
+          - SCAN
+          - DOMAIN
+          - COOKIE
+        action:
+          description: The action that was performed or is to be performed.
+          type: string
+          example: ARCHIVE
+          enum:
+          - ARCHIVE
+          - SCHEDULE
+          - SCHEDULE_CANCEL
+          - EDIT
+          - CREATE
+          - DELETE
+        message:
+          description: The message or notification text.
+          type: string
+          example: Scan queued for archival
+          maxLength: 500
+          minLength: 1
+        content:
+          $ref: '#/components/schemas/CookieEntityDto'
+          description: The main content or data payload of the response.
+        success:
+          description: This flag indicates whether the operation completed successfully.
+          type: boolean
+    DomainCookieCategoryEntityDto:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        displayGroupId:
+          description: The unique identifier of the display group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        thirdParty:
+          description: This flag indicates whether the cookie originates from a third-party source.
+          type: boolean
+          example: false
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: used for advertising
+        vendorServiceId:
+          description: Vendor service GUID to link this cookie instance
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
     SortObject:
       type: object
       properties:
@@ -1559,52 +1552,6 @@ components:
         unsorted:
           description: This flag indicates whether the results are in unsorted order.
           type: boolean
-    DomainCookieSourceRequestDto:
-      type: object
-      properties:
-        resourceType:
-          description: The type of web resource such as script, image, or stylesheet.
-          type: string
-          example: MANUAL
-          enum:
-          - MANUAL
-          - PATTERN
-          - SCRIPT
-          - MAIN_FRAME
-          maxLength: 255
-          minLength: 1
-        resourceOrigin:
-          description: resource origin type
-          type: string
-          example: MANUAL
-          enum:
-          - SCANNER
-          - MANUAL
-          - TELEMETRYSCANNER
-        resourceMatchType:
-          description: resource match type
-          type: string
-          example: URL
-          enum:
-          - URL
-          - SYSTEM_PATTERN
-          - CUSTOM_PATTERN
-        trackerType:
-          description: The category of tracking technology being used.
-          type: string
-          example: cookie
-          maxLength: 100
-          minLength: 1
-        id:
-          description: The unique identifier of the item.
-          type: string
-          format: uuid
-        ResourceUrl:
-          description: The web address where the resource is located.
-          type: string
-          example: amazon.com
-          maxLength: 255
-          minLength: 1
     PageCookieResponseDto:
       type: object
       properties:
@@ -1647,109 +1594,6 @@ components:
           format: int32
         empty:
           description: This flag indicates whether the result set is empty.
-          type: boolean
-    DomainCookieCategoryEntityDto:
-      type: object
-      properties:
-        domainId:
-          description: The unique identifier of the domain.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        displayGroupId:
-          description: The unique identifier of the display group.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        thirdParty:
-          description: This flag indicates whether the cookie originates from a third-party source.
-          type: boolean
-          example: false
-        description:
-          description: The description of the cookie and its intended purpose.
-          type: string
-          example: used for advertising
-        vendorServiceId:
-          description: Vendor service GUID to link this cookie instance
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-    BulkCookieDeletionRequest:
-      type: object
-      properties:
-        cookieIds:
-          description: The list of cookie identifiers.
-          type: array
-          items:
-            type: string
-            format: uuid
-          maxItems: 100
-          minItems: 0
-        filters:
-          description: The criteria used to filter the results.
-          $ref: '#/components/schemas/CookieFilters'
-        language:
-          description: The language code for localized content.
-          type: string
-          example: en
-          maxLength: 10
-          minLength: 2
-        countryCode:
-          description: The country code for regional settings.
-          type: string
-          example: us
-          maxLength: 10
-          minLength: 2
-        deleteByFilterCriteria:
-          description: This flag indicates whether to delete items based on filter conditions rather than specific identifiers.
-          type: boolean
-          example: false
-          default: 'false'
-        cookieName:
-          description: The name of the cookie.
-          type: string
-          example: cookie123
-          maxLength: 255
-          minLength: 1
-      required:
-      - cookieIds
-      - filters
-    CookieRequestDto:
-      type: object
-      properties:
-        name:
-          description: The name of the cookie.
-          type: string
-          example: cookie123
-          minLength: 1
-        host:
-          description: The domain or website that created the cookie.
-          type: string
-          example: amazon.com
-          minLength: 1
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          description: The starting position for paginated results.
-          type: integer
-          format: int64
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          description: This flag indicates whether pagination is enabled.
-          type: boolean
-        pageSize:
-          description: The number of items displayed per page.
-          type: integer
-          format: int32
-        pageNumber:
-          description: The current page number in the pagination sequence.
-          type: integer
-          format: int32
-        unpaged:
-          description: This flag indicates whether pagination is disabled.
           type: boolean
     CookieEntityDto:
       type: object
@@ -1814,32 +1658,194 @@ components:
           type: integer
           format: int32
           example: 7
-    DomainCookieInfo:
+    CookieSourceRequestDto:
       type: object
       properties:
-        cookieId:
+        domainId:
+          description: The unique identifier of the domain.
           type: string
-          description: Id of a cookie.
-        domainCookieId:
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        domainCookieSourceRequestDtoList:
+          description: The list of cookie source configuration requests for the domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieSourceRequestDto'
+          example:
+          - Id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            ResourceUrl: amazon.com
+            resourceType: MANUAL
+            resourceOrigin: MANUAL
+            resourceMatchType: URL
+            trackerType: cookie
+          maxItems: 1000
+          minItems: 0
+    BulkCookieDeletionRequest:
+      type: object
+      properties:
+        cookieIds:
+          description: The list of cookie identifiers.
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 100
+          minItems: 0
+        filters:
+          description: The criteria used to filter the results.
+          $ref: '#/components/schemas/CookieFilters'
+        language:
+          description: The language code for localized content.
           type: string
-          description: Id of domaincookie.
-        domainName:
+          example: en
+          maxLength: 10
+          minLength: 2
+        countryCode:
+          description: The country code for regional settings.
           type: string
-          description: Name of the domain.
-        displayGroupName:
-          type: string
-          description: Category name of cookie for that domain.
-        cookieCategoryID:
-          type: string
-          description: Category ID of the cookie.
-        thirdParty:
+          example: us
+          maxLength: 10
+          minLength: 2
+        deleteByFilterCriteria:
+          description: This flag indicates whether to delete items based on filter conditions rather than specific identifiers.
           type: boolean
-          description: Indiactes the type of the cookie. If set to true, then third party cookie else first party cookie for that domain.
-        description:
+          example: false
+          default: 'false'
+        cookieName:
+          description: The name of the cookie.
           type: string
-          description: Description of a cookie.
-      title: DomainCookieInfo
-      description: Domain level information for a cookie
+          example: cookie123
+          maxLength: 255
+          minLength: 1
+      required:
+      - cookieIds
+      - filters
+    CookieCreationRequestDto:
+      type: object
+      properties:
+        cookieName:
+          description: The name of the cookie.
+          type: string
+          example: cookieName123
+          maxLength: 255
+          minLength: 1
+        lifespan:
+          description: The duration for which the cookie remains active before expiring.
+          type: string
+          example: SESSION
+          enum:
+          - SESSION
+          - PERSISTENT
+        host:
+          description: The domain or website that created the cookie.
+          type: string
+          example: amazon.com
+          maxLength: 255
+          minLength: 1
+        description:
+          description: The description of the cookie and its intended purpose.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This cookie is used for advertising purposes.
+          maxLength: 1000
+          minLength: 1
+        length:
+          description: Length of the Cookie lifespan, enter a number greater than 0 if this is a PERSISTENT cookie, otherwise leave as 0
+          type: integer
+          format: int32
+          example: 5
+          default: '0'
+        durationType:
+          description: The type of duration indicating whether the cookie is session-based or persistent.
+          type: integer
+          format: int32
+          example: 1, 7 ,30, 365
+          default: '1'
+        cookieId:
+          description: The unique identifier of the cookie.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        customCategoryName:
+          description: The custom name assigned to the cookie category.
+          type: string
+          example: C0001
+          maxLength: 100
+          minLength: 1
+        domainCookieCategoryList:
+          description: The list of categories assigned to cookies for the specific domain.
+          type: array
+          items:
+            $ref: '#/components/schemas/DomainCookieCategoryRequestDto'
+          example:
+          - domainId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            customCategoryName: C0000
+            thirdParty: true
+            description: this cookies is used for targeting purposes only
+          maxItems: 1000
+          minItems: 0
+      required:
+      - customCategoryName
+      - durationType
+      - lifespan
+    DescriptionTranslationDto:
+      type: object
+      properties:
+        langCode:
+          description: The language code used for localization purposes.
+          type: string
+          example: EN
+          maxLength: 10
+          minLength: 2
+        defaultDescription:
+          description: The standard description that is used when no translation is provided for a specific language.
+          type: string
+          example: This is an example
+          maxLength: 1000
+          minLength: 1
+        thirdPartyDescription:
+          description: The description of third-party cookies and their usage.
+          type: string
+          example: This is an example
+          maxLength: 1000
+          minLength: 1
+    PaginatedCookieResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of cookies with domain level information
+          items:
+            $ref: '#/components/schemas/CookieDetailsDto'
+        numberOfElements:
+          type: integer
+          format: int32
+          description: Total number of elements in the result list.
+        pageNumber:
+          type: integer
+          format: int32
+          description: Page number of the results list (0….N).
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of records per page (0…N).
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of cookie results found.
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages in the result.
+      title: PaginatedCookieResponseDTO
+      description: Paginated List of cookies with domain level info
     CookieDetailsDto:
       type: object
       properties:
@@ -1876,38 +1882,6 @@ components:
             $ref: '#/components/schemas/DomainCookieInfo'
       title: CookieDetailsDto
       description: Cookie details with domain level info
-    PaginatedCookieResponseDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: List of cookies with domain level information
-          items:
-            $ref: '#/components/schemas/CookieDetailsDto'
-        numberOfElements:
-          type: integer
-          format: int32
-          description: Total number of elements in the result list.
-        pageNumber:
-          type: integer
-          format: int32
-          description: Page number of the results list (0….N).
-        pageSize:
-          type: integer
-          format: int32
-          description: Number of records per page (0…N).
-        sort:
-          $ref: '#/components/schemas/Sort'
-        totalElements:
-          type: integer
-          format: int64
-          description: Total number of cookie results found.
-        totalPages:
-          type: integer
-          format: int32
-          description: Total number of pages in the result.
-      title: PaginatedCookieResponseDTO
-      description: Paginated List of cookies with domain level info
     Sort:
       type: object
       properties:
@@ -1921,6 +1895,32 @@ components:
           type: boolean
           description: Flag to indicate if the results are unsorted or not. If set to TRUE, the results are unsorted.
       title: Sort
+    DomainCookieInfo:
+      type: object
+      properties:
+        cookieId:
+          type: string
+          description: Id of a cookie.
+        domainCookieId:
+          type: string
+          description: Id of domaincookie.
+        domainName:
+          type: string
+          description: Name of the domain.
+        displayGroupName:
+          type: string
+          description: Category name of cookie for that domain.
+        cookieCategoryID:
+          type: string
+          description: Category ID of the cookie.
+        thirdParty:
+          type: boolean
+          description: Indiactes the type of the cookie. If set to true, then third party cookie else first party cookie for that domain.
+        description:
+          type: string
+          description: Description of a cookie.
+      title: DomainCookieInfo
+      description: Domain level information for a cookie
   securitySchemes:
     OAUTH2:
       type: oauth2

@@ -1007,24 +1007,531 @@ paths:
         - ASSESSMENT
 components:
   schemas:
-    PrivacyAutomation-AssessmentAutomation_PersonalDataAttributeQuestionResponseDetails:
+    PrivacyAutomation-AssessmentAutomation_SubQuestionInformationUiDto:
       type: object
       properties:
-        dataSubjectId:
+        justification:
+          type: string
+        responses:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseInformationUiDto'
+        displayLabel:
+          type: string
+        relationshipDisplayInformation:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_CompositeDisplayLabel'
+        isLocalVersion:
+          type: boolean
+        parentAssessmentDetailId:
           type: string
           format: uuid
-        dataSubjectName:
+        parentResponseId:
           type: string
-        dataSubjectKey:
+          format: uuid
+        parentQuestionType:
           type: string
-        totalDataElements:
+          enum:
+          - TEXTBOX
+          - MULTICHOICE
+          - YESNO
+          - DATE
+          - STATEMENT
+          - INVENTORY
+          - INCIDENT
+          - ATTRIBUTE
+          - PERSONAL_DATA
+          - YES_NO_PARTIALLY
+          - CONTROL
+          - CONTRACT
+          - ENGAGEMENT
+          - ASSESS_CONTROL
+          - ASSESS_RISK
+          - ASSESS_ISSUE
+          - CUSTOM_ENTITY
+          - RELATIONSHIP
+          - DISCLOSURE
+        invalidResponseIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        errorCode:
+          type: string
+          enum:
+          - ATTRIBUTE_DISABLED
+          - ATTRIBUTE_OPTION_DISABLED
+          - INVALID_RESPONSE_VALUE
+          - INVENTORY_NOT_EXISTS
+          - RELATED_INVENTORY_ATTRIBUTE_DISABLED
+          - DATA_ELEMENT_NOT_EXISTS
+          - DATA_SUBJECT_NOT_EXISTS
+          - DUPLICATE_INVENTORY
+          - INVENTORY_ASSOCIATION_TYPE_INVALID
+          - INVENTORY_ASSOCIATION_TYPE_NOT_APPLICABLE
+          - MULTIPLE_SERVICE_PROVIDER_VENDOR_ASSET_RELATION
+          - EMAIL_INVALID
+          - RELATIONSHIP_ATTRIBUTE_OPTION_DISABLED
+          - CONTRACT_NOT_FOUND
+          - VENDOR_CHILD_ATTRIBUTE_INVALID_VALUE_FORMAT
+          - VENDOR_CHILD_ATTRIBUTE_VALUE_LONG
+          - CONTRACT_INVALID_NAME
+          - ENGAGEMENT_NOT_FOUND
+          - DUPLICATE_ENGAGEMENT
+          - INVALID_ENTITY
+          - NOT_FOUND_LINK_TYPE
+          - LINK_TYPE_DOES_NOT_BELONG_TO_ENTITY_TYPE
+          - LINK_RECORD_CANNOT_BE_CREATED_BETWEEN_SAME_ENTITY
+          - LINK_TYPE_DISABLED
+          - INVALID_CONTROL
+          - GENERIC_EXCEPTION
+          - UNKNOWN_MODULE_CLIENT_ERROR
+        errorTranslationKey:
+          type: string
+        relationshipAttributeResponseSummary:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_PersonalDataAttributeQuestionResponseDetails'
+        lockReason:
+          type: string
+          enum:
+          - LAUNCH_FROM_INVENTORY
+          - LAUNCH_FROM_INCIDENT
+          - LAUNCH_FROM_INCIDENT_TEMPLATE_QUESTION
+          - READ_ONLY_ATTRIBUTE
+          - LAUNCH_FROM_CONTROL_IMPLEMENTATION
+          - RESPONSE_DRIVEN_INVENTORY
+          - RESPONSE_DRIVEN_CONTROL_IMPLEMENTATION
+          - PRIMARY_LOCK
+          - PRIMARY_PARENT_LOCK
+          - RESPONSE_DRIVEN_PRIMARY_LOCK
+          - FORCE_CREATION_LOCK
+        totalInvalidResponseCount:
           type: integer
           format: int64
-        answeredDataElements:
+        totalAttachments:
+          type: integer
+          format: int32
+    PrivacyAutomation-AssessmentAutomation_ApproverOnlySectionRespondentRequest:
+      type: object
+      properties:
+        respondentId:
+          description: Id of the respondent for approver only sections
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        respondentName:
+          description: Name of the respondent for approver only sections
+          type: string
+          example: John Doe
+    PrivacyAutomation-AssessmentAutomation_BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity (organization group, user, etc.)
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          description: Display name of the entity (organization name or user's full name)
+          type: string
+          example: Entity Name
+        nameKey:
+          description: Translation key for the name, used for internationalization
+          type: string
+          example: EntityName
+    PrivacyAutomation-AssessmentAutomation_riskStatistics:
+      type: object
+      properties:
+        sectionId:
+          type: string
+          format: uuid
+        riskCount:
+          type: integer
+          format: int64
+        maxRiskLevel:
+          type: integer
+          format: int64
+    PrivacyAutomation-AssessmentAutomation_AssessmentInventoryRequest:
+      type: object
+      properties:
+        inventoryId:
+          description: Inventory ID for which the assessment is created
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        inventoryTypeId:
+          description: Type of the inventory for which the assessment is created
+          type: integer
+          format: int64
+          example: 1
+        inventoryTypeName:
+          description: type name of the inventory for which the assessment is created.
+          type: string
+          example: Data Processing Activity
+        inventoryNumber:
+          description: External number of the inventory for which the assessment is created
+          type: integer
+          format: int64
+          example: 12345
+        inventoryName:
+          description: Name of the inventory for which the assessment is created
+          type: string
+          example: Customer Data Processing for Marketing
+        valid:
+          type: boolean
+      example:
+        inventoryId: 550e8400-e29b-41d4-a716-446655440000
+        inventoryTypeId: 1
+        inventoryTypeName: Data Processing Activity
+        inventoryNumber: 12345
+        inventoryName: Customer Data Processing for Marketing
+      required:
+      - inventoryId
+      - inventoryName
+      - inventoryNumber
+      - inventoryTypeId
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformationUiDto:
+      type: object
+      properties:
+        set of all question ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        map containing the question id and the details:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionInformationUiDto'
+    PrivacyAutomation-AssessmentAutomation_TagEntityDetail:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the tag
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        option:
+          description: Display text for the tag that appears in the UI
+          type: string
+          example: High Priority
+    PrivacyAutomation-AssessmentAutomation_CategoryUiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameKey:
+          type: string
+        dataElements:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataElementResponse'
+    PrivacyAutomation-AssessmentAutomation_DataElementResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameKey:
+          type: string
+        type:
+          type: string
+          enum:
+          - NOT_SURE
+          - JUSTIFICATION
+          - NOT_APPLICABLE
+          - DEFAULT
+          - MATURITY_SCALE
+          - EFFECTIVENESS_SCALE
+          - OTHERS
+        personalDataDetailId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto:
+      type: object
+      properties:
+        relationshipNodeType:
+          description: Type of the relationship node
+          type: string
+          example: ASSESSMENT
+          minLength: 1
+        entityId:
+          description: Unique identifier of the related entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        entityDisplayName:
+          description: Display name of the related entity
+          type: string
+          example: Customer Data Assessment
+          minLength: 1
+        entityType:
+          description: Type information of the related entity
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_EntityTypeInformation'
+      example:
+        relationshipNodeType: ASSESSMENT
+        entityId: 123e4567-e89b-12d3-a456-426614174000
+        entityDisplayName: Customer Data Assessment
+        entityType:
+          id: 1
+          name: Privacy Impact Assessment
+          description: Assessment type for privacy impact evaluation
+      required:
+      - entityId
+      - entityType
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionLabelDto:
+      type: object
+      properties:
+        name:
+          description: Display name of the label
+          type: string
+          example: Personal Data Processing
+        nameKey:
+          description: Internationalization key for the label name
+          type: string
+          example: label.personal.data.processing
+        referenceEntity:
+          description: Type of the reference entity this label is associated with
+          type: string
+          example: DATA_CATEGORY
+          enum:
+          - DATA_CATEGORY
+          - PROCESSING_PURPOSE
+          - LEGAL_BASIS
+          - DATA_SUBJECT
+          - RETENTION_PERIOD
+          - TRANSFER_METHOD
+          - SECURITY_MEASURE
+        valueRefId:
+          description: Unique identifier of the referenced entity value. Null for custom labels.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        valueKey:
+          description: Internationalization key for the referenced entity value
+          type: string
+          example: data.category.personal.information
+      example:
+        name: Personal Data Processing
+        nameKey: label.personal.data.processing
+        referenceEntity: DATA_CATEGORY
+        valueRefId: 123e4567-e89b-12d3-a456-426614174000
+        valueKey: data.category.personal.information
+      required:
+      - name
+    PrivacyAutomation-AssessmentAutomation_RiskInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        number:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum:
+          - ASSESSMENTS
+          - ASSETS
+          - PROCESSING_ACTIVITIES
+          - VENDORS
+          - ENTITIES
+          - INCIDENTS
+          - ESG
+          - GENERIC
+          - GENERAL
+          - ENGAGEMENTS
+        riskType:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskEntityTypeInformation'
+        creationType:
+          type: string
+        state:
+          type: string
+          enum:
+          - IDENTIFIED
+          - RECOMMENDATION_ADDED
+          - RECOMMENDATION_SENT
+          - REMEDIATION_PROPOSED
+          - EXCEPTION_REQUESTED
+          - REDUCED
+          - RETAINED
+          - ARCHIVED_IN_VERSION
+        previousState:
+          type: string
+          enum:
+          - IDENTIFIED
+          - RECOMMENDATION_ADDED
+          - RECOMMENDATION_SENT
+          - REMEDIATION_PROPOSED
+          - EXCEPTION_REQUESTED
+          - REDUCED
+          - RETAINED
+          - ARCHIVED_IN_VERSION
+        typeRefIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        sourceType:
+          type: string
+          enum:
+          - PIA
+          - DM
+          - RA
+          - GRA
+          - DINA
+          - INVENTORY
+          - ENGAGEMENT
+        source:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskSourceInformation'
+        name:
+          type: string
+        description:
+          type: string
+        recommendation:
+          type: string
+        remediationProposal:
+          type: string
+        orgGroup:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        requestedException:
+          type: string
+        mitigation:
+          type: string
+        mitigatedDate:
+          type: string
+          format: date-time
+        justification:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskReferenceInformation'
+        createdUTCDateTime:
+          type: string
+          format: date-time
+        levelId:
+          type: integer
+          format: int64
+        level:
+          type: string
+        levelDisplayName:
+          type: string
+        probabilityLevelId:
+          type: integer
+          format: int64
+        probabilityLevel:
+          type: string
+        impactLevelId:
+          type: integer
+          format: int64
+        impactLevel:
+          type: string
+        riskScore:
+          type: number
+        viewOnly:
+          type: boolean
+        controlsIdentifier:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskCategoryInformation'
+        riskOwnerId:
+          type: string
+          format: uuid
+          deprecated: true
+        riskOwner:
+          type: string
+          deprecated: true
+        riskOwnersId:
+          type: array
+          items:
+            type: string
+            format: uuid
+        riskOwnersName:
+          type: string
+        riskApproversId:
+          type: array
+          items:
+            type: string
+            format: uuid
+        riskApprovers:
+          type: string
+        inherentRiskLevel:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
+        targetRiskLevel:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
+        treatmentPlan:
+          type: string
+        treatment:
+          type: string
+        result:
+          type: string
+        treatmentStatus:
+          type: string
+        workflow:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        stage:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        actionId:
+          type: integer
+          format: int64
+        threatInformation:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskThreatInformation'
+        vulnerabilitiesInformation:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskVulnerabilityInformation'
+        reminderDays:
           type: integer
           format: int64
         valid:
           type: boolean
+        attributeValues:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AttributeValueInformation'
+        closed:
+          type: boolean
+        riskDomain:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+    PrivacyAutomation-AssessmentAutomation_AssessmentEngagementLinkRequest:
+      type: object
+      properties:
+        engagementId:
+          description: Engagement identifier for which the assessment is created
+          type: string
+          format: uuid
+          example: 987e6543-e21b-12d3-a456-426614174000
+        engagementName:
+          description: Name of the engagement linked to the assessment
+          type: string
+          example: Q4 2024 Vendor Risk Assessment Engagement
+        number:
+          description: Sequential number assigned to the engagement
+          type: integer
+          format: int64
+          example: 2024001
+      example:
+        engagementId: 987e6543-e21b-12d3-a456-426614174000
+        engagementName: Q4 2024 Vendor Risk Assessment Engagement
+        number: 2024001
+      required:
+      - engagementId
+      - engagementName
     PrivacyAutomation-AssessmentAutomation_SendBackAssessmentRequest:
       type: object
       properties:
@@ -1055,186 +1562,138 @@ components:
             description: When an assessment is sent back, these sections will be reopened.
             example: 550e8400-e29b-41d4-a716-446655440000
           uniqueItems: true
-    PrivacyAutomation-AssessmentAutomation_ReassessAssessmentRequest:
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskDetailInformation:
       type: object
       properties:
-        assessmentMetadata:
-          description: Use this field to provide details such as Assessment name, Description, Organization, Approvers and Respondents, when copyAssessmentMetadata value is false.
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_assessmentMetadata'
-        deadline:
-          description: Deadline (date) to complete the assessment
-          type: string
-          format: date-time
-          example: '2025-12-31T23:59:59Z'
-        reminder:
-          description: 'Use this field to input the number of days before the deadline to send a automatic notification to the respondent. Deadline must be set for this field to be enabled.Note: Either ''reminder'' or ''reminderSchedules'' should be provided. If both are present, ''reminder'' takes precedence and will be converted to a reminderSchedule for RESPONDENT notification.
-
-            '
-          type: integer
-          format: int64
-          example: 7
-          deprecated: true
-        Reminder Schedules:
-          description: 'list of reminder schedules to trigger the reminder notifications to the configured users e.g respondents or approvers. Note: Either ''reminder'' or ''reminderSchedules'' should be provided. If both are present, ''reminder'' takes precedence and will override this field.
-
-            '
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto'
-          uniqueItems: true
-        copyAttachments:
-          description: This field will copy over the attachments linked to the source assessment.
-          type: boolean
-          example: true
-          default: 'false'
-        copyResponses:
-          description: This field will copy over the question responses from the source assessment.
-          type: boolean
-          example: true
-          default: 'false'
-        copyNotes:
-          description: This field will copy over the user notes from the source assessment.
-          type: boolean
-          example: true
-          default: 'false'
-        copyComments:
-          description: This field will copy over the comments from the source assessment.
-          type: boolean
-          example: true
-          default: 'false'
-        linkRisks:
-          description: Any risk rules created based on the template risk rules for the original assessment will be linked to the newly created assessment upon submission.
-          type: boolean
-          example: true
-          default: 'false'
-        copyAssessmentMetadata:
-          description: This field will copy assessment name, description, organisation, approver, respondent details from source assessment to new assessment.
-          type: boolean
-          example: true
-          default: 'false'
-        archiveSourceAssessment:
-          description: Use this field to provide a "true" or a "false" value to archive the original assessment. When reassessing, setting it to "true" will archive the original assessment and setting it to "false" will not archive the original assessment
-          type: boolean
-          example: false
-          default: 'false'
-    PrivacyAutomation-AssessmentAutomation_TemplateHeaderInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        templateType:
-          type: string
-          enum:
-          - PIA
-          - VENDOR
-          - RA
-          - GRA
-          - DINA
-          - BENCHMARKING
-          - ITRM
-          - CONTROL
-          - INCIDENT
-          - EXCHANGE
-          - ESG
-          - DISCLOSURE
-          - DISCLOSURE_YOY
-          - ERM
-          - TPDD
-          - AIGOVERNANCE
-          - DYNAMIC
-        templateVersion:
-          type: integer
-          format: int32
-        hasApproverSection:
-          type: boolean
-        nameKey:
-          type: string
-        translatedLanguageCodes:
+        questionIds:
           type: array
           items:
             type: string
-        templateLanguageCode:
+            format: uuid
+        riskId:
           type: string
-    PrivacyAutomation-AssessmentAutomation_ReassignAssessmentRequest:
+          format: uuid
+        level:
+          type: integer
+          format: int64
+        riskResponse:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskInformation'
+        questionId:
+          type: string
+          format: uuid
+          deprecated: true
+    PrivacyAutomation-AssessmentAutomation_AssessmentSubmissionInformation:
       type: object
       properties:
-        orgGroupId:
-          description: The ID of the organization that the assessment should be reassigned to
+        assessmentId:
+          description: Unique identifier of the assessment for which responses are being submitted
           type: string
           format: uuid
           example: 550e8400-e29b-41d4-a716-446655440000
-        approvers:
-          description: The user(s) that will override the current approvers if any are added
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-            minItems: 0
-          example:
-          - approverId: 550e8400-e29b-41d4-a716-446655440001
-            approverName: John Doe
-            comment: Primary approver
-          minItems: 0
-          properties:
-            list:
-              type: array
-              items:
-                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-            empty:
-              type: boolean
-            first:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-            last:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-        respondents:
-          description: The user(s) that will override the current respondents if any are added
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-            minItems: 0
-          example:
-          - respondentId: 550e8400-e29b-41d4-a716-446655440002
-            respondentName: Jane Smith
-            comment: Main respondent
-            sectionIds:
-            - 550e8400-e29b-41d4-a716-446655440003
-            isRespondentOfApproverSection: false
-          minItems: 0
-          properties:
-            list:
-              type: array
-              items:
-                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-            empty:
-              type: boolean
-            first:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-            last:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-        respondentCreationType:
-          description: If adding new users that don't already exist, this is the type of user they will be created as
-          type: string
-          example: INVITED
-          default: INVITED
-          enum:
-          - INVITED
-          - PROJECT_RESPONDENT
-    PrivacyAutomation-AssessmentAutomation_DataSubjectUiDto:
-      type: object
-      properties:
-        id:
+        sectionId:
+          description: Unique identifier of the section containing the question being answered
           type: string
           format: uuid
-        name:
+          example: 550e8400-e29b-41d4-a716-446655440001
+        questionId:
+          description: Unique identifier of the question being answered
           type: string
-        nameKey:
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        parentAssessmentDetailId:
+          description: Unique identifier of the parent assessment detail for attribute questions. Required for attribute questions only.
           type: string
-        categories:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_CategoryUiDto'
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        parentPersonalDataDetailId:
+          description: Unique identifier of the parent personal data detail for personal data relationship attribute questions. Required for personal data relationship attribute questions only.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440004
+        responses:
+          description: List of response information objects containing the actual responses to the question
+          example:
+          - type: SINGLE_SELECT
+            response: 'Yes'
+            responseId: 550e8400-e29b-41d4-a716-446655440003
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformation'
+          type: array
+        responseProvidedForOthers:
+          type: boolean
+      required:
+      - assessmentId
+      - questionId
+      - responses
+      - sectionId
+    PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails:
+      type: object
+      properties:
+        entity Number:
+          type: integer
+          format: int64
+        source Id:
+          type: string
+          format: uuid
+        source Name:
+          type: string
+        source type:
+          type: string
+          enum:
+          - Risks, Assets, ProcessingActivities, Vendors, Entities
+        Business key:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_QuestionAssociationInformation:
+      type: object
+      properties:
+        associationType:
+          type: string
+          enum:
+          - SOURCE
+          - TARGET
+          - ADDITIONAL_LINK_1
+          - ADDITIONAL_LINK_2
+          - RESTRICT_RESPONSE_OPTIONS
+        associatedQuestionIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    PrivacyAutomation-AssessmentAutomation_ClosureRequest:
+      type: object
+      properties:
+        forceOverride:
+          description: Flag to force override any validation errors during closure
+          type: boolean
+          example: false
+          default: 'false'
+        excludeRules:
+          description: Flag to exclude rule execution during closure
+          type: boolean
+          example: false
+          default: 'false'
+        closureComment:
+          description: Comment to include with the assessment closure
+          type: string
+          example: Approved after thorough review. All requirements have been met.
+        resultId:
+          description: Identifier of the result option to apply to the assessment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attestationRequired:
+          description: Flag indicating whether attestation is required for closure
+          type: boolean
+          example: false
+          default: 'false'
+    PrivacyAutomation-AssessmentAutomation_RiskThreatInformation:
+      type: object
+      properties:
+        Threat Id:
+          type: string
+          format: uuid
+        Threat Name:
+          type: string
     PrivacyAutomation-AssessmentAutomation_AssessmentCreateRequest:
       type: object
       properties:
@@ -1514,153 +1973,695 @@ components:
       required:
       - name
       - respondents
-    PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto:
+    PrivacyAutomation-AssessmentAutomation_ReassignAssessmentRequest:
+      type: object
+      properties:
+        orgGroupId:
+          description: The ID of the organization that the assessment should be reassigned to
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        approvers:
+          description: The user(s) that will override the current approvers if any are added
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+            minItems: 0
+          example:
+          - approverId: 550e8400-e29b-41d4-a716-446655440001
+            approverName: John Doe
+            comment: Primary approver
+          minItems: 0
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+            empty:
+              type: boolean
+            first:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+            last:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+        respondents:
+          description: The user(s) that will override the current respondents if any are added
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+            minItems: 0
+          example:
+          - respondentId: 550e8400-e29b-41d4-a716-446655440002
+            respondentName: Jane Smith
+            comment: Main respondent
+            sectionIds:
+            - 550e8400-e29b-41d4-a716-446655440003
+            isRespondentOfApproverSection: false
+          minItems: 0
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+            empty:
+              type: boolean
+            first:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+            last:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+        respondentCreationType:
+          description: If adding new users that don't already exist, this is the type of user they will be created as
+          type: string
+          example: INVITED
+          default: INVITED
+          enum:
+          - INVITED
+          - PROJECT_RESPONDENT
+    PrivacyAutomation-AssessmentAutomation_TemplateHeaderInformation:
       type: object
       properties:
         id:
-          description: Unique identifier for the reminder schedule.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        assessmentId:
-          description: Identifier of the assessment this reminder schedule applies to.
-          type: string
-          format: uuid
-          example: 8f14e45f-ea9e-4d1b-9b5f-42d5f6a8b9c1
-        sectionId:
-          description: Identifier of a specific assessment section this reminder schedule targets (optional).
-          type: string
-          format: uuid
-          example: 9a1b2c3d-4e5f-6789-abcd-ef0123456789
-        reminderInterval:
-          description: Interval in days between consecutive reminders.
-          type: integer
-          format: int32
-          example: 7
-        reminderReceiverEntityType:
-          description: Recipient type who will receive the reminder notifications.
-          type: string
-          example: RESPONDENT
-          enum:
-          - APPROVER
-          - RESPONDENT
-          - ALL
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        assessmentId: 8f14e45f-ea9e-4d1b-9b5f-42d5f6a8b9c1
-        sectionId: 9a1b2c3d-4e5f-6789-abcd-ef0123456789
-        reminderInterval: 7
-        reminderReceiverEntityType: RESPONDENT
-      required:
-      - reminderReceiverEntityType
-    PrivacyAutomation-AssessmentAutomation_AssessmentSectionHeaderInformation:
-      type: object
-      properties:
-        sectionId:
-          description: Unique identifier for the section
           type: string
           format: uuid
         name:
-          description: Name of the section
           type: string
-        description:
-          description: Description of the section
+        templateType:
           type: string
-        sequence:
-          description: Sequence number indicating the order of the section in the assessment
+          enum:
+          - PIA
+          - VENDOR
+          - RA
+          - GRA
+          - DINA
+          - BENCHMARKING
+          - ITRM
+          - CONTROL
+          - INCIDENT
+          - EXCHANGE
+          - ESG
+          - DISCLOSURE
+          - DISCLOSURE_YOY
+          - ERM
+          - TPDD
+          - AIGOVERNANCE
+          - DYNAMIC
+        templateVersion:
           type: integer
           format: int32
-        hidden:
-          description: Indicates if the section is hidden based on navigation rules
+        hasApproverSection:
           type: boolean
-          default: 'false'
-        invalidQuestionIds:
+        nameKey:
+          type: string
+        translatedLanguageCodes:
           type: array
           items:
-            format: uuid
-        requiredUnansweredQuestionIds:
+            type: string
+        templateLanguageCode:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_WelcomeSection:
+      type: object
+      properties:
+        Is getting started banner enabled?:
+          type: boolean
+        Welcome Title:
+          type: string
+        Welcome Text:
+          type: string
+        welcomeTitleKey:
+          type: string
+        welcomeTextKey:
+          type: string
+        Is Welcome section hidden?:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_AssessmentInformationUiDto:
+      type: object
+      properties:
+        assessment id:
+          type: string
+          format: uuid
+        assessment number:
+          type: integer
+          format: int64
+        assessment name:
+          type: string
+        assessment description:
+          type: string
+        assessment org group:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        assessment template:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TemplateHeaderInformation'
+        template id to which assessment was originally assigned to:
+          type: string
+          format: uuid
+        assessment stage:
+          type: string
+          enum:
+          - NOT_STARTED
+          - IN_PROGRESS
+          - UNDER_REVIEW
+          - COMPLETED
+        assessment result:
+          type: string
+        created by user id:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        created date time:
+          type: string
+          format: date-time
+        list of sections:
           type: array
           items:
-            format: uuid
-        requiredQuestionIds:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionHeaderInformation'
+        current section information:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformationUiDto'
+        approvers:
           type: array
           items:
-            format: uuid
-        unansweredQuestionIds:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ApproverInformation'
+        List of respondents for this assessment:
           type: array
           items:
-            format: uuid
-        effectivenessQuestionIds:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        deadline to complete the assessment, format - YYYY-MM-DDTHH:MM:SS.FFFZ:
+          type: string
+          format: date-time
+        reminder to be sent the number of days before the deadline denoted by this value:
+          type: integer
+          format: int64
+        reminder to be sent the number of days before the deadline denoted by these values:
           type: array
           items:
-            format: uuid
-            description: Set of question identifiers that are related to effectiveness assessment
-            example: 550e8400-e29b-41d4-a716-446655440000
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto'
+        indicates if the assessment or sections can be submitted:
+          type: boolean
+        indicates if the assessment can be approved:
+          type: boolean
+        assessment display state. Used only by our own use interface:
+          type: string
+          enum:
+          - REFRESH_NONE, REFRESH_ALL, REFRESH_PARTIAL
+        assessment question information:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformationUiDto'
+        set of inventory links:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_InventoryLink'
           uniqueItems: true
-        autoAnsweredQuestionIds:
+        indicates if it has request information:
+          type: boolean
+        map containing invalid questions and the associated risks:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+        List of laws associated with the assessment:
+          type: array
+          items:
+            type: string
+        Complexity level of Assessment' response:
+          type: string
+          enum:
+          - BASIC
+          - ADVANCED
+          - EXPERT
+        List of tags associated with the assessment:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TagEntityDetail'
+        reviewChangedResponses:
+          type: boolean
+        assessment id from where this assessment is copied:
+          type: string
+          format: uuid
+        editAllResponsesWhenInProgress:
+          type: boolean
+        primaryInventoryName:
+          type: string
+        primaryInventoryNumber:
+          type: integer
+          format: int64
+        userAssignmentMode:
+          type: string
+          enum:
+          - ASSESSMENT
+          - SECTION
+        Indicates progress on assessment with overall questionnaires:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentProgressInformation'
+        Welcome Section Information:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_WelcomeSection'
+        viewer:
+          type: boolean
+        welcomeSection:
+          type: boolean
+        firstSection:
+          type: boolean
+        lastSection:
+          type: boolean
+        welcomeText:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformationUiDto:
+      type: object
+      properties:
+        responseId:
+          type: string
+          format: uuid
+        response:
+          type: string
+        type:
+          type: string
+          enum:
+          - NOT_SURE
+          - JUSTIFICATION
+          - NOT_APPLICABLE
+          - DEFAULT
+          - MATURITY_SCALE
+          - EFFECTIVENESS_SCALE
+          - OTHERS
+        dataSubjectById:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        categoryById:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        responseMap:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataElementResponse'
+        scaleResponseMap:
+          type: object
+          additionalProperties:
+            type: number
+        controlResponse:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ControlResponse'
+        responseAdditionalDetails:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails'
+        relationshipResponseDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto'
+        valid:
+          type: boolean
+        responseKey:
+          type: string
+        attributeTextRedacted:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_AssessmentSubmissionRequest:
+      type: object
+      properties:
+        comment:
+          description: Optional comment to include with the assessment submission
+          type: string
+          example: All required information has been provided for review.
+        disclaimerAccepted:
+          description: Indicates whether the submitter has accepted the assessment submission disclaimer.
+          type: boolean
+          example: true
+      example:
+        comment: All required information has been provided for review.
+        disclaimerAccepted: true
+        isCallFromIntegration: false
+    PrivacyAutomation-AssessmentAutomation_CompositeDisplayLabel:
+      type: object
+      properties:
+        displayName:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_OptionInformationUiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        option:
+          type: string
+        sequence:
+          type: integer
+          format: int32
+        optionKey:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: object
+        optionType:
+          type: string
+          enum:
+          - NOT_SURE
+          - NOT_APPLICABLE
+          - OTHERS
+          - DEFAULT
+        hint:
+          type: string
+        hintKey:
+          type: string
+        preSelectedOption:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_AssessmentAttachmentRequest:
+      type: object
+      properties:
+        attachmentId:
+          description: Unique identifier for the attachment
+          type: string
+          format: uuid
+          example: 456e7890-e89b-12d3-a456-426614174000
+        fileName:
+          description: Name of the file being attached to the assessment
+          type: string
+          example: Privacy_Impact_Assessment_Report.pdf
+        fileDescription:
+          description: Optional description of the attached file and its relevance to the assessment
+          type: string
+          example: Comprehensive privacy impact assessment report for customer data processing activities
+        attachmentIntent:
+          description: Intent or purpose of the attachment. Defaults to QUESTION_EVIDENCE if not provided.
+          type: string
+          example: QUESTION_EVIDENCE
+          enum:
+          - AI_CONTEXT
+          - QUESTION_EVIDENCE
+          - ASSESSMENT_LEVEL
+      example:
+        attachmentId: 456e7890-e89b-12d3-a456-426614174000
+        fileName: Privacy_Impact_Assessment_Report.pdf
+        fileDescription: Comprehensive privacy impact assessment report for customer data processing activities
+      required:
+      - attachmentId
+      - fileName
+    PrivacyAutomation-AssessmentAutomation_ContractAdditionalResponseInformation:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_ControlImplementationRequest:
+      type: object
+      properties:
+        controlImplementationId:
+          description: Unique identifier for the control implementation
+          type: string
+          format: uuid
+          example: 789e4567-e89b-12d3-a456-426614174000
+        controlImplementationName:
+          description: Name of the control implementation
+          type: string
+          example: SOC 2 Type II Access Control Implementation
+        controlImplementationNumber:
+          description: External number of the control implementation
+          type: integer
+          format: int64
+          example: 98765
+        sourceId:
+          description: Unique identifier for the source entity associated with the control implementation
+          type: string
+          format: uuid
+          example: 456e7890-e89b-12d3-a456-426614174000
+        sourceName:
+          description: Name of the source entity associated with the control implementation
+          type: string
+          example: Customer Portal Application
+        sourceType:
+          description: Type of the source entity associated with the control implementation
+          type: string
+          example: APPLICATION
+          enum:
+          - APPLICATION
+          - SYSTEM
+          - DATABASE
+          - NETWORK
+          - INFRASTRUCTURE
+        entityBusinessKey:
+          description: Business key for the control implementation entity
+          type: string
+          example: 98765|SOC 2 Type II Access Control Implementation
+      example:
+        controlImplementationId: 789e4567-e89b-12d3-a456-426614174000
+        controlImplementationName: SOC 2 Type II Access Control Implementation
+        controlImplementationNumber: 98765
+        sourceId: 456e7890-e89b-12d3-a456-426614174000
+        sourceName: Customer Portal Application
+        sourceType: APPLICATION
+        entityBusinessKey: 98765|SOC 2 Type II Access Control Implementation
+      required:
+      - controlImplementationId
+      - controlImplementationName
+    PrivacyAutomation-AssessmentAutomation_LawInformation:
+      type: object
+      properties:
+        name:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_ResponseInformationUiDto:
+      type: object
+      properties:
+        invalidQuestionIds:
           type: array
           items:
             type: string
             format: uuid
           uniqueItems: true
-        riskStatistics:
-          description: Risk statistics for the section
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_riskStatistics'
-        status:
-          description: Current status of the section
+        allIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        byId:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformationUiDto'
+        invalidResponsesMap:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataSubjectUiDto'
+    PrivacyAutomation-AssessmentAutomation_InventoryLink:
+      type: object
+      properties:
+        link type:
           type: string
-        nameKey:
-          description: Translation key for the section name
+        link:
           type: string
-        descriptionKey:
-          description: Translation key for the section description
+    PrivacyAutomation-AssessmentAutomation_RiskLevelDetail:
+      type: object
+      properties:
+        levelId:
+          type: integer
+          format: int64
+        level:
           type: string
-        openNMIQuestionIds:
+        impactLevelId:
+          type: integer
+          format: int64
+        impactLevel:
+          type: string
+        probabilityLevelId:
+          type: integer
+          format: int64
+        probabilityLevel:
+          type: string
+        riskScore:
+          type: number
+    PrivacyAutomation-AssessmentAutomation_AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    PrivacyAutomation-AssessmentAutomation_riskCreateRequest:
+      type: object
+      properties:
+        levelId:
+          description: Risk level identifier
+          type: integer
+          format: int64
+          example: 3
+        typeId:
+          description: Risk type identifier
+          type: integer
+          format: int64
+          example: 1
+        sourceTypeId:
+          description: Risk source type identifier
+          type: integer
+          format: int64
+          example: 2
+        name:
+          description: Name of the risk
+          type: string
+          example: Data Breach Risk
+          maxLength: 300
+          minLength: 0
+        description:
+          description: Detailed description of the risk
+          type: string
+          example: Risk of unauthorized access to sensitive data
+          maxLength: 4000
+          minLength: 0
+        recommendation:
+          description: Recommendation to mitigate the risk
+          type: string
+          example: Implement encryption and access controls
+          maxLength: 4000
+          minLength: 0
+        mitigation:
+          description: Mitigation strategy for the risk
+          type: string
+          example: Data encryption at rest and in transit
+          maxLength: 4000
+          minLength: 0
+        requestedException:
+          description: Requested exception details
+          type: string
+          example: Exception requested for legacy systems
+          maxLength: 4000
+          minLength: 0
+        riskOwnerId:
+          type: string
+          format: uuid
+          deprecated: true
+        riskOwner:
+          type: string
+          deprecated: true
+        riskApproversId:
           type: array
           items:
             format: uuid
-          uniqueItems: true
-        sectionUserType:
-          description: Type of user assigned to the section (e.g., RESPONDENT, APPROVER)
+            example: 550e8400-e29b-41d4-a716-446655440004
+        riskOwners:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
+        deadline:
+          description: Deadline for risk mitigation
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59'
+        reminderDays:
+          description: Number of days for reminder before deadline
+          type: integer
+          format: int64
+          example: 7
+          minimum: 1
+        action:
+          description: Action to be taken for the risk
           type: string
           enum:
-          - APPROVER
-          - RESPONDENT
-        submitted:
+          - RISK_CREATED
+          - RECOMMENDATION_ADDED
+          - RECOMMENDATION_REMOVED
+          - RECOMMENDATION_SEND
+          - REMEDIATION_PROPOSED
+          - REMEDIATION_APPROVED
+          - REMEDIATION_REJECTED
+          - REMEDIATION_REMOVED
+          - EXCEPTION_REQUESTED
+          - EXCEPTION_GRANTED
+          - EXCEPTION_REJECTED
+          - EXCEPTION_REMOVED
+          - DEFAULT
+        probabilityLevelId:
+          description: Probability level identifier
+          type: integer
+          format: int64
+          example: 2
+        probabilityLevel:
+          description: Probability level description
+          type: string
+          example: Medium
+        impactLevelId:
+          description: Impact level identifier
+          type: integer
+          format: int64
+          example: 3
+        impactLevel:
+          description: Impact level description
+          type: string
+          example: High
+        riskScore:
+          description: Calculated risk score
+          type: number
+          format: decimal
+          example: 7.5
+          minimum: 0
+        systemCreated:
+          description: Flag indicating if the risk was created by the system
           type: boolean
-    PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest:
-      type: object
-      properties:
-        approverId:
-          description: Unique identifier for the approver
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        approverName:
-          description: Display name of the approver
-          type: string
-          example: John Doe
-        comment:
-          description: Optional comment for the approver assignment
-          type: string
-          example: Primary approver
-        workflowStageIds:
+          example: false
+        categoryIds:
           type: array
           items:
             format: uuid
-            description: Workflow stage identifier
-            example: 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-      required:
-      - approverId
-    PrivacyAutomation-AssessmentAutomation_RiskThreatInformation:
-      type: object
-      properties:
-        Threat Id:
+            example: 550e8400-e29b-41d4-a716-446655440006
+        controlIds:
+          type: array
+          items:
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440007
+        threatId:
+          description: Threat ID associated with the risk
           type: string
           format: uuid
-        Threat Name:
+          example: 550e8400-e29b-41d4-a716-446655440008
+        vulnerabilityIds:
+          type: array
+          items:
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440009
+        riskTemplate:
+          description: Risk template identifier
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskTemplateIdentifier'
+        targetRiskLevel:
+          description: Target risk level details
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
+        attributeValues:
+          description: Map of attribute values for the risk
+          type: object
+          additionalProperties:
+            type: array
+            description: Map of attribute values for the risk
+            items:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AttributeValueInformation'
+        orgGroupId:
+          description: Organization group ID
           type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440010
+        treatment:
+          description: AKA remediation in current workflow
+          type: string
+          maxLength: 4000
+          minLength: 0
+        riskManager:
+          type: array
+          items:
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440005
+          uniqueItems: true
+        riskDomain:
+          type: string
+          format: uuid
+      required:
+      - sourceTypeId
+      - typeId
     PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformationUiDto:
       type: object
       properties:
@@ -1720,132 +2721,176 @@ components:
           type: string
         submitted:
           type: boolean
-    PrivacyAutomation-AssessmentAutomation_EntityTypeInformation:
+    PrivacyAutomation-AssessmentAutomation_ApproverInformation:
       type: object
       properties:
         id:
-          description: Unique identifier of the entity type
+          type: string
+          format: uuid
+        workflowStageId:
           type: string
           format: uuid
         name:
-          description: Name of the entity type
           type: string
-        nameKey:
-          description: Translation key for the entity type name
+        approver:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
+        approvedOn:
           type: string
-        moduleName:
-          description: Module name that owns this entity type
-          type: string
-        schemaName:
-          description: Schema name for this entity type
-          type: string
-        seeded:
-          description: Whether this entity type is seeded
-          type: boolean
-        validEntityType:
-          type: boolean
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: Assets
-        nameKey: Assets
-    PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails:
-      type: object
-      properties:
-        entity Number:
-          type: integer
-          format: int64
-        source Id:
-          type: string
-          format: uuid
-        source Name:
-          type: string
-        source type:
+          format: date-time
+        approvalState:
           type: string
           enum:
-          - Risks, Assets, ProcessingActivities, Vendors, Entities
-        Business key:
+          - OPEN
+          - APPROVED
+          - REJECTED
+        resultId:
           type: string
-    PrivacyAutomation-AssessmentAutomation_OptionInformationUiDto:
+          format: uuid
+        resultName:
+          type: string
+        resultNameKey:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_assessmentMetadata:
+      type: object
+      properties:
+        name:
+          description: Name of the assessment
+          type: string
+        description:
+          description: Description about the assessment
+          type: string
+        orgGroupId:
+          description: Organization Group ID to which the assessment belongs to
+          type: string
+          format: uuid
+        approvers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+            empty:
+              type: boolean
+            first:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+            last:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
+        respondents:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+            empty:
+              type: boolean
+            first:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+            last:
+              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
+        respondentCreationType:
+          description: Use this field to select if new respondents are created as Invited Users or Project Respondents when calling the Public Reassess API. The 'Allow Creating Project Respondents from Assessment' global setting should be enabled for new users to be set as Project Respondents.
+          type: string
+          enum:
+          - INVITED
+          - PROJECT_RESPONDENT
+    PrivacyAutomation-AssessmentAutomation_PersonalDataAttributeQuestionResponseDetails:
+      type: object
+      properties:
+        dataSubjectId:
+          type: string
+          format: uuid
+        dataSubjectName:
+          type: string
+        dataSubjectKey:
+          type: string
+        totalDataElements:
+          type: integer
+          format: int64
+        answeredDataElements:
+          type: integer
+          format: int64
+        valid:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_ReopenAssessmentRequest:
+      type: object
+      properties:
+        emailComment:
+          description: Comment to be put in notification email when the assessment is reopened
+          type: string
+          example: Assessment reopened for additional review and data collection
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskInformation:
+      type: object
+      properties:
+        questionId:
+          description: Identifier of the question associated with this risk
+          type: string
+          format: uuid
+        parentQuestionResponseDetailId:
+          description: Identifier of the parent question response detail
+          type: string
+          format: uuid
+        riskId:
+          description: Unique identifier of the risk
+          type: string
+          format: uuid
+        level:
+          description: Risk level value
+          type: integer
+          format: int64
+        score:
+          description: Numerical risk score
+          type: integer
+          format: int64
+        probability:
+          description: Probability component of risk score
+          type: integer
+          format: int64
+        impactLevel:
+          description: Impact level component of risk score
+          type: integer
+          format: int64
+        riskLevelValue:
+          description: Display value of the risk level (e.g., 'High', 'Medium', 'Low')
+          type: string
+        riskLevelValueKey:
+          description: Key for the risk level value for localization
+          type: string
+        riskLevelColorCode:
+          description: Color code associated with the risk level for UI display
+          type: string
+        attributeOptionId:
+          description: Identifier of the attribute option associated with this risk level
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_RiskReferenceInformation:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        option:
+        type:
           type: string
-        sequence:
-          type: integer
-          format: int32
-        optionKey:
+          enum:
+          - QUESTION
+          - ASSESSMENT
+          - INVENTORY
+          - ENGAGEMENT
+          - GENERIC
+        name:
           type: string
-        attributes:
+        additionalAttributes:
           type: object
           additionalProperties:
-            type: object
-        optionType:
-          type: string
-          enum:
-          - NOT_SURE
-          - NOT_APPLICABLE
-          - OTHERS
-          - DEFAULT
-        hint:
-          type: string
-        hintKey:
-          type: string
-        preSelectedOption:
-          type: boolean
-    PrivacyAutomation-AssessmentAutomation_ControlImplementationRequest:
-      type: object
-      properties:
-        controlImplementationId:
-          description: Unique identifier for the control implementation
-          type: string
-          format: uuid
-          example: 789e4567-e89b-12d3-a456-426614174000
-        controlImplementationName:
-          description: Name of the control implementation
-          type: string
-          example: SOC 2 Type II Access Control Implementation
-        controlImplementationNumber:
-          description: External number of the control implementation
-          type: integer
-          format: int64
-          example: 98765
-        sourceId:
-          description: Unique identifier for the source entity associated with the control implementation
-          type: string
-          format: uuid
-          example: 456e7890-e89b-12d3-a456-426614174000
-        sourceName:
-          description: Name of the source entity associated with the control implementation
-          type: string
-          example: Customer Portal Application
-        sourceType:
-          description: Type of the source entity associated with the control implementation
-          type: string
-          example: APPLICATION
-          enum:
-          - APPLICATION
-          - SYSTEM
-          - DATABASE
-          - NETWORK
-          - INFRASTRUCTURE
-        entityBusinessKey:
-          description: Business key for the control implementation entity
-          type: string
-          example: 98765|SOC 2 Type II Access Control Implementation
-      example:
-        controlImplementationId: 789e4567-e89b-12d3-a456-426614174000
-        controlImplementationName: SOC 2 Type II Access Control Implementation
-        controlImplementationNumber: 98765
-        sourceId: 456e7890-e89b-12d3-a456-426614174000
-        sourceName: Customer Portal Application
-        sourceType: APPLICATION
-        entityBusinessKey: 98765|SOC 2 Type II Access Control Implementation
-      required:
-      - controlImplementationId
-      - controlImplementationName
+            type: array
+            items:
+              type: string
+              format: uuid
     PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformation:
       type: object
       properties:
@@ -1943,360 +2988,170 @@ components:
           $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
         dataElement:
           $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-    PrivacyAutomation-AssessmentAutomation_AssessmentSubmissionRequest:
-      type: object
-      properties:
-        comment:
-          description: Optional comment to include with the assessment submission
-          type: string
-          example: All required information has been provided for review.
-        disclaimerAccepted:
-          description: Indicates whether the submitter has accepted the assessment submission disclaimer.
-          type: boolean
-          example: true
-      example:
-        comment: All required information has been provided for review.
-        disclaimerAccepted: true
-        isCallFromIntegration: false
-    PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto:
-      type: object
-      properties:
-        relationshipNodeType:
-          description: Type of the relationship node
-          type: string
-          example: ASSESSMENT
-          minLength: 1
-        entityId:
-          description: Unique identifier of the related entity
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        entityDisplayName:
-          description: Display name of the related entity
-          type: string
-          example: Customer Data Assessment
-          minLength: 1
-        entityType:
-          description: Type information of the related entity
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_EntityTypeInformation'
-      example:
-        relationshipNodeType: ASSESSMENT
-        entityId: 123e4567-e89b-12d3-a456-426614174000
-        entityDisplayName: Customer Data Assessment
-        entityType:
-          id: 1
-          name: Privacy Impact Assessment
-          description: Assessment type for privacy impact evaluation
-      required:
-      - entityId
-      - entityType
-    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskDetailInformation:
-      type: object
-      properties:
-        questionIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-        riskId:
-          type: string
-          format: uuid
-        level:
-          type: integer
-          format: int64
-        riskResponse:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskInformation'
-        questionId:
-          type: string
-          format: uuid
-          deprecated: true
-    PrivacyAutomation-AssessmentAutomation_CompositeDisplayLabel:
-      type: object
-      properties:
-        displayName:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_InventoryLink:
-      type: object
-      properties:
-        link type:
-          type: string
-        link:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformationUiDto:
-      type: object
-      properties:
-        responseId:
-          type: string
-          format: uuid
-        response:
-          type: string
-        type:
-          type: string
-          enum:
-          - NOT_SURE
-          - JUSTIFICATION
-          - NOT_APPLICABLE
-          - DEFAULT
-          - MATURITY_SCALE
-          - EFFECTIVENESS_SCALE
-          - OTHERS
-        dataSubjectById:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        categoryById:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        responseMap:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataElementResponse'
-        scaleResponseMap:
-          type: object
-          additionalProperties:
-            type: number
-        controlResponse:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ControlResponse'
-        responseAdditionalDetails:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseAdditionalDetails'
-        relationshipResponseDetails:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RelationshipResponseDetailsDto'
-        valid:
-          type: boolean
-        responseKey:
-          type: string
-        attributeTextRedacted:
-          type: boolean
-    PrivacyAutomation-AssessmentAutomation_ReopenAssessmentRequest:
-      type: object
-      properties:
-        emailComment:
-          description: Comment to be put in notification email when the assessment is reopened
-          type: string
-          example: Assessment reopened for additional review and data collection
-    PrivacyAutomation-AssessmentAutomation_RiskLevelDetail:
-      type: object
-      properties:
-        levelId:
-          type: integer
-          format: int64
-        level:
-          type: string
-        impactLevelId:
-          type: integer
-          format: int64
-        impactLevel:
-          type: string
-        probabilityLevelId:
-          type: integer
-          format: int64
-        probabilityLevel:
-          type: string
-        riskScore:
-          type: number
-    PrivacyAutomation-AssessmentAutomation_riskStatistics:
-      type: object
-      properties:
-        sectionId:
-          type: string
-          format: uuid
-        riskCount:
-          type: integer
-          format: int64
-        maxRiskLevel:
-          type: integer
-          format: int64
-    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionLabelDto:
-      type: object
-      properties:
-        name:
-          description: Display name of the label
-          type: string
-          example: Personal Data Processing
-        nameKey:
-          description: Internationalization key for the label name
-          type: string
-          example: label.personal.data.processing
-        referenceEntity:
-          description: Type of the reference entity this label is associated with
-          type: string
-          example: DATA_CATEGORY
-          enum:
-          - DATA_CATEGORY
-          - PROCESSING_PURPOSE
-          - LEGAL_BASIS
-          - DATA_SUBJECT
-          - RETENTION_PERIOD
-          - TRANSFER_METHOD
-          - SECURITY_MEASURE
-        valueRefId:
-          description: Unique identifier of the referenced entity value. Null for custom labels.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        valueKey:
-          description: Internationalization key for the referenced entity value
-          type: string
-          example: data.category.personal.information
-      example:
-        name: Personal Data Processing
-        nameKey: label.personal.data.processing
-        referenceEntity: DATA_CATEGORY
-        valueRefId: 123e4567-e89b-12d3-a456-426614174000
-        valueKey: data.category.personal.information
-      required:
-      - name
-    PrivacyAutomation-AssessmentAutomation_RiskVulnerabilityInformation:
-      type: object
-      properties:
-        Vulnerability Id:
-          type: string
-          format: uuid
-        Vulnerability Name:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentEngagementLinkRequest:
-      type: object
-      properties:
-        engagementId:
-          description: Engagement identifier for which the assessment is created
-          type: string
-          format: uuid
-          example: 987e6543-e21b-12d3-a456-426614174000
-        engagementName:
-          description: Name of the engagement linked to the assessment
-          type: string
-          example: Q4 2024 Vendor Risk Assessment Engagement
-        number:
-          description: Sequential number assigned to the engagement
-          type: integer
-          format: int64
-          example: 2024001
-      example:
-        engagementId: 987e6543-e21b-12d3-a456-426614174000
-        engagementName: Q4 2024 Vendor Risk Assessment Engagement
-        number: 2024001
-      required:
-      - engagementId
-      - engagementName
-    PrivacyAutomation-AssessmentAutomation_AssessmentInventoryRequest:
-      type: object
-      properties:
-        inventoryId:
-          description: Inventory ID for which the assessment is created
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        inventoryTypeId:
-          description: Type of the inventory for which the assessment is created
-          type: integer
-          format: int64
-          example: 1
-        inventoryTypeName:
-          description: type name of the inventory for which the assessment is created.
-          type: string
-          example: Data Processing Activity
-        inventoryNumber:
-          description: External number of the inventory for which the assessment is created
-          type: integer
-          format: int64
-          example: 12345
-        inventoryName:
-          description: Name of the inventory for which the assessment is created
-          type: string
-          example: Customer Data Processing for Marketing
-        valid:
-          type: boolean
-      example:
-        inventoryId: 550e8400-e29b-41d4-a716-446655440000
-        inventoryTypeId: 1
-        inventoryTypeName: Data Processing Activity
-        inventoryNumber: 12345
-        inventoryName: Customer Data Processing for Marketing
-      required:
-      - inventoryId
-      - inventoryName
-      - inventoryNumber
-      - inventoryTypeId
-    PrivacyAutomation-AssessmentAutomation_ApproverInformation:
+    PrivacyAutomation-AssessmentAutomation_DataSubjectUiDto:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        workflowStageId:
+        name:
+          type: string
+        nameKey:
+          type: string
+        categories:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_CategoryUiDto'
+    PrivacyAutomation-AssessmentAutomation_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    PrivacyAutomation-AssessmentAutomation_AssessmentRiskCreateRequest:
+      type: object
+      properties:
+        sectionId:
+          description: Section identifier for the assessment with which risk is associated
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        questionId:
+          description: Question identifier for the assessment with which risk is associated
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
+        parentQuestionResponseDetailId:
+          description: Parent question response identifier
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        riskCreateRequest:
+          description: Details of risk associated with the question to be created
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_riskCreateRequest'
+      required:
+      - questionId
+      - riskCreateRequest
+      - sectionId
+    PrivacyAutomation-AssessmentAutomation_TaskCollaboratorDto:
+      type: object
+      properties:
+        collaboratorId:
+          description: Unique identifier of the collaborator
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        collaboratorEmail:
+          description: Email address of the collaborator
+          type: string
+          example: collaborator@example.com
+          maxLength: 255
+          minLength: 5
+        type:
+          description: Type of assignee (User or Group)
+          type: string
+          example: USER
+          enum:
+          - USER
+          - GROUP
+      example:
+        collaboratorId: 123e4567-e89b-12d3-a456-426614174000
+        collaboratorEmail: collaborator@example.com
+        type: USER
+      required:
+      - type
+    PrivacyAutomation-AssessmentAutomation_EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity type
           type: string
           format: uuid
         name:
+          description: Name of the entity type
           type: string
-        approver:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail'
-        approvedOn:
+        nameKey:
+          description: Translation key for the entity type name
           type: string
-          format: date-time
-        approvalState:
+        moduleName:
+          description: Module name that owns this entity type
           type: string
-          enum:
-          - OPEN
-          - APPROVED
-          - REJECTED
-        resultId:
+        schemaName:
+          description: Schema name for this entity type
           type: string
-          format: uuid
-        resultName:
-          type: string
-        resultNameKey:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionRiskInformation:
+        seeded:
+          description: Whether this entity type is seeded
+          type: boolean
+        validEntityType:
+          type: boolean
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Assets
+        nameKey: Assets
+    PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest:
       type: object
       properties:
-        questionId:
-          description: Identifier of the question associated with this risk
+        respondentId:
+          description: Unique identifier for the respondent user
           type: string
           format: uuid
-        parentQuestionResponseDetailId:
-          description: Identifier of the parent question response detail
+          example: 550e8400-e29b-41d4-a716-446655440000
+        respondentName:
+          description: Display name of the respondent
           type: string
-          format: uuid
-        riskId:
-          description: Unique identifier of the risk
+          example: John Doe
+        comment:
+          description: Optional comment for the respondent assignment
           type: string
-          format: uuid
-        level:
-          description: Risk level value
-          type: integer
-          format: int64
-        score:
-          description: Numerical risk score
-          type: integer
-          format: int64
-        probability:
-          description: Probability component of risk score
-          type: integer
-          format: int64
-        impactLevel:
-          description: Impact level component of risk score
-          type: integer
-          format: int64
-        riskLevelValue:
-          description: Display value of the risk level (e.g., 'High', 'Medium', 'Low')
-          type: string
-        riskLevelValueKey:
-          description: Key for the risk level value for localization
-          type: string
-        riskLevelColorCode:
-          description: Color code associated with the risk level for UI display
-          type: string
-        attributeOptionId:
-          description: Identifier of the attribute option associated with this risk level
-          type: string
-          format: uuid
+          example: Assessment respondent added
+        sectionIds:
+          type: array
+          items:
+            format: uuid
+            description: Section identifier
+            example: 550e8400-e29b-41d4-a716-446655661111
+          uniqueItems: true
+        isRespondentOfApproverSection:
+          description: Flag indicating whether this respondent is assigned to approver sections
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - respondentName
     PrivacyAutomation-AssessmentAutomation_RiskEntityTypeInformation:
       type: object
       properties:
@@ -2306,43 +3161,27 @@ components:
           type: string
       required:
       - id
-    PrivacyAutomation-AssessmentAutomation_CategoryUiDto:
+    PrivacyAutomation-AssessmentAutomation_SubQuestionUiDto:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        nameKey:
-          type: string
-        dataElements:
+        allIds:
           type: array
           items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataElementResponse'
-    PrivacyAutomation-AssessmentAutomation_RiskReferenceInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        type:
-          type: string
-          enum:
-          - QUESTION
-          - ASSESSMENT
-          - INVENTORY
-          - ENGAGEMENT
-          - GENERIC
-        name:
-          type: string
-        additionalAttributes:
+            type: string
+            format: uuid
+        byId:
           type: object
           additionalProperties:
-            type: array
-            items:
-              type: string
-              format: uuid
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SubQuestionInformationUiDto'
+    PrivacyAutomation-AssessmentAutomation_AssessmentProgressInformation:
+      type: object
+      properties:
+        totalQuestions:
+          type: integer
+          format: int64
+        respondedQuestions:
+          type: integer
+          format: int64
     PrivacyAutomation-AssessmentAutomation_AssessableEntityDetail:
       type: object
       properties:
@@ -2373,6 +3212,305 @@ components:
           description: Business Key of the entity
           type: string
           example: Vendor business key
+    PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest:
+      type: object
+      properties:
+        approverId:
+          description: Unique identifier for the approver
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        approverName:
+          description: Display name of the approver
+          type: string
+          example: John Doe
+        comment:
+          description: Optional comment for the approver assignment
+          type: string
+          example: Primary approver
+        workflowStageIds:
+          type: array
+          items:
+            format: uuid
+            description: Workflow stage identifier
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+      required:
+      - approverId
+    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionIssueInformation:
+      type: object
+      properties:
+        questionId:
+          type: string
+          format: uuid
+        issueId:
+          type: string
+          format: uuid
+        parentQuestionResponseDetailId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_ReassessAssessmentRequest:
+      type: object
+      properties:
+        assessmentMetadata:
+          description: Use this field to provide details such as Assessment name, Description, Organization, Approvers and Respondents, when copyAssessmentMetadata value is false.
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_assessmentMetadata'
+        deadline:
+          description: Deadline (date) to complete the assessment
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        reminder:
+          description: 'Use this field to input the number of days before the deadline to send a automatic notification to the respondent. Deadline must be set for this field to be enabled.Note: Either ''reminder'' or ''reminderSchedules'' should be provided. If both are present, ''reminder'' takes precedence and will be converted to a reminderSchedule for RESPONDENT notification.
+
+            '
+          type: integer
+          format: int64
+          example: 7
+          deprecated: true
+        Reminder Schedules:
+          description: 'list of reminder schedules to trigger the reminder notifications to the configured users e.g respondents or approvers. Note: Either ''reminder'' or ''reminderSchedules'' should be provided. If both are present, ''reminder'' takes precedence and will override this field.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto'
+          uniqueItems: true
+        copyAttachments:
+          description: This field will copy over the attachments linked to the source assessment.
+          type: boolean
+          example: true
+          default: 'false'
+        copyResponses:
+          description: This field will copy over the question responses from the source assessment.
+          type: boolean
+          example: true
+          default: 'false'
+        copyNotes:
+          description: This field will copy over the user notes from the source assessment.
+          type: boolean
+          example: true
+          default: 'false'
+        copyComments:
+          description: This field will copy over the comments from the source assessment.
+          type: boolean
+          example: true
+          default: 'false'
+        linkRisks:
+          description: Any risk rules created based on the template risk rules for the original assessment will be linked to the newly created assessment upon submission.
+          type: boolean
+          example: true
+          default: 'false'
+        copyAssessmentMetadata:
+          description: This field will copy assessment name, description, organisation, approver, respondent details from source assessment to new assessment.
+          type: boolean
+          example: true
+          default: 'false'
+        archiveSourceAssessment:
+          description: Use this field to provide a "true" or a "false" value to archive the original assessment. When reassessing, setting it to "true" will archive the original assessment and setting it to "false" will not archive the original assessment
+          type: boolean
+          example: false
+          default: 'false'
+    PrivacyAutomation-AssessmentAutomation_RiskSourceInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - PIA
+          - DM
+          - RA
+          - GRA
+          - DINA
+          - INVENTORY
+          - ENGAGEMENT
+        sourceType:
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskEntityTypeInformation'
+        additionalAttributes:
+          type: object
+          additionalProperties:
+            type: object
+        sectionId:
+          type: string
+          format: uuid
+        questionId:
+          type: string
+          format: uuid
+        parentQuestionResponseDetailId:
+          type: string
+          format: uuid
+    PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the reminder schedule.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        assessmentId:
+          description: Identifier of the assessment this reminder schedule applies to.
+          type: string
+          format: uuid
+          example: 8f14e45f-ea9e-4d1b-9b5f-42d5f6a8b9c1
+        sectionId:
+          description: Identifier of a specific assessment section this reminder schedule targets (optional).
+          type: string
+          format: uuid
+          example: 9a1b2c3d-4e5f-6789-abcd-ef0123456789
+        reminderInterval:
+          description: Interval in days between consecutive reminders.
+          type: integer
+          format: int32
+          example: 7
+        reminderReceiverEntityType:
+          description: Recipient type who will receive the reminder notifications.
+          type: string
+          example: RESPONDENT
+          enum:
+          - APPROVER
+          - RESPONDENT
+          - ALL
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        assessmentId: 8f14e45f-ea9e-4d1b-9b5f-42d5f6a8b9c1
+        sectionId: 9a1b2c3d-4e5f-6789-abcd-ef0123456789
+        reminderInterval: 7
+        reminderReceiverEntityType: RESPONDENT
+      required:
+      - reminderReceiverEntityType
+    PrivacyAutomation-AssessmentAutomation_TaskCreateRequest:
+      type: object
+      properties:
+        taskName:
+          description: Name of the task
+          type: string
+          example: Complete security review
+          maxLength: 255
+          minLength: 1
+        description:
+          description: Description of the task
+          type: string
+          example: Review security controls and document findings
+          maxLength: 2000
+          minLength: 0
+        assigneeId:
+          description: The UUID of the user assigned to the task
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        deadline:
+          description: The date by which the task must be completed
+          type: string
+          format: date
+          example: '2025-12-31'
+        collaborators:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TaskCollaboratorDto'
+      required:
+      - taskName
+    PrivacyAutomation-AssessmentAutomation_AssessmentSectionHeaderInformation:
+      type: object
+      properties:
+        sectionId:
+          description: Unique identifier for the section
+          type: string
+          format: uuid
+        name:
+          description: Name of the section
+          type: string
+        description:
+          description: Description of the section
+          type: string
+        sequence:
+          description: Sequence number indicating the order of the section in the assessment
+          type: integer
+          format: int32
+        hidden:
+          description: Indicates if the section is hidden based on navigation rules
+          type: boolean
+          default: 'false'
+        invalidQuestionIds:
+          type: array
+          items:
+            format: uuid
+        requiredUnansweredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        requiredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        unansweredQuestionIds:
+          type: array
+          items:
+            format: uuid
+        effectivenessQuestionIds:
+          type: array
+          items:
+            format: uuid
+            description: Set of question identifiers that are related to effectiveness assessment
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        autoAnsweredQuestionIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        riskStatistics:
+          description: Risk statistics for the section
+          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_riskStatistics'
+        status:
+          description: Current status of the section
+          type: string
+        nameKey:
+          description: Translation key for the section name
+          type: string
+        descriptionKey:
+          description: Translation key for the section description
+          type: string
+        openNMIQuestionIds:
+          type: array
+          items:
+            format: uuid
+          uniqueItems: true
+        sectionUserType:
+          description: Type of user assigned to the section (e.g., RESPONDENT, APPROVER)
+          type: string
+          enum:
+          - APPROVER
+          - RESPONDENT
+        submitted:
+          type: boolean
+    PrivacyAutomation-AssessmentAutomation_RiskCategoryInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameKey:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_ResponseFilter:
+      type: object
+      properties:
+        Collection of key-value(s) pairs:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+        operator:
+          type: string
     PrivacyAutomation-AssessmentAutomation_AssessmentIncidentRequest:
       type: object
       properties:
@@ -2391,50 +3529,26 @@ components:
       required:
       - incidentId
       - incidentName
-    PrivacyAutomation-AssessmentAutomation_LawInformation:
+    PrivacyAutomation-AssessmentAutomation_RiskVulnerabilityInformation:
       type: object
       properties:
-        name:
+        Vulnerability Id:
           type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionIssueInformation:
+          format: uuid
+        Vulnerability Name:
+          type: string
+    PrivacyAutomation-AssessmentAutomation_SectionRiskStats:
       type: object
       properties:
-        questionId:
+        sectionId:
           type: string
           format: uuid
-        issueId:
-          type: string
-          format: uuid
-        parentQuestionResponseDetailId:
-          type: string
-          format: uuid
-    PrivacyAutomation-AssessmentAutomation_TaskCollaboratorDto:
-      type: object
-      properties:
-        collaboratorId:
-          description: Unique identifier of the collaborator
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        collaboratorEmail:
-          description: Email address of the collaborator
-          type: string
-          example: collaborator@example.com
-          maxLength: 255
-          minLength: 5
-        type:
-          description: Type of assignee (User or Group)
-          type: string
-          example: USER
-          enum:
-          - USER
-          - GROUP
-      example:
-        collaboratorId: 123e4567-e89b-12d3-a456-426614174000
-        collaboratorEmail: collaborator@example.com
-        type: USER
-      required:
-      - type
+        riskCount:
+          type: integer
+          format: int64
+        maxRiskLevel:
+          type: integer
+          format: int64
     PrivacyAutomation-AssessmentAutomation_QuestionInformationUiDto:
       type: object
       properties:
@@ -2627,41 +3741,31 @@ components:
           type: boolean
         contentKey:
           type: string
-    PrivacyAutomation-AssessmentAutomation_ResponseInformationUiDto:
+    PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail:
       type: object
       properties:
-        invalidQuestionIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        allIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        byId:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformationUiDto'
-        invalidResponsesMap:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_DataSubjectUiDto'
-    PrivacyAutomation-AssessmentAutomation_ApproverOnlySectionRespondentRequest:
-      type: object
-      properties:
-        respondentId:
-          description: Id of the respondent for approver only sections
+        id:
+          description: Unique identifier of the user
           type: string
           format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        respondentName:
-          description: Name of the respondent for approver only sections
+        fullName:
+          description: Full name of the user
           type: string
-          example: John Doe
+        email:
+          description: Email address of the user
+          type: string
+        deleted:
+          description: Flag indicating whether the user has been deleted
+          type: boolean
+        assigneeType:
+          description: Type of assignee (e.g., USER, GROUP)
+          type: string
+    PrivacyAutomation-AssessmentAutomation_RiskTemplateIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
     PrivacyAutomation-AssessmentAutomation_ControlResponse:
       type: object
       properties:
@@ -2682,1110 +3786,6 @@ components:
           format: uuid
         category name:
           type: string
-    PrivacyAutomation-AssessmentAutomation_riskCreateRequest:
-      type: object
-      properties:
-        levelId:
-          description: Risk level identifier
-          type: integer
-          format: int64
-          example: 3
-        typeId:
-          description: Risk type identifier
-          type: integer
-          format: int64
-          example: 1
-        sourceTypeId:
-          description: Risk source type identifier
-          type: integer
-          format: int64
-          example: 2
-        name:
-          description: Name of the risk
-          type: string
-          example: Data Breach Risk
-          maxLength: 300
-          minLength: 0
-        description:
-          description: Detailed description of the risk
-          type: string
-          example: Risk of unauthorized access to sensitive data
-          maxLength: 4000
-          minLength: 0
-        recommendation:
-          description: Recommendation to mitigate the risk
-          type: string
-          example: Implement encryption and access controls
-          maxLength: 4000
-          minLength: 0
-        mitigation:
-          description: Mitigation strategy for the risk
-          type: string
-          example: Data encryption at rest and in transit
-          maxLength: 4000
-          minLength: 0
-        requestedException:
-          description: Requested exception details
-          type: string
-          example: Exception requested for legacy systems
-          maxLength: 4000
-          minLength: 0
-        riskOwnerId:
-          type: string
-          format: uuid
-          deprecated: true
-        riskOwner:
-          type: string
-          deprecated: true
-        riskApproversId:
-          type: array
-          items:
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440004
-        riskOwners:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        deadline:
-          description: Deadline for risk mitigation
-          type: string
-          format: date-time
-          example: '2025-12-31T23:59:59'
-        reminderDays:
-          description: Number of days for reminder before deadline
-          type: integer
-          format: int64
-          example: 7
-          minimum: 1
-        action:
-          description: Action to be taken for the risk
-          type: string
-          enum:
-          - RISK_CREATED
-          - RECOMMENDATION_ADDED
-          - RECOMMENDATION_REMOVED
-          - RECOMMENDATION_SEND
-          - REMEDIATION_PROPOSED
-          - REMEDIATION_APPROVED
-          - REMEDIATION_REJECTED
-          - REMEDIATION_REMOVED
-          - EXCEPTION_REQUESTED
-          - EXCEPTION_GRANTED
-          - EXCEPTION_REJECTED
-          - EXCEPTION_REMOVED
-          - DEFAULT
-        probabilityLevelId:
-          description: Probability level identifier
-          type: integer
-          format: int64
-          example: 2
-        probabilityLevel:
-          description: Probability level description
-          type: string
-          example: Medium
-        impactLevelId:
-          description: Impact level identifier
-          type: integer
-          format: int64
-          example: 3
-        impactLevel:
-          description: Impact level description
-          type: string
-          example: High
-        riskScore:
-          description: Calculated risk score
-          type: number
-          format: decimal
-          example: 7.5
-          minimum: 0
-        systemCreated:
-          description: Flag indicating if the risk was created by the system
-          type: boolean
-          example: false
-        categoryIds:
-          type: array
-          items:
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440006
-        controlIds:
-          type: array
-          items:
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440007
-        threatId:
-          description: Threat ID associated with the risk
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440008
-        vulnerabilityIds:
-          type: array
-          items:
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440009
-        riskTemplate:
-          description: Risk template identifier
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskTemplateIdentifier'
-        targetRiskLevel:
-          description: Target risk level details
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
-        attributeValues:
-          description: Map of attribute values for the risk
-          type: object
-          additionalProperties:
-            type: array
-            description: Map of attribute values for the risk
-            items:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AttributeValueInformation'
-        orgGroupId:
-          description: Organization group ID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440010
-        treatment:
-          description: AKA remediation in current workflow
-          type: string
-          maxLength: 4000
-          minLength: 0
-        riskManager:
-          type: array
-          items:
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440005
-          uniqueItems: true
-        riskDomain:
-          type: string
-          format: uuid
-      required:
-      - sourceTypeId
-      - typeId
-    PrivacyAutomation-AssessmentAutomation_TagEntityDetail:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the tag
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        option:
-          description: Display text for the tag that appears in the UI
-          type: string
-          example: High Priority
-    PrivacyAutomation-AssessmentAutomation_BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the entity (organization group, user, etc.)
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        name:
-          description: Display name of the entity (organization name or user's full name)
-          type: string
-          example: Entity Name
-        nameKey:
-          description: Translation key for the name, used for internationalization
-          type: string
-          example: EntityName
-    PrivacyAutomation-AssessmentAutomation_ResponseFilter:
-      type: object
-      properties:
-        Collection of key-value(s) pairs:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-              format: uuid
-        operator:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformationUiDto:
-      type: object
-      properties:
-        set of all question ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-        map containing the question id and the details:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_QuestionInformationUiDto'
-    PrivacyAutomation-AssessmentAutomation_QuestionAssociationInformation:
-      type: object
-      properties:
-        associationType:
-          type: string
-          enum:
-          - SOURCE
-          - TARGET
-          - ADDITIONAL_LINK_1
-          - ADDITIONAL_LINK_2
-          - RESTRICT_RESPONSE_OPTIONS
-        associatedQuestionIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-    PrivacyAutomation-AssessmentAutomation_RiskTemplateIdentifier:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-    PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest:
-      type: object
-      properties:
-        respondentId:
-          description: Unique identifier for the respondent user
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        respondentName:
-          description: Display name of the respondent
-          type: string
-          example: John Doe
-        comment:
-          description: Optional comment for the respondent assignment
-          type: string
-          example: Assessment respondent added
-        sectionIds:
-          type: array
-          items:
-            format: uuid
-            description: Section identifier
-            example: 550e8400-e29b-41d4-a716-446655661111
-          uniqueItems: true
-        isRespondentOfApproverSection:
-          description: Flag indicating whether this respondent is assigned to approver sections
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - respondentName
-    PrivacyAutomation-AssessmentAutomation_RiskCategoryInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        nameKey:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_BasicUserEntityDetail:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the user
-          type: string
-          format: uuid
-        fullName:
-          description: Full name of the user
-          type: string
-        email:
-          description: Email address of the user
-          type: string
-        deleted:
-          description: Flag indicating whether the user has been deleted
-          type: boolean
-        assigneeType:
-          description: Type of assignee (e.g., USER, GROUP)
-          type: string
-    PrivacyAutomation-AssessmentAutomation_DataElementResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        nameKey:
-          type: string
-        type:
-          type: string
-          enum:
-          - NOT_SURE
-          - JUSTIFICATION
-          - NOT_APPLICABLE
-          - DEFAULT
-          - MATURITY_SCALE
-          - EFFECTIVENESS_SCALE
-          - OTHERS
-        personalDataDetailId:
-          type: string
-          format: uuid
-    PrivacyAutomation-AssessmentAutomation_assessmentMetadata:
-      type: object
-      properties:
-        name:
-          description: Name of the assessment
-          type: string
-        description:
-          description: Description about the assessment
-          type: string
-        orgGroupId:
-          description: Organization Group ID to which the assessment belongs to
-          type: string
-          format: uuid
-        approvers:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-          properties:
-            list:
-              type: array
-              items:
-                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-            empty:
-              type: boolean
-            first:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-            last:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentApproverRequest'
-        respondents:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-          properties:
-            list:
-              type: array
-              items:
-                $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-            empty:
-              type: boolean
-            first:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-            last:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentRespondentRequest'
-        respondentCreationType:
-          description: Use this field to select if new respondents are created as Invited Users or Project Respondents when calling the Public Reassess API. The 'Allow Creating Project Respondents from Assessment' global setting should be enabled for new users to be set as Project Respondents.
-          type: string
-          enum:
-          - INVITED
-          - PROJECT_RESPONDENT
-    PrivacyAutomation-AssessmentAutomation_ClosureRequest:
-      type: object
-      properties:
-        forceOverride:
-          description: Flag to force override any validation errors during closure
-          type: boolean
-          example: false
-          default: 'false'
-        excludeRules:
-          description: Flag to exclude rule execution during closure
-          type: boolean
-          example: false
-          default: 'false'
-        closureComment:
-          description: Comment to include with the assessment closure
-          type: string
-          example: Approved after thorough review. All requirements have been met.
-        resultId:
-          description: Identifier of the result option to apply to the assessment
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attestationRequired:
-          description: Flag indicating whether attestation is required for closure
-          type: boolean
-          example: false
-          default: 'false'
-    PrivacyAutomation-AssessmentAutomation_WelcomeSection:
-      type: object
-      properties:
-        Is getting started banner enabled?:
-          type: boolean
-        Welcome Title:
-          type: string
-        Welcome Text:
-          type: string
-        welcomeTitleKey:
-          type: string
-        welcomeTextKey:
-          type: string
-        Is Welcome section hidden?:
-          type: boolean
-    PrivacyAutomation-AssessmentAutomation_SubQuestionInformationUiDto:
-      type: object
-      properties:
-        justification:
-          type: string
-        responses:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ResponseInformationUiDto'
-        displayLabel:
-          type: string
-        relationshipDisplayInformation:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_CompositeDisplayLabel'
-        isLocalVersion:
-          type: boolean
-        parentAssessmentDetailId:
-          type: string
-          format: uuid
-        parentResponseId:
-          type: string
-          format: uuid
-        parentQuestionType:
-          type: string
-          enum:
-          - TEXTBOX
-          - MULTICHOICE
-          - YESNO
-          - DATE
-          - STATEMENT
-          - INVENTORY
-          - INCIDENT
-          - ATTRIBUTE
-          - PERSONAL_DATA
-          - YES_NO_PARTIALLY
-          - CONTROL
-          - CONTRACT
-          - ENGAGEMENT
-          - ASSESS_CONTROL
-          - ASSESS_RISK
-          - ASSESS_ISSUE
-          - CUSTOM_ENTITY
-          - RELATIONSHIP
-          - DISCLOSURE
-        invalidResponseIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        errorCode:
-          type: string
-          enum:
-          - ATTRIBUTE_DISABLED
-          - ATTRIBUTE_OPTION_DISABLED
-          - INVALID_RESPONSE_VALUE
-          - INVENTORY_NOT_EXISTS
-          - RELATED_INVENTORY_ATTRIBUTE_DISABLED
-          - DATA_ELEMENT_NOT_EXISTS
-          - DATA_SUBJECT_NOT_EXISTS
-          - DUPLICATE_INVENTORY
-          - INVENTORY_ASSOCIATION_TYPE_INVALID
-          - INVENTORY_ASSOCIATION_TYPE_NOT_APPLICABLE
-          - MULTIPLE_SERVICE_PROVIDER_VENDOR_ASSET_RELATION
-          - EMAIL_INVALID
-          - RELATIONSHIP_ATTRIBUTE_OPTION_DISABLED
-          - CONTRACT_NOT_FOUND
-          - VENDOR_CHILD_ATTRIBUTE_INVALID_VALUE_FORMAT
-          - VENDOR_CHILD_ATTRIBUTE_VALUE_LONG
-          - CONTRACT_INVALID_NAME
-          - ENGAGEMENT_NOT_FOUND
-          - DUPLICATE_ENGAGEMENT
-          - INVALID_ENTITY
-          - NOT_FOUND_LINK_TYPE
-          - LINK_TYPE_DOES_NOT_BELONG_TO_ENTITY_TYPE
-          - LINK_RECORD_CANNOT_BE_CREATED_BETWEEN_SAME_ENTITY
-          - LINK_TYPE_DISABLED
-          - INVALID_CONTROL
-          - GENERIC_EXCEPTION
-          - UNKNOWN_MODULE_CLIENT_ERROR
-        errorTranslationKey:
-          type: string
-        relationshipAttributeResponseSummary:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_PersonalDataAttributeQuestionResponseDetails'
-        lockReason:
-          type: string
-          enum:
-          - LAUNCH_FROM_INVENTORY
-          - LAUNCH_FROM_INCIDENT
-          - LAUNCH_FROM_INCIDENT_TEMPLATE_QUESTION
-          - READ_ONLY_ATTRIBUTE
-          - LAUNCH_FROM_CONTROL_IMPLEMENTATION
-          - RESPONSE_DRIVEN_INVENTORY
-          - RESPONSE_DRIVEN_CONTROL_IMPLEMENTATION
-          - PRIMARY_LOCK
-          - PRIMARY_PARENT_LOCK
-          - RESPONSE_DRIVEN_PRIMARY_LOCK
-          - FORCE_CREATION_LOCK
-        totalInvalidResponseCount:
-          type: integer
-          format: int64
-        totalAttachments:
-          type: integer
-          format: int32
-    PrivacyAutomation-AssessmentAutomation_AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-      required:
-      - value
-    PrivacyAutomation-AssessmentAutomation_SectionRiskStats:
-      type: object
-      properties:
-        sectionId:
-          type: string
-          format: uuid
-        riskCount:
-          type: integer
-          format: int64
-        maxRiskLevel:
-          type: integer
-          format: int64
-    PrivacyAutomation-AssessmentAutomation_AssessmentSubmissionInformation:
-      type: object
-      properties:
-        assessmentId:
-          description: Unique identifier of the assessment for which responses are being submitted
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        sectionId:
-          description: Unique identifier of the section containing the question being answered
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        questionId:
-          description: Unique identifier of the question being answered
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        parentAssessmentDetailId:
-          description: Unique identifier of the parent assessment detail for attribute questions. Required for attribute questions only.
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440003
-        parentPersonalDataDetailId:
-          description: Unique identifier of the parent personal data detail for personal data relationship attribute questions. Required for personal data relationship attribute questions only.
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440004
-        responses:
-          description: List of response information objects containing the actual responses to the question
-          example:
-          - type: SINGLE_SELECT
-            response: 'Yes'
-            responseId: 550e8400-e29b-41d4-a716-446655440003
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentResponseInformation'
-          type: array
-        responseProvidedForOthers:
-          type: boolean
-      required:
-      - assessmentId
-      - questionId
-      - responses
-      - sectionId
-    PrivacyAutomation-AssessmentAutomation_RiskSourceInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        type:
-          type: string
-          enum:
-          - PIA
-          - DM
-          - RA
-          - GRA
-          - DINA
-          - INVENTORY
-          - ENGAGEMENT
-        sourceType:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskEntityTypeInformation'
-        additionalAttributes:
-          type: object
-          additionalProperties:
-            type: object
-        sectionId:
-          type: string
-          format: uuid
-        questionId:
-          type: string
-          format: uuid
-        parentQuestionResponseDetailId:
-          type: string
-          format: uuid
-    PrivacyAutomation-AssessmentAutomation_AssessmentAttachmentRequest:
-      type: object
-      properties:
-        attachmentId:
-          description: Unique identifier for the attachment
-          type: string
-          format: uuid
-          example: 456e7890-e89b-12d3-a456-426614174000
-        fileName:
-          description: Name of the file being attached to the assessment
-          type: string
-          example: Privacy_Impact_Assessment_Report.pdf
-        fileDescription:
-          description: Optional description of the attached file and its relevance to the assessment
-          type: string
-          example: Comprehensive privacy impact assessment report for customer data processing activities
-        attachmentIntent:
-          description: Intent or purpose of the attachment. Defaults to QUESTION_EVIDENCE if not provided.
-          type: string
-          example: QUESTION_EVIDENCE
-          enum:
-          - AI_CONTEXT
-          - QUESTION_EVIDENCE
-          - ASSESSMENT_LEVEL
-      example:
-        attachmentId: 456e7890-e89b-12d3-a456-426614174000
-        fileName: Privacy_Impact_Assessment_Report.pdf
-        fileDescription: Comprehensive privacy impact assessment report for customer data processing activities
-      required:
-      - attachmentId
-      - fileName
-    PrivacyAutomation-AssessmentAutomation_TaskCreateRequest:
-      type: object
-      properties:
-        taskName:
-          description: Name of the task
-          type: string
-          example: Complete security review
-          maxLength: 255
-          minLength: 1
-        description:
-          description: Description of the task
-          type: string
-          example: Review security controls and document findings
-          maxLength: 2000
-          minLength: 0
-        assigneeId:
-          description: The UUID of the user assigned to the task
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        deadline:
-          description: The date by which the task must be completed
-          type: string
-          format: date
-          example: '2025-12-31'
-        collaborators:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TaskCollaboratorDto'
-      required:
-      - taskName
-    PrivacyAutomation-AssessmentAutomation_AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    PrivacyAutomation-AssessmentAutomation_AssessmentRiskCreateRequest:
-      type: object
-      properties:
-        sectionId:
-          description: Section identifier for the assessment with which risk is associated
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        questionId:
-          description: Question identifier for the assessment with which risk is associated
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        parentQuestionResponseDetailId:
-          description: Parent question response identifier
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        riskCreateRequest:
-          description: Details of risk associated with the question to be created
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_riskCreateRequest'
-      required:
-      - questionId
-      - riskCreateRequest
-      - sectionId
-    PrivacyAutomation-AssessmentAutomation_ContractAdditionalResponseInformation:
-      type: object
-      properties:
-        attachmentId:
-          type: string
-          format: uuid
-    PrivacyAutomation-AssessmentAutomation_AssessmentInformationUiDto:
-      type: object
-      properties:
-        assessment id:
-          type: string
-          format: uuid
-        assessment number:
-          type: integer
-          format: int64
-        assessment name:
-          type: string
-        assessment description:
-          type: string
-        assessment org group:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        assessment template:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TemplateHeaderInformation'
-        template id to which assessment was originally assigned to:
-          type: string
-          format: uuid
-        assessment stage:
-          type: string
-          enum:
-          - NOT_STARTED
-          - IN_PROGRESS
-          - UNDER_REVIEW
-          - COMPLETED
-        assessment result:
-          type: string
-        created by user id:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        created date time:
-          type: string
-          format: date-time
-        list of sections:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionHeaderInformation'
-        current section information:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentSectionInformationUiDto'
-        approvers:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ApproverInformation'
-        List of respondents for this assessment:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        deadline to complete the assessment, format - YYYY-MM-DDTHH:MM:SS.FFFZ:
-          type: string
-          format: date-time
-        reminder to be sent the number of days before the deadline denoted by this value:
-          type: integer
-          format: int64
-        reminder to be sent the number of days before the deadline denoted by these values:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_ReminderScheduleDto'
-        indicates if the assessment or sections can be submitted:
-          type: boolean
-        indicates if the assessment can be approved:
-          type: boolean
-        assessment display state. Used only by our own use interface:
-          type: string
-          enum:
-          - REFRESH_NONE, REFRESH_ALL, REFRESH_PARTIAL
-        assessment question information:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentQuestionInformationUiDto'
-        set of inventory links:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_InventoryLink'
-          uniqueItems: true
-        indicates if it has request information:
-          type: boolean
-        map containing invalid questions and the associated risks:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-              format: uuid
-        List of laws associated with the assessment:
-          type: array
-          items:
-            type: string
-        Complexity level of Assessment' response:
-          type: string
-          enum:
-          - BASIC
-          - ADVANCED
-          - EXPERT
-        List of tags associated with the assessment:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_TagEntityDetail'
-        reviewChangedResponses:
-          type: boolean
-        assessment id from where this assessment is copied:
-          type: string
-          format: uuid
-        editAllResponsesWhenInProgress:
-          type: boolean
-        primaryInventoryName:
-          type: string
-        primaryInventoryNumber:
-          type: integer
-          format: int64
-        userAssignmentMode:
-          type: string
-          enum:
-          - ASSESSMENT
-          - SECTION
-        Indicates progress on assessment with overall questionnaires:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AssessmentProgressInformation'
-        Welcome Section Information:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_WelcomeSection'
-        viewer:
-          type: boolean
-        welcomeSection:
-          type: boolean
-        firstSection:
-          type: boolean
-        lastSection:
-          type: boolean
-        welcomeText:
-          type: string
-    PrivacyAutomation-AssessmentAutomation_AssessmentProgressInformation:
-      type: object
-      properties:
-        totalQuestions:
-          type: integer
-          format: int64
-        respondedQuestions:
-          type: integer
-          format: int64
-    PrivacyAutomation-AssessmentAutomation_SubQuestionUiDto:
-      type: object
-      properties:
-        allIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-        byId:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_SubQuestionInformationUiDto'
-    PrivacyAutomation-AssessmentAutomation_RiskInformation:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        number:
-          type: integer
-          format: int64
-        type:
-          type: string
-          enum:
-          - ASSESSMENTS
-          - ASSETS
-          - PROCESSING_ACTIVITIES
-          - VENDORS
-          - ENTITIES
-          - INCIDENTS
-          - ESG
-          - GENERIC
-          - GENERAL
-          - ENGAGEMENTS
-        riskType:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskEntityTypeInformation'
-        creationType:
-          type: string
-        state:
-          type: string
-          enum:
-          - IDENTIFIED
-          - RECOMMENDATION_ADDED
-          - RECOMMENDATION_SENT
-          - REMEDIATION_PROPOSED
-          - EXCEPTION_REQUESTED
-          - REDUCED
-          - RETAINED
-          - ARCHIVED_IN_VERSION
-        previousState:
-          type: string
-          enum:
-          - IDENTIFIED
-          - RECOMMENDATION_ADDED
-          - RECOMMENDATION_SENT
-          - REMEDIATION_PROPOSED
-          - EXCEPTION_REQUESTED
-          - REDUCED
-          - RETAINED
-          - ARCHIVED_IN_VERSION
-        typeRefIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-        sourceType:
-          type: string
-          enum:
-          - PIA
-          - DM
-          - RA
-          - GRA
-          - DINA
-          - INVENTORY
-          - ENGAGEMENT
-        source:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskSourceInformation'
-        name:
-          type: string
-        description:
-          type: string
-        recommendation:
-          type: string
-        remediationProposal:
-          type: string
-        orgGroup:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        requestedException:
-          type: string
-        mitigation:
-          type: string
-        mitigatedDate:
-          type: string
-          format: date-time
-        justification:
-          type: string
-        deadline:
-          type: string
-          format: date-time
-        references:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskReferenceInformation'
-        createdUTCDateTime:
-          type: string
-          format: date-time
-        levelId:
-          type: integer
-          format: int64
-        level:
-          type: string
-        levelDisplayName:
-          type: string
-        probabilityLevelId:
-          type: integer
-          format: int64
-        probabilityLevel:
-          type: string
-        impactLevelId:
-          type: integer
-          format: int64
-        impactLevel:
-          type: string
-        riskScore:
-          type: number
-        viewOnly:
-          type: boolean
-        controlsIdentifier:
-          type: array
-          items:
-            type: string
-        categories:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskCategoryInformation'
-        riskOwnerId:
-          type: string
-          format: uuid
-          deprecated: true
-        riskOwner:
-          type: string
-          deprecated: true
-        riskOwnersId:
-          type: array
-          items:
-            type: string
-            format: uuid
-        riskOwnersName:
-          type: string
-        riskApproversId:
-          type: array
-          items:
-            type: string
-            format: uuid
-        riskApprovers:
-          type: string
-        inherentRiskLevel:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
-        targetRiskLevel:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskLevelDetail'
-        treatmentPlan:
-          type: string
-        treatment:
-          type: string
-        result:
-          type: string
-        treatmentStatus:
-          type: string
-        workflow:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        stage:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
-        actionId:
-          type: integer
-          format: int64
-        threatInformation:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskThreatInformation'
-        vulnerabilitiesInformation:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_RiskVulnerabilityInformation'
-        reminderDays:
-          type: integer
-          format: int64
-        valid:
-          type: boolean
-        attributeValues:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_AttributeValueInformation'
-        closed:
-          type: boolean
-        riskDomain:
-          $ref: '#/components/schemas/PrivacyAutomation-AssessmentAutomation_BasicEntityDetail'
   securitySchemes:
     PrivacyAutomation-AssessmentAutomation_OAUTH2:
       type: oauth2

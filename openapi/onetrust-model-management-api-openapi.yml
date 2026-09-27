@@ -1174,149 +1174,6 @@ paths:
         - integration
 components:
   schemas:
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last modified the record.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the record.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the record.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the record.
-          type: string
-          example: FL
-    EntityDetailRequest:
-      type: object
-      properties:
-        extendedBaseAttributes:
-          description: The details of the attribute.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field by which to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and the value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: The value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: The end value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
-    Sort:
-      type: object
-      properties:
-        sorted:
-          description: This flag indicates whether the results were sorted.
-          type: boolean
-          example: true
-        unsorted:
-          description: This flag indicates whether the results were unsorted.
-          type: boolean
-          example: false
-        empty:
-          description: This flag indicates whether sort criteria was left undefined.
-          type: boolean
-          example: false
-    EntityListRequest:
-      type: object
-      properties:
-        context:
-          description: The contextual details of the object.
-          $ref: '#/components/schemas/ContextInformation'
-        queryRequest:
-          description: The details of the filter, text, and organization search criteria.
-          $ref: '#/components/schemas/EntityQueryRequest'
-        requestedFields:
-          description: The details of the non-required fields to include in the response.
-          $ref: '#/components/schemas/EntityFieldRequest'
-      example:
-        queryRequest:
-          criteria:
-            filters:
-            - fieldName: name
-              operator: contains
-              value: OneTrust
-            - fieldName: entityStatus
-              operator: equals
-              value: Active
-            searchQuery: gdpr
-            sort:
-            - fieldName: lastModifiedTimestamp
-              direction: DESC
-          organizationTraversalStrategy: ancestors_and_descendants
-          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          queryAction: ListEntity
-        requestedFields:
-          includeStandardFields: true
-          includeCustomFields: true
-          includeAuditFields: false
-          specificStandardFields:
-          - name
-          - entityNumber
-          - createdBy
-          specificCustomFields:
-          - vendor_tier
-          - risk_score
-    AttributeQueryCriteria:
-      type: object
-      properties:
-        filters:
-          description: The criteria used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The key terms for the search criteria.
-          type: string
     EntityUpdateRequest:
       type: object
       properties:
@@ -1350,84 +1207,6 @@ components:
           textAttributeName:
           - value: New Text Value
       title: Entity Update Request
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the record was created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the record was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The creation details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The last modified details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
-    EntityQueryRequest:
-      type: object
-      properties:
-        criteria:
-          description: The details of the filter criteria.
-          example:
-            filters:
-            - fieldName: name
-              operator: contains
-              value: OneTrust
-            searchQuery: privacy
-            sort:
-            - fieldName: lastModifiedTimestamp
-              direction: DESC
-          $ref: '#/components/schemas/AttributeQueryCriteria'
-        organizationTraversalStrategy:
-          description: The strategy used to return objects within the organizational hierarchy.
-          type: string
-          example: ancestors_and_descendants
-          enum:
-          - ancestors_and_descendants
-          - descendants
-          - all
-        requestedOrganizationId:
-          description: The unique identifier of the organization for the request.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        queryAction:
-          description: The action specifying the source of the API request.
-          type: string
-          example: ListEntity
-      example:
-        criteria:
-          filters:
-          - fieldName: name
-            operator: contains
-            value: OneTrust
-          - fieldName: entityStatus
-            operator: equals
-            value: Active
-          - fieldName: lastModifiedTimestamp
-            operator: greaterThan
-            value: '2024-01-01T00:00:00Z'
-          searchQuery: privacy
-          sort:
-          - fieldName: lastModifiedTimestamp
-            direction: DESC
-        organizationTraversalStrategy: ancestors_and_descendants
-        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        queryAction: ListEntity
     EntityOrganizationInformation:
       type: object
       properties:
@@ -1531,6 +1310,199 @@ components:
       - size
       - totalElements
       - totalPages
+    EntityListRequest:
+      type: object
+      properties:
+        context:
+          description: The contextual details of the object.
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: The details of the filter, text, and organization search criteria.
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: The details of the non-required fields to include in the response.
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
+    EntityDetailRequest:
+      type: object
+      properties:
+        extendedBaseAttributes:
+          description: The details of the attribute.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    EntityQueryRequest:
+      type: object
+      properties:
+        criteria:
+          description: The details of the filter criteria.
+          example:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            searchQuery: privacy
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+        organizationTraversalStrategy:
+          description: The strategy used to return objects within the organizational hierarchy.
+          type: string
+          example: ancestors_and_descendants
+          enum:
+          - ancestors_and_descendants
+          - descendants
+          - all
+        requestedOrganizationId:
+          description: The unique identifier of the organization for the request.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction:
+          description: The action specifying the source of the API request.
+          type: string
+          example: ListEntity
+      example:
+        criteria:
+          filters:
+          - fieldName: name
+            operator: contains
+            value: OneTrust
+          - fieldName: entityStatus
+            operator: equals
+            value: Active
+          - fieldName: lastModifiedTimestamp
+            operator: greaterThan
+            value: '2024-01-01T00:00:00Z'
+          searchQuery: privacy
+          sort:
+          - fieldName: lastModifiedTimestamp
+            direction: DESC
+        organizationTraversalStrategy: ancestors_and_descendants
+        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction: ListEntity
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
     AttributeValueInformation:
       type: object
       properties:
@@ -1566,6 +1538,156 @@ components:
           default: 'false'
       required:
       - value
+    EntityInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          readOnly: true
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+          maximum: 9999999
+          minimum: 1
+          readOnly: true
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc2c46
+        schemaId:
+          description: The unique identifier of the schema.
+          type: string
+          format: uuid
+          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
+          readOnly: true
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        workflowAndStage:
+          description: The details of the workflow and stage.
+          example:
+            id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+            name: Vendor On-Boarding Workflow
+            nameKey: Workflow.VendorOnBoarding.Name
+            type: Vendor
+            workflowMode: BASIC
+            stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+            stageName: Start On-Boarding
+            stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
+            badgeColor: '#4287f5'
+          $ref: '#/components/schemas/EntityWorkflowInformation'
+        attributes:
+          description: The details of the associated attributes.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          example:
+            createdBy: admin@example.com
+            createdTimestamp: '2023-01-15T10:30:45Z'
+            lastModifiedBy: system@example.com
+            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+          readOnly: true
+      example:
+        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name: OneTrust
+        entityType:
+          id: d1119953-b4b5-4042-8cb9-b78038cc2c46
+          name: Vendor
+      required:
+      - entityType
+      - id
+      - name
+      - number
+      - schemaId
+      title: Entity Information
+    EntityFieldRequest:
+      type: object
+      properties:
+        fields:
+          description: The name of the field.
+          type: array
+          items:
+            type: string
+          example:
+          - textAttributeField1
+          - singleSelectAttributeField1
+        mode:
+          description: The mode in which non-required fields would be selected.
+          type: string
+          default: select_all
+          enum:
+          - select_all
+          - ignore_all
+          - specific
+        includeSelectedFullTextSearchFields:
+          description: This flag indicates whether to include selected full text search fields.
+          type: boolean
+          example: true
+        overriddenSearchFields:
+          description: The overridden search fields.
+          type: array
+          items:
+            type: string
+          example:
+          - name
+      required:
+      - mode
+    EntityIdentifierInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object.
+          type: string
+          example: OneTrust
+        number:
+          description: The sequential order in which the object was created.
+          type: integer
+          format: int64
+          example: 1
+        orgGroupId:
+          description: The unique identifier of the organization responsible for the object.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        entityType:
+          description: The details of the object type.
+          example:
+            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
+            name: Asset
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+      required:
+      - entityType
+      - id
     ModelCreateRequest:
       type: object
       properties:
@@ -1693,69 +1815,6 @@ components:
       required:
       - name
       title: Model Creation Request
-    EntityFieldRequest:
-      type: object
-      properties:
-        fields:
-          description: The name of the field.
-          type: array
-          items:
-            type: string
-          example:
-          - textAttributeField1
-          - singleSelectAttributeField1
-        mode:
-          description: The mode in which non-required fields would be selected.
-          type: string
-          default: select_all
-          enum:
-          - select_all
-          - ignore_all
-          - specific
-        includeSelectedFullTextSearchFields:
-          description: This flag indicates whether to include selected full text search fields.
-          type: boolean
-          example: true
-        overriddenSearchFields:
-          description: The overridden search fields.
-          type: array
-          items:
-            type: string
-          example:
-          - name
-      required:
-      - mode
-    EntityIdentifierInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the object.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the object.
-          type: string
-          example: OneTrust
-        number:
-          description: The sequential order in which the object was created.
-          type: integer
-          format: int64
-          example: 1
-        orgGroupId:
-          description: The unique identifier of the organization responsible for the object.
-          type: string
-          format: uuid
-          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
-        entityType:
-          description: The details of the object type.
-          example:
-            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
-            name: Asset
-          $ref: '#/components/schemas/BasicEntityTypeInformation'
-      required:
-      - entityType
-      - id
     EntityWorkflowInformation:
       type: object
       properties:
@@ -1803,46 +1862,21 @@ components:
       - stageId
       - stageName
       - type
-    BasicEntityTypeInformation:
+    Sort:
       type: object
       properties:
-        id:
-          description: The unique identifier of the object type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the object type.
-          type: string
-          example: Vendor
-        seeded:
-          description: 'This flag indicates whether the object type is seeded. '
+        sorted:
+          description: This flag indicates whether the results were sorted.
           type: boolean
           example: true
-        moduleName:
-          description: The name of the product where the object type exists.
-          type: string
-          example: Vendor
-          enum:
-          - Vendor
-          - DataMapping
-          - Risk
-          - Assessments
-          - CustomEntityManagement
-        schemaName:
-          description: The name of the schema.
-          type: string
-          example: vendor
-          enum:
-          - vendor
-          - data-mapping
-          - risk
-          - assessments
-          - customEntityManagement
-      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
-      required:
-      - id
-      - name
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
+          type: boolean
+          example: false
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
+          type: boolean
+          example: false
     ContextInformation:
       type: object
       properties:
@@ -1851,6 +1885,47 @@ components:
           additionalProperties:
             type: object
           type: object
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
     PageEntityInformation:
       type: object
       properties:
@@ -1942,93 +2017,18 @@ components:
       - size
       - totalElements
       - totalPages
-    EntityInformation:
+    AttributeQueryCriteria:
       type: object
       properties:
-        id:
-          description: The unique identifier of the object.
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          readOnly: true
-        number:
-          description: The sequential order in which the object was created.
-          type: integer
-          format: int64
-          example: 1
-          maximum: 9999999
-          minimum: 1
-          readOnly: true
-        name:
-          description: The name of the object.
-          type: string
-          example: OneTrust
-          maxLength: 255
-          minLength: 1
-        orgGroupId:
-          description: The unique identifier of the organization responsible for the object.
-          type: string
-          format: uuid
-          example: d1119953-b4b5-4042-8cb9-b78038cc2c46
-        schemaId:
-          description: The unique identifier of the schema.
-          type: string
-          format: uuid
-          example: c21319953-b4b5-4042-8cb9-b78038cc4c51
-          readOnly: true
-        entityType:
-          description: The details of the object type.
-          example:
-            id: a2319953-b4b5-4042-8cb9-b78038cc4c46
-            name: Asset
-          $ref: '#/components/schemas/BasicEntityTypeInformation'
-        workflowAndStage:
-          description: The details of the workflow and stage.
-          example:
-            id: b271c01a-89a9-41b1-8185-0a3e2bfdad84
-            name: Vendor On-Boarding Workflow
-            nameKey: Workflow.VendorOnBoarding.Name
-            type: Vendor
-            workflowMode: BASIC
-            stageId: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
-            stageName: Start On-Boarding
-            stageNameKey: Workflow.VendorOnBoarding.Stage.StartOnBoarding
-            badgeColor: '#4287f5'
-          $ref: '#/components/schemas/EntityWorkflowInformation'
-        attributes:
-          description: The details of the associated attributes.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        auditFields:
-          description: The activity details of when the record was created and last updated.
-          example:
-            createdBy: admin@example.com
-            createdTimestamp: '2023-01-15T10:30:45Z'
-            lastModifiedBy: system@example.com
-            lastModifiedTimestamp: '2025-03-22T14:15:22Z'
-          $ref: '#/components/schemas/EntityRecordAuditInformation'
-          readOnly: true
-      example:
-        id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name: OneTrust
-        entityType:
-          id: d1119953-b4b5-4042-8cb9-b78038cc2c46
-          name: Vendor
-      required:
-      - entityType
-      - id
-      - name
-      - number
-      - schemaId
-      title: Entity Information
   securitySchemes:
     OAUTH2:
       type: oauth2

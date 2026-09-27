@@ -253,14 +253,6 @@ components:
         status: Pending
       required:
       - controlIds
-    TechRiskCompliance-Risk_RiskThreatAddRequest:
-      type: object
-      properties:
-        threatId:
-          description: Unique identifier of the threat to be added. If null, any existing threat will be removed from the risk.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
     TechRiskCompliance-Risk_RiskVulnerabilityAddRequest:
       type: object
       properties:
@@ -276,6 +268,14 @@ components:
           - 987fcdeb-51a2-43d7-9abc-123456789012
       required:
       - vulnerabilityIdList
+    TechRiskCompliance-Risk_RiskThreatAddRequest:
+      type: object
+      properties:
+        threatId:
+          description: Unique identifier of the threat to be added. If null, any existing threat will be removed from the risk.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

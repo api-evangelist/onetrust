@@ -414,49 +414,146 @@ paths:
         - CONTROL
 components:
   schemas:
-    TechRiskCompliance-ITRiskManagement_FilterInformation:
+    TechRiskCompliance-ITRiskManagement_IdResponseUUID:
       type: object
       properties:
-        field:
-          description: Field to search on.
+        id:
+          description: Primary identifier of the created or updated entity, typically a UUID.
           type: string
-          example: lastCollected
-        operator:
-          description: Operator for search.
-          type: string
-          example: GREATER_THAN
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - BETWEEN
-          - GREATER_THAN
-          - LESS_THAN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
-          type: object
-          example: '2020-11-10'
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
       required:
-      - field
-      - value
+      - id
+    TechRiskCompliance-ITRiskManagement_ControlUpdateRequestDto:
+      type: object
+      properties:
+        identifier:
+          description: The identifier of the control.
+          type: string
+          example: A.1.1
+          maxLength: 50
+          minLength: 1
+        name:
+          description: The name of the control.
+          type: string
+          example: Control ABC
+          maxLength: 300
+          minLength: 1
+        orgGroupId:
+          description: The identifier of the organization the master control is linked to. In general, this is top organization in the org hierarchy.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        description:
+          description: Description of the control.
+          type: string
+          example: Testing Control
+          maxLength: 4000
+          minLength: 0
+        recommendation:
+          description: The recommendation status of this control based on Athena logic.
+          type: string
+          example: Recommended
+          maxLength: 500
+          minLength: 0
+        frameworkId:
+          description: Identifier of the framework the control is tied to.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        frameworkName:
+          description: Name of the framework the control is tied to.
+          type: string
+          example: NIST
+          maxLength: 500
+          minLength: 0
+        frameworkNameKey:
+          description: Identifier used for translation of Framework Name.
+          type: string
+          example: framework.NIST
+          maxLength: 500
+          minLength: 0
+        status:
+          description: The new status of the control. This can be Active, Archived, or Pending.
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Archived
+          - Pending
+        categoryId:
+          description: The identifier of the category tied to the control. Optional if no category is needed or if category name is provided.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        categoryName:
+          description: The name of the category tied to the control. Optional if category Id is provided.
+          type: string
+          example: Access Control
+          maxLength: 500
+          minLength: 0
+        categoryNameKey:
+          description: Identifier used for translation of category name. Optional if category Id is provided.
+          type: string
+          example: category.AccessControl
+          maxLength: 500
+          minLength: 0
+        attributes:
+          description: Custom Attributes
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeValueInformation'
+        implementationGuidance:
+          description: Implementation guidance of control.
+          type: string
+          example: Testing Control
+        scopeId:
+          description: The identifier of the scope associated with this control.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        justificationIds:
+          description: Set of justification identifiers explaining why this control is included in the framework.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Set of justification identifiers explaining why this control is included in the framework.
+          example:
+          - 123e4567-e89b-12d3-a456-426614174001
+          - 123e4567-e89b-12d3-a456-426614174002
+          uniqueItems: true
+      required:
+      - identifier
+      - name
+      - orgGroupId
+    TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: ID of the entity type. This can be Assets, Entities, Custom Object GUID in the form of String.
+          type: string
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        label:
+          description: Name of the EntityType.
+          type: string
+          example: Assets
+        translationKey:
+          description: Translation Key of EntityType ID.
+          type: string
+          example: Assets
+        moduleName:
+          description: Module Name of EntityType.
+          type: string
+          example: DataMapping
+        seeded:
+          description: The parameter is true for Base Entity Type and false for Custom Object/Entity Types by default.
+          type: boolean
+          example: true
+      required:
+      - id
     TechRiskCompliance-ITRiskManagement_ControlDetailInformation:
       type: object
       properties:
@@ -560,123 +657,6 @@ components:
       - name
       - orgGroupId
       - orgGroupName
-    TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-      required:
-      - value
-    TechRiskCompliance-ITRiskManagement_AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    TechRiskCompliance-ITRiskManagement_Pageable:
-      type: object
-      properties:
-        offset:
-          description: The page offset.
-          type: integer
-          format: int64
-          example: 0
-        pageNumber:
-          description: Page number of the results list (0….N).
-          type: integer
-          format: int32
-          example: 0
-        pageSize:
-          description: Number of records per page (0…N).
-          type: integer
-          format: int32
-          example: 20
-        paged:
-          description: The flag to check if the result is paged or not.
-          type: boolean
-          example: true
-        sort:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
-        unpaged:
-          description: The flag to check if the result is unpaged or not.
-          type: boolean
-          example: false
-      title: Pageable
-    TechRiskCompliance-ITRiskManagement_IdResponseUUID:
-      type: object
-      properties:
-        id:
-          description: Primary identifier of the created or updated entity, typically a UUID.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-      required:
-      - id
-    TechRiskCompliance-ITRiskManagement_Sort:
-      type: object
-      properties:
-        empty:
-          description: The flag to check if the result is empty or not.
-          type: boolean
-          example: false
-        sorted:
-          description: The flag to check if the result is sorted or not.
-          type: boolean
-          example: true
-        unsorted:
-          description: The flag to check if the result is unsorted or not.
-          type: boolean
-          example: false
-      title: Sort
     TechRiskCompliance-ITRiskManagement_ControlDto:
       type: object
       properties:
@@ -777,6 +757,59 @@ components:
       - name
       - orgGroupId
       - orgGroupName
+    TechRiskCompliance-ITRiskManagement_ControlRemovalResponse:
+      type: object
+      properties:
+        deletedControl:
+          description: List of controls that were deleted.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDetail'
+        nonDeletedControl:
+          description: List of controls that could not be deleted.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDetail'
+    TechRiskCompliance-ITRiskManagement_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
     TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
       type: object
       properties:
@@ -792,26 +825,93 @@ components:
           example: firewall
         excludeTotalRecordsCount:
           type: boolean
-    TechRiskCompliance-ITRiskManagement_ControlDetail:
+    TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation:
       type: object
       properties:
         id:
-          description: Control GUID.
+          description: Unique identifier for the attribute option
           type: string
           format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        identifier:
-          description: Control Identifier.
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
           type: string
-          example: A.1.1
-        name:
-          description: Control Name.
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
           type: string
-          example: Control ABC
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
       required:
-      - id
-      - identifier
-      - name
+      - value
+    TechRiskCompliance-ITRiskManagement_PageControlDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    TechRiskCompliance-ITRiskManagement_Sort:
+      type: object
+      properties:
+        empty:
+          description: The flag to check if the result is empty or not.
+          type: boolean
+          example: false
+        sorted:
+          description: The flag to check if the result is sorted or not.
+          type: boolean
+          example: true
+        unsorted:
+          description: The flag to check if the result is unsorted or not.
+          type: boolean
+          example: false
+      title: Sort
     TechRiskCompliance-ITRiskManagement_ControlCreateRequestDto:
       type: object
       properties:
@@ -926,160 +1026,55 @@ components:
       - name
       - orgGroupId
       - origin
-    TechRiskCompliance-ITRiskManagement_PageControlDto:
+    TechRiskCompliance-ITRiskManagement_Pageable:
       type: object
       properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDto'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
+        offset:
+          description: The page offset.
+          type: integer
+          format: int64
+          example: 0
+        pageNumber:
+          description: Page number of the results list (0….N).
           type: integer
           format: int32
           example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
+        pageSize:
+          description: Number of records per page (0…N).
           type: integer
           format: int32
           example: 20
-        pageable:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        paged:
+          description: The flag to check if the result is paged or not.
+          type: boolean
+          example: true
         sort:
           $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-    TechRiskCompliance-ITRiskManagement_ControlUpdateRequestDto:
+        unpaged:
+          description: The flag to check if the result is unpaged or not.
+          type: boolean
+          example: false
+      title: Pageable
+    TechRiskCompliance-ITRiskManagement_ControlDetail:
       type: object
       properties:
+        id:
+          description: Control GUID.
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
         identifier:
-          description: The identifier of the control.
+          description: Control Identifier.
           type: string
           example: A.1.1
-          maxLength: 50
-          minLength: 1
         name:
-          description: The name of the control.
+          description: Control Name.
           type: string
           example: Control ABC
-          maxLength: 300
-          minLength: 1
-        orgGroupId:
-          description: The identifier of the organization the master control is linked to. In general, this is top organization in the org hierarchy.
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        description:
-          description: Description of the control.
-          type: string
-          example: Testing Control
-          maxLength: 4000
-          minLength: 0
-        recommendation:
-          description: The recommendation status of this control based on Athena logic.
-          type: string
-          example: Recommended
-          maxLength: 500
-          minLength: 0
-        frameworkId:
-          description: Identifier of the framework the control is tied to.
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        frameworkName:
-          description: Name of the framework the control is tied to.
-          type: string
-          example: NIST
-          maxLength: 500
-          minLength: 0
-        frameworkNameKey:
-          description: Identifier used for translation of Framework Name.
-          type: string
-          example: framework.NIST
-          maxLength: 500
-          minLength: 0
-        status:
-          description: The new status of the control. This can be Active, Archived, or Pending.
-          type: string
-          example: Active
-          enum:
-          - Active
-          - Archived
-          - Pending
-        categoryId:
-          description: The identifier of the category tied to the control. Optional if no category is needed or if category name is provided.
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        categoryName:
-          description: The name of the category tied to the control. Optional if category Id is provided.
-          type: string
-          example: Access Control
-          maxLength: 500
-          minLength: 0
-        categoryNameKey:
-          description: Identifier used for translation of category name. Optional if category Id is provided.
-          type: string
-          example: category.AccessControl
-          maxLength: 500
-          minLength: 0
-        attributes:
-          description: Custom Attributes
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AttributeValueInformation'
-        implementationGuidance:
-          description: Implementation guidance of control.
-          type: string
-          example: Testing Control
-        scopeId:
-          description: The identifier of the scope associated with this control.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        justificationIds:
-          description: Set of justification identifiers explaining why this control is included in the framework.
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Set of justification identifiers explaining why this control is included in the framework.
-          example:
-          - 123e4567-e89b-12d3-a456-426614174001
-          - 123e4567-e89b-12d3-a456-426614174002
-          uniqueItems: true
       required:
+      - id
       - identifier
       - name
-      - orgGroupId
     TechRiskCompliance-ITRiskManagement_ControlAttributeValueInformation:
       type: object
       properties:
@@ -1100,44 +1095,49 @@ components:
           description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
           type: string
           example: '3.5'
-    TechRiskCompliance-ITRiskManagement_ControlEntityTypeInformation:
+    TechRiskCompliance-ITRiskManagement_FilterInformation:
       type: object
       properties:
-        id:
-          description: ID of the entity type. This can be Assets, Entities, Custom Object GUID in the form of String.
+        field:
+          description: Field to search on.
           type: string
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        label:
-          description: Name of the EntityType.
+          example: lastCollected
+        operator:
+          description: Operator for search.
           type: string
-          example: Assets
-        translationKey:
-          description: Translation Key of EntityType ID.
-          type: string
-          example: Assets
-        moduleName:
-          description: Module Name of EntityType.
-          type: string
-          example: DataMapping
-        seeded:
-          description: The parameter is true for Base Entity Type and false for Custom Object/Entity Types by default.
-          type: boolean
-          example: true
+          example: GREATER_THAN
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          example: '2020-11-10'
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7."
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
       required:
-      - id
-    TechRiskCompliance-ITRiskManagement_ControlRemovalResponse:
-      type: object
-      properties:
-        deletedControl:
-          description: List of controls that were deleted.
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDetail'
-        nonDeletedControl:
-          description: List of controls that could not be deleted.
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ControlDetail'
+      - field
+      - value
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

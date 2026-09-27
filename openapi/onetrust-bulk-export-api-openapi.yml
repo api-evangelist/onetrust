@@ -736,15 +736,85 @@ paths:
         - BULK_EXPORT
 components:
   schemas:
-    HeadersSchema:
+    DataSubjectsBulkAddPurposeParamSchema:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/ParamLastTransactionCollectionPointId'
+      - $ref: '#/components/schemas/ParamPurposeId'
+      - $ref: '#/components/schemas/ParamStatus'
+      - $ref: '#/components/schemas/ParamCustomPreferenceName'
+      - $ref: '#/components/schemas/ParamCustomPreferenceValue'
+      - $ref: '#/components/schemas/ParamDataElementName'
+      - $ref: '#/components/schemas/ParamDataElementValue'
+      - $ref: '#/components/schemas/ParamWithdrawalNotes'
+      - $ref: '#/components/schemas/ParamIncludeTestDataSubject'
+      - $ref: '#/components/schemas/ParamDateType'
+      - $ref: '#/components/schemas/ParamPrimaryIdentifierType'
+      - $ref: '#/components/schemas/ParamAdditionalIdentifierType'
+      - $ref: '#/components/schemas/ParamOrganizationGroupId'
+      - $ref: '#/components/schemas/ParamSourcePurposeGuid'
+      - $ref: '#/components/schemas/ParamTargetPurposeGuid'
+      - $ref: '#/components/schemas/ParamDefaultStatus'
+      - $ref: '#/components/schemas/ParamCollectionPointJWT'
+    ParamPurposeVersion:
       type: object
       properties:
-        Authorization:
-          description: The authorization bearer token required to access the bulk export.
+        name:
+          description: This parameter filters results by purpose versions.
           type: string
-          example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-      example:
-        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          default: purposeVersion
+          enum:
+          - purposeVersion
+        values:
+          description: The version of the purpose. Minimum 1 item, maximum 20 values.
+          type: array
+          items:
+            type: integer
+            format: int32
+            minimum: 0
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Purpose Version
+    ParamPrimaryIdentifierType:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by a specific identifier type for the primary identifier, such as email.
+          type: string
+          default: primaryIdentifierType
+          enum:
+          - primaryIdentifierType
+        values:
+          description: The type of data subject identifier used as a primary identifier.
+          type: array
+          items:
+            type: string
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Primary Identifier Type
+    ParamAdditionalIdentifierType:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by a specific identifier type, such as email.
+          type: string
+          default: additionalIdentifierType
+          enum:
+          - additionalIdentifierType
+        values:
+          description: The type of data subject identifier used as an additional identifier.
+          type: array
+          items:
+            type: string
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Additional Identifier Type
     ParamTestDataSubject:
       type: object
       properties:
@@ -767,462 +837,6 @@ components:
       required:
       - name
       title: Test Data Subject
-    ParamNewIdentifierType:
-      type: object
-      properties:
-        name:
-          description: The name of the parameter used to specify the new identifier type. Exactly 1 item required when actionType is CHANGE_IDENTIFIER_TYPE.
-          type: string
-          default: newIdentifierType
-          enum:
-          - newIdentifierType
-        values:
-          type: array
-          items:
-            type: string
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: New Identifier Type
-    ParamTargetPurposeGuid:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the target purpose GUID.
-          type: string
-          default: targetPurposeGuid
-          enum:
-          - targetPurposeGuid
-        values:
-          description: The target purpose GUID to which to copy status. Exactly 1 item is required.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Target Purpose Guid
-    DataSubjectsBulkAddPurposeRequest:
-      type: object
-      properties:
-        exportType:
-          description: The type of data to export.
-          type: string
-          example: DATA_SUBJECTS_BULK_ADD_PURPOSE
-          enum:
-          - DATA_SUBJECTS_BULK_ADD_PURPOSE
-        startDate:
-          description: The start of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS_BULK_ADD_PURPOSE` export type, and the timespan is limited to 180 days.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS_BULK_ADD_PURPOSE` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
-          type: string
-          format: date
-          example: '2023-12-01'
-        params:
-          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSubjectsBulkAddPurposeParamSchema'
-          uniqueItems: true
-      required:
-      - endDate
-      - startDate
-      title: 'Bulk Add Purpose: Data Subjects '
-    ConsentReceiptsRequest:
-      type: object
-      properties:
-        exportType:
-          description: The type of data to export.
-          type: string
-          example: CONSENT_RECEIPTS
-          enum:
-          - CONSENT_RECEIPTS
-        startDate:
-          description: The start of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS` export type, and the timespan is limited to 180 days.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
-          type: string
-          format: date
-          example: '2023-12-01'
-        params:
-          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentReceiptsParamSchema'
-          uniqueItems: true
-      required:
-      - endDate
-      - startDate
-      title: 'Export: Consent Receipts'
-    DataSubjectsBulkActionsRequest:
-      type: object
-      properties:
-        exportType:
-          description: The type of data to export.
-          type: string
-          example: DATA_SUBJECTS_BULK_ACTIONS
-          enum:
-          - DATA_SUBJECTS_BULK_ACTIONS
-        startDate:
-          description: The start of a date range used to filter results. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
-          type: string
-          format: date
-          example: '2023-12-01'
-        params:
-          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSubjectsBulkActionsParamSchema'
-          uniqueItems: true
-      title: 'Bulk Action: Data Subjects'
-    BulkExportDownloadPageResponse:
-      type: object
-      properties:
-        items:
-          description: The details of the exported file.
-          type: array
-          items:
-            $ref: '#/components/schemas/BulkExportDownloadResponse'
-        continuationToken:
-          description: The continuation token.
-          type: string
-          example: 112233
-        hasNext:
-          description: This flag indicates whether there are more values to be retrieved.
-          type: boolean
-          example: true
-    ParamDefaultStatus:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the target purpose status when the source purpose status is not found.
-          type: string
-          default: defaultStatus
-          enum:
-          - defaultStatus
-        values:
-          description: The target purpose status when the source purpose is not found. Exactly 1 item is required.
-          type: array
-          items:
-            type: string
-            format: string
-            enum:
-            - PENDING
-            - CONFIRMED
-            - WITHDRAWN
-            - IMPLICIT
-            - EXPIRED
-            - NOTGIVEN
-            - OPT_OUT
-            - NO_CHOICE
-            - HARD_OPT_OUT
-            - EXTEND
-            - OPT_IN
-            - NO_OPT_OUT
-            example: CONFIRMED
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Default Status
-    ParamPurposeGuid:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by purpose IDs.
-          type: string
-          default: purposeGuid
-          enum:
-          - purposeGuid
-        values:
-          description: The unique identifier of a purpose. Minimum 1 item, maximum 20 values.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
-          maxItems: 20
-          minItems: 1
-      required:
-      - name
-      title: Purpose Guid
-    ParamStatus:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the consent status. For more information, see [Data Subject Purpose Statuses.](https://my.onetrust.com/s/article/UUID-d4ed05a9-a999-f2cb-8272-610a5817b43f?language=en_US#UUID-d4ed05a9-a999-f2cb-8272-610a5817b43f_section-idm46212287084304)
-          type: string
-          default: status
-          enum:
-          - status
-        values:
-          description: The status of consent. Minimum 1 item, maximum 20 values.
-          type: array
-          items:
-            type: string
-            enum:
-            - ACTIVE
-            - ALWAYS_ACTIVE
-            - EXPIRED
-            - HARD_OPT_OUT
-            - IMPLICIT
-            - NO_CONSENT
-            - NOT_OPT_OUT
-            - OPT_OUT
-            - PENDING
-            - WITHDRAWN
-          maxItems: 20
-          minItems: 1
-      required:
-      - name
-      title: Status
-    DataSubjectsParamSchema:
-      type: object
-      oneOf:
-      - $ref: '#/components/schemas/ParamLastTransactionCollectionPointId'
-      - $ref: '#/components/schemas/ParamPurposeId'
-      - $ref: '#/components/schemas/ParamStatus'
-      - $ref: '#/components/schemas/ParamCustomPreferenceName'
-      - $ref: '#/components/schemas/ParamCustomPreferenceValue'
-      - $ref: '#/components/schemas/ParamDataElementName'
-      - $ref: '#/components/schemas/ParamDataElementValue'
-      - $ref: '#/components/schemas/ParamWithdrawalNotes'
-      - $ref: '#/components/schemas/ParamIncludeTestDataSubject'
-      - $ref: '#/components/schemas/ParamDateType'
-      - $ref: '#/components/schemas/ParamPrimaryIdentifierType'
-      - $ref: '#/components/schemas/ParamAdditionalIdentifierType'
-      - $ref: '#/components/schemas/ParamOrganizationGroupId'
-    BulkExportFormat:
-      type: string
-      example: CSV
-      default: CSV
-      enum:
-      - CSV
-      - JSON
-    DataSubjectsRequest:
-      type: object
-      properties:
-        exportType:
-          description: The type of data to export.
-          type: string
-          example: DATA_SUBJECTS
-          enum:
-          - DATA_SUBJECTS
-        startDate:
-          description: The start of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS` export type, and the timespan is limited to 180 days.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
-          type: string
-          format: date
-          example: '2023-12-01'
-        params:
-          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSubjectsParamSchema'
-          uniqueItems: true
-      required:
-      - endDate
-      - startDate
-      title: 'Export: Data Subjects'
-    ParamPurposeId:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by purpose IDs.
-          type: string
-          default: purposeId
-          enum:
-          - purposeId
-        values:
-          description: The unique identifier of a purpose.
-          type: array
-          items:
-            type: string
-          maxItems: 20
-          minItems: 1
-      required:
-      - name
-      title: Purpose Id
-    ParamIncludeTestDataSubject:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by test data subjects.
-          type: string
-          default: includeTestDataSubject
-          enum:
-          - includeTestDataSubject
-        values:
-          description: This flag indicates whether to include or exclude test data subjects. This parameter defaults to false (i.e. no test data subjects will be returned). Exactly 1 item is required.
-          type: array
-          items:
-            type: string
-            enum:
-            - 'true'
-            - 'false'
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Include Test Data Subject
-    CookieReceiptsRequest:
-      type: object
-      properties:
-        exportType:
-          description: The type of data to export.
-          type: string
-          example: COOKIE_RECEIPTS
-          enum:
-          - COOKIE_RECEIPTS
-        startDate:
-          description: The start of a date range used to filter results. This parameter is required for the `COOKIE_RECEIPTS` export type, and the timespan is limited to 180 days.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is required for the `COOKIE_RECEIPTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
-          type: string
-          format: date
-          example: '2023-12-01'
-        params:
-          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
-          type: array
-          items:
-            $ref: '#/components/schemas/CookieReceiptsParamSchema'
-          uniqueItems: true
-      required:
-      - endDate
-      - startDate
-      title: 'Export: Cookie Receipts'
-    ParamCustomPreferenceName:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by custom preference names.
-          type: string
-          default: customPreferenceName
-          enum:
-          - customPreferenceName
-        values:
-          description: The name of the custom preference. If the custom preference name is included without the custom preference value, the export will return all records with the custom preference.
-          type: array
-          items:
-            type: string
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Custom Preference Name
-    BulkExportRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the bulk export.
-          type: string
-          example: Monthly Consent Report - Q2 2023
-          maxLength: 255
-          minLength: 1
-        exportType:
-          description: The type of data to export. Different export types support different filtering parameters.
-          example: CONSENT_RECEIPTS
-          enum:
-          - CONSENT_RECEIPTS
-          - COOKIE_RECEIPTS
-          - DATA_SUBJECTS
-          - DATA_SUBJECTS_BULK_ACTIONS
-          - DATA_SUBJECTS_BULK_ADD_PURPOSE
-          $ref: '#/components/schemas/BulkExportType'
-        startDate:
-          description: The start of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS`, `COOKIE_RECEIPTS`, `DATA_SUBJECTS` and `DATA_SUBJECTS_BULK_ADD_PURPOSE` export types, and the timespan is limited to 180 days. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
-          type: string
-          format: date
-          example: '2023-07-01'
-        endDate:
-          description: The end of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS`, `COOKIE_RECEIPTS`, `DATA_SUBJECTS` and `DATA_SUBJECTS_BULK_ADD_PURPOSE` export types, and must be within 180 days from the `startDate`. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type. The `endDate` can be as recent as yesterday, but cannot be the current day.
-          type: string
-          format: date
-          example: '2023-12-01'
-        exportFormat:
-          description: The file format of the bulk export.
-          example: CSV
-          default: CSV
-          enum:
-          - CSV
-          - JSON
-          $ref: '#/components/schemas/BulkExportFormat'
-      discriminator:
-        propertyName: exportType
-        mapping:
-          CONSENT_RECEIPTS: '#/components/schemas/ConsentReceiptsRequest'
-          COOKIE_RECEIPTS: '#/components/schemas/CookieReceiptsRequest'
-          DATA_SUBJECTS: '#/components/schemas/DataSubjectsRequest'
-          DATA_SUBJECTS_BULK_ACTIONS: '#/components/schemas/DataSubjectsBulkActionsRequest'
-          DATA_SUBJECTS_BULK_ADD_PURPOSE: '#/components/schemas/DataSubjectsBulkAddPurposeRequest'
-      oneOf:
-      - $ref: '#/components/schemas/ConsentReceiptsRequest'
-      - $ref: '#/components/schemas/CookieReceiptsRequest'
-      - $ref: '#/components/schemas/DataSubjectsRequest'
-      - $ref: '#/components/schemas/DataSubjectsBulkActionsRequest'
-      - $ref: '#/components/schemas/DataSubjectsBulkAddPurposeRequest'
-      required:
-      - exportType
-    ParamWithdrawalNotes:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by withdrawal notes.
-          type: string
-          default: withdrawalNotes
-          enum:
-          - withdrawalNotes
-        values:
-          description: The reason notes that explain why consent was withdrawn.
-          type: array
-          items:
-            type: string
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Withdrawal Notes
-    SortObject:
-      type: object
-      properties:
-        empty:
-          description: This flag indicates whether sort criteria was left undefined.
-          type: boolean
-        unsorted:
-          description: This flag indicates whether the results were not sorted.
-          type: boolean
-        sorted:
-          description: This flag indicates whether the results were sorted.
-          type: boolean
-    CookieReceiptsParamSchema:
-      type: object
-      oneOf:
-      - $ref: '#/components/schemas/ParamCollectionPointVersion'
-      - $ref: '#/components/schemas/ParamCollectionPointGuid'
-      - $ref: '#/components/schemas/ParamPurposeVersion'
-      - $ref: '#/components/schemas/ParamPurposeGuid'
     DataSubjectsBulkActionsParamSchema:
       type: object
       oneOf:
@@ -1238,203 +852,29 @@ components:
       - $ref: '#/components/schemas/ParamDataElementName'
       - $ref: '#/components/schemas/ParamDataElementValue'
       - $ref: '#/components/schemas/ParamNewIdentifierType'
-    BulkExportParam:
+    PageableObject:
       type: object
       properties:
-        name:
-          description: The name of the parameter used to filter results. Available parameters depend on exportType.
-          type: string
-          example: collectionPointGuid
-          enum:
-          - collectionPointVersion
-          - purposeVersion
-          - collectionPointGuid
-          - purposeGuid
-          - lastTransactionCollectionPointId
-          - purposeId
-          - status
-          - customPreferenceName
-          - customPreferenceValue
-          - dataElementName
-          - dataElementValue
-          - withdrawalNotes
-          - includeTestDataSubject
-          - dateType
-          - primaryIdentifierType
-          - additionalIdentifierType
-          - organizationGroupId
-        values:
-          description: 'The values of the parameter used to filter results. Max items depend on parameter name and exportType.
-
-
-            - For CONSENT_RECEIPTS and COOKIE_RECEIPTS: All parameters accept up to 20 values.
-
-            - For DATA_SUBJECTS: Most parameters accept up to 20 values, except customPreferenceName, customPreferenceValue, dataElementName, dataElementValue, withdrawalNotes, includeTestDataSubject, and dateType which accept only 1 value.'
-          type: array
-          items:
-            type: string
-            description: 'The values of the parameter used to filter results. Max items depend on parameter name and exportType.
-
-
-              - For CONSENT_RECEIPTS and COOKIE_RECEIPTS: All parameters accept up to 20 values.
-
-              - For DATA_SUBJECTS: Most parameters accept up to 20 values, except customPreferenceName, customPreferenceValue, dataElementName, dataElementValue, withdrawalNotes, includeTestDataSubject, and dateType which accept only 1 value.'
-            example: '["af01cad5-a39d-4585-9ee1-2062b1426bdd"]'
-          example:
-          - af01cad5-a39d-4585-9ee1-2062b1426bdd
-      example:
-      - name: primaryIdentifierType
-        values:
-        - email
-      discriminator:
-        propertyName: name
-        mapping:
-          collectionPointVersion: '#/components/schemas/ParamCollectionPointVersion'
-          collectionPointGuid: '#/components/schemas/ParamCollectionPointGuid'
-          purposeVersion: '#/components/schemas/ParamPurposeVersion'
-          purposeGuid: '#/components/schemas/ParamPurposeGuid'
-          lastTransactionCollectionPointId: '#/components/schemas/ParamLastTransactionCollectionPointId'
-          purposeId: '#/components/schemas/ParamPurposeId'
-          status: '#/components/schemas/ParamStatus'
-          customPreferenceName: '#/components/schemas/ParamCustomPreferenceName'
-          customPreferenceValue: '#/components/schemas/ParamCustomPreferenceValue'
-          dataElementName: '#/components/schemas/ParamDataElementName'
-          dataElementValue: '#/components/schemas/ParamDataElementValue'
-          withdrawalNotes: '#/components/schemas/ParamWithdrawalNotes'
-          includeTestDataSubject: '#/components/schemas/ParamIncludeTestDataSubject'
-          dateType: '#/components/schemas/ParamDateType'
-          primaryIdentifierType: '#/components/schemas/ParamPrimaryIdentifierType'
-          additionalIdentifierType: '#/components/schemas/ParamAdditionalIdentifierType'
-          organizationGroupId: '#/components/schemas/ParamOrganizationGroupId'
-      oneOf:
-      - $ref: '#/components/schemas/ParamCollectionPointVersion'
-      - $ref: '#/components/schemas/ParamCollectionPointGuid'
-      - $ref: '#/components/schemas/ParamPurposeVersion'
-      - $ref: '#/components/schemas/ParamPurposeGuid'
-      - $ref: '#/components/schemas/ParamLastTransactionCollectionPointId'
-      - $ref: '#/components/schemas/ParamPurposeId'
-      - $ref: '#/components/schemas/ParamStatus'
-      - $ref: '#/components/schemas/ParamCustomPreferenceName'
-      - $ref: '#/components/schemas/ParamCustomPreferenceValue'
-      - $ref: '#/components/schemas/ParamDataElementName'
-      - $ref: '#/components/schemas/ParamDataElementValue'
-      - $ref: '#/components/schemas/ParamWithdrawalNotes'
-      - $ref: '#/components/schemas/ParamIncludeTestDataSubject'
-      - $ref: '#/components/schemas/ParamDateType'
-      - $ref: '#/components/schemas/ParamPrimaryIdentifierType'
-      - $ref: '#/components/schemas/ParamAdditionalIdentifierType'
-      - $ref: '#/components/schemas/ParamOrganizationGroupId'
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who initiated the bulk export.
-          type: string
-          format: uuid
-        value:
-          description: The name of the user who initiated the bulk export.
-          type: string
-        valueKey:
-          description: This value will always be null.
-          type: string
-        colorCode:
-          description: The attribute option color code.
-          type: string
-        optionSelectionValue:
-          description: The attribute option selection value.
-          type: string
-        displayLabel:
-          description: The display label for the option value.
-          type: string
-        disabled:
-          description: This flag indicates whether the user is inactive.
-          type: boolean
-    ParamOrganizationGroupId:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by organization IDs.
-          type: string
-          default: organizationGroupId
-          enum:
-          - organizationGroupId
-        values:
-          description: The unique identifier of the organization. Records assigned to the organization and any child organizations below it will be returned.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: e5f93c7a-2b48-4d19-ae67-f81b24c09d35
-          maxItems: 20
-          minItems: 1
-      required:
-      - name
-      title: Organization Group Id
-    ParamActionType:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the bulk action type.
-          type: string
-          default: actionType
-          enum:
-          - actionType
-        values:
-          description: The bulk action type. Exactly 1 item is required. This is a mandatory filter.
-          type: array
-          items:
-            type: string
-            enum:
-            - DELETE
-            - REMOVE_TEST_FLAG
-            - CHANGE_IDENTIFIER_TYPE
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Action Type
-    PageBulkExportListItem:
-      type: object
-      properties:
-        content:
-          description: The data of the returned objects.
-          items:
-            $ref: '#/components/schemas/BulkExportListItem'
-          type: array
-        pageable:
-          description: The configuration parameters of the page.
-          $ref: '#/components/schemas/PageableObject'
-        last:
-          description: This flag indicates whether the current page is the last page of the list.
-          type: boolean
-        totalElements:
-          description: The total number of results in the list.
+        offset:
+          description: The number of results to exclude from the start of the list.
           type: integer
           format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int32
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
         sort:
           description: The sort criteria that dictates the order of the results.
           $ref: '#/components/schemas/SortObject'
-        first:
-          description: This flag indicates whether the current page is the first page of the list.
+        paged:
+          description: This flag indicates whether the results were paged.
           type: boolean
-        numberOfElements:
-          description: The number of results on the current page.
+        pageNumber:
+          description: The page number of the results.
           type: integer
           format: int32
-        empty:
-          description: This flag indicates whether no results exist on the page.
+        pageSize:
+          description: The number of results per page.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether the results were not paged.
           type: boolean
     BulkExportDownloadResponse:
       type: object
@@ -1458,38 +898,36 @@ components:
           description: The system-generated name of the exported file to download.
           type: string
           example: 72e2a55b-a271-4469-aeb0-cee19d1f37d7.csv.gz
-    ParamCollectionPointVersion:
+    ParamDataElementValue:
       type: object
       properties:
         name:
-          description: This parameter filters results by collection point versions.
+          description: This parameter filters results by data element values.
           type: string
-          default: collectionPointVersion
+          default: dataElementValue
           enum:
-          - collectionPointVersion
+          - dataElementValue
         values:
-          description: The version of the collection point.
+          description: 'The value of the data element. This parameter must be used in conjunction with the data element name. The export will return all records with the data element and the specific value. '
           type: array
           items:
-            type: integer
-            format: int32
-            minimum: 0
-          maxItems: 20
+            type: string
+          maxItems: 1
           minItems: 1
       required:
       - name
-      title: Collection Point Version
-    ParamPrimaryIdentifierType:
+      title: Data Element Value
+    ParamLastTransactionCollectionPointId:
       type: object
       properties:
         name:
-          description: This parameter filters results by a specific identifier type for the primary identifier, such as email.
+          description: This parameter filters results for data subjects that have last given consent from the specific collection point.
           type: string
-          default: primaryIdentifierType
+          default: lastTransactionCollectionPointId
           enum:
-          - primaryIdentifierType
+          - lastTransactionCollectionPointId
         values:
-          description: The type of data subject identifier used as a primary identifier.
+          description: The unique identifier of a collection point that recorded a data subject's last transaction. Minimum 1 item, maximum 20 values.
           type: array
           items:
             type: string
@@ -1497,47 +935,51 @@ components:
           minItems: 1
       required:
       - name
-      title: Primary Identifier Type
-    ParamCollectionPointGuid:
+      title: Last Transaction Collection Point Id
+    ParamTargetPurposeGuid:
       type: object
       properties:
         name:
-          description: This parameter filters results by a specific collection point ID.
+          description: This parameter filters results by the target purpose GUID.
           type: string
-          default: collectionPointGuid
+          default: targetPurposeGuid
           enum:
-          - collectionPointGuid
+          - targetPurposeGuid
         values:
-          description: The unique identifier of the collection point.
+          description: The target purpose GUID to which to copy status. Exactly 1 item is required.
           type: array
           items:
             type: string
             format: uuid
-            example: a7c95f18-c0d6-4a19-8e7a-c2de93e58a52
-          maxItems: 20
+            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
+          maxItems: 1
           minItems: 1
       required:
       - name
-      title: Collection Point Guid
-    ParamAdditionalIdentifierType:
+      title: Target Purpose Guid
+    ParamActionType:
       type: object
       properties:
         name:
-          description: This parameter filters results by a specific identifier type, such as email.
+          description: This parameter filters results by the bulk action type.
           type: string
-          default: additionalIdentifierType
+          default: actionType
           enum:
-          - additionalIdentifierType
+          - actionType
         values:
-          description: The type of data subject identifier used as an additional identifier.
+          description: The bulk action type. Exactly 1 item is required. This is a mandatory filter.
           type: array
           items:
             type: string
-          maxItems: 20
+            enum:
+            - DELETE
+            - REMOVE_TEST_FLAG
+            - CHANGE_IDENTIFIER_TYPE
+          maxItems: 1
           minItems: 1
       required:
       - name
-      title: Additional Identifier Type
+      title: Action Type
     BulkExportListItem:
       type: object
       properties:
@@ -1593,6 +1035,129 @@ components:
           type: string
           format: date-time
           example: '2024-11-24 22:20:30'
+    ParamDataElementName:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by data element names.
+          type: string
+          default: dataElementName
+          enum:
+          - dataElementName
+        values:
+          description: The name of the data element. If the data element name is included without the data element value, the export will return all records with the data element.
+          type: array
+          items:
+            type: string
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Data Element Name
+    ParamCollectionPointJWT:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by the collection point JWT.
+          type: string
+          default: collectionPointJWT
+          enum:
+          - collectionPointJWT
+        values:
+          description: The collection point JWT to use for bulk import. Exactly 1 item is required.
+          type: array
+          items:
+            type: string
+            format: string
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Collection Point JWT
+    ParamNewIdentifierType:
+      type: object
+      properties:
+        name:
+          description: The name of the parameter used to specify the new identifier type. Exactly 1 item required when actionType is CHANGE_IDENTIFIER_TYPE.
+          type: string
+          default: newIdentifierType
+          enum:
+          - newIdentifierType
+        values:
+          type: array
+          items:
+            type: string
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: New Identifier Type
+    ParamOrganizationGroupId:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by organization IDs.
+          type: string
+          default: organizationGroupId
+          enum:
+          - organizationGroupId
+        values:
+          description: The unique identifier of the organization. Records assigned to the organization and any child organizations below it will be returned.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: e5f93c7a-2b48-4d19-ae67-f81b24c09d35
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Organization Group Id
+    ParamSourcePurposeGuid:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by the source purpose GUID.
+          type: string
+          default: sourcePurposeGuid
+          enum:
+          - sourcePurposeGuid
+        values:
+          description: The source purpose GUID from which to copy status. Exactly 1 item is required.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Source Purpose Guid
+    ParamDateType:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by various dates recorded for a data subject.
+          type: string
+          default: dateType
+          enum:
+          - dateType
+        values:
+          description: The type of date that the `startDate` and `endDate` reference to filter results. The `CREATED_DATE` value filters results by data subjects' `FirstTransactionDate`. The `LAST_MODIFIED_DATE` value filters results by data subjects' `LastTransactionDate`. The `LAST_INTERACTION_DATE` value filters results by data subjects' `LastInteractionDate`. This parameter defaults to `CREATED_DATE`. Exactly 1 selection is required.
+          type: array
+          items:
+            type: string
+            enum:
+            - CREATED_DATE
+            - LAST_MODIFIED_DATE
+            - LAST_INTERACTION_DATE
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Date Type
     ParamCustomPreferenceValue:
       type: object
       properties:
@@ -1612,17 +1177,187 @@ components:
       required:
       - name
       title: Custom Preference Value
-    ParamLastTransactionCollectionPointId:
+    BulkExportCreditsInformation:
+      type: object
+      properties:
+        totalCredits:
+          description: The total number of credits available for the account.
+          type: integer
+          format: int32
+          example: 6
+          minimum: 0
+        creditsRemaining:
+          description: The number of credits remaining for the account.
+          type: integer
+          format: int32
+          example: 5
+          minimum: 0
+        creditsUsed:
+          description: The number of credits used for the account.
+          type: integer
+          format: int32
+          example: 1
+          minimum: 0
+          readOnly: true
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who initiated the bulk export.
+          type: string
+          format: uuid
+        value:
+          description: The name of the user who initiated the bulk export.
+          type: string
+        valueKey:
+          description: This value will always be null.
+          type: string
+        colorCode:
+          description: The attribute option color code.
+          type: string
+        optionSelectionValue:
+          description: The attribute option selection value.
+          type: string
+        displayLabel:
+          description: The display label for the option value.
+          type: string
+        disabled:
+          description: This flag indicates whether the user is inactive.
+          type: boolean
+    ParamDefaultStatus:
       type: object
       properties:
         name:
-          description: This parameter filters results for data subjects that have last given consent from the specific collection point.
+          description: This parameter filters results by the target purpose status when the source purpose status is not found.
           type: string
-          default: lastTransactionCollectionPointId
+          default: defaultStatus
           enum:
-          - lastTransactionCollectionPointId
+          - defaultStatus
         values:
-          description: The unique identifier of a collection point that recorded a data subject's last transaction. Minimum 1 item, maximum 20 values.
+          description: The target purpose status when the source purpose is not found. Exactly 1 item is required.
+          type: array
+          items:
+            type: string
+            format: string
+            enum:
+            - PENDING
+            - CONFIRMED
+            - WITHDRAWN
+            - IMPLICIT
+            - EXPIRED
+            - NOTGIVEN
+            - OPT_OUT
+            - NO_CHOICE
+            - HARD_OPT_OUT
+            - EXTEND
+            - OPT_IN
+            - NO_OPT_OUT
+            example: CONFIRMED
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Default Status
+    ConsentReceiptsRequest:
+      type: object
+      properties:
+        exportType:
+          description: The type of data to export.
+          type: string
+          example: CONSENT_RECEIPTS
+          enum:
+          - CONSENT_RECEIPTS
+        startDate:
+          description: The start of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS` export type, and the timespan is limited to 180 days.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
+          type: string
+          format: date
+          example: '2023-12-01'
+        params:
+          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentReceiptsParamSchema'
+          uniqueItems: true
+      required:
+      - endDate
+      - startDate
+      title: 'Export: Consent Receipts'
+    BulkExportRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the bulk export.
+          type: string
+          example: Monthly Consent Report - Q2 2023
+          maxLength: 255
+          minLength: 1
+        exportType:
+          description: The type of data to export. Different export types support different filtering parameters.
+          example: CONSENT_RECEIPTS
+          enum:
+          - CONSENT_RECEIPTS
+          - COOKIE_RECEIPTS
+          - DATA_SUBJECTS
+          - DATA_SUBJECTS_BULK_ACTIONS
+          - DATA_SUBJECTS_BULK_ADD_PURPOSE
+          $ref: '#/components/schemas/BulkExportType'
+        startDate:
+          description: The start of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS`, `COOKIE_RECEIPTS`, `DATA_SUBJECTS` and `DATA_SUBJECTS_BULK_ADD_PURPOSE` export types, and the timespan is limited to 180 days. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is required for the `CONSENT_RECEIPTS`, `COOKIE_RECEIPTS`, `DATA_SUBJECTS` and `DATA_SUBJECTS_BULK_ADD_PURPOSE` export types, and must be within 180 days from the `startDate`. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type. The `endDate` can be as recent as yesterday, but cannot be the current day.
+          type: string
+          format: date
+          example: '2023-12-01'
+        exportFormat:
+          description: The file format of the bulk export.
+          example: CSV
+          default: CSV
+          enum:
+          - CSV
+          - JSON
+          $ref: '#/components/schemas/BulkExportFormat'
+      discriminator:
+        propertyName: exportType
+        mapping:
+          CONSENT_RECEIPTS: '#/components/schemas/ConsentReceiptsRequest'
+          COOKIE_RECEIPTS: '#/components/schemas/CookieReceiptsRequest'
+          DATA_SUBJECTS: '#/components/schemas/DataSubjectsRequest'
+          DATA_SUBJECTS_BULK_ACTIONS: '#/components/schemas/DataSubjectsBulkActionsRequest'
+          DATA_SUBJECTS_BULK_ADD_PURPOSE: '#/components/schemas/DataSubjectsBulkAddPurposeRequest'
+      oneOf:
+      - $ref: '#/components/schemas/ConsentReceiptsRequest'
+      - $ref: '#/components/schemas/CookieReceiptsRequest'
+      - $ref: '#/components/schemas/DataSubjectsRequest'
+      - $ref: '#/components/schemas/DataSubjectsBulkActionsRequest'
+      - $ref: '#/components/schemas/DataSubjectsBulkAddPurposeRequest'
+      required:
+      - exportType
+    BulkExportFormat:
+      type: string
+      example: CSV
+      default: CSV
+      enum:
+      - CSV
+      - JSON
+    ParamPurposeId:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by purpose IDs.
+          type: string
+          default: purposeId
+          enum:
+          - purposeId
+        values:
+          description: The unique identifier of a purpose.
           type: array
           items:
             type: string
@@ -1630,16 +1365,44 @@ components:
           minItems: 1
       required:
       - name
-      title: Last Transaction Collection Point Id
-    BulkExportType:
-      type: string
-      example: CONSENT_RECEIPTS
-      enum:
-      - CONSENT_RECEIPTS
-      - COOKIE_RECEIPTS
-      - DATA_SUBJECTS
-      - DATA_SUBJECTS_BULK_ACTIONS
-      - DATA_SUBJECTS_BULK_ADD_PURPOSE
+      title: Purpose Id
+    ParamCollectionPointGuid:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by a specific collection point ID.
+          type: string
+          default: collectionPointGuid
+          enum:
+          - collectionPointGuid
+        values:
+          description: The unique identifier of the collection point.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: a7c95f18-c0d6-4a19-8e7a-c2de93e58a52
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Collection Point Guid
+    BulkExportDownloadPageResponse:
+      type: object
+      properties:
+        items:
+          description: The details of the exported file.
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkExportDownloadResponse'
+        continuationToken:
+          description: The continuation token.
+          type: string
+          example: 112233
+        hasNext:
+          description: This flag indicates whether there are more values to be retrieved.
+          type: boolean
+          example: true
     BulkExportResponse:
       type: object
       properties:
@@ -1735,53 +1498,129 @@ components:
             values:
             - email
           uniqueItems: true
-    BulkExportCreditsInformation:
+    ParamCollectionPointVersion:
       type: object
       properties:
-        totalCredits:
-          description: The total number of credits available for the account.
-          type: integer
-          format: int32
-          example: 6
-          minimum: 0
-        creditsRemaining:
-          description: The number of credits remaining for the account.
-          type: integer
-          format: int32
-          example: 5
-          minimum: 0
-        creditsUsed:
-          description: The number of credits used for the account.
-          type: integer
-          format: int32
-          example: 1
-          minimum: 0
-          readOnly: true
-    PageableObject:
+        name:
+          description: This parameter filters results by collection point versions.
+          type: string
+          default: collectionPointVersion
+          enum:
+          - collectionPointVersion
+        values:
+          description: The version of the collection point.
+          type: array
+          items:
+            type: integer
+            format: int32
+            minimum: 0
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Collection Point Version
+    ConsentReceiptsParamSchema:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/ParamCollectionPointVersion'
+      - $ref: '#/components/schemas/ParamCollectionPointGuid'
+      - $ref: '#/components/schemas/ParamPurposeVersion'
+      - $ref: '#/components/schemas/ParamPurposeGuid'
+    ParamWithdrawalNotes:
       type: object
       properties:
-        offset:
-          description: The number of results to exclude from the start of the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          description: This flag indicates whether the results were paged.
+        name:
+          description: This parameter filters results by withdrawal notes.
+          type: string
+          default: withdrawalNotes
+          enum:
+          - withdrawalNotes
+        values:
+          description: The reason notes that explain why consent was withdrawn.
+          type: array
+          items:
+            type: string
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Withdrawal Notes
+    BulkExportType:
+      type: string
+      example: CONSENT_RECEIPTS
+      enum:
+      - CONSENT_RECEIPTS
+      - COOKIE_RECEIPTS
+      - DATA_SUBJECTS
+      - DATA_SUBJECTS_BULK_ACTIONS
+      - DATA_SUBJECTS_BULK_ADD_PURPOSE
+    DataSubjectsBulkActionsRequest:
+      type: object
+      properties:
+        exportType:
+          description: The type of data to export.
+          type: string
+          example: DATA_SUBJECTS_BULK_ACTIONS
+          enum:
+          - DATA_SUBJECTS_BULK_ACTIONS
+        startDate:
+          description: The start of a date range used to filter results. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is optional for the `DATA_SUBJECTS_BULK_ACTIONS` export type.
+          type: string
+          format: date
+          example: '2023-12-01'
+        params:
+          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSubjectsBulkActionsParamSchema'
+          uniqueItems: true
+      title: 'Bulk Action: Data Subjects'
+    HeadersSchema:
+      type: object
+      properties:
+        Authorization:
+          description: The authorization bearer token required to access the bulk export.
+          type: string
+          example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      example:
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: This flag indicates whether sort criteria was left undefined.
           type: boolean
-        pageNumber:
-          description: The page number of the results.
-          type: integer
-          format: int32
-        pageSize:
-          description: The number of results per page.
-          type: integer
-          format: int32
-        unpaged:
-          description: This flag indicates whether the results were not paged.
+        unsorted:
+          description: This flag indicates whether the results were not sorted.
           type: boolean
-    DataSubjectsBulkAddPurposeParamSchema:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+    ParamCustomPreferenceName:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by custom preference names.
+          type: string
+          default: customPreferenceName
+          enum:
+          - customPreferenceName
+        values:
+          description: The name of the custom preference. If the custom preference name is included without the custom preference value, the export will return all records with the custom preference.
+          type: array
+          items:
+            type: string
+          maxItems: 1
+          minItems: 1
+      required:
+      - name
+      title: Custom Preference Name
+    DataSubjectsParamSchema:
       type: object
       oneOf:
       - $ref: '#/components/schemas/ParamLastTransactionCollectionPointId'
@@ -1797,141 +1636,302 @@ components:
       - $ref: '#/components/schemas/ParamPrimaryIdentifierType'
       - $ref: '#/components/schemas/ParamAdditionalIdentifierType'
       - $ref: '#/components/schemas/ParamOrganizationGroupId'
-      - $ref: '#/components/schemas/ParamSourcePurposeGuid'
-      - $ref: '#/components/schemas/ParamTargetPurposeGuid'
-      - $ref: '#/components/schemas/ParamDefaultStatus'
-      - $ref: '#/components/schemas/ParamCollectionPointJWT'
-    ParamDataElementName:
+    DataSubjectsRequest:
+      type: object
+      properties:
+        exportType:
+          description: The type of data to export.
+          type: string
+          example: DATA_SUBJECTS
+          enum:
+          - DATA_SUBJECTS
+        startDate:
+          description: The start of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS` export type, and the timespan is limited to 180 days.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
+          type: string
+          format: date
+          example: '2023-12-01'
+        params:
+          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSubjectsParamSchema'
+          uniqueItems: true
+      required:
+      - endDate
+      - startDate
+      title: 'Export: Data Subjects'
+    ParamStatus:
       type: object
       properties:
         name:
-          description: This parameter filters results by data element names.
+          description: This parameter filters results by the consent status. For more information, see [Data Subject Purpose Statuses.](https://my.onetrust.com/s/article/UUID-d4ed05a9-a999-f2cb-8272-610a5817b43f?language=en_US#UUID-d4ed05a9-a999-f2cb-8272-610a5817b43f_section-idm46212287084304)
           type: string
-          default: dataElementName
+          default: status
           enum:
+          - status
+        values:
+          description: The status of consent. Minimum 1 item, maximum 20 values.
+          type: array
+          items:
+            type: string
+            enum:
+            - ACTIVE
+            - ALWAYS_ACTIVE
+            - EXPIRED
+            - HARD_OPT_OUT
+            - IMPLICIT
+            - NO_CONSENT
+            - NOT_OPT_OUT
+            - OPT_OUT
+            - PENDING
+            - WITHDRAWN
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Status
+    DataSubjectsBulkAddPurposeRequest:
+      type: object
+      properties:
+        exportType:
+          description: The type of data to export.
+          type: string
+          example: DATA_SUBJECTS_BULK_ADD_PURPOSE
+          enum:
+          - DATA_SUBJECTS_BULK_ADD_PURPOSE
+        startDate:
+          description: The start of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS_BULK_ADD_PURPOSE` export type, and the timespan is limited to 180 days.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is required for the `DATA_SUBJECTS_BULK_ADD_PURPOSE` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
+          type: string
+          format: date
+          example: '2023-12-01'
+        params:
+          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSubjectsBulkAddPurposeParamSchema'
+          uniqueItems: true
+      required:
+      - endDate
+      - startDate
+      title: 'Bulk Add Purpose: Data Subjects '
+    BulkExportParam:
+      type: object
+      properties:
+        name:
+          description: The name of the parameter used to filter results. Available parameters depend on exportType.
+          type: string
+          example: collectionPointGuid
+          enum:
+          - collectionPointVersion
+          - purposeVersion
+          - collectionPointGuid
+          - purposeGuid
+          - lastTransactionCollectionPointId
+          - purposeId
+          - status
+          - customPreferenceName
+          - customPreferenceValue
           - dataElementName
+          - dataElementValue
+          - withdrawalNotes
+          - includeTestDataSubject
+          - dateType
+          - primaryIdentifierType
+          - additionalIdentifierType
+          - organizationGroupId
         values:
-          description: The name of the data element. If the data element name is included without the data element value, the export will return all records with the data element.
+          description: 'The values of the parameter used to filter results. Max items depend on parameter name and exportType.
+
+
+            - For CONSENT_RECEIPTS and COOKIE_RECEIPTS: All parameters accept up to 20 values.
+
+            - For DATA_SUBJECTS: Most parameters accept up to 20 values, except customPreferenceName, customPreferenceValue, dataElementName, dataElementValue, withdrawalNotes, includeTestDataSubject, and dateType which accept only 1 value.'
           type: array
           items:
             type: string
-          maxItems: 1
-          minItems: 1
+            description: 'The values of the parameter used to filter results. Max items depend on parameter name and exportType.
+
+
+              - For CONSENT_RECEIPTS and COOKIE_RECEIPTS: All parameters accept up to 20 values.
+
+              - For DATA_SUBJECTS: Most parameters accept up to 20 values, except customPreferenceName, customPreferenceValue, dataElementName, dataElementValue, withdrawalNotes, includeTestDataSubject, and dateType which accept only 1 value.'
+            example: '["af01cad5-a39d-4585-9ee1-2062b1426bdd"]'
+          example:
+          - af01cad5-a39d-4585-9ee1-2062b1426bdd
+      example:
+      - name: primaryIdentifierType
+        values:
+        - email
+      discriminator:
+        propertyName: name
+        mapping:
+          collectionPointVersion: '#/components/schemas/ParamCollectionPointVersion'
+          collectionPointGuid: '#/components/schemas/ParamCollectionPointGuid'
+          purposeVersion: '#/components/schemas/ParamPurposeVersion'
+          purposeGuid: '#/components/schemas/ParamPurposeGuid'
+          lastTransactionCollectionPointId: '#/components/schemas/ParamLastTransactionCollectionPointId'
+          purposeId: '#/components/schemas/ParamPurposeId'
+          status: '#/components/schemas/ParamStatus'
+          customPreferenceName: '#/components/schemas/ParamCustomPreferenceName'
+          customPreferenceValue: '#/components/schemas/ParamCustomPreferenceValue'
+          dataElementName: '#/components/schemas/ParamDataElementName'
+          dataElementValue: '#/components/schemas/ParamDataElementValue'
+          withdrawalNotes: '#/components/schemas/ParamWithdrawalNotes'
+          includeTestDataSubject: '#/components/schemas/ParamIncludeTestDataSubject'
+          dateType: '#/components/schemas/ParamDateType'
+          primaryIdentifierType: '#/components/schemas/ParamPrimaryIdentifierType'
+          additionalIdentifierType: '#/components/schemas/ParamAdditionalIdentifierType'
+          organizationGroupId: '#/components/schemas/ParamOrganizationGroupId'
+      oneOf:
+      - $ref: '#/components/schemas/ParamCollectionPointVersion'
+      - $ref: '#/components/schemas/ParamCollectionPointGuid'
+      - $ref: '#/components/schemas/ParamPurposeVersion'
+      - $ref: '#/components/schemas/ParamPurposeGuid'
+      - $ref: '#/components/schemas/ParamLastTransactionCollectionPointId'
+      - $ref: '#/components/schemas/ParamPurposeId'
+      - $ref: '#/components/schemas/ParamStatus'
+      - $ref: '#/components/schemas/ParamCustomPreferenceName'
+      - $ref: '#/components/schemas/ParamCustomPreferenceValue'
+      - $ref: '#/components/schemas/ParamDataElementName'
+      - $ref: '#/components/schemas/ParamDataElementValue'
+      - $ref: '#/components/schemas/ParamWithdrawalNotes'
+      - $ref: '#/components/schemas/ParamIncludeTestDataSubject'
+      - $ref: '#/components/schemas/ParamDateType'
+      - $ref: '#/components/schemas/ParamPrimaryIdentifierType'
+      - $ref: '#/components/schemas/ParamAdditionalIdentifierType'
+      - $ref: '#/components/schemas/ParamOrganizationGroupId'
+    PageBulkExportListItem:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          items:
+            $ref: '#/components/schemas/BulkExportListItem'
+          type: array
+        pageable:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/PageableObject'
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/SortObject'
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+        empty:
+          description: This flag indicates whether no results exist on the page.
+          type: boolean
+    CookieReceiptsRequest:
+      type: object
+      properties:
+        exportType:
+          description: The type of data to export.
+          type: string
+          example: COOKIE_RECEIPTS
+          enum:
+          - COOKIE_RECEIPTS
+        startDate:
+          description: The start of a date range used to filter results. This parameter is required for the `COOKIE_RECEIPTS` export type, and the timespan is limited to 180 days.
+          type: string
+          format: date
+          example: '2023-07-01'
+        endDate:
+          description: The end of a date range used to filter results. This parameter is required for the `COOKIE_RECEIPTS` export type and must be within 180 days from the `startDate`. The `endDate` can be as recent as yesterday, but cannot be the current day.
+          type: string
+          format: date
+          example: '2023-12-01'
+        params:
+          description: The parameters used to filter results. To define multiple parameters, click the Add Object option that appears below the first object.
+          type: array
+          items:
+            $ref: '#/components/schemas/CookieReceiptsParamSchema'
+          uniqueItems: true
       required:
-      - name
-      title: Data Element Name
-    ParamDataElementValue:
+      - endDate
+      - startDate
+      title: 'Export: Cookie Receipts'
+    ParamIncludeTestDataSubject:
       type: object
       properties:
         name:
-          description: This parameter filters results by data element values.
+          description: This parameter filters results by test data subjects.
           type: string
-          default: dataElementValue
+          default: includeTestDataSubject
           enum:
-          - dataElementValue
+          - includeTestDataSubject
         values:
-          description: 'The value of the data element. This parameter must be used in conjunction with the data element name. The export will return all records with the data element and the specific value. '
+          description: This flag indicates whether to include or exclude test data subjects. This parameter defaults to false (i.e. no test data subjects will be returned). Exactly 1 item is required.
           type: array
           items:
             type: string
+            enum:
+            - 'true'
+            - 'false'
           maxItems: 1
           minItems: 1
       required:
       - name
-      title: Data Element Value
-    ConsentReceiptsParamSchema:
+      title: Include Test Data Subject
+    ParamPurposeGuid:
+      type: object
+      properties:
+        name:
+          description: This parameter filters results by purpose IDs.
+          type: string
+          default: purposeGuid
+          enum:
+          - purposeGuid
+        values:
+          description: The unique identifier of a purpose. Minimum 1 item, maximum 20 values.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
+          maxItems: 20
+          minItems: 1
+      required:
+      - name
+      title: Purpose Guid
+    CookieReceiptsParamSchema:
       type: object
       oneOf:
       - $ref: '#/components/schemas/ParamCollectionPointVersion'
       - $ref: '#/components/schemas/ParamCollectionPointGuid'
       - $ref: '#/components/schemas/ParamPurposeVersion'
       - $ref: '#/components/schemas/ParamPurposeGuid'
-    ParamCollectionPointJWT:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the collection point JWT.
-          type: string
-          default: collectionPointJWT
-          enum:
-          - collectionPointJWT
-        values:
-          description: The collection point JWT to use for bulk import. Exactly 1 item is required.
-          type: array
-          items:
-            type: string
-            format: string
-            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Collection Point JWT
-    ParamPurposeVersion:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by purpose versions.
-          type: string
-          default: purposeVersion
-          enum:
-          - purposeVersion
-        values:
-          description: The version of the purpose. Minimum 1 item, maximum 20 values.
-          type: array
-          items:
-            type: integer
-            format: int32
-            minimum: 0
-          maxItems: 20
-          minItems: 1
-      required:
-      - name
-      title: Purpose Version
-    ParamSourcePurposeGuid:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by the source purpose GUID.
-          type: string
-          default: sourcePurposeGuid
-          enum:
-          - sourcePurposeGuid
-        values:
-          description: The source purpose GUID from which to copy status. Exactly 1 item is required.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: c4f82e3d-1a76-48e7-91d5-7f9c0e56a8b3
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Source Purpose Guid
-    ParamDateType:
-      type: object
-      properties:
-        name:
-          description: This parameter filters results by various dates recorded for a data subject.
-          type: string
-          default: dateType
-          enum:
-          - dateType
-        values:
-          description: The type of date that the `startDate` and `endDate` reference to filter results. The `CREATED_DATE` value filters results by data subjects' `FirstTransactionDate`. The `LAST_MODIFIED_DATE` value filters results by data subjects' `LastTransactionDate`. The `LAST_INTERACTION_DATE` value filters results by data subjects' `LastInteractionDate`. This parameter defaults to `CREATED_DATE`. Exactly 1 selection is required.
-          type: array
-          items:
-            type: string
-            enum:
-            - CREATED_DATE
-            - LAST_MODIFIED_DATE
-            - LAST_INTERACTION_DATE
-          maxItems: 1
-          minItems: 1
-      required:
-      - name
-      title: Date Type
   securitySchemes:
     OAUTH2:
       type: oauth2

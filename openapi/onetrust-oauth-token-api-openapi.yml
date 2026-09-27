@@ -124,6 +124,27 @@ paths:
           description: Internal Server Error
 components:
   schemas:
+    Platform-AccessManagement_ClientCredentialsRequest:
+      type: object
+      properties:
+        grant_type:
+          description: The OAuth grant type. Always use 'client_credentials'.
+          type: string
+          default: client_credentials
+          enum:
+          - client_credentials
+        client_id:
+          description: Your OneTrust client credential identifier.
+          type: string
+          default: 3d8efc3b94ed49628482eb2ab5e3bc8g
+        client_secret:
+          description: Your OneTrust client credential secret key.
+          type: string
+          default: Ycx7HNUbHWyPBZvT4WhjYyIvnEdQL3d4
+      required:
+      - client_id
+      - client_secret
+      - grant_type
     Platform-AccessManagement_ClientCredentialsResponse:
       type: object
       properties:
@@ -184,27 +205,6 @@ components:
           description: The API username in the format tenantGuid@api.onetrust.com.
           type: string
           format: email
-    Platform-AccessManagement_ClientCredentialsRequest:
-      type: object
-      properties:
-        grant_type:
-          description: The OAuth grant type. Always use 'client_credentials'.
-          type: string
-          default: client_credentials
-          enum:
-          - client_credentials
-        client_id:
-          description: Your OneTrust client credential identifier.
-          type: string
-          default: 3d8efc3b94ed49628482eb2ab5e3bc8g
-        client_secret:
-          description: Your OneTrust client credential secret key.
-          type: string
-          default: Ycx7HNUbHWyPBZvT4WhjYyIvnEdQL3d4
-      required:
-      - client_id
-      - client_secret
-      - grant_type
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

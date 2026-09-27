@@ -864,32 +864,18 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentAPI_ConsentGroupStatusPriorityDto:
+    ConsentAPI_DataSubjectInformation:
       type: object
       properties:
-        status:
-          description: The Purpose Status value
+        id:
+          description: Unique Identifier identifying a Data Subject
           type: string
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - ALWAYS
-          - ACTIVE
-          - OPT OUT
-          - HARD OPT OUT
-          - PENDING
-          - NO CONSENT
-          - WITHDRAWN
-          - EXPIRED
-          minLength: 1
-        priority:
-          description: The Priority of the Purpose Status, with 0 being the highest possible value
-          type: integer
-          format: int32
-          example: 3
-          minimum: 0
-      required:
-      - priority
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        identifier:
+          description: The Data Subject identifier value
+          type: string
+          example: example@otprivacy.com
     ConsentAPI_DataSubjectPurposeInformationDto:
       type: object
       properties:
@@ -911,34 +897,68 @@ components:
           description: The Data Subject's effective status for this Purpose, in the context of the specified Consent Group
           type: string
           example: OPT_OUT
-    ConsentAPI_ConsentGroupPurposeRulesRequest:
+    ConsentAPI_ConsentGroupRequest:
       type: object
       properties:
-        purposeRules:
-          description: A list of Purpose Rules to be added to a Consent Group
+        name:
+          description: The Consent Group name
+          type: string
+          example: OneTrust Atlanta
+          minLength: 1
+        description:
+          description: A description of the Consent Group
+          type: string
+          example: Consent for the company OneTrust, specifically for the Atlanta Office. Contains subsidiary data subjects representing OneTrust employees that work at this location.
+        externalName:
+          description: The Consent Group's external name. If not provided, this will be generated based on the name
+          type: string
+          example: onetrust_atlanta
+    ConsentAPI_DataSubjectInformationDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        identifier:
+          description: The Data Subject identifier value
+          type: string
+          example: example@otprivacy.com
+        purposes:
+          description: The Data Subject's Purpose list
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_PurposeRuleRequest'
-          maxItems: 2147483647
-          minItems: 1
-    ConsentAPI_PageableObject:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectPurposeInformationDto'
+    ConsentAPI_ConsentGroupSummaryDto:
       type: object
       properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
+        name:
+          description: The Consent Group name
+          type: string
+          example: OneTrust Atlanta
+          minLength: 1
+        description:
+          description: A description of the Consent Group
+          type: string
+          example: Consent for the company OneTrust, specifically for the Atlanta Office. Contains subsidiary data subjects representing OneTrust employees that work at this location.
+        externalName:
+          description: The Consent Group's external name. If not provided, this will be generated based on the name
+          type: string
+          example: onetrust_atlanta
+        consentGroupId:
+          description: Unique identifier identifying a Consent Group
+          type: string
+          format: uuid
+          example: 2a644966-fe93-4561-b71a-f0dda4396459
+        membershipType:
+          description: Indicates whether the consent group has other consent groups as its children, or if it has data subjects associated to it
+          type: string
+          example: CHILD_GROUPS
+          enum:
+          - EMPTY
+          - CHILD_GROUPS
+          - DATA_SUBJECTS
     ConsentAPI_ConsentGroupDto:
       type: object
       properties:
@@ -983,16 +1003,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_ConsentGroupSummaryDto'
-    ConsentAPI_ConsentGroupDataSubjectsRequest:
-      type: object
-      properties:
-        dataSubjects:
-          description: A list of Data Subjects to be added to a Consent Group, identified either by their id or their identifier value
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectInformation'
-          maxItems: 2147483647
-          minItems: 1
     ConsentAPI_PageConsentGroupListDto:
       type: object
       properties:
@@ -1042,51 +1052,6 @@ components:
           type: integer
           format: int32
           example: 20
-    ConsentAPI_ConsentGroupSummaryDto:
-      type: object
-      properties:
-        name:
-          description: The Consent Group name
-          type: string
-          example: OneTrust Atlanta
-          minLength: 1
-        description:
-          description: A description of the Consent Group
-          type: string
-          example: Consent for the company OneTrust, specifically for the Atlanta Office. Contains subsidiary data subjects representing OneTrust employees that work at this location.
-        externalName:
-          description: The Consent Group's external name. If not provided, this will be generated based on the name
-          type: string
-          example: onetrust_atlanta
-        consentGroupId:
-          description: Unique identifier identifying a Consent Group
-          type: string
-          format: uuid
-          example: 2a644966-fe93-4561-b71a-f0dda4396459
-        membershipType:
-          description: Indicates whether the consent group has other consent groups as its children, or if it has data subjects associated to it
-          type: string
-          example: CHILD_GROUPS
-          enum:
-          - EMPTY
-          - CHILD_GROUPS
-          - DATA_SUBJECTS
-    ConsentAPI_ConsentGroupRequest:
-      type: object
-      properties:
-        name:
-          description: The Consent Group name
-          type: string
-          example: OneTrust Atlanta
-          minLength: 1
-        description:
-          description: A description of the Consent Group
-          type: string
-          example: Consent for the company OneTrust, specifically for the Atlanta Office. Contains subsidiary data subjects representing OneTrust employees that work at this location.
-        externalName:
-          description: The Consent Group's external name. If not provided, this will be generated based on the name
-          type: string
-          example: onetrust_atlanta
     ConsentAPI_PurposeRuleRequest:
       type: object
       properties:
@@ -1102,23 +1067,69 @@ components:
           minLength: 1
       required:
       - purposeId
-    ConsentAPI_DataSubjectInformationDto:
+    ConsentAPI_ConsentGroupListDto:
       type: object
       properties:
-        id:
-          description: Unique Identifier identifying a Data Subject
+        consentGroupId:
+          description: Unique identifier identifying a Consent Group
           type: string
           format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        identifier:
-          description: The Data Subject identifier value
+          example: 2a644966-fe93-4561-b71a-f0dda4396459
+        name:
+          description: The Consent Group name
           type: string
-          example: example@otprivacy.com
-        purposes:
-          description: The Data Subject's Purpose list
+          example: OneTrust Atlanta
+          minLength: 1
+        externalName:
+          description: The Consent Group's external name. If not provided, this will be generated based on the name
+          type: string
+          example: onetrust_atlanta
+    ConsentAPI_ConsentGroupSettingsDto:
+      type: object
+      properties:
+        statusPriorityRules:
+          description: The Priority of the Purpose Statuses in the context of Consent Groups
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectPurposeInformationDto'
+            $ref: '#/components/schemas/ConsentAPI_ConsentGroupStatusPriorityDto'
+      required:
+      - statusPriorityRules
+    ConsentAPI_ConsentGroupStatusPriorityDto:
+      type: object
+      properties:
+        status:
+          description: The Purpose Status value
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - ALWAYS
+          - ACTIVE
+          - OPT OUT
+          - HARD OPT OUT
+          - PENDING
+          - NO CONSENT
+          - WITHDRAWN
+          - EXPIRED
+          minLength: 1
+        priority:
+          description: The Priority of the Purpose Status, with 0 being the highest possible value
+          type: integer
+          format: int32
+          example: 3
+          minimum: 0
+      required:
+      - priority
+    ConsentAPI_ConsentGroupDataSubjectsRequest:
+      type: object
+      properties:
+        dataSubjects:
+          description: A list of Data Subjects to be added to a Consent Group, identified either by their id or their identifier value
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectInformation'
+          maxItems: 2147483647
+          minItems: 1
     ConsentAPI_ConsentGroupConsentGroupsRequest:
       type: object
       properties:
@@ -1133,18 +1144,6 @@ components:
           - fa3ecf8f-afe5-41f3-a621-5c519a38521e
           maxItems: 2147483647
           minItems: 1
-    ConsentAPI_DataSubjectInformation:
-      type: object
-      properties:
-        id:
-          description: Unique Identifier identifying a Data Subject
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        identifier:
-          description: The Data Subject identifier value
-          type: string
-          example: example@otprivacy.com
     ConsentAPI_PurposeRuleDto:
       type: object
       properties:
@@ -1164,6 +1163,24 @@ components:
           example: OPT_OUT
       required:
       - purposeId
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
     ConsentAPI_SortObject:
       type: object
       properties:
@@ -1173,33 +1190,16 @@ components:
           type: boolean
         unsorted:
           type: boolean
-    ConsentAPI_ConsentGroupSettingsDto:
+    ConsentAPI_ConsentGroupPurposeRulesRequest:
       type: object
       properties:
-        statusPriorityRules:
-          description: The Priority of the Purpose Statuses in the context of Consent Groups
+        purposeRules:
+          description: A list of Purpose Rules to be added to a Consent Group
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_ConsentGroupStatusPriorityDto'
-      required:
-      - statusPriorityRules
-    ConsentAPI_ConsentGroupListDto:
-      type: object
-      properties:
-        consentGroupId:
-          description: Unique identifier identifying a Consent Group
-          type: string
-          format: uuid
-          example: 2a644966-fe93-4561-b71a-f0dda4396459
-        name:
-          description: The Consent Group name
-          type: string
-          example: OneTrust Atlanta
-          minLength: 1
-        externalName:
-          description: The Consent Group's external name. If not provided, this will be generated based on the name
-          type: string
-          example: onetrust_atlanta
+            $ref: '#/components/schemas/ConsentAPI_PurposeRuleRequest'
+          maxItems: 2147483647
+          minItems: 1
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

@@ -411,6 +411,126 @@ paths:
         - CONSENT
 components:
   schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Page:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_PageLinkedIdentityGroupDto_Page:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Page'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Page'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed:
+      properties:
+        id:
+          description: Unique identifier of the Data Subject
+          type: string
+          format: uuid
+          example: c43a9190-ffd6-4be3-aeff-95b46d0fa59f
+        identifier:
+          description: The identifier value of the Data Subject
+          type: string
+          example: example@otprivacy.com
+        identifierType:
+          description: The type of identifier used for the Data Subject (e.g., Email, Phone, CustomID)
+          type: string
+          example: Email
+        isPrimary:
+          description: Boolean flag that denotes if the Data Subject is the primary of the group
+          type: boolean
+          example: false
+        canBePrimary:
+          description: Boolean flag that denotes if the Data Subject is allowed to be the group primary
+          type: boolean
+          example: false
+        addedDate:
+          description: The date that the Data Subject was added to the group
+          type: string
+          format: date-time
+          example: '2020-05-30T12:23:42.145Z'
+        numberOfLinkedGroups:
+          description: The number of Other Linked Groups the Data Subject is a member of
+          type: integer
+          format: int64
+          example: 2
+        magicLinkToken:
+          description: Authentication token used for magic link functionality
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        magicLinkTokenEncoded:
+          description: URL-encoded version of the magic link token for direct use in URLs
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        organizations:
+          description: Set of organization UUIDs associated with this Data Subject
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Set of organization UUIDs associated with this Data Subject
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+      required:
+      - identifier
+      - identifierType
     ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Page:
       properties:
         id:
@@ -532,60 +652,6 @@ components:
           description: Name of the Linked Identity Group
           type: string
           example: Customer Support Group
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed:
-      properties:
-        id:
-          description: Unique identifier of the Data Subject
-          type: string
-          format: uuid
-          example: c43a9190-ffd6-4be3-aeff-95b46d0fa59f
-        identifier:
-          description: The identifier value of the Data Subject
-          type: string
-          example: example@otprivacy.com
-        identifierType:
-          description: The type of identifier used for the Data Subject (e.g., Email, Phone, CustomID)
-          type: string
-          example: Email
-        isPrimary:
-          description: Boolean flag that denotes if the Data Subject is the primary of the group
-          type: boolean
-          example: false
-        canBePrimary:
-          description: Boolean flag that denotes if the Data Subject is allowed to be the group primary
-          type: boolean
-          example: false
-        addedDate:
-          description: The date that the Data Subject was added to the group
-          type: string
-          format: date-time
-          example: '2020-05-30T12:23:42.145Z'
-        numberOfLinkedGroups:
-          description: The number of Other Linked Groups the Data Subject is a member of
-          type: integer
-          format: int64
-          example: 2
-        magicLinkToken:
-          description: Authentication token used for magic link functionality
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        magicLinkTokenEncoded:
-          description: URL-encoded version of the magic link token for direct use in URLs
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        organizations:
-          description: Set of organization UUIDs associated with this Data Subject
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Set of organization UUIDs associated with this Data Subject
-          example:
-          - 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-      required:
-      - identifier
-      - identifierType
     ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page:
       properties:
         empty:
@@ -594,72 +660,6 @@ components:
           type: boolean
         unsorted:
           type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Page:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PageLinkedIdentityGroupDto_Page:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Page'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Page'
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Page:
       properties:
         id:

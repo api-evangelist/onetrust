@@ -703,46 +703,133 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation:
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDto:
       properties:
-        id:
-          description: Unique identifier for the attribute option
+        Id:
+          description: Unique identifier for the Custom Preference
           type: string
           format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+          example: 194e0d3b-0ba8-4bc7-b046-e3ae42b2bd25
+        Name:
+          description: The display name of the Custom Preference
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
+          example: Email Frequency
+          maxLength: 255
+          minLength: 1
+        Description:
+          description: Detailed description explaining the purpose and usage of this Custom Preference
           type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
+          example: Options for different frequencies to receive emails
+          maxLength: 1000
+        SelectionType:
+          description: Defines how options can be selected in this Custom Preference
           type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          example: SINGLE_CHOICE
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        DisplayAs:
+          description: Specifies how the preference options should be displayed in the UI
           type: string
-          example: '"3.5"'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
+          example: BUTTONs
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+          - BUTTONs
+          - CHECKBOXES
+          - DROPDOWN
+          - RADIO_BUTTONS
+        CreatedDate:
+          description: Timestamp when the Custom Preference was created
           type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
+          format: date-time
+          example: '2023-01-15T10:52:30.974Z'
+        UpdatedDate:
+          description: Timestamp when the Custom Preference was last updated
+          type: string
+          format: date-time
+          example: '2023-01-15T10:55:30.974Z'
+        NumberOfOptions:
+          description: Total number of available options for this Custom Preference
+          type: integer
+          format: int64
+          example: 4
+          minimum: 0
+        Required:
+          description: Indicates whether a response is mandatory for this Custom Preference
           type: boolean
           example: false
           default: false
-      example: a2229953-b4b5-4042-8cb9-b78038cc4c46
+        NumberOfLanguages:
+          description: Number of languages this Custom Preference has been translated into
+          type: integer
+          format: int64
+          example: 3
+          minimum: 0
+        DefaultLanguage:
+          description: The default language code for this Custom Preference (BCP 47 format)
+          type: string
+          example: en-us
+          pattern: ^[a-z]{2}(-[A-Z]{2})?$
+        Disabled:
+          description: Indicates if this Custom Preference is currently disabled
+          type: boolean
+          example: false
+          default: false
+        Options:
+          description: List of available options for this Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
+        Languages:
+          description: List of language configurations for this Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto'
+        Organizations:
+          description: List of Organization IDs that have access to this Custom Preference
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 712a1f61-a548-432f-afc4-5a383c28eeb2
+        TotalLinkedActivePurposes:
+          description: Count of active purposes that reference this Custom Preference
+          type: integer
+          format: int64
+          example: 5
+          minimum: 0
+        PurposeCustomPreferenceId:
+          description: Unique identifier of the Purpose and Custom Preference relation
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
       required:
-      - value
+      - DisplayAs
+      - Id
+      - Name
+      - SelectionType
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceInformation:
+      properties:
+        Id:
+          description: Unique identifier of the custom preference
+          type: string
+          format: uuid
+          example: 64f8ebb3-b43d-4e4b-a84a-3d301b6d95f1
+        Name:
+          description: Display name of the custom preference
+          type: string
+          example: Fiscal preference
+        CustomPreferenceOptions:
+          description: List of options selected by the data subject for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionsInformation'
+      required:
+      - Id
+      - Name
     ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto:
       properties:
         Id:
@@ -771,32 +858,146 @@ components:
           description: Whether Custom Preference is disabled or not
           type: boolean
           example: false
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto:
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicInformation:
       properties:
+        Id:
+          type: string
+          format: uuid
         Name:
-          description: The Custom Preference name
           type: string
-          example: Email Frequency
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailsDto:
+      properties:
+        Id:
+          description: Globally unique identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Label:
+          description: Name of the Purpose
+          type: string
+          example: Marketing Communications
         Description:
-          description: The description of the Custom Preference
+          description: Detailed description of the Purpose's intended use
           type: string
-          example: Options for different frequencies to receive emails
-        Language:
-          description: The Custom Preference content language code
+          example: Collect customer emails for marketing purposes
+        Status:
+          description: Status of the Purpose
           type: string
-          example: en-us
-        Default:
-          description: Whether this language is the default one for the Custom Preference
-          type: boolean
-          example: true
-        Options:
-          description: Options associated with a Custom Preference
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        Version:
+          description: Current version of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        RetireOnDate:
+          description: Date when the purpose will be retired
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        ParentPurposeId:
+          description: Unique identifier of the parent purpose
+          type: string
+          format: uuid
+          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
+        ExternalReference:
+          description: External reference identifier for the purpose
+          type: string
+          example: EXT-REF-12345
+        PurposeType:
+          description: Type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        ConsentLifeSpan:
+          description: Lifespan of the consent in seconds
+          type: integer
+          format: int64
+          example: 7776000
+        ImplicitConsentLifeSpan:
+          description: Lifespan for implicit consents in seconds
+          type: integer
+          format: int64
+          example: 31536000
+        ImplicitConsentConfirmDesc:
+          description: Description shown when confirming implicit consent
+          type: string
+          example: By continuing, you agree to our terms and conditions
+        PurposeCategory:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation'
+        Languages:
+          description: List of languages supported by the purpose
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
-      required:
-      - Description
-      - Name
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto'
+        Topics:
+          description: List of topics associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDto'
+        CustomPreferences:
+          description: List of custom preferences associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDto'
+        ExpiryDateType:
+          description: Date field considered for purpose lifespan/expiry
+          type: string
+          example: LAST_TRANSACTION_DATE
+          enum:
+          - LAST_TRANSACTION_DATE
+          - CONSENT_DATE
+        attributeValues:
+          description: Map of attribute values associated with the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Map of attribute values associated with the purpose
+            items:
+              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation'
+        IsMajorVersion:
+          type: boolean
+        HardOptOutDisplayFormat:
+          description: The format in which the purpose displays in a Trust Center when the consent status is Hard opt-out. Hard opt-out purposes can either be displayed but locked, or hidden.
+          type: string
+          example: HIDE
+          enum:
+          - HIDE
+          - LOCK
+        attributes:
+          description: Additional attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Additional attributes attached to the purpose
+            items:
+              type: string
+              description: Additional attributes attached to the purpose
+        EnableGeolocation:
+          description: Flag to enable geolocation tracking for this purpose
+          type: boolean
+          example: false
+        LastMajorVersion:
+          description: Last major version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        VersionNotes:
+          description: Notes about the current version of the purpose
+          type: string
+          example: Updated to include new data retention policies
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto:
       properties:
         Name:
@@ -826,183 +1027,25 @@ components:
       required:
       - Description
       - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectForPurposeInformation:
-      properties:
-        DataSubjectId:
-          description: Unique identifier of the Data Subject (typically an email or ID)
-          type: string
-          example: example@otprivacy.com
-        Status:
-          description: Current transaction status of the Data Subject for this Purpose
-          type: string
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - WITHDRAWN
-          - EXPIRED
-          - NOT GIVEN
-          - PENDING
-          - OPT OUT
-        FirstTransactionDate:
-          description: Timestamp of the first transaction for this Data Subject and Purpose
-          type: string
-          format: date-time
-          example: '2020-01-06T10:54:30.974Z'
-        LastTransactionDate:
-          description: Timestamp of the most recent transaction for this Data Subject and Purpose
-          type: string
-          format: date-time
-          example: '2020-01-12T12:42:12.842Z'
-        Topics:
-          description: List of topics associated with the Data Subject's consent
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicInformation'
-        CustomPreferences:
-          description: List of custom preferences selected by the Data Subject
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceInformation'
-      required:
-      - DataSubjectId
-      - Status
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionsInformation:
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDto:
       properties:
         Id:
-          description: Unique identifier of the custom preference option
+          description: The unique identifier of the Purpose and Topic relation
           type: string
           format: uuid
-          example: 331f4c1c-2dc6-4a04-8603-7edab63e36d4
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
         Name:
-          description: Display name of the custom preference option
+          description: The Topic name
           type: string
-          example: Monthly
-      required:
-      - Id
-      - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PageDataSubjectForPurposeInformation:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectForPurposeInformation'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
+          example: Car Marketing
+        IntegrationKey:
+          description: The Topic integration key (combination of Purpose and Topic names)
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        CanDelete:
+          description: Whether this Topic can be deleted or not
           type: boolean
           example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeDetailsDto:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailsDto'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
     ConsentPreferences-UniversalConsentPreferenceManag_EditPurposeDto:
       type: object
       properties:
@@ -1144,139 +1187,6 @@ components:
       - Name
       - Status
       - Version
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailsDto:
-      properties:
-        Id:
-          description: Globally unique identifier of the Purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        Label:
-          description: Name of the Purpose
-          type: string
-          example: Marketing Communications
-        Description:
-          description: Detailed description of the Purpose's intended use
-          type: string
-          example: Collect customer emails for marketing purposes
-        Status:
-          description: Status of the Purpose
-          type: string
-          example: ACTIVE
-          enum:
-          - DRAFT
-          - ACTIVE
-          - RETIRED
-        Version:
-          description: Current version of the Purpose
-          type: integer
-          format: int64
-          example: 2
-        RetireOnDate:
-          description: Date when the purpose will be retired
-          type: string
-          format: date-time
-          example: '2025-12-31T23:59:59Z'
-        ParentPurposeId:
-          description: Unique identifier of the parent purpose
-          type: string
-          format: uuid
-          example: ba54eb25-90f0-4633-ab12-c7bf5afdd856
-        ExternalReference:
-          description: External reference identifier for the purpose
-          type: string
-          example: EXT-REF-12345
-        PurposeType:
-          description: Type of the purpose
-          type: string
-          example: STANDARD
-          enum:
-          - STANDARD
-          - COOKIE
-          - IAB
-          - MOBILE
-          - NOTIFICATION_OPT_OUT
-        ConsentLifeSpan:
-          description: Lifespan of the consent in seconds
-          type: integer
-          format: int64
-          example: 7776000
-        ImplicitConsentLifeSpan:
-          description: Lifespan for implicit consents in seconds
-          type: integer
-          format: int64
-          example: 31536000
-        ImplicitConsentConfirmDesc:
-          description: Description shown when confirming implicit consent
-          type: string
-          example: By continuing, you agree to our terms and conditions
-        PurposeCategory:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation'
-        Languages:
-          description: List of languages supported by the purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto'
-        Topics:
-          description: List of topics associated with the purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDto'
-        CustomPreferences:
-          description: List of custom preferences associated with the purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDto'
-        ExpiryDateType:
-          description: Date field considered for purpose lifespan/expiry
-          type: string
-          example: LAST_TRANSACTION_DATE
-          enum:
-          - LAST_TRANSACTION_DATE
-          - CONSENT_DATE
-        attributeValues:
-          description: Map of attribute values associated with the purpose
-          type: object
-          additionalProperties:
-            type: array
-            description: Map of attribute values associated with the purpose
-            items:
-              $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation'
-        IsMajorVersion:
-          type: boolean
-        HardOptOutDisplayFormat:
-          description: The format in which the purpose displays in a Trust Center when the consent status is Hard opt-out. Hard opt-out purposes can either be displayed but locked, or hidden.
-          type: string
-          example: HIDE
-          enum:
-          - HIDE
-          - LOCK
-        attributes:
-          description: Additional attributes attached to the purpose
-          type: object
-          additionalProperties:
-            type: array
-            description: Additional attributes attached to the purpose
-            items:
-              type: string
-              description: Additional attributes attached to the purpose
-        EnableGeolocation:
-          description: Flag to enable geolocation tracking for this purpose
-          type: boolean
-          example: false
-        LastMajorVersion:
-          description: Last major version number of the purpose
-          type: integer
-          format: int64
-          example: 2
-        VersionNotes:
-          description: Notes about the current version of the purpose
-          type: string
-          example: Updated to include new data retention policies
-        HardOptOutMessage:
-          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
-          type: string
-          example: This purpose is required and cannot be opted out
     ConsentPreferences-UniversalConsentPreferenceManag_AssociatedAttributeValueInformation:
       properties:
         id:
@@ -1298,51 +1208,86 @@ components:
           example: red
       required:
       - value
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicInformation:
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectForPurposeInformation:
       properties:
-        Id:
+        DataSubjectId:
+          description: Unique identifier of the Data Subject (typically an email or ID)
           type: string
-          format: uuid
-        Name:
+          example: example@otprivacy.com
+        Status:
+          description: Current transaction status of the Data Subject for this Purpose
           type: string
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceInformation:
-      properties:
-        Id:
-          description: Unique identifier of the custom preference
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - WITHDRAWN
+          - EXPIRED
+          - NOT GIVEN
+          - PENDING
+          - OPT OUT
+        FirstTransactionDate:
+          description: Timestamp of the first transaction for this Data Subject and Purpose
           type: string
-          format: uuid
-          example: 64f8ebb3-b43d-4e4b-a84a-3d301b6d95f1
-        Name:
-          description: Display name of the custom preference
+          format: date-time
+          example: '2020-01-06T10:54:30.974Z'
+        LastTransactionDate:
+          description: Timestamp of the most recent transaction for this Data Subject and Purpose
           type: string
-          example: Fiscal preference
-        CustomPreferenceOptions:
-          description: List of options selected by the data subject for this custom preference
+          format: date-time
+          example: '2020-01-12T12:42:12.842Z'
+        Topics:
+          description: List of topics associated with the Data Subject's consent
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionsInformation'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicInformation'
+        CustomPreferences:
+          description: List of custom preferences selected by the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceInformation'
+      required:
+      - DataSubjectId
+      - Status
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionsInformation:
+      properties:
+        Id:
+          description: Unique identifier of the custom preference option
+          type: string
+          format: uuid
+          example: 331f4c1c-2dc6-4a04-8603-7edab63e36d4
+        Name:
+          description: Display name of the custom preference option
+          type: string
+          example: Monthly
       required:
       - Id
       - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDto:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto:
       properties:
-        Id:
-          description: The unique identifier of the Purpose and Topic relation
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
         Name:
-          description: The Topic name
+          description: The Custom Preference name
           type: string
-          example: Car Marketing
-        IntegrationKey:
-          description: The Topic integration key (combination of Purpose and Topic names)
+          example: Email Frequency
+        Description:
+          description: The description of the Custom Preference
           type: string
-          example: Marketing-Communications_Car-Marketing
-        CanDelete:
-          description: Whether this Topic can be deleted or not
+          example: Options for different frequencies to receive emails
+        Language:
+          description: The Custom Preference content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Custom Preference
           type: boolean
           example: true
+        Options:
+          description: Options associated with a Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
+      required:
+      - Description
+      - Name
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeCreateDto:
       type: object
       properties:
@@ -1447,114 +1392,169 @@ components:
       - ConsentLifeSpan
       - Description
       - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDto:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageDataSubjectForPurposeInformation:
+      type: object
       properties:
-        Id:
-          description: Unique identifier for the Custom Preference
-          type: string
-          format: uuid
-          example: 194e0d3b-0ba8-4bc7-b046-e3ae42b2bd25
-        Name:
-          description: The display name of the Custom Preference
-          type: string
-          example: Email Frequency
-          maxLength: 255
-          minLength: 1
-        Description:
-          description: Detailed description explaining the purpose and usage of this Custom Preference
-          type: string
-          example: Options for different frequencies to receive emails
-          maxLength: 1000
-        SelectionType:
-          description: Defines how options can be selected in this Custom Preference
-          type: string
-          example: SINGLE_CHOICE
-          enum:
-          - SINGLE_CHOICE
-          - MULTI_CHOICE
-          - SINGLE_CHOICE
-          - MULTI_CHOICE
-        DisplayAs:
-          description: Specifies how the preference options should be displayed in the UI
-          type: string
-          example: BUTTONs
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-          - BUTTONs
-          - CHECKBOXES
-          - DROPDOWN
-          - RADIO_BUTTONS
-        CreatedDate:
-          description: Timestamp when the Custom Preference was created
-          type: string
-          format: date-time
-          example: '2023-01-15T10:52:30.974Z'
-        UpdatedDate:
-          description: Timestamp when the Custom Preference was last updated
-          type: string
-          format: date-time
-          example: '2023-01-15T10:55:30.974Z'
-        NumberOfOptions:
-          description: Total number of available options for this Custom Preference
-          type: integer
-          format: int64
-          example: 4
-          minimum: 0
-        Required:
-          description: Indicates whether a response is mandatory for this Custom Preference
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectForPurposeInformation'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
           type: boolean
           example: false
-          default: false
-        NumberOfLanguages:
-          description: Number of languages this Custom Preference has been translated into
-          type: integer
-          format: int64
-          example: 3
-          minimum: 0
-        DefaultLanguage:
-          description: The default language code for this Custom Preference (BCP 47 format)
-          type: string
-          example: en-us
-          pattern: ^[a-z]{2}(-[A-Z]{2})?$
-        Disabled:
-          description: Indicates if this Custom Preference is currently disabled
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
           type: boolean
           example: false
-          default: false
-        Options:
-          description: List of available options for this Custom Preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
-        Languages:
-          description: List of language configurations for this Custom Preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto'
-        Organizations:
-          description: List of Organization IDs that have access to this Custom Preference
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 712a1f61-a548-432f-afc4-5a383c28eeb2
-        TotalLinkedActivePurposes:
-          description: Count of active purposes that reference this Custom Preference
+        number:
+          description: The number associated with the result.
           type: integer
-          format: int64
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
           example: 5
-          minimum: 0
-        PurposeCustomPreferenceId:
-          description: Unique identifier of the Purpose and Custom Preference relation
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeDetailsDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailsDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_AttributeValueInformation:
+      properties:
+        id:
+          description: Unique identifier for the attribute option
           type: string
           format: uuid
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '"3.5"'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: false
+      example: a2229953-b4b5-4042-8cb9-b78038cc4c46
       required:
-      - DisplayAs
-      - Id
-      - Name
-      - SelectionType
+      - value
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

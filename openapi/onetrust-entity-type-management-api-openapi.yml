@@ -312,15 +312,6 @@ paths:
         - AI_GOVERNANCE_WRITE
 components:
   schemas:
-    SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     AttributePredicate:
       type: object
       properties:
@@ -362,125 +353,6 @@ components:
           - type: number
       required:
       - field
-    Page:
-      type: object
-      properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          items:
-            type: object
-          type: array
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The full name of the user.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials for the first and last name of the user.
-          type: string
-          example: FL
-    EntityTypeSettingInformation:
-      type: object
-      properties:
-        enableWorkflow:
-          description: Indicate workflow is enabled for given entity type
-          type: boolean
-          example: true
-        enableWorkflowStageTracking:
-          description: Indicate current setting to record entity workflow stage tracking history
-          type: boolean
-          example: true
-        assessable:
-          description: Indicate if entity type are assessable or not
-          type: boolean
-          example: false
-        enableTask:
-          description: Indicate tasks are enabled for given entity type
-          type: boolean
-          example: false
-        enableRisk:
-          description: Indicate risks are enabled for given entity type
-          type: boolean
-          example: false
-        enableDocument:
-          description: Indicate documents are enabled for given entity type
-          type: boolean
-          example: false
-        enableControl:
-          description: Indicate controls are enabled for given entity type
-          type: boolean
-          example: false
-        enableWebForm:
-          description: Indicate web forms are enabled for given entity type
-          type: boolean
-          example: false
-        enableComment:
-          description: Indicate comments are enabled for given entity type
-          type: boolean
-          example: false
-      required:
-      - assessable
-      - enableComment
-      - enableControl
-      - enableDocument
-      - enableRisk
-      - enableTask
-      - enableWebForm
-      - enableWorkflow
-      - enableWorkflowStageTracking
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
     AttributeQueryCriteria:
       type: object
       properties:
@@ -495,33 +367,6 @@ components:
           type: string
           maxLength: 500
           minLength: 0
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the entity was last created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the entity was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The information of the user who last created/modified the entity.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The information of the user who last created/modified the entity.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
     EntityTypeInformation:
       type: object
       properties:
@@ -640,6 +485,161 @@ components:
       - id
       - name
       - settings
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The full name of the user.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    EntityTypeSettingInformation:
+      type: object
+      properties:
+        enableWorkflow:
+          description: Indicate workflow is enabled for given entity type
+          type: boolean
+          example: true
+        enableWorkflowStageTracking:
+          description: Indicate current setting to record entity workflow stage tracking history
+          type: boolean
+          example: true
+        assessable:
+          description: Indicate if entity type are assessable or not
+          type: boolean
+          example: false
+        enableTask:
+          description: Indicate tasks are enabled for given entity type
+          type: boolean
+          example: false
+        enableRisk:
+          description: Indicate risks are enabled for given entity type
+          type: boolean
+          example: false
+        enableDocument:
+          description: Indicate documents are enabled for given entity type
+          type: boolean
+          example: false
+        enableControl:
+          description: Indicate controls are enabled for given entity type
+          type: boolean
+          example: false
+        enableWebForm:
+          description: Indicate web forms are enabled for given entity type
+          type: boolean
+          example: false
+        enableComment:
+          description: Indicate comments are enabled for given entity type
+          type: boolean
+          example: false
+      required:
+      - assessable
+      - enableComment
+      - enableControl
+      - enableDocument
+      - enableRisk
+      - enableTask
+      - enableWebForm
+      - enableWorkflow
+      - enableWorkflowStageTracking
   securitySchemes:
     OAUTH2:
       type: oauth2

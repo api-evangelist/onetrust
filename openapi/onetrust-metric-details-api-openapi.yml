@@ -96,6 +96,33 @@ paths:
         - ESG_READ
 components:
   schemas:
+    OneTrustResponseListMetricDataAggregateResponseDetails:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricDataAggregateResponseDetails'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
     ReportingPeriodDateOption:
       type: object
       properties:
@@ -114,63 +141,6 @@ components:
           type: string
           format: date
           example: '2019-12-31'
-    OneTrustSort:
-      type: object
-      properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
-          type: string
-    OneTrustResponseListMetricDataAggregateResponseDetails:
-      type: object
-      properties:
-        data:
-          description: The parameters that detail entity data.
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricDataAggregateResponseDetails'
-        errors:
-          description: This parameter provides error details if 400 Bad Request is returned.
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata'
-    OneTrustPage:
-      type: object
-      properties:
-        first:
-          description: This parameter indicates whether the current page is the first page of the list.
-          type: boolean
-        last:
-          description: This parameter indicates whether the current page is the last page of the list.
-          type: boolean
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int64
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int64
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          type: array
-          items:
-            $ref: '#/components/schemas/OneTrustSort'
     MetricDataAggregateResponseDetails:
       type: object
       properties:
@@ -206,6 +176,36 @@ components:
       properties:
         page:
           $ref: '#/components/schemas/OneTrustPage'
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
   securitySchemes:
     oauth2:
       type: oauth2

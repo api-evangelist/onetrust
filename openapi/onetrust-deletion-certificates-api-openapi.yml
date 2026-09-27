@@ -118,66 +118,6 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentAPI_PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-    ConsentAPI_DeletionCertificateResponseDto:
-      type: object
-      properties:
-        objectId:
-          description: The unique identifier of the deleted object
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        objectType:
-          description: The type of the deleted object
-          type: string
-          example: DATA_SUBJECT
-          enum:
-          - RECEIPT
-          - DATA_SUBJECT
-          - DATA_SUBJECT_PROFILE
-        deleteTime:
-          description: The date and time when the object was marked for deletion
-          type: string
-          format: date-time
-          example: '2025-12-02T17:16:57.256567343'
-        deleteType:
-          description: Indicates the source from which the delete request was initiated
-          type: string
-          example: RETENTION
-          enum:
-          - RETENTION
-          - API
-        retentionPolicyRuleId:
-          description: The identifier of the retention policy rule associated with this deletion
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
     ConsentAPI_DeletionCertificateSliceDto:
       type: object
       properties:
@@ -214,6 +154,66 @@ components:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
           example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_DeletionCertificateResponseDto:
+      type: object
+      properties:
+        objectId:
+          description: The unique identifier of the deleted object
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        objectType:
+          description: The type of the deleted object
+          type: string
+          example: DATA_SUBJECT
+          enum:
+          - RECEIPT
+          - DATA_SUBJECT
+          - DATA_SUBJECT_PROFILE
+        deleteTime:
+          description: The date and time when the object was marked for deletion
+          type: string
+          format: date-time
+          example: '2025-12-02T17:16:57.256567343'
+        deleteType:
+          description: Indicates the source from which the delete request was initiated
+          type: string
+          example: RETENTION
+          enum:
+          - RETENTION
+          - API
+        retentionPolicyRuleId:
+          description: The identifier of the retention policy rule associated with this deletion
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

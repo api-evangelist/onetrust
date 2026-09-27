@@ -179,27 +179,6 @@ components:
         geolocation:
           description: The geolocation details of the consent receipt.
           $ref: '#/components/schemas/DataSubjectGeolocationDto'
-    CustomPreferencesDto:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            description: The unique identifier of the purpose preference associated with the purpose.
-            type: string
-            format: uuid
-            example: 1ebe272a-736f-4bec-b4b3-77309bb6bdf3
-          options:
-            description: The unique identifiers of the purpose preference options that the data subject interacted with.
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  description: The unique identifiers of the purpose preference options.
-                  type: string
-                  format: uuid
-                  example: 7590d76b-c69f-4c68-805d-bd326595a213
     DataSubjectGeolocationDto:
       type: object
       properties:
@@ -221,6 +200,27 @@ components:
           type: string
           example: Georgia
       title: DataSubjectGeolocationDto
+    CustomPreferencesDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            description: The unique identifier of the purpose preference associated with the purpose.
+            type: string
+            format: uuid
+            example: 1ebe272a-736f-4bec-b4b3-77309bb6bdf3
+          options:
+            description: The unique identifiers of the purpose preference options that the data subject interacted with.
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  description: The unique identifiers of the purpose preference options.
+                  type: string
+                  format: uuid
+                  example: 7590d76b-c69f-4c68-805d-bd326595a213
 x-onetrust:
   spec-label: OpenAPI 3.1.0
 x-readme:

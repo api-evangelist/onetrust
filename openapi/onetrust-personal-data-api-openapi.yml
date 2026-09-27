@@ -1167,7 +1167,7 @@ paths:
       tags:
       - Personal Data
       summary: Get List of Data Classifications
-      operationId: listAllDataClassificationsUsingGET
+      operationId: getInventoryV2DataClassifications
       parameters:
       - name: page
         in: query
@@ -1239,6 +1239,8 @@ paths:
         `GET https://trial.onetrust.com/api/inventory/v2/data-classifications`'
       security:
       - oauth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: listAllDataClassificationsUsingGET
     servers:
     - url: https://customer.my.onetrust.com/api
   /inventory/v2/data-elements:
@@ -1246,7 +1248,7 @@ paths:
       tags:
       - Personal Data
       summary: Get List of Data Elements
-      operationId: listAllDataElementsUsingGET
+      operationId: getInventoryV2DataElements
       parameters:
       - name: page
         in: query
@@ -1318,89 +1320,53 @@ paths:
         `GET https://trial.onetrust.com/api/inventory/v2/data-elements`'
       security:
       - oauth2: []
+      x-operation-id-source: normalized
+      x-operation-id-original: listAllDataElementsUsingGET
     servers:
     - url: https://customer.my.onetrust.com/api
 components:
   schemas:
-    DataSubjectResponse:
+    DataCategoryCreateUpdateRequest:
       type: object
       properties:
-        id:
-          description: Unique identifier of the entity
+        value:
+          description: Name of the personal data entity
+          type: string
+          example: Financial Data
+          maxLength: 400
+          minLength: 0
+        description:
+          description: Description of the personal data entity
+          type: string
+          example: Contains financial information of customers
+          maxLength: 2000
+          minLength: 0
+        status:
+          description: Status of the personal data entity
+          type: string
+          example: Active
+          enum:
+          - Active
+          - Inactive
+          - Draft
+          maxLength: 50
+          minLength: 0
+        termId:
+          description: ID of the associated term
           type: string
           format: uuid
           example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
-        name:
-          description: Name of the entity
-          type: string
-          example: Financial Data
-        nameKey:
-          description: Translation key for the entity name
-          type: string
-          example: financial_data_name
-        description:
-          description: Description of the entity
-          type: string
-          example: Contains financial information of customers
-        descriptionKey:
-          description: Translation key for the entity description
-          type: string
-          example: financial_data_description
-        source:
-          description: Source of the data subject
-          type: string
-          example: SYSTEM
-          enum:
-          - SYSTEM
-          - USER
-          - IMPORTED
-        visible:
-          type: boolean
-      required:
-      - id
-      - name
-      - nameKey
-    OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/OneTrustPage'
-    DataCategoryResponse:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the entity
+        tagId:
+          description: ID of the associated tag
           type: string
           format: uuid
           example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
-        name:
-          description: Name of the entity
-          type: string
-          example: Financial Data
-        nameKey:
-          description: Translation key for the entity name
-          type: string
-          example: financial_data_name
-        description:
-          description: Description of the entity
-          type: string
-          example: Contains financial information of customers
-        descriptionKey:
-          description: Translation key for the entity description
-          type: string
-          example: financial_data_description
-        source:
-          description: Source of the data category
-          type: string
-          example: SYSTEM
-          enum:
-          - SYSTEM
-          - USER
-          - IMPORTED
+      example:
+        value: Financial Data
+        description: Category for financial information
+        status: Active
       required:
-      - id
-      - name
-      - nameKey
+      - value
     DataSubjectCreateUpdateRequest:
       type: object
       properties:
@@ -1442,19 +1408,80 @@ components:
         status: Active
       required:
       - value
-    OneTrustResponseListDataSubjectResponse:
+    OneTrustSort:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSubjectResponse'
-        errors:
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata'
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+    BasePersonalDataResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+      required:
+      - id
+      - name
+      - nameKey
+    DataCategoryResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data category
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+      required:
+      - id
+      - name
+      - nameKey
     DataElementDetailedResponse:
       type: object
       properties:
@@ -1593,85 +1620,6 @@ components:
             type: object
         meta:
           $ref: '#/components/schemas/OneTrustMetadata'
-    DataCategoryCreateUpdateRequest:
-      type: object
-      properties:
-        value:
-          description: Name of the personal data entity
-          type: string
-          example: Financial Data
-          maxLength: 400
-          minLength: 0
-        description:
-          description: Description of the personal data entity
-          type: string
-          example: Contains financial information of customers
-          maxLength: 2000
-          minLength: 0
-        status:
-          description: Status of the personal data entity
-          type: string
-          example: Active
-          enum:
-          - Active
-          - Inactive
-          - Draft
-          maxLength: 50
-          minLength: 0
-        termId:
-          description: ID of the associated term
-          type: string
-          format: uuid
-          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
-        tagId:
-          description: ID of the associated tag
-          type: string
-          format: uuid
-          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
-      example:
-        value: Financial Data
-        description: Category for financial information
-        status: Active
-      required:
-      - value
-    OneTrustSort:
-      type: object
-      properties:
-        direction:
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          type: string
-    BasePersonalDataResponse:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the entity
-          type: string
-          format: uuid
-          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
-        name:
-          description: Name of the entity
-          type: string
-          example: Financial Data
-        nameKey:
-          description: Translation key for the entity name
-          type: string
-          example: financial_data_name
-        description:
-          description: Description of the entity
-          type: string
-          example: Contains financial information of customers
-        descriptionKey:
-          description: Translation key for the entity description
-          type: string
-          example: financial_data_description
-      required:
-      - id
-      - name
-      - nameKey
     DataClassificationCreateUpdateRequest:
       type: object
       properties:
@@ -1713,39 +1661,19 @@ components:
         status: Active
       required:
       - value
-    OneTrustPage:
+    OneTrustResponseListDataSubjectResponse:
       type: object
       properties:
-        first:
-          type: boolean
-        last:
-          type: boolean
-        number:
-          type: integer
-          format: int64
-        size:
-          type: integer
-          format: int64
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int64
-        sort:
+        data:
           type: array
           items:
-            $ref: '#/components/schemas/OneTrustSort'
-    ObjectReference:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        value:
-          type: string
-        valueKey:
-          type: string
+            $ref: '#/components/schemas/DataSubjectResponse'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
     DataClassificationResponse:
       type: object
       properties:
@@ -1782,12 +1710,107 @@ components:
       - id
       - name
       - nameKey
-    OneTrustMetadata_2:
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
+    DataSubjectResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the entity
+          type: string
+          format: uuid
+          example: 43fd3a8d-3f6b-464e-bf43-3f0c6c592442
+        name:
+          description: Name of the entity
+          type: string
+          example: Financial Data
+        nameKey:
+          description: Translation key for the entity name
+          type: string
+          example: financial_data_name
+        description:
+          description: Description of the entity
+          type: string
+          example: Contains financial information of customers
+        descriptionKey:
+          description: Translation key for the entity description
+          type: string
+          example: financial_data_description
+        source:
+          description: Source of the data subject
+          type: string
+          example: SYSTEM
+          enum:
+          - SYSTEM
+          - USER
+          - IMPORTED
+        visible:
+          type: boolean
+      required:
+      - id
+      - name
+      - nameKey
+    OneTrustMetadata:
       type: object
       properties:
         page:
-          $ref: '#/components/schemas/OneTrustPage_2'
-      title: OneTrustMetadata
+          $ref: '#/components/schemas/OneTrustPage'
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
+    OneTrustResponseListDataElementDetailedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataElementDetailedResponse_2'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata_2'
+      title: OneTrustResponseListDataElementDetailedResponse
+    OneTrustSort_2:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+      title: OneTrustSort
     DataCategoryResponse_2:
       type: object
       properties:
@@ -1812,20 +1835,6 @@ components:
           description: Unique key for name of the Data Category.
           example: DataCategoriesAcademicBackground
       title: DataCategoryResponse
-    OneTrustResponseListDataClassificationResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataClassificationResponse_2'
-        errors:
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata_2'
-      title: OneTrustResponseListDataClassificationResponse
     DataElementDetailedResponse_2:
       type: object
       properties:
@@ -1858,17 +1867,50 @@ components:
           description: Unique key for the name of the Data Element.
           example: DataElementsAge
       title: DataElementDetailedResponse
-    OneTrustSort_2:
+    OneTrustResponseListDataClassificationResponse:
       type: object
       properties:
-        direction:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataClassificationResponse_2'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata_2'
+      title: OneTrustResponseListDataClassificationResponse
+    DataClassificationResponse_2:
+      type: object
+      properties:
+        description:
           type: string
-          enum:
-          - ASC
-          - DESC
-        property:
+          description: Description of the Data Classification.
+          example: Personal Data
+        descriptionKey:
           type: string
-      title: OneTrustSort
+          description: Unique key for description of the Data Classification.
+          example: DataClassificationsPersonalDataDesc
+        id:
+          type: string
+          description: Unique Id of the Data Classification.
+          example: 9fad637c-8548-438e-9a6f-6e38eb2692de
+        name:
+          type: string
+          description: Name of the Data Classification.
+          example: Personal Data
+        nameKey:
+          type: string
+          description: Unique key for the name of the Data Classification.
+          example: DataClassificationsPersonalData
+      title: DataClassificationResponse
+    OneTrustMetadata_2:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage_2'
+      title: OneTrustMetadata
     OneTrustPage_2:
       type: object
       properties:
@@ -1896,44 +1938,6 @@ components:
           format: int64
           example: '1'
       title: OneTrustPage
-    OneTrustResponseListDataElementDetailedResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataElementDetailedResponse_2'
-        errors:
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata_2'
-      title: OneTrustResponseListDataElementDetailedResponse
-    DataClassificationResponse_2:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Description of the Data Classification.
-          example: Personal Data
-        descriptionKey:
-          type: string
-          description: Unique key for description of the Data Classification.
-          example: DataClassificationsPersonalDataDesc
-        id:
-          type: string
-          description: Unique Id of the Data Classification.
-          example: 9fad637c-8548-438e-9a6f-6e38eb2692de
-        name:
-          type: string
-          description: Name of the Data Classification.
-          example: Personal Data
-        nameKey:
-          type: string
-          description: Unique key for the name of the Data Classification.
-          example: DataClassificationsPersonalData
-      title: DataClassificationResponse
   securitySchemes:
     OAUTH2:
       type: oauth2

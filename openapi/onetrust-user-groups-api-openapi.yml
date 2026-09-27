@@ -571,66 +571,6 @@ paths:
         - USER
 components:
   schemas:
-    Platform-AccessManagement_PageMemberResponse:
-      type: object
-      properties:
-        content:
-          description: The list of group members in the current page.
-          items:
-            $ref: '#/components/schemas/Platform-AccessManagement_MemberResponse'
-          type: array
-        empty:
-          description: Indicates whether the result set is empty.
-          type: boolean
-        first:
-          description: Indicates whether this is the first page.
-          type: boolean
-        last:
-          description: Indicates whether this is the last page.
-          type: boolean
-        number:
-          description: The current page number.
-          type: integer
-          format: int32
-        numberOfElements:
-          description: The number of records in the current page.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The total number of records across all pages.
-          type: integer
-          format: int32
-          example: 20
-        totalElements:
-          description: The total number of pages available.
-          type: integer
-          format: int64
-          example: 1
-        totalPages:
-          description: The pagination details for this response.
-          type: integer
-          format: int32
-          example: 1
-        sort:
-          description: Sort order for the results.
-          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
-        pageable:
-          description: The pagination details for this response.
-          type: object
-          example:
-            offset: 0
-            pageNumber: 0
-            pageSize: 20
-            paged: true
-            sort:
-            - ascending: true
-              descending: false
-              direction: ASC
-              ignoreCase: false
-              nullHandling: NATIVE
-              property: name
-            unpaged: false
     Platform-AccessManagement_CreateGroupRequest:
       type: object
       properties:
@@ -645,45 +585,25 @@ components:
           type: string
           example: Group for system administrators
           maxLength: 300
-    Platform-AccessManagement_AddMembersRequest:
+    Platform-AccessManagement_SortObject:
       type: object
       properties:
-        members:
-          description: The list of user identifiers to be added to the user group.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-        groupId:
-          description: The unique identifier of the user group.
-          type: string
-          format: uuid
-          example: a739211d-d216-4398-a1c2-f7a20412692d
-    Platform-AccessManagement_DeleteMembersRequest:
-      type: object
-      properties:
-        members:
-          description: 'The list of user identifiers of the user group. '
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-        groupId:
-          description: The unique identifier of the user group.
-          type: string
-          format: uuid
-          example: a739211d-d216-4398-a1c2-f7a20412692d
-    Platform-AccessManagement_PageUserGroupResponse:
+        empty:
+          description: Indicates whether the result set is empty, meaning no records were found.
+          type: boolean
+        sorted:
+          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          type: boolean
+        unsorted:
+          description: The indicator of whether the results are unsorted.
+          type: boolean
+    Platform-AccessManagement_PageMemberResponse:
       type: object
       properties:
         content:
-          description: The list of user groups in the current page.
+          description: The list of group members in the current page.
           items:
-            $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+            $ref: '#/components/schemas/Platform-AccessManagement_MemberResponse'
           type: array
         empty:
           description: Indicates whether the result set is empty.
@@ -751,18 +671,76 @@ components:
           type: string
           example: Group for system administrators
           maxLength: 300
-    Platform-AccessManagement_SortObject:
+    Platform-AccessManagement_AddMembersRequest:
       type: object
       properties:
-        empty:
-          description: Indicates whether the result set is empty, meaning no records were found.
+        members:
+          description: The list of user identifiers to be added to the user group.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_DeleteMembersRequest:
+      type: object
+      properties:
+        members:
+          description: 'The list of user identifiers of the user group. '
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_MemberResponse:
+      type: object
+      properties:
+        fullName:
+          description: The user's full name.
+          type: string
+          example: John Doe
+          maxLength: 201
+        email:
+          description: The user's email address.
+          type: string
+          format: email
+          example: jdoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        memberId:
+          description: The unique identifier of the group member.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        enabled:
+          description: Indicates whether the user account is active.
           type: boolean
-        sorted:
-          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          example: true
+        internal:
+          description: Indicates whether this is an internal system record.
           type: boolean
-        unsorted:
-          description: The indicator of whether the results are unsorted.
-          type: boolean
+          example: false
+        createdBy:
+          description: The unique identifier of the user who created this record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The date and time when the record was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
     Platform-AccessManagement_UserGroupResponse:
       type: object
       properties:
@@ -802,44 +780,66 @@ components:
           type: string
           format: date-time
           example: '2022-05-01T12:34:56Z'
-    Platform-AccessManagement_MemberResponse:
+    Platform-AccessManagement_PageUserGroupResponse:
       type: object
       properties:
-        fullName:
-          description: The user's full name.
-          type: string
-          example: John Doe
-          maxLength: 201
-        email:
-          description: The user's email address.
-          type: string
-          format: email
-          example: jdoe@onetrust.com
-          maxLength: 255
-          minLength: 5
-        memberId:
-          description: The unique identifier of the group member.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        enabled:
-          description: Indicates whether the user account is active.
+        content:
+          description: The list of user groups in the current page.
+          items:
+            $ref: '#/components/schemas/Platform-AccessManagement_UserGroupResponse'
+          type: array
+        empty:
+          description: Indicates whether the result set is empty.
           type: boolean
-          example: true
-        internal:
-          description: Indicates whether this is an internal system record.
+        first:
+          description: Indicates whether this is the first page.
           type: boolean
-          example: false
-        createdBy:
-          description: The unique identifier of the user who created this record.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        createdDate:
-          description: The date and time when the record was created.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
+        last:
+          description: Indicates whether this is the last page.
+          type: boolean
+        number:
+          description: The current page number.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The number of records in the current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The total number of records across all pages.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total number of pages available.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The pagination details for this response.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort order for the results.
+          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
+        pageable:
+          description: The pagination details for this response.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

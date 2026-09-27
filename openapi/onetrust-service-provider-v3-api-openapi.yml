@@ -83,41 +83,33 @@ paths:
         - SCIM
 components:
   schemas:
-    ServiceProviderConfig:
+    AuthenticationScheme:
       type: object
       properties:
-        schemas:
-          description: A collection of resource types supported by the service provider
-          type: array
-          items:
-            type: string
-            description: A collection of resource types supported by the service provider
-            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
-          example:
-          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
-          uniqueItems: true
-        patch:
-          $ref: '#/components/schemas/Supported'
-        bulk:
-          $ref: '#/components/schemas/BulkSupported'
-        filter:
-          $ref: '#/components/schemas/FilterSupported'
-        changePassword:
-          $ref: '#/components/schemas/Supported'
-        sort:
-          $ref: '#/components/schemas/Supported'
-        etag:
-          $ref: '#/components/schemas/Supported'
-        xmlDataFormat:
-          $ref: '#/components/schemas/Supported'
-        authenticationSchemes:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthenticationScheme'
-        meta:
-          $ref: '#/components/schemas/Meta'
-          readOnly: true
-      title: ServiceProviderConfig
+        name:
+          description: Name of the authentication scheme
+          type: string
+          example: Oauth2 Bearer
+        description:
+          description: Description of the authentication scheme
+          type: string
+          example: OAuth2 Bearer access token is used for authorization.
+        specUrl:
+          description: URI of the specification for the authentication scheme
+          type: string
+          example: http://tools.ietf.org/html/rfc6749
+        documentationUrl:
+          description: URI to retrieve more information about the authentication scheme
+          type: string
+          example: http://oauth.net/2/
+        type:
+          description: Type of the authentication scheme
+          type: string
+          example: oauthbearertoken
+        primary:
+          description: Indicates whether the authentication scheme is primary
+          type: boolean
+          example: true
     Meta:
       type: object
       properties:
@@ -167,40 +159,41 @@ components:
           minLength: 1
       readOnly: true
       title: Meta
-    Supported:
+    ServiceProviderConfig:
       type: object
       properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-    AuthenticationScheme:
-      type: object
-      properties:
-        name:
-          description: Name of the authentication scheme
-          type: string
-          example: Oauth2 Bearer
-        description:
-          description: Description of the authentication scheme
-          type: string
-          example: OAuth2 Bearer access token is used for authorization.
-        specUrl:
-          description: URI of the specification for the authentication scheme
-          type: string
-          example: http://tools.ietf.org/html/rfc6749
-        documentationUrl:
-          description: URI to retrieve more information about the authentication scheme
-          type: string
-          example: http://oauth.net/2/
-        type:
-          description: Type of the authentication scheme
-          type: string
-          example: oauthbearertoken
-        primary:
-          description: Indicates whether the authentication scheme is primary
-          type: boolean
-          example: true
+        schemas:
+          description: A collection of resource types supported by the service provider
+          type: array
+          items:
+            type: string
+            description: A collection of resource types supported by the service provider
+            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
+          uniqueItems: true
+        patch:
+          $ref: '#/components/schemas/Supported'
+        bulk:
+          $ref: '#/components/schemas/BulkSupported'
+        filter:
+          $ref: '#/components/schemas/FilterSupported'
+        changePassword:
+          $ref: '#/components/schemas/Supported'
+        sort:
+          $ref: '#/components/schemas/Supported'
+        etag:
+          $ref: '#/components/schemas/Supported'
+        xmlDataFormat:
+          $ref: '#/components/schemas/Supported'
+        authenticationSchemes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthenticationScheme'
+        meta:
+          $ref: '#/components/schemas/Meta'
+          readOnly: true
+      title: ServiceProviderConfig
     FilterSupported:
       type: object
       properties:
@@ -224,6 +217,13 @@ components:
         maxPayloadSize:
           type: integer
           format: int32
+    Supported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
   securitySchemes:
     OAUTH2:
       type: oauth2

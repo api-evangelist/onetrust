@@ -283,6 +283,15 @@ components:
           type: string
           format: date-time
           example: '2024-02-01T00:00:00.000'
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentAPI_PageableObject:
       type: object
       properties:
@@ -300,15 +309,6 @@ components:
           type: integer
           format: int32
         unpaged:
-          type: boolean
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
           type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:

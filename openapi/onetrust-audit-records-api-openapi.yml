@@ -236,45 +236,46 @@ paths:
         - USER
 components:
   schemas:
-    Platform-AccessManagement_LoginHistoryResponse:
+    AuditRecords_UserActivityResponse:
       type: object
       properties:
-        userName:
-          description: The username or email address used to log in.
+        name:
+          description: Name of the user
           type: string
-          example: johndoe@onetrust.com
-          maxLength: 255
-          minLength: 5
-        ipAddress:
-          description: The IP address from which the login attempt was made. Supports both IPv4 and IPv6 addresses.
+          example: Test User6
+        email:
+          description: Email address
           type: string
-          example: 127.0.0.1.
-          maxLength: 45
-          minLength: 7
-        userAgentString:
-          description: The browser and operating system information from the login attempt.
+          example: tu7@rootorg.com
+        event:
+          description: Event type
           type: string
-          example: Chrome 90.0.4430.212 | Windows 10
-          maxLength: 500
-        createDT:
-          description: The date and time of the login attempt.
+          example: User Edit
+        fieldName:
+          description: Field Name
+          type: string
+          example: Email Address
+        oldValue:
+          description: Old value
+          type: string
+          example: tu6@rootorg.com
+        newValue:
+          description: New value
+          type: string
+          example: tu7@rootorg.com
+        method:
+          description: Method name
+          type: string
+          example: User Provisioning
+        updatedBy:
+          description: Updated by
+          type: string
+          example: OneTrust User
+        date:
+          description: Date of the event
           type: string
           format: date-time
-          example: '2023-01-15T14:30:00Z'
-        status:
-          description: The result of the login attempt (Success or Failure).
-          type: string
-          example: Success
-          enum:
-          - Success
-          - Failure
-          maxLength: 8
-          minLength: 7
-        userId:
-          description: The unique identifier of the user.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
+          example: '2024-09-13T23:02:21.659738Z'
     AuditRecords_PageUserActivityResponse:
       type: object
       properties:
@@ -346,6 +347,54 @@ components:
         unsorted:
           description: The indicator of whether the results are unsorted.
           type: boolean
+    Platform-AccessManagement_LoginHistoryResponse:
+      type: object
+      properties:
+        userName:
+          description: The username or email address used to log in.
+          type: string
+          example: johndoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        ipAddress:
+          description: The IP address from which the login attempt was made. Supports both IPv4 and IPv6 addresses.
+          type: string
+          example: 127.0.0.1.
+          maxLength: 45
+          minLength: 7
+        userAgentString:
+          description: The browser and operating system information from the login attempt.
+          type: string
+          example: Chrome 90.0.4430.212 | Windows 10
+          maxLength: 500
+        createDT:
+          description: The date and time of the login attempt.
+          type: string
+          format: date-time
+          example: '2023-01-15T14:30:00Z'
+        status:
+          description: The result of the login attempt (Success or Failure).
+          type: string
+          example: Success
+          enum:
+          - Success
+          - Failure
+          maxLength: 8
+          minLength: 7
+        userId:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+    AuditRecords_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     Platform-AccessManagement_PageLoginHistoryResponse:
       type: object
       properties:
@@ -406,55 +455,6 @@ components:
               nullHandling: NATIVE
               property: name
             unpaged: false
-    AuditRecords_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    AuditRecords_UserActivityResponse:
-      type: object
-      properties:
-        name:
-          description: Name of the user
-          type: string
-          example: Test User6
-        email:
-          description: Email address
-          type: string
-          example: tu7@rootorg.com
-        event:
-          description: Event type
-          type: string
-          example: User Edit
-        fieldName:
-          description: Field Name
-          type: string
-          example: Email Address
-        oldValue:
-          description: Old value
-          type: string
-          example: tu6@rootorg.com
-        newValue:
-          description: New value
-          type: string
-          example: tu7@rootorg.com
-        method:
-          description: Method name
-          type: string
-          example: User Provisioning
-        updatedBy:
-          description: Updated by
-          type: string
-          example: OneTrust User
-        date:
-          description: Date of the event
-          type: string
-          format: date-time
-          example: '2024-09-13T23:02:21.659738Z'
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

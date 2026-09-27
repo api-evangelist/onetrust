@@ -314,16 +314,23 @@ paths:
         - INVENTORY_WRITE
 components:
   schemas:
-    KeyIdDto:
+    DateDto:
       type: object
       properties:
-        businessKey:
+        fromDateValue:
+          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
           type: string
-        inventoryId:
+          example: '2023-01-01'
+          maxLength: 60
+          minLength: 0
+        toDateValue:
+          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
           type: string
-          format: uuid
+          example: '2023-01-31'
+          maxLength: 60
+          minLength: 0
       required:
-      - businessKey
+      - fromDateValue
     VendorSearchResult:
       type: object
       properties:
@@ -358,23 +365,16 @@ components:
           type: array
           items:
             type: string
-    DateDto:
+    KeyIdDto:
       type: object
       properties:
-        fromDateValue:
-          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
+        businessKey:
           type: string
-          example: '2023-01-01'
-          maxLength: 60
-          minLength: 0
-        toDateValue:
-          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
+        inventoryId:
           type: string
-          example: '2023-01-31'
-          maxLength: 60
-          minLength: 0
+          format: uuid
       required:
-      - fromDateValue
+      - businessKey
     InventoryFilterRequest:
       type: object
       properties:
