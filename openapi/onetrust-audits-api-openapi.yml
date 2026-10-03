@@ -486,6 +486,52 @@ paths:
         - AUDIT_MANAGEMENT
 components:
   schemas:
+    ScopesAssignmentRequest:
+      type: object
+      properties:
+        controlId:
+          description: The guid of Master Control for the Audit Scope. This should match the framework of the Audit.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        auditorEmail:
+          description: The email address of the Auditor to be assigned to the scope.
+          type: string
+          example: auditor@example.com
+          minLength: 5
+        approverEmail:
+          description: The email address of the Approver to be assigned to the scope.
+          type: string
+          example: approver@example.com
+          minLength: 5
+      required:
+      - controlId
+      title: ScopesAssignmentRequest
+    FrameworkAssignmentModel:
+      type: object
+      properties:
+        id:
+          description: Framework Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Framework Name
+          type: string
+          example: ISO 27001
+      required:
+      - id
+      title: FrameworkAssignmentModel
+    UserAssignmentModel:
+      type: object
+      properties:
+        email:
+          description: Email
+          type: string
+          example: john.auditor@example.com
+      required:
+      - email
+      title: UserAssignmentModel
     FilterInformation:
       type: object
       properties:
@@ -528,6 +574,57 @@ components:
       required:
       - field
       title: FilterInformation
+    PageAuditDetailListInformation:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page
+          items:
+            $ref: '#/components/schemas/AuditDetailListInformation'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+          maximum: 2000
+          minimum: 0
     AuditDetailInformation:
       type: object
       properties:
@@ -636,246 +733,6 @@ components:
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
       title: AuditDetailInformation
-    PageAuditDetailListInformation:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page
-          items:
-            $ref: '#/components/schemas/AuditDetailListInformation'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/Pageable'
-        sort:
-          $ref: '#/components/schemas/Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-          maximum: 2000
-          minimum: 0
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    AuditCreateModel:
-      type: object
-      properties:
-        header:
-          description: Audit Header
-          $ref: '#/components/schemas/AuditHeaderModel'
-        auditSourceType:
-          description: Audit source type
-          type: string
-          example: NONE
-          enum:
-          - NONE
-          - VENDOR
-          - ASSET
-          - PROCESING_ACTIVITY
-        orgGroup:
-          description: Audit Organization Group
-          $ref: '#/components/schemas/OrgGroupAssignmentModel'
-        framework:
-          description: Framework
-          $ref: '#/components/schemas/FrameworkAssignmentModel'
-        auditors:
-          description: List of auditors. A minimum of one auditor has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        approvers:
-          description: List of approvers. A minimum of one approver has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        scopes:
-          description: List of scopes (controls). A minimum of one scope has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/ScopesAssignmentRequest'
-        attributes:
-          description: Custom Attributes
-          type: object
-          example:
-            priority:
-            - value: High
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - approvers
-      - auditSourceType
-      - auditors
-      - framework
-      - header
-      - orgGroup
-      - scopes
-      title: AuditCreateModel
-    AuditorInformation:
-      type: object
-      properties:
-        auditorId:
-          description: Auditor Identifier
-          type: string
-          format: uuid
-          example: f3d38630-9246-45be-898a-69878bd108e4
-        fullName:
-          description: Auditor Name
-          type: string
-          example: Jane Smith
-      title: AuditorInformation
-    ScopesAssignmentRequest:
-      type: object
-      properties:
-        controlId:
-          description: The guid of Master Control for the Audit Scope. This should match the framework of the Audit.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        auditorEmail:
-          description: The email address of the Auditor to be assigned to the scope.
-          type: string
-          example: auditor@example.com
-          minLength: 5
-        approverEmail:
-          description: The email address of the Approver to be assigned to the scope.
-          type: string
-          example: approver@example.com
-          minLength: 5
-      required:
-      - controlId
-      title: ScopesAssignmentRequest
-    ApproverInformation:
-      type: object
-      properties:
-        approverId:
-          description: Approver Identifier
-          type: string
-          format: uuid
-          example: f3d38630-9246-45be-898a-69878bd108e4
-        fullName:
-          description: Approver Name
-          type: string
-          example: JohnJohn
-      title: ApproverInformation
-    Pageable:
-      type: object
-      title: Pageable
-    SearchCriteriaRequest:
-      type: object
-      properties:
-        filters:
-          description: Filters, which is a set of field name and value combinations to refine search results
-          type: array
-          items:
-            $ref: '#/components/schemas/FilterInformation'
-          example:
-          - field: status
-            operator: EQUALS
-            value: IN_PROGRESS
-          uniqueItems: true
-        fullText:
-          description: Full text search term to find matching audits or workpapers
-          type: string
-          example: Security Compliance
-      title: SearchCriteriaRequest
-    AuditHeaderModel:
-      type: object
-      properties:
-        name:
-          description: Audit Name
-          type: string
-          example: Annual Security Compliance Audit
-          minLength: 1
-        auditTypeId:
-          description: Audit Type Identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174002
-        goal:
-          description: The goal of the Audit.
-          type: string
-          example: To assess compliance with information security controls and identify areas for improvement
-        startDate:
-          description: Audit Start Date
-          type: string
-          format: date
-          example: '2025-06-01'
-        endDate:
-          description: Audit End Date
-          type: string
-          format: date
-          example: '2025-06-30'
-      required:
-      - auditTypeId
-      - name
-      title: AuditHeaderModel
     StageInformation:
       type: object
       properties:
@@ -899,56 +756,6 @@ components:
       required:
       - id
       title: StageInformation
-    Sort:
-      type: object
-      title: Sort
-    UserAssignmentModel:
-      type: object
-      properties:
-        email:
-          description: Email
-          type: string
-          example: john.auditor@example.com
-      required:
-      - email
-      title: UserAssignmentModel
-    AuditUpdateModel:
-      type: object
-      properties:
-        header:
-          description: Audit Header
-          example:
-            name: Annual Security Audit
-            goal: Assess security controls
-          $ref: '#/components/schemas/AuditHeaderModel'
-        auditors:
-          description: List of auditors. A minimum of one auditor has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        approvers:
-          description: List of approvers. A minimum of one approver has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        auditorAssignmentType:
-          type: string
-          enum:
-          - THROW_EXCEPTION_ON_AUDITOR_REMOVAL_IF_SCOPES_ASSIGNED
-          - UNASSIGN_SCOPES_ON_AUDITOR_REMOVAL
-        attributes:
-          description: Custom Attributes
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - approvers
-      - auditorAssignmentType
-      - auditors
-      - header
-      title: AuditUpdateModel
     BasicEntityDetail:
       type: object
       properties:
@@ -967,36 +774,19 @@ components:
       required:
       - id
       title: BasicEntityDetail
-    OrgGroupAssignmentModel:
+    AuditorInformation:
       type: object
       properties:
-        id:
-          description: Audit Organization Group Identifier
+        auditorId:
+          description: Auditor Identifier
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        name:
-          description: Audit Organization Group
+          example: f3d38630-9246-45be-898a-69878bd108e4
+        fullName:
+          description: Auditor Name
           type: string
-          example: Finance Department
-      required:
-      - id
-      title: OrgGroupAssignmentModel
-    FrameworkAssignmentModel:
-      type: object
-      properties:
-        id:
-          description: Framework Identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Framework Name
-          type: string
-          example: ISO 27001
-      required:
-      - id
-      title: FrameworkAssignmentModel
+          example: Jane Smith
+      title: AuditorInformation
     AuditDetailListInformation:
       type: object
       properties:
@@ -1089,6 +879,216 @@ components:
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
       title: AuditDetailListInformation
+    ApproverInformation:
+      type: object
+      properties:
+        approverId:
+          description: Approver Identifier
+          type: string
+          format: uuid
+          example: f3d38630-9246-45be-898a-69878bd108e4
+        fullName:
+          description: Approver Name
+          type: string
+          example: JohnJohn
+      title: ApproverInformation
+    OrgGroupAssignmentModel:
+      type: object
+      properties:
+        id:
+          description: Audit Organization Group Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        name:
+          description: Audit Organization Group
+          type: string
+          example: Finance Department
+      required:
+      - id
+      title: OrgGroupAssignmentModel
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    AuditUpdateModel:
+      type: object
+      properties:
+        header:
+          description: Audit Header
+          example:
+            name: Annual Security Audit
+            goal: Assess security controls
+          $ref: '#/components/schemas/AuditHeaderModel'
+        auditors:
+          description: List of auditors. A minimum of one auditor has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        approvers:
+          description: List of approvers. A minimum of one approver has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        auditorAssignmentType:
+          type: string
+          enum:
+          - THROW_EXCEPTION_ON_AUDITOR_REMOVAL_IF_SCOPES_ASSIGNED
+          - UNASSIGN_SCOPES_ON_AUDITOR_REMOVAL
+        attributes:
+          description: Custom Attributes
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - approvers
+      - auditorAssignmentType
+      - auditors
+      - header
+      title: AuditUpdateModel
+    SearchCriteriaRequest:
+      type: object
+      properties:
+        filters:
+          description: Filters, which is a set of field name and value combinations to refine search results
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterInformation'
+          example:
+          - field: status
+            operator: EQUALS
+            value: IN_PROGRESS
+          uniqueItems: true
+        fullText:
+          description: Full text search term to find matching audits or workpapers
+          type: string
+          example: Security Compliance
+      title: SearchCriteriaRequest
+    Sort:
+      type: object
+      title: Sort
+    AuditCreateModel:
+      type: object
+      properties:
+        header:
+          description: Audit Header
+          $ref: '#/components/schemas/AuditHeaderModel'
+        auditSourceType:
+          description: Audit source type
+          type: string
+          example: NONE
+          enum:
+          - NONE
+          - VENDOR
+          - ASSET
+          - PROCESING_ACTIVITY
+        orgGroup:
+          description: Audit Organization Group
+          $ref: '#/components/schemas/OrgGroupAssignmentModel'
+        framework:
+          description: Framework
+          $ref: '#/components/schemas/FrameworkAssignmentModel'
+        auditors:
+          description: List of auditors. A minimum of one auditor has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        approvers:
+          description: List of approvers. A minimum of one approver has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        scopes:
+          description: List of scopes (controls). A minimum of one scope has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopesAssignmentRequest'
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            priority:
+            - value: High
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - approvers
+      - auditSourceType
+      - auditors
+      - framework
+      - header
+      - orgGroup
+      - scopes
+      title: AuditCreateModel
+    Pageable:
+      type: object
+      title: Pageable
+    AuditHeaderModel:
+      type: object
+      properties:
+        name:
+          description: Audit Name
+          type: string
+          example: Annual Security Compliance Audit
+          minLength: 1
+        auditTypeId:
+          description: Audit Type Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        goal:
+          description: The goal of the Audit.
+          type: string
+          example: To assess compliance with information security controls and identify areas for improvement
+        startDate:
+          description: Audit Start Date
+          type: string
+          format: date
+          example: '2025-06-01'
+        endDate:
+          description: Audit End Date
+          type: string
+          format: date
+          example: '2025-06-30'
+      required:
+      - auditTypeId
+      - name
+      title: AuditHeaderModel
     BasicEntityDetailTranslation:
       type: object
       properties:

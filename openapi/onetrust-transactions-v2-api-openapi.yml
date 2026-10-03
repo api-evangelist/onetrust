@@ -161,27 +161,6 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentAPI_PurposeNoteDto:
-      type: object
-      properties:
-        noteId:
-          description: Unique identifier for the purpose note
-          type: string
-          format: uuid
-          example: d1a8f6f2-781a-4b2b-b1db-07e25f1c9a94
-        noteType:
-          description: Type of the note
-          type: string
-          enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: Language of the purpose note
-          type: string
-          example: en-us
-        noteText:
-          description: The actual text of the note
-          type: string
-          example: 0e7ed8b7-a64d-4e38-a7ea-7c28dbdd5869
     ConsentAPI_PreferenceDto:
       type: object
       properties:
@@ -194,6 +173,65 @@ components:
           description: Transaction type for the topic
           type: string
           example: OPT_IN
+    ConsentAPI_PurposeScopeDto:
+      type: object
+      properties:
+        key:
+          description: The key representing a specific scope of the purpose.
+          type: string
+        value:
+          description: The description of the purpose scope.
+          type: string
+    ConsentAPI_ContinuationToken:
+      type: object
+      properties:
+        requestContinuation:
+          description: Request continuation token used to paginate. If the number of records in the response is more than a page, it returns a `requestContinuation` token in the response. This `requestContinuation` token should be passed to the next request's body to paginate.
+          type: string
+          example:
+            compositeToken:
+              token: +RID:iNFkAI-ei-4uLDsAAAAAAA==#RT:2#SRC:1#TRC:40#RTD:0Idx9i7ua9Rq4VL3LfZOBTMxMzMuMjMuMjpVMjY7NTo7MjIvMzE5Nzo1AA==#ISV:2#IEO:65567#QCF:8#FPC:AgHq7OoGADE1APzASusCAABA7GoAIVt//sFH5/+hQP9/EUD/f/JAn8/9/xFAv/9DQP/7v//f/yJA//f/+2FC//sxQf9/IUD/O1FA/38RQP7/IUD7/5VA/7/t/93u93+2/xFA/58hQH/6MUB/+xhAv2//99v//f+//ev//+EfAA==
+              range:
+                min: ''
+                max: FF
+            orderByItems:
+            - item: '2022-12-19T15:49:11.236953'
+            rid: iNFkAI-ei-4FKjsAAAAAAA==
+            inclusive: true
+        nextMarker:
+          description: Request continuation token used to paginate over historical receipts
+          type: string
+          example: TGp8AqS3Gfnzwc5srJKeaA==
+    ConsentAPI_CustomPreferenceDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the custom preference.
+          type: string
+          format: uuid
+          example: 3f6b0b58-1c9e-4f65-92b6-8e5c0cb9a1d2
+        options:
+          description: List of options linked to this preference.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 8f3c2a47-6b2d-4b9d-9d8b-1b5f3c8f1a23
+          - f1d24c56-9873-4c43-84af-2c94a7f9b11d
+        choices:
+          description: List of choices made for this custom preference.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceChoiceDto'
+    ConsentAPI_AttachmentDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the uploaded attachment.
+          type: string
+          format: uuid
+          example: 3f6b0b58-1c9e-4f65-92b6-8e5c0cb9a1d2
     ConsentAPI_TransactionDto:
       type: object
       properties:
@@ -352,23 +390,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_PurposeScopeDto'
-    ConsentAPI_AttachmentDto:
+    ConsentAPI_PrivacyNoticeDto:
       type: object
       properties:
         id:
-          description: The unique identifier of the uploaded attachment.
+          description: The unique identifier of the privacy notice.
           type: string
           format: uuid
-          example: 3f6b0b58-1c9e-4f65-92b6-8e5c0cb9a1d2
-    ConsentAPI_PurposeScopeDto:
-      type: object
-      properties:
-        key:
-          description: The key representing a specific scope of the purpose.
-          type: string
-        value:
-          description: The description of the purpose scope.
-          type: string
+          example: a1b2c3d4-e5f6-7a89-b0c1-d2e3f4a5b6c7
+        version:
+          description: The major version number of the privacy notice.
+          type: integer
+          format: int64
+          example: 3
+        minorVersion:
+          description: The minor version number of the privacy notice.
+          type: integer
+          format: int64
+          example: 2
     ConsentAPI_PageableObjectWithContinuationToken:
       type: object
       properties:
@@ -390,6 +429,15 @@ components:
         requestContinuation:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentAPI_CustomPreferenceChoiceDto:
       type: object
       properties:
@@ -402,53 +450,27 @@ components:
           description: The type of transaction associated with this option.
           type: string
           example: OPT_IN
-    ConsentAPI_SortObject:
+    ConsentAPI_PurposeNoteDto:
       type: object
       properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentAPI_PrivacyNoticeDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the privacy notice.
+        noteId:
+          description: Unique identifier for the purpose note
           type: string
           format: uuid
-          example: a1b2c3d4-e5f6-7a89-b0c1-d2e3f4a5b6c7
-        version:
-          description: The major version number of the privacy notice.
-          type: integer
-          format: int64
-          example: 3
-        minorVersion:
-          description: The minor version number of the privacy notice.
-          type: integer
-          format: int64
-          example: 2
-    ConsentAPI_ContinuationToken:
-      type: object
-      properties:
-        requestContinuation:
-          description: Request continuation token used to paginate. If the number of records in the response is more than a page, it returns a `requestContinuation` token in the response. This `requestContinuation` token should be passed to the next request's body to paginate.
+          example: d1a8f6f2-781a-4b2b-b1db-07e25f1c9a94
+        noteType:
+          description: Type of the note
           type: string
-          example:
-            compositeToken:
-              token: +RID:iNFkAI-ei-4uLDsAAAAAAA==#RT:2#SRC:1#TRC:40#RTD:0Idx9i7ua9Rq4VL3LfZOBTMxMzMuMjMuMjpVMjY7NTo7MjIvMzE5Nzo1AA==#ISV:2#IEO:65567#QCF:8#FPC:AgHq7OoGADE1APzASusCAABA7GoAIVt//sFH5/+hQP9/EUD/f/JAn8/9/xFAv/9DQP/7v//f/yJA//f/+2FC//sxQf9/IUD/O1FA/38RQP7/IUD7/5VA/7/t/93u93+2/xFA/58hQH/6MUB/+xhAv2//99v//f+//ev//+EfAA==
-              range:
-                min: ''
-                max: FF
-            orderByItems:
-            - item: '2022-12-19T15:49:11.236953'
-            rid: iNFkAI-ei-4FKjsAAAAAAA==
-            inclusive: true
-        nextMarker:
-          description: Request continuation token used to paginate over historical receipts
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: Language of the purpose note
           type: string
-          example: TGp8AqS3Gfnzwc5srJKeaA==
+          example: en-us
+        noteText:
+          description: The actual text of the note
+          type: string
+          example: 0e7ed8b7-a64d-4e38-a7ea-7c28dbdd5869
     ConsentAPI_TransactionSliceDto:
       type: object
       properties:
@@ -481,28 +503,6 @@ components:
           format: int32
         empty:
           type: boolean
-    ConsentAPI_CustomPreferenceDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the custom preference.
-          type: string
-          format: uuid
-          example: 3f6b0b58-1c9e-4f65-92b6-8e5c0cb9a1d2
-        options:
-          description: List of options linked to this preference.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 8f3c2a47-6b2d-4b9d-9d8b-1b5f3c8f1a23
-          - f1d24c56-9873-4c43-84af-2c94a7f9b11d
-        choices:
-          description: List of choices made for this custom preference.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceChoiceDto'
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

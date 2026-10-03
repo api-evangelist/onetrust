@@ -374,15 +374,233 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto:
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto:
+      properties:
+        Name:
+          description: The Topic name
+          type: string
+          example: Car Marketing
+        Language:
+          description: The Topic content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Topic
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto:
+      properties:
+        Id:
+          description: The unique identifier of the Purpose and Topic relation
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        Name:
+          description: The Topic name
+          type: string
+          example: Car Marketing
+        IntegrationKey:
+          description: The Topic integration key (combination of Purpose and Topic names)
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        Languages:
+          description: Translations for a Topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesResponseDto:
+      type: object
+      properties:
+        Purposes:
+          description: List of Purposes with their updated consent status for the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto'
+        Language:
+          description: The preferred language of the Data Subject in BCP 47 format
+          type: string
+          example: en-us
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesRequestDto:
+      properties:
+        Id:
+          description: Unique Identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Topics:
+          description: List of Topics associated with the Purpose and their consent status
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectTopicsDto'
+        CustomPreferences:
+          description: List of custom preferences associated with the Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto'
+      required:
+      - Id
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto:
+      properties:
+        Id:
+          description: Unique identifier of the Purpose and Custom Preference relation
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        Name:
+          description: The Custom Preference name
+          type: string
+          example: Email Frequency
+        Description:
+          description: The description of the Custom Preference
+          type: string
+          example: Options for different frequencies to receive emails
+        SelectionType:
+          description: Selection Type of the Custom Preference Options
+          type: string
+          enum:
+          - SINGLE_CHOICE
+          - MULTI_CHOICE
+        DisplayAs:
+          description: Display Type of the Custom Preference Options
+          type: string
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        Required:
+          description: Whether selection for this Custom Preference is required
+          type: boolean
+          example: false
+        Options:
+          description: A list containing the Custom Preference's Options
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
+        Languages:
+          description: A list containing the Custom Preference's Languages
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto:
       properties:
         Id:
           type: string
           format: uuid
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto:
+      properties:
+        Id:
+          description: Unique Identifier identifying an Option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        Label:
+          description: The Option label
+          type: string
+          example: Weekly
+        Order:
+          description: The order of the Option, Starts from 0
+          type: integer
+          format: int32
+          example: 1
+        IsDefault:
+          description: Whether the Option is default option or not
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto:
+      properties:
+        Name:
+          description: name for a Custom Preference
+          type: string
+          example: Monthly
+        Description:
+          description: The description of the Custom Preference
+          type: string
+          example: Options for different frequencies to receive emails
+        Language:
+          description: The Custom Preference content language code
+          type: string
+          example: en-us
+        Default:
+          description: The Option label
+          type: boolean
+          example: true
         Options:
+          description: Options associated with a Custom Preference
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto'
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
+      required:
+      - Description
+      - Name
+    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPurposesByIdentifier:
+      type: object
+      properties:
+        DataSubjectId:
+          description: The Data Subject identifier
+          type: string
+          example: example@otprivacy.com
+        Language:
+          description: The Data Subject's preferred language code
+          type: string
+          example: en-us
+        Purposes:
+          description: A list of Purposes associated to the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto'
+        Status:
+          description: Status code for the Preference Center [200 (active), 400 (no transactions for this Data Subject)]
+          type: integer
+          format: int32
+          example: 200
+        DsDataElements:
+          description: A list containing the Data Elements and their values for the specified Data Subject
+          type: object
+          example:
+          - First Name: John
+            Last Name: Doe
+          additionalProperties:
+            type: object
+            description: A list containing the Data Elements and their values for the specified Data Subject
+            example:
+            - First Name: John
+              Last Name: Doe
+        messages:
+          type: array
+          items:
+            type: string
+        unsubscribeAll:
+          description: 'Indicates whether a data subject has opted to unsubscribe from all Purposes within a Preference Center '
+          type: boolean
+          example: true
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto:
+      properties:
+        Name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        Description:
+          description: The Purpose description
+          type: string
+          example: Collect customer emails for marketing purposes
+        Description of Implicit Purpose Confirmation checkbox:
+          description: The Implicit Purpose Confirmation checkbox description
+          type: string
+          example: I can confirm
+        Language:
+          description: The Purpose content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Purpose
+          type: boolean
+          example: true
+        HardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - Description
+      - Name
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesRequestDto:
       type: object
       properties:
@@ -414,23 +632,147 @@ components:
           writeOnly: true
       required:
       - Purposes
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPreferencesResponseDto:
-      type: object
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto:
       properties:
-        Purposes:
-          description: List of Purposes with their updated consent status for the Data Subject
+        Id:
+          description: Unique Identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Label:
+          description: Name of the Purpose
+          type: string
+          example: Marketing Communications
+        Description:
+          description: Description of the Purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        Status:
+          description: Status of the Purpose
+          type: string
+          example: ACTIVE
+        TransactionStatus:
+          description: Status for a Data Subject consent on a Purpose
+          type: string
+          example: ACTIVE
+        ExternalReference:
+          type: string
+        Topics:
+          description: List of consented Topics associated to a Purpose
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto'
-        Language:
-          description: The preferred language of the Data Subject in BCP 47 format
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
+        CustomPreferences:
+          description: List of consented Custom Preferences associated to a Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto:
+      properties:
+        messages:
+          description: List of status messages related to the Purpose update operation
+          type: array
+          items:
+            type: string
+          example:
+          - added
+          - updated
+        Id:
+          description: Unique identifier for the Purpose that was updated
           type: string
-          example: en-us
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto:
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Status:
+          description: Indicates whether the Purpose update was successful
+          type: boolean
+          example: true
+        ReceiptGuid:
+          description: Unique identifier for the receipt of this update operation
+          type: string
+          format: uuid
+          example: 64a9b83e-3aae-4e9f-b75e-5fbd01aecd85
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposesWithLanguagesDto:
+      properties:
+        Id:
+          description: Unique identifier of the Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        Version:
+          description: Version number of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        Label:
+          description: Display name of the Purpose
+          type: string
+          example: Marketing Communications
+        Description:
+          description: Detailed description explaining the Purpose
+          type: string
+          example: Collect customer emails for marketing purposes
+        Status:
+          description: Current status of the Purpose (e.g., ACTIVE, INACTIVE)
+          type: string
+          example: ACTIVE
+        PurposeType:
+          description: Classification type of the Purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        ExternalReference:
+          type: string
+        Languages:
+          description: List of language-specific data for the Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto'
+        Topics:
+          description: List of Topics associated with this Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
+        CustomPreferences:
+          description: List of custom preference settings for this Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
+        LifeSpan:
+          description: Lifespan of consents recorded against this Purpose in seconds
+          type: integer
+          format: int64
+          example: 7889238
+        ImplicitConsentLifeSpan:
+          description: Lifespan of implicit consents for this Purpose in seconds
+          type: integer
+          format: int64
+          example: 7889238
+        ImplicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox
+          type: string
+          example: I can confirm
+        DefaultConsentStatus:
+          description: Default consent status for this Purpose
+          type: string
+          example: OPT_OUT
+          default: OPT_OUT
+          enum:
+          - ACTIVE
+          - OPT_OUT
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto:
       properties:
         Id:
           type: string
           format: uuid
+        Options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferenceOptionDto'
     ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterDto:
       type: object
       properties:
@@ -514,348 +856,6 @@ components:
         Id:
           type: string
           format: uuid
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto:
-      properties:
-        Name:
-          description: The Purpose name
-          type: string
-          example: Marketing Communications
-        Description:
-          description: The Purpose description
-          type: string
-          example: Collect customer emails for marketing purposes
-        Description of Implicit Purpose Confirmation checkbox:
-          description: The Implicit Purpose Confirmation checkbox description
-          type: string
-          example: I can confirm
-        Language:
-          description: The Purpose content language code
-          type: string
-          example: en-us
-        Default:
-          description: Whether this language is the default one for the Purpose
-          type: boolean
-          example: true
-        HardOptOutMessage:
-          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
-          type: string
-          example: This purpose is required and cannot be opted out
-      required:
-      - Description
-      - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto:
-      properties:
-        Name:
-          description: name for a Custom Preference
-          type: string
-          example: Monthly
-        Description:
-          description: The description of the Custom Preference
-          type: string
-          example: Options for different frequencies to receive emails
-        Language:
-          description: The Custom Preference content language code
-          type: string
-          example: en-us
-        Default:
-          description: The Option label
-          type: boolean
-          example: true
-        Options:
-          description: Options associated with a Custom Preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
-      required:
-      - Description
-      - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto:
-      properties:
-        Id:
-          description: Unique Identifier of the Purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        Label:
-          description: Name of the Purpose
-          type: string
-          example: Marketing Communications
-        Description:
-          description: Description of the Purpose
-          type: string
-          example: Collect customer emails for marketing purposes
-        Status:
-          description: Status of the Purpose
-          type: string
-          example: ACTIVE
-        TransactionStatus:
-          description: Status for a Data Subject consent on a Purpose
-          type: string
-          example: ACTIVE
-        ExternalReference:
-          type: string
-        Topics:
-          description: List of consented Topics associated to a Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
-        CustomPreferences:
-          description: List of consented Custom Preferences associated to a Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto:
-      properties:
-        Id:
-          description: The unique identifier of the Purpose and Topic relation
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        Name:
-          description: The Topic name
-          type: string
-          example: Car Marketing
-        IntegrationKey:
-          description: The Topic integration key (combination of Purpose and Topic names)
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        Languages:
-          description: Translations for a Topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto'
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto:
-      properties:
-        Id:
-          description: Unique Identifier identifying an Option
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        Label:
-          description: The Option label
-          type: string
-          example: Weekly
-        Order:
-          description: The order of the Option, Starts from 0
-          type: integer
-          format: int32
-          example: 1
-        IsDefault:
-          description: Whether the Option is default option or not
-          type: boolean
-          example: true
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposesWithLanguagesDto:
-      properties:
-        Id:
-          description: Unique identifier of the Purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        Version:
-          description: Version number of the Purpose
-          type: integer
-          format: int64
-          example: 2
-        Label:
-          description: Display name of the Purpose
-          type: string
-          example: Marketing Communications
-        Description:
-          description: Detailed description explaining the Purpose
-          type: string
-          example: Collect customer emails for marketing purposes
-        Status:
-          description: Current status of the Purpose (e.g., ACTIVE, INACTIVE)
-          type: string
-          example: ACTIVE
-        PurposeType:
-          description: Classification type of the Purpose
-          type: string
-          example: STANDARD
-          enum:
-          - STANDARD
-          - COOKIE
-          - IAB
-          - MOBILE
-          - NOTIFICATION_OPT_OUT
-        ExternalReference:
-          type: string
-        Languages:
-          description: List of language-specific data for the Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDto'
-        Topics:
-          description: List of Topics associated with this Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeTopicDto'
-        CustomPreferences:
-          description: List of custom preference settings for this Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto'
-        LifeSpan:
-          description: Lifespan of consents recorded against this Purpose in seconds
-          type: integer
-          format: int64
-          example: 7889238
-        ImplicitConsentLifeSpan:
-          description: Lifespan of implicit consents for this Purpose in seconds
-          type: integer
-          format: int64
-          example: 7889238
-        ImplicitConsentConfirmDesc:
-          description: Description text for the implicit consent confirmation checkbox
-          type: string
-          example: I can confirm
-        DefaultConsentStatus:
-          description: Default consent status for this Purpose
-          type: string
-          example: OPT_OUT
-          default: OPT_OUT
-          enum:
-          - ACTIVE
-          - OPT_OUT
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferencePurposeCustomPreferenceDto:
-      properties:
-        Id:
-          description: Unique identifier of the Purpose and Custom Preference relation
-          type: string
-          format: uuid
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        Name:
-          description: The Custom Preference name
-          type: string
-          example: Email Frequency
-        Description:
-          description: The description of the Custom Preference
-          type: string
-          example: Options for different frequencies to receive emails
-        SelectionType:
-          description: Selection Type of the Custom Preference Options
-          type: string
-          enum:
-          - SINGLE_CHOICE
-          - MULTI_CHOICE
-        DisplayAs:
-          description: Display Type of the Custom Preference Options
-          type: string
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        Required:
-          description: Whether selection for this Custom Preference is required
-          type: boolean
-          example: false
-        Options:
-          description: A list containing the Custom Preference's Options
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceOptionDto'
-        Languages:
-          description: A list containing the Custom Preference's Languages
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCustomPreferenceLanguageDto'
-    ConsentPreferences-UniversalConsentPreferenceManag_PreferenceCenterPurposesByIdentifier:
-      type: object
-      properties:
-        DataSubjectId:
-          description: The Data Subject identifier
-          type: string
-          example: example@otprivacy.com
-        Language:
-          description: The Data Subject's preferred language code
-          type: string
-          example: en-us
-        Purposes:
-          description: A list of Purposes associated to the Data Subject
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposesByIdentifierDto'
-        Status:
-          description: Status code for the Preference Center [200 (active), 400 (no transactions for this Data Subject)]
-          type: integer
-          format: int32
-          example: 200
-        DsDataElements:
-          description: A list containing the Data Elements and their values for the specified Data Subject
-          type: object
-          example:
-          - First Name: John
-            Last Name: Doe
-          additionalProperties:
-            type: object
-            description: A list containing the Data Elements and their values for the specified Data Subject
-            example:
-            - First Name: John
-              Last Name: Doe
-        messages:
-          type: array
-          items:
-            type: string
-        unsubscribeAll:
-          description: 'Indicates whether a data subject has opted to unsubscribe from all Purposes within a Preference Center '
-          type: boolean
-          example: true
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesRequestDto:
-      properties:
-        Id:
-          description: Unique Identifier of the Purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        Topics:
-          description: List of Topics associated with the Purpose and their consent status
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectTopicsDto'
-        CustomPreferences:
-          description: List of custom preferences associated with the Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectCustomPreferencesDto'
-      required:
-      - Id
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectPurposesResponseDto:
-      properties:
-        messages:
-          description: List of status messages related to the Purpose update operation
-          type: array
-          items:
-            type: string
-          example:
-          - added
-          - updated
-        Id:
-          description: Unique identifier for the Purpose that was updated
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        Status:
-          description: Indicates whether the Purpose update was successful
-          type: boolean
-          example: true
-        ReceiptGuid:
-          description: Unique identifier for the receipt of this update operation
-          type: string
-          format: uuid
-          example: 64a9b83e-3aae-4e9f-b75e-5fbd01aecd85
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDto:
-      properties:
-        Name:
-          description: The Topic name
-          type: string
-          example: Car Marketing
-        Language:
-          description: The Topic content language code
-          type: string
-          example: en-us
-        Default:
-          description: Whether this language is the default one for the Topic
-          type: boolean
-          example: true
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

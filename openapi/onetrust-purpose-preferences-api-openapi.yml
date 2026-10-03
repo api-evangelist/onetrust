@@ -309,60 +309,6 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto:
-      properties:
-        Name:
-          description: The Custom Preference name
-          type: string
-          example: Email Frequency
-        Description:
-          description: The description of the Custom Preference
-          type: string
-          example: Options for different frequencies to receive emails
-        Language:
-          description: The Custom Preference content language code
-          type: string
-          example: en-us
-        Default:
-          description: Whether this language is the default one for the Custom Preference
-          type: boolean
-          example: true
-        Options:
-          description: Options associated with a Custom Preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
-      required:
-      - Description
-      - Name
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto:
-      properties:
-        Id:
-          description: Unique Identifier identifying an Option
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        Label:
-          description: The Option label
-          type: string
-          example: Weekly
-        Order:
-          description: The order of the option, Starts from 0
-          type: integer
-          format: int32
-          example: 1
-        IsDefault:
-          description: Whether the Option is default option or not
-          type: boolean
-          example: true
-        CanDelete:
-          description: Whether the Option can be deleted or not
-          type: boolean
-          example: true
-        Disabled:
-          description: Whether Custom Preference is disabled or not
-          type: boolean
-          example: false
     ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceDto:
       type: object
       properties:
@@ -467,6 +413,34 @@ components:
       - Id
       - Name
       - SelectionType
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto:
+      properties:
+        Id:
+          description: Unique Identifier identifying an Option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        Label:
+          description: The Option label
+          type: string
+          example: Weekly
+        Order:
+          description: The order of the option, Starts from 0
+          type: integer
+          format: int32
+          example: 1
+        IsDefault:
+          description: Whether the Option is default option or not
+          type: boolean
+          example: true
+        CanDelete:
+          description: Whether the Option can be deleted or not
+          type: boolean
+          example: true
+        Disabled:
+          description: Whether Custom Preference is disabled or not
+          type: boolean
+          example: false
     ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceCreateDto:
       properties:
         Name:
@@ -563,6 +537,32 @@ components:
       - Name
       - Options
       - SelectionType
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDto:
+      properties:
+        Name:
+          description: The Custom Preference name
+          type: string
+          example: Email Frequency
+        Description:
+          description: The description of the Custom Preference
+          type: string
+          example: Options for different frequencies to receive emails
+        Language:
+          description: The Custom Preference content language code
+          type: string
+          example: en-us
+        Default:
+          description: Whether this language is the default one for the Custom Preference
+          type: boolean
+          example: true
+        Options:
+          description: Options associated with a Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDto'
+      required:
+      - Description
+      - Name
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

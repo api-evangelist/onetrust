@@ -1037,117 +1037,40 @@ components:
           description: Sensitivity of the permission
           type: string
           example: Sensitive
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          description: The starting position for paginated results.
-          type: integer
-          format: int64
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          description: This flag indicates whether pagination is enabled.
-          type: boolean
-        pageSize:
-          description: The number of items displayed per page.
-          type: integer
-          format: int32
-        pageNumber:
-          description: The current page number in the pagination sequence.
-          type: integer
-          format: int32
-        unpaged:
-          description: This flag indicates whether pagination is disabled.
-          type: boolean
-    AppPrivacyManifestResponsePublicDto:
-      type: object
-      properties:
-        editVersion:
-          description: The current edit version of the Privacy Manifest
-          type: string
-          example: 2
-        versions:
-          description: All available edit versions for this application's Privacy Manifest
-          type: array
-          items:
-            type: string
-          example:
-          - '1'
-          - '2'
-        countTotal:
-          description: Total number of data types present in the scan results
-          type: integer
-          format: int32
-          example: 5
-        countAligned:
-          description: Number of data types that are fully aligned with the Privacy Manifest
-          type: integer
-          format: int32
-          example: 3
-        countMismatched:
-          description: Number of data types with at least one non-DATA_TYPE mismatch
-          type: integer
-          format: int32
-          example: 1
-        countMissing:
-          description: Number of data types missing from the Privacy Manifest declaration
-          type: integer
-          format: int32
-          example: 1
-        dataTypes:
-          description: Per-data-type scan summary, keyed by data type.
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AppPrivacyManifestResponseDataPublicDto'
-    ApplicationBrandingAttributesRequestDTO:
-      type: object
-      properties:
-        attributes:
-          description: List of application branding attributes to update.
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
-          example:
-          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: mob_aBannerTextColor
-            value: '#000000'
-            type: STRING
-          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-            name: mob_aBannerCloseButtonTextColorDark
-            value: '#FFFFFF'
-            type: STRING
-    ApplicationBrandingAttributesResponseDTO:
+    ApplicationListPublicDto:
       type: object
       properties:
         id:
-          description: Resource ID (Application ID)
+          description: Unique identifier of the application
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        resourceName:
-          description: Resource name (Application/Domain name)
+        name:
+          description: Name of the application
           type: string
-          example: My Application
+          example: My Mobile App
           maxLength: 255
           minLength: 1
-        attributes:
-          description: Map of branding attributes keyed by attribute name
-          type: object
-          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
-          additionalProperties:
-            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
-    ApplicationScanDetailDto:
-      type: object
-      properties:
-        scanId:
-          description: Unique identifier for this scan
+        os:
+          description: Operating system type
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          example: ANDROID
+          enum:
+          - IOS
+          - ANDROID
+          - APPLETV
+          - ANDROIDTV
+          - FIRETV
+          - ROKU
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
         status:
-          description: Status of this scan
+          description: Current scan status of the application
           type: string
           example: COMPLETED
           enum:
@@ -1157,214 +1080,62 @@ components:
           - FAILED
           - INTERRUPTED
           - UNSCANNED
-        sdkCount:
-          description: Total number of SDKs found
-          type: integer
-          format: int32
-        sdkCategories:
-          description: SDK counts grouped by category
-          type: object
-          example:
-            Strictly Necessary: 10
-            Performance: 5
-            Functionality: 3
-            Targeting: 2
-            Unknown: 1
-          additionalProperties:
-            type: integer
-            format: int32
-        permissionCount:
-          description: Total number of permissions found
-          type: integer
-          format: int32
-        permissionCountHighRisk:
-          description: Number of high-risk permissions
-          type: integer
-          format: int32
-        permissionCategories:
-          description: Permission counts grouped by category
-          type: object
-          example:
-            Device Hardware: 4
-            Accounts: 1
-            Media: 1
-            System Notifications: 3
-            Security: 1
-          additionalProperties:
-            type: integer
-            format: int32
-        scanDate:
-          description: Date and time of the scan
+        publishStatus:
+          description: Publish status of the application
           type: string
-          format: date-time
-          example: '2022-01-01T00:00:00.000Z'
-        version:
-          description: Detected version of the given application
-          type: string
-          example: 1.0.0
-        engineVersion:
-          description: OneTrust mobile scan engine version used for this scan
-          type: string
-          example: 2.0.0
-    AppPrivacyManifestMismatchPublicDto:
-      type: object
-      properties:
-        sdkPackageId:
-          description: Package identifier of the SDK that triggered this mismatch
-          type: string
-          example: com.google.firebase
-        sdkName:
-          description: Display name of the SDK that triggered this mismatch
-          type: string
-          example: Firebase
-        dataType:
-          description: The Privacy Manifest data type this mismatch relates to
-          type: string
-          example: DEVICE_ID
+          example: PUBLISHED
           enum:
-          - NAME
-          - EMAIL
-          - PHONE_NUMBER
-          - PHYSICAL_ADDRESS
-          - OTHER_USER_CONTACT_INFO
-          - HEALTH
-          - FITNESS
-          - PAYMENT_INFO
-          - CREDIT_INFO
-          - OTHER_FINANCIAL_INFO
-          - PRECISE_LOCATION
-          - COARSE_LOCATION
-          - SENSITIVE_INFO
-          - CONTACTS
-          - MESSAGES
-          - PHOTOS_VIDEOS
-          - AUDIO_DATA
-          - GAMEPLAY_CONTENT
-          - CUSTOMER_SUPPORT
-          - OTHER_USER_CONTENT
-          - BROWSING_HISTORY
-          - SEARCH_HISTORY
-          - USER_ID
-          - DEVICE_ID
-          - PURCHASE_HISTORY
-          - PRODUCT_INTERACTION
-          - ADVERTISING_DATA
-          - OTHER_USAGE_DATA
-          - CRASH_DATA
-          - PERFORMANCE_DATA
-          - OTHER_DIAGNOSTIC_DATA
-          - ENVIRONMENT_SCANNING
-          - HANDS
-          - HEAD
-          - OTHER_DATA_TYPES
-          - UNKNOWN
-        mismatch:
-          description: The category of mismatch detected
-          type: string
-          example: DATA_PURPOSE
-          enum:
-          - NONE
-          - DATA_TYPE
-          - DATA_PURPOSE
-          - TRACKING
-          - USERLINK
-        appValue:
-          description: The value declared in the app's Privacy Manifest
-          type: string
-          example: true
-        sdkValue:
-          description: The value detected in the SDK scan
-          type: string
-          example: false
-    ApplicationEntityPublicDto:
-      type: object
-      properties:
-        applicationId:
-          description: Application ID
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        consentPolicyId:
+          description: Consent policy ID assigned to this application
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Application Name
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        consentPolicyName:
+          description: Name of the assigned consent policy
           type: string
-          example: My Application
+          example: GDPR Policy
           maxLength: 255
           minLength: 1
-        platform:
-          description: Application Platform
+        consentPolicyAssignDate:
+          description: Date when consent policy was assigned
           type: string
-          example: ANDROID
-          enum:
-          - ANDROID
-          - IOS
-          maxLength: 50
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+        orgId:
+          description: Organization ID that owns this application
+          type: string
+          example: org-123
+        orgName:
+          description: Organization name
+          type: string
+          example: OneTrust
+          maxLength: 255
           minLength: 1
-        fileType:
-          description: File Type
+        scriptVersion:
+          description: Script version
           type: string
-          example: apk
-          enum:
-          - apk
-          - ipa
-          - aab
-          maxLength: 10
-          minLength: 3
-        scanId:
-          description: The unique identifier of the scan.
+          example: 202603.1.0
+          maxLength: 100
+        createdDate:
+          description: Date when the application was created
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-    AppPrivacyManifestResponseDatatypePublicDto:
-      type: object
-      properties:
-        dataType:
-          description: The Privacy Manifest data type these results relate to
+          format: date-time
+          example: '2024-01-01T10:00:00Z'
+        modifiedDate:
+          description: Date when the application was last modified
           type: string
-          example: DEVICE_ID
-          enum:
-          - NAME
-          - EMAIL
-          - PHONE_NUMBER
-          - PHYSICAL_ADDRESS
-          - OTHER_USER_CONTACT_INFO
-          - HEALTH
-          - FITNESS
-          - PAYMENT_INFO
-          - CREDIT_INFO
-          - OTHER_FINANCIAL_INFO
-          - PRECISE_LOCATION
-          - COARSE_LOCATION
-          - SENSITIVE_INFO
-          - CONTACTS
-          - MESSAGES
-          - PHOTOS_VIDEOS
-          - AUDIO_DATA
-          - GAMEPLAY_CONTENT
-          - CUSTOMER_SUPPORT
-          - OTHER_USER_CONTENT
-          - BROWSING_HISTORY
-          - SEARCH_HISTORY
-          - USER_ID
-          - DEVICE_ID
-          - PURCHASE_HISTORY
-          - PRODUCT_INTERACTION
-          - ADVERTISING_DATA
-          - OTHER_USAGE_DATA
-          - CRASH_DATA
-          - PERFORMANCE_DATA
-          - OTHER_DIAGNOSTIC_DATA
-          - ENVIRONMENT_SCANNING
-          - HANDS
-          - HEAD
-          - OTHER_DATA_TYPES
-          - UNKNOWN
-        mismatches:
-          description: Mismatches detected for this data type, keyed by mismatch category.
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AppPrivacyManifestMismatchPublicDto'
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+        publishedDate:
+          description: Date when the application was last published
+          type: string
+          format: date-time
+          example: '2024-01-10T10:00:00Z'
     ApplicationRequestPublicDto:
       type: object
       properties:
@@ -1404,7 +1175,7 @@ components:
           example: org-123
           maxLength: 255
           minLength: 1
-    PageApplicationScanDetailDto:
+    PageApplicationListPublicDto:
       type: object
       properties:
         totalPages:
@@ -1418,7 +1189,7 @@ components:
           format: int32
         content:
           items:
-            $ref: '#/components/schemas/ApplicationScanDetailDto'
+            $ref: '#/components/schemas/ApplicationListPublicDto'
           type: array
         number:
           type: integer
@@ -1436,79 +1207,6 @@ components:
           format: int32
         empty:
           type: boolean
-    AppPrivacyManifestResponseDataPublicDto:
-      type: object
-      properties:
-        dataType:
-          description: The Privacy Manifest data type these results relate to
-          type: string
-          example: DEVICE_ID
-          enum:
-          - NAME
-          - EMAIL
-          - PHONE_NUMBER
-          - PHYSICAL_ADDRESS
-          - OTHER_USER_CONTACT_INFO
-          - HEALTH
-          - FITNESS
-          - PAYMENT_INFO
-          - CREDIT_INFO
-          - OTHER_FINANCIAL_INFO
-          - PRECISE_LOCATION
-          - COARSE_LOCATION
-          - SENSITIVE_INFO
-          - CONTACTS
-          - MESSAGES
-          - PHOTOS_VIDEOS
-          - AUDIO_DATA
-          - GAMEPLAY_CONTENT
-          - CUSTOMER_SUPPORT
-          - OTHER_USER_CONTENT
-          - BROWSING_HISTORY
-          - SEARCH_HISTORY
-          - USER_ID
-          - DEVICE_ID
-          - PURCHASE_HISTORY
-          - PRODUCT_INTERACTION
-          - ADVERTISING_DATA
-          - OTHER_USAGE_DATA
-          - CRASH_DATA
-          - PERFORMANCE_DATA
-          - OTHER_DIAGNOSTIC_DATA
-          - ENVIRONMENT_SCANNING
-          - HANDS
-          - HEAD
-          - OTHER_DATA_TYPES
-          - UNKNOWN
-        sdkCount:
-          description: Number of SDKs detected that relate to this data type
-          type: integer
-          format: int32
-          example: 3
-        purposes:
-          description: Data collection purposes declared for this data type
-          type: array
-          items:
-            type: string
-            enum:
-            - THIRD_PARTY_ADVERTISING
-            - DEVELOPER_ADVERTISING
-            - ANALYTICS
-            - PRODUCT_PERSONALIZATION
-            - APP_FUNCTIONALITY
-            - OTHER
-            - UNKNOWN
-        mismatches:
-          description: Mismatch categories detected for this data type
-          type: array
-          items:
-            type: string
-            enum:
-            - NONE
-            - DATA_TYPE
-            - DATA_PURPOSE
-            - TRACKING
-            - USERLINK
     PublicApplicationBrandingAttributeDTO:
       type: object
       properties:
@@ -1747,6 +1445,257 @@ components:
           - LONG
           - BOOLEAN
           - UUID
+    AppPrivacyManifestResponseDatatypePublicDto:
+      type: object
+      properties:
+        dataType:
+          description: The Privacy Manifest data type these results relate to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        mismatches:
+          description: Mismatches detected for this data type, keyed by mismatch category.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AppPrivacyManifestMismatchPublicDto'
+    ApplicationEntityPublicDto:
+      type: object
+      properties:
+        applicationId:
+          description: Application ID
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Application Name
+          type: string
+          example: My Application
+          maxLength: 255
+          minLength: 1
+        platform:
+          description: Application Platform
+          type: string
+          example: ANDROID
+          enum:
+          - ANDROID
+          - IOS
+          maxLength: 50
+          minLength: 1
+        fileType:
+          description: File Type
+          type: string
+          example: apk
+          enum:
+          - apk
+          - ipa
+          - aab
+          maxLength: 10
+          minLength: 3
+        scanId:
+          description: The unique identifier of the scan.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    AppPrivacyManifestResponsePublicDto:
+      type: object
+      properties:
+        editVersion:
+          description: The current edit version of the Privacy Manifest
+          type: string
+          example: 2
+        versions:
+          description: All available edit versions for this application's Privacy Manifest
+          type: array
+          items:
+            type: string
+          example:
+          - '1'
+          - '2'
+        countTotal:
+          description: Total number of data types present in the scan results
+          type: integer
+          format: int32
+          example: 5
+        countAligned:
+          description: Number of data types that are fully aligned with the Privacy Manifest
+          type: integer
+          format: int32
+          example: 3
+        countMismatched:
+          description: Number of data types with at least one non-DATA_TYPE mismatch
+          type: integer
+          format: int32
+          example: 1
+        countMissing:
+          description: Number of data types missing from the Privacy Manifest declaration
+          type: integer
+          format: int32
+          example: 1
+        dataTypes:
+          description: Per-data-type scan summary, keyed by data type.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AppPrivacyManifestResponseDataPublicDto'
+    AppPrivacyManifestResponseDataPublicDto:
+      type: object
+      properties:
+        dataType:
+          description: The Privacy Manifest data type these results relate to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        sdkCount:
+          description: Number of SDKs detected that relate to this data type
+          type: integer
+          format: int32
+          example: 3
+        purposes:
+          description: Data collection purposes declared for this data type
+          type: array
+          items:
+            type: string
+            enum:
+            - THIRD_PARTY_ADVERTISING
+            - DEVELOPER_ADVERTISING
+            - ANALYTICS
+            - PRODUCT_PERSONALIZATION
+            - APP_FUNCTIONALITY
+            - OTHER
+            - UNKNOWN
+        mismatches:
+          description: Mismatch categories detected for this data type
+          type: array
+          items:
+            type: string
+            enum:
+            - NONE
+            - DATA_TYPE
+            - DATA_PURPOSE
+            - TRACKING
+            - USERLINK
+    ApplicationScanResponsePublicDto:
+      type: object
+      properties:
+        scanId:
+          description: Identifier of the created Application Scan
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+    ApplicationBrandingAttributesRequestDTO:
+      type: object
+      properties:
+        attributes:
+          description: List of application branding attributes to update.
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
+          example:
+          - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: mob_aBannerTextColor
+            value: '#000000'
+            type: STRING
+          - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            name: mob_aBannerCloseButtonTextColorDark
+            value: '#FFFFFF'
+            type: STRING
     SortObject:
       type: object
       properties:
@@ -1759,7 +1708,27 @@ components:
         unsorted:
           description: This flag indicates whether the results are in unsorted order.
           type: boolean
-    PageApplicationListPublicDto:
+    ApplicationBrandingAttributesResponseDTO:
+      type: object
+      properties:
+        id:
+          description: Resource ID (Application ID)
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        resourceName:
+          description: Resource name (Application/Domain name)
+          type: string
+          example: My Application
+          maxLength: 255
+          minLength: 1
+        attributes:
+          description: Map of branding attributes keyed by attribute name
+          type: object
+          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
+          additionalProperties:
+            $ref: '#/components/schemas/PublicApplicationBrandingAttributeDTO'
+    PageApplicationScanDetailDto:
       type: object
       properties:
         totalPages:
@@ -1773,7 +1742,7 @@ components:
           format: int32
         content:
           items:
-            $ref: '#/components/schemas/ApplicationListPublicDto'
+            $ref: '#/components/schemas/ApplicationScanDetailDto'
           type: array
         number:
           type: integer
@@ -1791,14 +1760,74 @@ components:
           format: int32
         empty:
           type: boolean
-    BrandingAttributesUpdateResponseDTO:
+    ApplicationScanDetailDto:
       type: object
       properties:
-        id:
-          description: Resource ID (Domain ID or Application ID)
+        scanId:
+          description: Unique identifier for this scan
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        status:
+          description: Status of this scan
+          type: string
+          example: COMPLETED
+          enum:
+          - PENDING
+          - PROGRESS
+          - COMPLETED
+          - FAILED
+          - INTERRUPTED
+          - UNSCANNED
+        sdkCount:
+          description: Total number of SDKs found
+          type: integer
+          format: int32
+        sdkCategories:
+          description: SDK counts grouped by category
+          type: object
+          example:
+            Strictly Necessary: 10
+            Performance: 5
+            Functionality: 3
+            Targeting: 2
+            Unknown: 1
+          additionalProperties:
+            type: integer
+            format: int32
+        permissionCount:
+          description: Total number of permissions found
+          type: integer
+          format: int32
+        permissionCountHighRisk:
+          description: Number of high-risk permissions
+          type: integer
+          format: int32
+        permissionCategories:
+          description: Permission counts grouped by category
+          type: object
+          example:
+            Device Hardware: 4
+            Accounts: 1
+            Media: 1
+            System Notifications: 3
+            Security: 1
+          additionalProperties:
+            type: integer
+            format: int32
+        scanDate:
+          description: Date and time of the scan
+          type: string
+          format: date-time
+          example: '2022-01-01T00:00:00.000Z'
+        version:
+          description: Detected version of the given application
+          type: string
+          example: 1.0.0
+        engineVersion:
+          description: OneTrust mobile scan engine version used for this scan
+          type: string
+          example: 2.0.0
     PageApplicationScanSdkPublicDto:
       type: object
       properties:
@@ -1831,113 +1860,14 @@ components:
           format: int32
         empty:
           type: boolean
-    ApplicationScanResponsePublicDto:
-      type: object
-      properties:
-        scanId:
-          description: Identifier of the created Application Scan
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-    ApplicationListPublicDto:
+    BrandingAttributesUpdateResponseDTO:
       type: object
       properties:
         id:
-          description: Unique identifier of the application
+          description: Resource ID (Domain ID or Application ID)
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the application
-          type: string
-          example: My Mobile App
-          maxLength: 255
-          minLength: 1
-        os:
-          description: Operating system type
-          type: string
-          example: ANDROID
-          enum:
-          - IOS
-          - ANDROID
-          - APPLETV
-          - ANDROIDTV
-          - FIRETV
-          - ROKU
-          - SAMSUNGTV
-          - LGTV
-          - VIZIOTV
-          - HBBTV
-          - PANASONICTV
-          - PS5
-          - YOUVIEW
-        status:
-          description: Current scan status of the application
-          type: string
-          example: COMPLETED
-          enum:
-          - PENDING
-          - PROGRESS
-          - COMPLETED
-          - FAILED
-          - INTERRUPTED
-          - UNSCANNED
-        publishStatus:
-          description: Publish status of the application
-          type: string
-          example: PUBLISHED
-          enum:
-          - DRAFT
-          - PUBLISHED
-          - PUBLISHING
-          - FAILED
-          - WAITING
-        consentPolicyId:
-          description: Consent policy ID assigned to this application
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        consentPolicyName:
-          description: Name of the assigned consent policy
-          type: string
-          example: GDPR Policy
-          maxLength: 255
-          minLength: 1
-        consentPolicyAssignDate:
-          description: Date when consent policy was assigned
-          type: string
-          format: date-time
-          example: '2024-01-15T10:30:00Z'
-        orgId:
-          description: Organization ID that owns this application
-          type: string
-          example: org-123
-        orgName:
-          description: Organization name
-          type: string
-          example: OneTrust
-          maxLength: 255
-          minLength: 1
-        scriptVersion:
-          description: Script version
-          type: string
-          example: 202603.1.0
-          maxLength: 100
-        createdDate:
-          description: Date when the application was created
-          type: string
-          format: date-time
-          example: '2024-01-01T10:00:00Z'
-        modifiedDate:
-          description: Date when the application was last modified
-          type: string
-          format: date-time
-          example: '2024-01-15T10:30:00Z'
-        publishedDate:
-          description: Date when the application was last published
-          type: string
-          format: date-time
-          example: '2024-01-10T10:00:00Z'
     ApplicationScanSdkPublicDto:
       type: object
       properties:
@@ -1961,6 +1891,76 @@ components:
           description: Description for the SDK
           type: string
           example: The Apache Commons Math project is a library of lightweight, self-contained mathematics and statistics components addressing the most common practical problems not immediately available in the Java programming language or commons-lang.
+    AppPrivacyManifestMismatchPublicDto:
+      type: object
+      properties:
+        sdkPackageId:
+          description: Package identifier of the SDK that triggered this mismatch
+          type: string
+          example: com.google.firebase
+        sdkName:
+          description: Display name of the SDK that triggered this mismatch
+          type: string
+          example: Firebase
+        dataType:
+          description: The Privacy Manifest data type this mismatch relates to
+          type: string
+          example: DEVICE_ID
+          enum:
+          - NAME
+          - EMAIL
+          - PHONE_NUMBER
+          - PHYSICAL_ADDRESS
+          - OTHER_USER_CONTACT_INFO
+          - HEALTH
+          - FITNESS
+          - PAYMENT_INFO
+          - CREDIT_INFO
+          - OTHER_FINANCIAL_INFO
+          - PRECISE_LOCATION
+          - COARSE_LOCATION
+          - SENSITIVE_INFO
+          - CONTACTS
+          - MESSAGES
+          - PHOTOS_VIDEOS
+          - AUDIO_DATA
+          - GAMEPLAY_CONTENT
+          - CUSTOMER_SUPPORT
+          - OTHER_USER_CONTENT
+          - BROWSING_HISTORY
+          - SEARCH_HISTORY
+          - USER_ID
+          - DEVICE_ID
+          - PURCHASE_HISTORY
+          - PRODUCT_INTERACTION
+          - ADVERTISING_DATA
+          - OTHER_USAGE_DATA
+          - CRASH_DATA
+          - PERFORMANCE_DATA
+          - OTHER_DIAGNOSTIC_DATA
+          - ENVIRONMENT_SCANNING
+          - HANDS
+          - HEAD
+          - OTHER_DATA_TYPES
+          - UNKNOWN
+        mismatch:
+          description: The category of mismatch detected
+          type: string
+          example: DATA_PURPOSE
+          enum:
+          - NONE
+          - DATA_TYPE
+          - DATA_PURPOSE
+          - TRACKING
+          - USERLINK
+        appValue:
+          description: The value declared in the app's Privacy Manifest
+          type: string
+          example: true
+        sdkValue:
+          description: The value detected in the SDK scan
+          type: string
+          example: false
   securitySchemes:
     OAUTH2:
       type: oauth2

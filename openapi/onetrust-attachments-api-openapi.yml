@@ -169,26 +169,6 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
-    AttachmentMultipartRequest:
-      type: object
-      properties:
-        attachment:
-          description: The details of the file.
-          type: object
-          oneOf:
-          - $ref: '#/components/schemas/AttachmentCreateRequestV2'
-          - type: string
-            format: application/json
-            example: '{"FileName":"document.pdf","Type":30,"RefIds":["beb90499-ea60-47aa-8ed8-966f2df5f2e8"],"IsInternal":true,"Name":"Important Document","Comments":"This is a confidential document"}'
-            title: Attachment JSON Object - Required Format
-        file:
-          description: The file to upload to the OneTrust Platform. The file must be 64MB or less.
-          type: string
-          format: binary
-          contentMediaType: application/octet-stream
-      required:
-      - attachment
-      - file
     SharedAccessParams:
       type: object
       properties:
@@ -208,30 +188,102 @@ components:
           description: The access token for the file.
           type: string
           example: sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
-    AttachmentProcessInitResponse:
+    AttachmentCreateRequestV2:
       type: object
       properties:
-        requestType:
-          description: The status of the request.
+        FileName:
+          description: The name of the file, including its extension.
           type: string
-          example: CREATED
+          example: document.pdf
+          maxLength: 260
+          minLength: 0
+        Name:
+          description: The display name of the file.
+          type: string
+          example: Important Document
+          maxLength: 260
+          minLength: 0
+        RefIds:
+          description: The unique identifier of the record associated with the attached file.
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: <p>This needs to be a valid UUID. RefIds link files with entities. For e.g. To link a file with an assessment, use 'AssessmentId' as RefId.<p>
+            example:
+            - 123e4567-e89b-12d3-a456-426614174000
+          maxItems: 1
+        Comments:
+          description: The notes about the file.
+          type: string
+          example: This is a confidential document
+          maxLength: 1073741823
+        Type:
+          description: The number associated with the content type of the file, as listed within Show Details.
+          type: integer
+          format: int64
+          default: '30'
           enum:
-          - CREATED
-          - RENEWED
-          - OVERRIDE
-          - RETRY
-          - DIRECTORY
-        uploadParams:
-          description: The details needed to access the file.
-          $ref: '#/components/schemas/SharedAccessParams'
-        statusUrl:
-          description: The URL to check the status of the request.
-          type: string
-          example: /document/v3/attachments/status/d7facfb2-7906-435a-8e94-95a39232632b
-        downloadUrl:
-          description: The URL to download the file.
-          type: string
-          example: https://trialapp4533.blob.core.windows.net/stage/d7facfb2-7906-435a-8e94-95a39232632b?sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
+          - '10'
+          - '20'
+          - '30'
+          - '40'
+          - '50'
+          - '60'
+          - '70'
+          - '80'
+          - '90'
+          - '100'
+          - '110'
+          - '120'
+          - '130'
+          - '140'
+          - '150'
+          - '160'
+          - '170'
+          - '180'
+          - '190'
+          - '200'
+          - '210'
+          x-enumDescriptions:
+            '10': Question
+            '20': LogoBranding
+            '21': TitleBranding
+            '30': DSAR
+            '50': Inventory
+            '60': Assessment Question
+            '70': Incident
+            '80': Export Control
+            '90': Export Engagement
+            '100': Export Assessment Exchange Request
+            '110': Risk
+            '120': Export Vendor Contract
+            '130': Audit Management
+            '140': WOPI EPM Office Files
+            '150': Data Governance
+            '160': Template Question
+            '161': Template Export
+            '170': Glossary
+            '180': Attribute Manager Export
+            '190': WB Investigation Attachment
+            '200': Custom Object Document
+            '210': Continuous Monitoring
+            '220': OT Insights Bulk Export
+        IsInternal:
+          description: This flag indicates whether the file is marked for internal use.
+          type: boolean
+          example: true
+          default: 'true'
+        Encrypt:
+          description: This flag indicates whether the file should be encrypted.
+          type: boolean
+          example: true
+          default: 'true'
+      required:
+      - FileName
+      - RefIds
+      - Type
+      title: Parameters & Descriptions - Reference Only
     AttachmentResponse:
       type: object
       properties:
@@ -344,102 +396,50 @@ components:
           description: This flag indicates whether the file is marked for internal use.
           type: boolean
           example: true
-    AttachmentCreateRequestV2:
+    AttachmentMultipartRequest:
       type: object
       properties:
-        FileName:
-          description: The name of the file, including its extension.
+        attachment:
+          description: The details of the file.
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/AttachmentCreateRequestV2'
+          - type: string
+            format: application/json
+            example: '{"FileName":"document.pdf","Type":30,"RefIds":["beb90499-ea60-47aa-8ed8-966f2df5f2e8"],"IsInternal":true,"Name":"Important Document","Comments":"This is a confidential document"}'
+            title: Attachment JSON Object - Required Format
+        file:
+          description: The file to upload to the OneTrust Platform. The file must be 64MB or less.
           type: string
-          example: document.pdf
-          maxLength: 260
-          minLength: 0
-        Name:
-          description: The display name of the file.
-          type: string
-          example: Important Document
-          maxLength: 260
-          minLength: 0
-        RefIds:
-          description: The unique identifier of the record associated with the attached file.
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: <p>This needs to be a valid UUID. RefIds link files with entities. For e.g. To link a file with an assessment, use 'AssessmentId' as RefId.<p>
-            example:
-            - 123e4567-e89b-12d3-a456-426614174000
-          maxItems: 1
-        Comments:
-          description: The notes about the file.
-          type: string
-          example: This is a confidential document
-          maxLength: 1073741823
-        Type:
-          description: The number associated with the content type of the file, as listed within Show Details.
-          type: integer
-          format: int64
-          default: '30'
-          enum:
-          - '10'
-          - '20'
-          - '30'
-          - '40'
-          - '50'
-          - '60'
-          - '70'
-          - '80'
-          - '90'
-          - '100'
-          - '110'
-          - '120'
-          - '130'
-          - '140'
-          - '150'
-          - '160'
-          - '170'
-          - '180'
-          - '190'
-          - '200'
-          - '210'
-          x-enumDescriptions:
-            '10': Question
-            '20': LogoBranding
-            '21': TitleBranding
-            '30': DSAR
-            '50': Inventory
-            '60': Assessment Question
-            '70': Incident
-            '80': Export Control
-            '90': Export Engagement
-            '100': Export Assessment Exchange Request
-            '110': Risk
-            '120': Export Vendor Contract
-            '130': Audit Management
-            '140': WOPI EPM Office Files
-            '150': Data Governance
-            '160': Template Question
-            '161': Template Export
-            '170': Glossary
-            '180': Attribute Manager Export
-            '190': WB Investigation Attachment
-            '200': Custom Object Document
-            '210': Continuous Monitoring
-            '220': OT Insights Bulk Export
-        IsInternal:
-          description: This flag indicates whether the file is marked for internal use.
-          type: boolean
-          example: true
-          default: 'true'
-        Encrypt:
-          description: This flag indicates whether the file should be encrypted.
-          type: boolean
-          example: true
-          default: 'true'
+          format: binary
+          contentMediaType: application/octet-stream
       required:
-      - FileName
-      - RefIds
-      - Type
-      title: Parameters & Descriptions - Reference Only
+      - attachment
+      - file
+    AttachmentProcessInitResponse:
+      type: object
+      properties:
+        requestType:
+          description: The status of the request.
+          type: string
+          example: CREATED
+          enum:
+          - CREATED
+          - RENEWED
+          - OVERRIDE
+          - RETRY
+          - DIRECTORY
+        uploadParams:
+          description: The details needed to access the file.
+          $ref: '#/components/schemas/SharedAccessParams'
+        statusUrl:
+          description: The URL to check the status of the request.
+          type: string
+          example: /document/v3/attachments/status/d7facfb2-7906-435a-8e94-95a39232632b
+        downloadUrl:
+          description: The URL to download the file.
+          type: string
+          example: https://trialapp4533.blob.core.windows.net/stage/d7facfb2-7906-435a-8e94-95a39232632b?sv=2024-08-04&se=2025-06-06T17%3A05%3A07Z&sr=b&sp=r&sig=WRS6X5eKVLHjDqJvpFQuw6BA23hDB0NQviyfmAau%2FEc%3D
   securitySchemes:
     OAUTH2:
       type: oauth2

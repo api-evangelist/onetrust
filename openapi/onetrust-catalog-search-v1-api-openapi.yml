@@ -142,91 +142,6 @@ paths:
         - DATA_CATALOG_READ
 components:
   schemas:
-    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2:
-      type: object
-      properties:
-        searchFieldName:
-          description: Name of the search field
-          type: string
-          example: name
-          minLength: 1
-        searchFieldDataType:
-          description: Data type of the field selected
-          type: string
-          example: string
-        operators:
-          type: array
-          items:
-            type: string
-            description: Operators supported by search field
-            enum:
-            - EQ
-            - NOT_EQ
-            - GREATER_THAN
-            - GREATER_THAN_EQUAL_TO
-            - LESS_THAN_EQUAL_TO
-            - AFTER_OR_ON
-            - BEFORE_OR_ON
-            - MORE_THAN
-            - CONTAINS
-            - BETWEEN
-            - WITHIN_THE_LAST
-            - DOES_NOT_CONTAIN
-            - IS_EMPTY
-            - IS_NOT_EMPTY
-            - LIST_CONTAINS
-            - LIST_DOES_NOT_CONTAIN
-            - EQUALS_TO_ANY_OF
-            - NOT_EQUALS_TO_ANY_OF
-            - EQUALS_TO_ALL_OF
-            - NOT_EQUALS_TO_ALL_OF
-            - LIST_CONTAINS_ANY_OF
-            - LIST_DOES_NOT_CONTAIN_ANY_OF
-            example: EQ
-    DataUseGovernance-DataCatalogMetadataExchange_FieldValue:
-      type: object
-      properties:
-        value:
-          description: Search field value
-          type: object
-          example: Employee Details
-        nameKey:
-          description: Search field name key
-          type: string
-          example: DataDictionaryParent
-        dataType:
-          description: Search field data type
-          type: string
-          example: String
-        optionType:
-          description: Search field option type
-          type: string
-          example: users
-        enabled:
-          description: Search field boolean value
-          type: boolean
-          example: true
-        mappedFieldSchema:
-          description: Search field mapped field's schema
-          type: string
-          example: "\"{\n \"name\": \"ClassificationTerm\",\n \"type\": \"Object\",\n \"fields\": [\n {\n \"type\": \"String\",\n \"name\": \"approvedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTerms\"\n },\n {\n \"type\": \"String\",\n \"name\": \"approvedTermId\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTermIds\"\n },\n {\n \"type\": \"String\",\n \"name\": \"recommendedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchRecommendedTerms\"\n }\n ]\n}\"\n"
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          description: The page number of the results.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage'
-    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
-      type: object
-      properties:
-        from:
-          description: Start value for the range
-          type: string
-          example: '61'
-        to:
-          description: End value for the range
-          type: string
-          example: '80'
     DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria:
       type: object
       properties:
@@ -244,92 +159,6 @@ components:
           minItems: 1
       required:
       - groupOperator
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage:
-      type: object
-      properties:
-        first:
-          description: This parameter indicates whether the current page is the first page of the list.
-          type: boolean
-        last:
-          description: This parameter indicates whether the current page is the last page of the list.
-          type: boolean
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int64
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int64
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort'
-    DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the search document
-          type: string
-          example: 172a829d-0f9f-45ab-b5f5-028d228c6edf
-          minLength: 1
-        documentType:
-          description: Type of the search document
-          type: string
-          example: metadata
-          minLength: 1
-        name:
-          description: Name of the search document
-          type: string
-          example: Employee table
-          minLength: 1
-        properties:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FieldValue'
-          writeOnly: true
-        jobId:
-          description: Identifier for the job
-          type: string
-          example: 234a829d-0f9f-45ab-b5f5-028d228abcd
-        source:
-          description: Source of the search document
-          type: string
-          example: data-discovery
-    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldResponse:
-      type: object
-      properties:
-        searchFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2'
-            description: List of search fields with their metadata
-    DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup:
-      type: object
-      properties:
-        operator:
-          description: Logical operator between criteria
-          type: string
-          enum:
-          - AND
-          - OR
-        criteria:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_Criterion'
-            description: Individual criterion of a criteria
-          minItems: 1
-      required:
-      - operator
     DataUseGovernance-DataCatalogMetadataExchange_Criterion:
       type: object
       properties:
@@ -412,34 +241,119 @@ components:
             description: Value range for the criterion
       required:
       - operator
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata:
       type: object
       properties:
-        data:
-          description: The parameters that detail entity data.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
-        errors:
-          description: This parameter provides error details if 400 Bad Request is returned.
-          type: array
-          items:
-            type: object
-        meta:
-          description: The configuration parameters of the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort:
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage'
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage:
       type: object
       properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort'
+    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
+      type: object
+      properties:
+        from:
+          description: Start value for the range
+          type: string
+          example: '61'
+        to:
+          description: End value for the range
+          type: string
+          example: '80'
+    DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup:
+      type: object
+      properties:
+        operator:
+          description: Logical operator between criteria
           type: string
           enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
+          - AND
+          - OR
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_Criterion'
+            description: Individual criterion of a criteria
+          minItems: 1
+      required:
+      - operator
+    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2:
+      type: object
+      properties:
+        searchFieldName:
+          description: Name of the search field
           type: string
+          example: name
+          minLength: 1
+        searchFieldDataType:
+          description: Data type of the field selected
+          type: string
+          example: string
+        operators:
+          type: array
+          items:
+            type: string
+            description: Operators supported by search field
+            enum:
+            - EQ
+            - NOT_EQ
+            - GREATER_THAN
+            - GREATER_THAN_EQUAL_TO
+            - LESS_THAN_EQUAL_TO
+            - AFTER_OR_ON
+            - BEFORE_OR_ON
+            - MORE_THAN
+            - CONTAINS
+            - BETWEEN
+            - WITHIN_THE_LAST
+            - DOES_NOT_CONTAIN
+            - IS_EMPTY
+            - IS_NOT_EMPTY
+            - LIST_CONTAINS
+            - LIST_DOES_NOT_CONTAIN
+            - EQUALS_TO_ANY_OF
+            - NOT_EQUALS_TO_ANY_OF
+            - EQUALS_TO_ALL_OF
+            - NOT_EQUALS_TO_ALL_OF
+            - LIST_CONTAINS_ANY_OF
+            - LIST_DOES_NOT_CONTAIN_ANY_OF
+            example: EQ
+    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldResponse:
+      type: object
+      properties:
+        searchFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2'
+            description: List of search fields with their metadata
     DataUseGovernance-DataCatalogMetadataExchange_SearchRequest:
       type: object
       properties:
@@ -486,6 +400,92 @@ components:
         documents:
           description: List of search documents matching the search criteria
           $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument'
+    DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the search document
+          type: string
+          example: 172a829d-0f9f-45ab-b5f5-028d228c6edf
+          minLength: 1
+        documentType:
+          description: Type of the search document
+          type: string
+          example: metadata
+          minLength: 1
+        name:
+          description: Name of the search document
+          type: string
+          example: Employee table
+          minLength: 1
+        properties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FieldValue'
+          writeOnly: true
+        jobId:
+          description: Identifier for the job
+          type: string
+          example: 234a829d-0f9f-45ab-b5f5-028d228abcd
+        source:
+          description: Source of the search document
+          type: string
+          example: data-discovery
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
+    DataUseGovernance-DataCatalogMetadataExchange_FieldValue:
+      type: object
+      properties:
+        value:
+          description: Search field value
+          type: object
+          example: Employee Details
+        nameKey:
+          description: Search field name key
+          type: string
+          example: DataDictionaryParent
+        dataType:
+          description: Search field data type
+          type: string
+          example: String
+        optionType:
+          description: Search field option type
+          type: string
+          example: users
+        enabled:
+          description: Search field boolean value
+          type: boolean
+          example: true
+        mappedFieldSchema:
+          description: Search field mapped field's schema
+          type: string
+          example: "\"{\n \"name\": \"ClassificationTerm\",\n \"type\": \"Object\",\n \"fields\": [\n {\n \"type\": \"String\",\n \"name\": \"approvedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTerms\"\n },\n {\n \"type\": \"String\",\n \"name\": \"approvedTermId\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTermIds\"\n },\n {\n \"type\": \"String\",\n \"name\": \"recommendedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchRecommendedTerms\"\n }\n ]\n}\"\n"
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

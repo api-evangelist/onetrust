@@ -197,6 +197,40 @@ paths:
         - COOKIE_FREE
 components:
   schemas:
+    TargetPagesScanEntityDto:
+      title: TargetPagesScanEntityDto
+      description: Target page for scan and details
+      type: object
+      required:
+      - pageListName
+      - targetType
+      - urlType
+      - pageUrls
+      properties:
+        pageListName:
+          type: string
+          description: Name of the page list.
+          minLength: 1
+        targetType:
+          type: string
+          description: Type of targeting for the URLs
+          minLength: 1
+          enum:
+          - IncludeOnly
+          - Exclude
+          - Target
+        urlType:
+          type: string
+          description: Specify which level of inclusion or exclusion is desired
+          minLength: 1
+          enum:
+          - Page
+          - Path
+          - Subdomain
+        pageUrls:
+          type: string
+          description: List of valid URLs, one per line. URLs should start with "https://" or "http://"
+          minLength: 1
     PaginatedWebsiteResponseDTO:
       type: object
       properties:
@@ -229,6 +263,51 @@ components:
           description: Total number of pages in the result.
       title: PaginatedWebsiteResponseDTO
       description: Paginated websites scanned or pending to be scanned
+    ExposedWebsiteDetailsDto:
+      type: object
+      properties:
+        consentPolicyName:
+          type: string
+          description: Name of the assigned consent policy to the website.
+        domainName:
+          type: string
+          description: Name of the domain.
+        domainId:
+          type: string
+          format: UUID
+          description: ID of the domain.
+        externalOrgId:
+          type: string
+          description: ID of the external organization for the website scan.
+        lastScannedDate:
+          type: string
+          format: date-time
+          description: The date and time at which the domain was last scanned.
+        lastScannedTotalCookies:
+          type: integer
+          format: int32
+          description: Total cookies found on the last scan.
+        lastScannedTotalPages:
+          type: integer
+          format: int32
+          description: Total pages scanned in the last scan.
+        orgName:
+          type: string
+          description: Name of the organization.
+        overPageLimit:
+          type: boolean
+          description: The flag to indicate if it is over the tenant page limit.
+        scanError:
+          type: string
+          description: Error message if any in the scan.
+        scheduledDateOfNextScan:
+          type: string
+          format: date-time
+          description: The date and time at which the next scan is scheduled.
+        status:
+          type: string
+          description: Status of the scan.
+      title: ExposedWebsiteDetailsDto
     ScanWebsiteDto:
       title: ScanWebsiteDto
       description: Website details for scan
@@ -299,85 +378,6 @@ components:
           type: boolean
           description: Flag to indicate if the rescan is required or not.
       title: ServiceResponseDto
-    TargetPagesScanEntityDto:
-      title: TargetPagesScanEntityDto
-      description: Target page for scan and details
-      type: object
-      required:
-      - pageListName
-      - targetType
-      - urlType
-      - pageUrls
-      properties:
-        pageListName:
-          type: string
-          description: Name of the page list.
-          minLength: 1
-        targetType:
-          type: string
-          description: Type of targeting for the URLs
-          minLength: 1
-          enum:
-          - IncludeOnly
-          - Exclude
-          - Target
-        urlType:
-          type: string
-          description: Specify which level of inclusion or exclusion is desired
-          minLength: 1
-          enum:
-          - Page
-          - Path
-          - Subdomain
-        pageUrls:
-          type: string
-          description: List of valid URLs, one per line. URLs should start with "https://" or "http://"
-          minLength: 1
-    ExposedWebsiteDetailsDto:
-      type: object
-      properties:
-        consentPolicyName:
-          type: string
-          description: Name of the assigned consent policy to the website.
-        domainName:
-          type: string
-          description: Name of the domain.
-        domainId:
-          type: string
-          format: UUID
-          description: ID of the domain.
-        externalOrgId:
-          type: string
-          description: ID of the external organization for the website scan.
-        lastScannedDate:
-          type: string
-          format: date-time
-          description: The date and time at which the domain was last scanned.
-        lastScannedTotalCookies:
-          type: integer
-          format: int32
-          description: Total cookies found on the last scan.
-        lastScannedTotalPages:
-          type: integer
-          format: int32
-          description: Total pages scanned in the last scan.
-        orgName:
-          type: string
-          description: Name of the organization.
-        overPageLimit:
-          type: boolean
-          description: The flag to indicate if it is over the tenant page limit.
-        scanError:
-          type: string
-          description: Error message if any in the scan.
-        scheduledDateOfNextScan:
-          type: string
-          format: date-time
-          description: The date and time at which the next scan is scheduled.
-        status:
-          type: string
-          description: Status of the scan.
-      title: ExposedWebsiteDetailsDto
     Sort:
       type: object
       properties:

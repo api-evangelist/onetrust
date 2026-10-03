@@ -412,28 +412,6 @@ paths:
         - ASSESSMENT
 components:
   schemas:
-    Template_TemplateCreateResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the created template.
-          type: string
-          format: uuid
-          example: 7d271be5-0601-4190-96a7-65d7c427a725
-        rootVersionId:
-          description: The root version identifier of the template used for version management.
-          type: string
-          format: uuid
-          example: 7d271be5-0601-4190-96a7-65d7c427a725
-        templateVersion:
-          description: The version number of the template indicating its iteration.
-          type: integer
-          format: int32
-          example: 1
-        languageCode:
-          description: The language code specifying the localization of the template.
-          type: string
-          example: en
     Template_TemplateBasicDetailsDto:
       type: object
       properties:
@@ -459,6 +437,28 @@ components:
           - ESG
           - TPDD
           - AIGOVERNANCE
+    Template_TemplateCreateResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the created template.
+          type: string
+          format: uuid
+          example: 7d271be5-0601-4190-96a7-65d7c427a725
+        rootVersionId:
+          description: The root version identifier of the template used for version management.
+          type: string
+          format: uuid
+          example: 7d271be5-0601-4190-96a7-65d7c427a725
+        templateVersion:
+          description: The version number of the template indicating its iteration.
+          type: integer
+          format: int32
+          example: 1
+        languageCode:
+          description: The language code specifying the localization of the template.
+          type: string
+          example: en
   securitySchemes:
     PrivacyAutomation-AssessmentAutomation_OAUTH2:
       type: oauth2

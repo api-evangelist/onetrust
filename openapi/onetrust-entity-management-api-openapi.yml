@@ -925,6 +925,346 @@ paths:
         - AI_GOVERNANCE_WRITE
 components:
   schemas:
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the entity type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the entity type.
+          type: string
+          example: Vendor
+        seeded:
+          description: This parameter indicates whether the entity type is seeded or custom.
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the module where the entity exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - projects
+          - models
+          - datasets
+          - aisystems
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+          maxLength: 500
+          minLength: 0
+    EntityOrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the organization.
+          type: string
+          example: Business Unit
+      required:
+      - id
+    ContextInformation:
+      type: object
+      properties:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    BasicAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier of an Entity Attribute
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        value:
+          description: Value of an Entity Attribute
+          type: string
+          example: Galaxy
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the entity was last created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the entity was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The information of the user who last created/modified the entity.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            type: object
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    EntityWorkflowStageRequest:
+      type: object
+      properties:
+        workflow:
+          description: Workflow to be assigned to the entity. The entity type must have this workflow type defined in its settings.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            value: Example Workflow
+          $ref: '#/components/schemas/BasicAttributeInformation'
+        stage:
+          description: Workflow stage to be assigned to the entity within the specified workflow. Must be a valid stage for the given workflow.
+          example:
+            id: c86539953-b4b5-4042-8cb9-b78038ccfc46
+            value: Example Stage
+          $ref: '#/components/schemas/BasicAttributeInformation'
+        closedDate:
+          description: Date when the entity was closed. Only relevant for workflows with closed stages.
+          type: string
+          format: date-time
+          example: '2017-02-03T10:37:30Z'
+      example:
+        workflow:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          value: Example Workflow
+        stage:
+          id: c86539953-b4b5-4042-8cb9-b78038ccfc46
+          value: Example Stage
+      title: Entity Workflow Stage Request
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    EntityCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the entity. Required field used as the primary identifier for users.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The organization group that owns this entity. Contains organization ID and optional name.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Organization Name
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: The custom attributes for the entity defined by its schema. Contains attribute paths mapped to their values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        workflowAndStage:
+          description: Requested workflow and stage to be assigned to the entity during creation. Contains workflow and stage identifiers.
+          example:
+            workflow:
+              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              value: Workflow Name
+            stage:
+              id: d2329953-b4b5-4042-8cb9-b78038cc4c46
+              value: Stage Name
+          $ref: '#/components/schemas/EntityWorkflowStageRequest'
+        entityLinks:
+          description: Entity link requests to create relationships with other entities during entity creation
+          type: array
+          items:
+            $ref: '#/components/schemas/BasicLinkCreateSourceRequest'
+          example:
+          - entity1:
+              id: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+              entityType:
+                name: Issue
+            entityLinkTypeId: a1fe9bea-1e27-4f33-bd1c-3420b894bbb0
+      example:
+        name: OneTrust
+        organization:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        attributes:
+          textAttributeName:
+          - value: Text
+      required:
+      - name
+      title: Entity Create Request
     LinkedEntityInformation:
       type: object
       properties:
@@ -995,389 +1335,6 @@ components:
       - id
       - number
       title: Linked Entity Information
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-    EntityUpdateRequest:
-      type: object
-      properties:
-        name:
-          description: The updated name of the entity. If not provided, the existing name will be retained.
-          type: string
-          example: OneTrust
-          maxLength: 255
-          minLength: 1
-        organization:
-          description: The updated organization group for the entity. Contains organization ID and optional name. If not provided, the existing organization will be retained.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: Business Unit
-          $ref: '#/components/schemas/EntityOrganizationInformation'
-        attributes:
-          description: Custom attributes to update on the entity. Only the attributes provided will be updated; others will retain their existing values.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      example:
-        name: OneTrust Updated
-        attributes:
-          textAttributeName:
-          - value: New Text Value
-      title: Entity Update Request
-    EntityOrganizationInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the organization.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the organization.
-          type: string
-          example: Business Unit
-      required:
-      - id
-    EntityWorkflowStageRequest:
-      type: object
-      properties:
-        workflow:
-          description: Workflow to be assigned to the entity. The entity type must have this workflow type defined in its settings.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            value: Example Workflow
-          $ref: '#/components/schemas/BasicAttributeInformation'
-        stage:
-          description: Workflow stage to be assigned to the entity within the specified workflow. Must be a valid stage for the given workflow.
-          example:
-            id: c86539953-b4b5-4042-8cb9-b78038ccfc46
-            value: Example Stage
-          $ref: '#/components/schemas/BasicAttributeInformation'
-        closedDate:
-          description: Date when the entity was closed. Only relevant for workflows with closed stages.
-          type: string
-          format: date-time
-          example: '2017-02-03T10:37:30Z'
-      example:
-        workflow:
-          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          value: Example Workflow
-        stage:
-          id: c86539953-b4b5-4042-8cb9-b78038ccfc46
-          value: Example Stage
-      title: Entity Workflow Stage Request
-    EntityListRequest:
-      type: object
-      properties:
-        context:
-          description: User-defined context for the current request
-          $ref: '#/components/schemas/ContextInformation'
-        queryRequest:
-          description: Query request containing search criteria and organization context
-          $ref: '#/components/schemas/EntityQueryRequest'
-        requestedFields:
-          description: Field request specifying which fields to include in the response
-          $ref: '#/components/schemas/EntityFieldRequest'
-      example:
-        queryRequest:
-          criteria:
-            filters:
-            - fieldName: name
-              operator: contains
-              value: OneTrust
-            - fieldName: entityStatus
-              operator: equals
-              value: Active
-            searchQuery: gdpr
-            sort:
-            - fieldName: lastModifiedTimestamp
-              direction: DESC
-          organizationTraversalStrategy: ancestors_and_descendants
-          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          queryAction: ListEntity
-        requestedFields:
-          includeStandardFields: true
-          includeCustomFields: true
-          includeAuditFields: false
-          specificStandardFields:
-          - name
-          - entityNumber
-          - createdBy
-          specificCustomFields:
-          - vendor_tier
-          - risk_score
-    EntityDetailRequest:
-      type: object
-      properties:
-        extendedBaseAttributes:
-          description: Base Seeded Attributes
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the entity was last created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the entity was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The information of the user who last created/modified the entity.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The information of the user who last created/modified the entity.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The full name of the user.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials for the first and last name of the user.
-          type: string
-          example: FL
-    EntityQueryRequest:
-      type: object
-      properties:
-        criteria:
-          description: The criteria used to search for entities, including filters, full-text search, and sorting
-          example:
-            filters:
-            - fieldName: name
-              operator: contains
-              value: OneTrust
-            searchQuery: privacy
-            sort:
-            - fieldName: lastModifiedTimestamp
-              direction: DESC
-          $ref: '#/components/schemas/AttributeQueryCriteria'
-        organizationTraversalStrategy:
-          description: 'The strategy for fetching entities across related organizations. Default: null (no organization traversal applicable)'
-          type: string
-          example: ancestors_and_descendants
-          enum:
-          - ancestors_and_descendants
-          - descendants
-          - all
-        requestedOrganizationId:
-          description: The overridden requested organization identifier. If supplied, would be used instead of request context organization
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        queryAction:
-          description: The query action specifies the source of the API call and allows a service to apply a predicate
-          type: string
-          example: ListEntity
-      example:
-        criteria:
-          filters:
-          - fieldName: name
-            operator: contains
-            value: OneTrust
-          - fieldName: entityStatus
-            operator: equals
-            value: Active
-          - fieldName: lastModifiedTimestamp
-            operator: greaterThan
-            value: '2024-01-01T00:00:00Z'
-          searchQuery: privacy
-          sort:
-          - fieldName: lastModifiedTimestamp
-            direction: DESC
-        organizationTraversalStrategy: ancestors_and_descendants
-        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        queryAction: ListEntity
-    BasicEntityTypeInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for the entity type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the entity type.
-          type: string
-          example: Vendor
-        seeded:
-          description: This parameter indicates whether the entity type is seeded or custom.
-          type: boolean
-          example: true
-        moduleName:
-          description: The name of the module where the entity exists.
-          type: string
-          example: Vendor
-          enum:
-          - Vendor
-          - DataMapping
-          - Risk
-          - Assessments
-          - CustomEntityManagement
-        schemaName:
-          description: The name of the schema.
-          type: string
-          example: vendor
-          enum:
-          - vendor
-          - projects
-          - models
-          - datasets
-          - aisystems
-      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
-      required:
-      - id
-      - name
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    BasicLinkCreateSourceRequest:
-      type: object
-      properties:
-        attributes:
-          description: Custom attributes for the link based on the link type schema. Contains attribute paths mapped to their values.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        entity1:
-          description: The first entity in the relationship (source entity). Contains entity identifier and type details.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-        entity2:
-          description: The second entity in the relationship (target entity). Contains entity identifier and type details.
-          example:
-            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
-            entityType:
-              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
-              name: Vendor
-          $ref: '#/components/schemas/LinkedEntityInformation'
-        entityLinkTypeId:
-          description: Unique identifier of the link type that defines the relationship. Required if sourceSystemGenerator is not provided.
-          type: string
-          format: uuid
-          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
-        sourceSystemGenerator:
-          description: Identifier of the system that generates this link. Required if entityLinkTypeId is not provided.
-          type: string
-          example: LINK-SOURCE
-        linkTypeLabel:
-          description: Display name for the relationship direction. Used for showing the relationship in UI.
-          type: string
-          example: Sends Data To
-      example:
-        entity1:
-          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          entityType:
-            name: Vendor
-        entity2:
-          id: a2129953-b4b5-4042-8cb9-b78038cc4c46
-          entityType:
-            name: Asset
-        entityLinkTypeId: d1119953-b4b5-4042-8cb9-b78038cc4c46
-      required:
-      - entity2
-      title: Basic Link Create Source Request
     EntityInformation:
       type: object
       properties:
@@ -1465,6 +1422,116 @@ components:
       - number
       - schemaId
       title: Entity Information
+    EntityUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The updated name of the entity. If not provided, the existing name will be retained.
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        organization:
+          description: The updated organization group for the entity. Contains organization ID and optional name. If not provided, the existing organization will be retained.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: Business Unit
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+        attributes:
+          description: Custom attributes to update on the entity. Only the attributes provided will be updated; others will retain their existing values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      example:
+        name: OneTrust Updated
+        attributes:
+          textAttributeName:
+          - value: New Text Value
+      title: Entity Update Request
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The full name of the user.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials for the first and last name of the user.
+          type: string
+          example: FL
+    BasicLinkCreateSourceRequest:
+      type: object
+      properties:
+        attributes:
+          description: Custom attributes for the link based on the link type schema. Contains attribute paths mapped to their values.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        entity1:
+          description: The first entity in the relationship (source entity). Contains entity identifier and type details.
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entity2:
+          description: The second entity in the relationship (target entity). Contains entity identifier and type details.
+          example:
+            id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+            entityType:
+              id: d1119953-b4b5-4042-8cb9-b78038cc4c46
+              name: Vendor
+          $ref: '#/components/schemas/LinkedEntityInformation'
+        entityLinkTypeId:
+          description: Unique identifier of the link type that defines the relationship. Required if sourceSystemGenerator is not provided.
+          type: string
+          format: uuid
+          example: d1119953-b4b5-4042-8cb9-b78038cc4c46
+        sourceSystemGenerator:
+          description: Identifier of the system that generates this link. Required if entityLinkTypeId is not provided.
+          type: string
+          example: LINK-SOURCE
+        linkTypeLabel:
+          description: Display name for the relationship direction. Used for showing the relationship in UI.
+          type: string
+          example: Sends Data To
+      example:
+        entity1:
+          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          entityType:
+            name: Vendor
+        entity2:
+          id: a2129953-b4b5-4042-8cb9-b78038cc4c46
+          entityType:
+            name: Asset
+        entityLinkTypeId: d1119953-b4b5-4042-8cb9-b78038cc4c46
+      required:
+      - entity2
+      title: Basic Link Create Source Request
     EntityFieldRequest:
       type: object
       properties:
@@ -1498,85 +1565,28 @@ components:
             type: string
           example:
           - name
-    EntityCreateRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the entity. Required field used as the primary identifier for users.
-          type: string
-          example: OneTrust
-          maxLength: 255
-          minLength: 1
-        organization:
-          description: The organization group that owns this entity. Contains organization ID and optional name.
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: Organization Name
-          $ref: '#/components/schemas/EntityOrganizationInformation'
-        attributes:
-          description: The custom attributes for the entity defined by its schema. Contains attribute paths mapped to their values.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        workflowAndStage:
-          description: Requested workflow and stage to be assigned to the entity during creation. Contains workflow and stage identifiers.
-          example:
-            workflow:
-              id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              value: Workflow Name
-            stage:
-              id: d2329953-b4b5-4042-8cb9-b78038cc4c46
-              value: Stage Name
-          $ref: '#/components/schemas/EntityWorkflowStageRequest'
-        entityLinks:
-          description: Entity link requests to create relationships with other entities during entity creation
-          type: array
-          items:
-            $ref: '#/components/schemas/BasicLinkCreateSourceRequest'
-          example:
-          - entity1:
-              id: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-              entityType:
-                name: Issue
-            entityLinkTypeId: a1fe9bea-1e27-4f33-bd1c-3420b894bbb0
-      example:
-        name: OneTrust
-        organization:
-          id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        attributes:
-          textAttributeName:
-          - value: Text
-      required:
-      - name
-      title: Entity Create Request
-    BasicAttributeInformation:
+    AssociatedAttributeValueInformation:
       type: object
       properties:
         id:
-          description: Unique Identifier of an Entity Attribute
+          description: Unique identifier for the attribute option
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
         value:
-          description: Value of an Entity Attribute
+          description: Attribute value
           type: string
-          example: Galaxy
-    SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
     EntityWorkflowInformation:
       type: object
       properties:
@@ -1624,122 +1634,112 @@ components:
       - stageId
       - stageName
       - type
-    ContextInformation:
+    EntityDetailRequest:
       type: object
       properties:
-        parameters:
+        extendedBaseAttributes:
+          description: Base Seeded Attributes
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
           additionalProperties:
-            type: object
-          type: object
-    AttributePredicate:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+    EntityQueryRequest:
       type: object
       properties:
-        field:
-          description: The field name used to filter results.
+        criteria:
+          description: The criteria used to search for entities, including filters, full-text search, and sorting
+          example:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            searchQuery: privacy
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+        organizationTraversalStrategy:
+          description: 'The strategy for fetching entities across related organizations. Default: null (no organization traversal applicable)'
           type: string
-        operator:
-          description: The relationship that must be met between the field and value.
-          type: string
+          example: ancestors_and_descendants
           enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
-    AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
+          - ancestors_and_descendants
+          - descendants
+          - all
+        requestedOrganizationId:
+          description: The overridden requested organization identifier. If supplied, would be used instead of request context organization
           type: string
           format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction:
+          description: The query action specifies the source of the API call and allows a service to apply a predicate
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-      required:
-      - value
-    Page:
+          example: ListEntity
+      example:
+        criteria:
+          filters:
+          - fieldName: name
+            operator: contains
+            value: OneTrust
+          - fieldName: entityStatus
+            operator: equals
+            value: Active
+          - fieldName: lastModifiedTimestamp
+            operator: greaterThan
+            value: '2024-01-01T00:00:00Z'
+          searchQuery: privacy
+          sort:
+          - fieldName: lastModifiedTimestamp
+            direction: DESC
+        organizationTraversalStrategy: ancestors_and_descendants
+        requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        queryAction: ListEntity
+    EntityListRequest:
       type: object
       properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          items:
-            type: object
-          type: array
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-    AttributeQueryCriteria:
-      type: object
-      properties:
-        filters:
-          description: The fields and values used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The key terms for the search criteria.
-          type: string
-          maxLength: 500
-          minLength: 0
+        context:
+          description: User-defined context for the current request
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: Query request containing search criteria and organization context
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: Field request specifying which fields to include in the response
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
   securitySchemes:
     OAUTH2:
       type: oauth2

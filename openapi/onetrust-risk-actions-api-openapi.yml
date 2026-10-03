@@ -530,141 +530,19 @@ paths:
         - RISK
 components:
   schemas:
-    TechRiskCompliance-Risk_RiskLevelDetails:
-      type: object
-      properties:
-        levelId:
-          description: Risk level identifier
-          type: integer
-          format: int64
-        level:
-          description: Risk level name
-          type: string
-        impactLevelId:
-          description: Impact level identifier
-          type: integer
-          format: int64
-        impactLevel:
-          description: Impact level name
-          type: string
-        probabilityLevelId:
-          description: Probability level identifier
-          type: integer
-          format: int64
-        probabilityLevel:
-          description: Probability level name
-          type: string
-        riskScore:
-          description: Calculated risk score
-          type: number
-        levelGuid:
-          description: Risk level unique identifier
-          type: string
-          format: uuid
-        levelKey:
-          description: Risk level key
-          type: string
-        colorCode:
-          description: Risk level color code
-          type: string
-        impactLevelGuid:
-          description: Impact level unique identifier
-          type: string
-          format: uuid
-        impactLevelKey:
-          description: Impact level key
-          type: string
-        probabilityLevelGuid:
-          description: Probability level unique identifier
-          type: string
-          format: uuid
-        probabilityLevelKey:
-          description: Probability level key
-          type: string
-    TechRiskCompliance-Risk_EntityTypeInformation:
+    TechRiskCompliance-Risk_BasicEntityDetail:
       type: object
       properties:
         id:
-          description: Entity Type ID. This can be Assets, Entities, PIA, Engagement, Custom Object GUID in form of String.
-          type: string
-          example: 3f99b4ac-7c66-45b6-8ff4-63a67a3ec7be
-        label:
-          description: Entity Type Name
-          type: string
-          example: Inventory
-          maxLength: 512
-        translationKey:
-          description: Translation Key of Entity Type ID
-          type: string
-          example: OBJ.Objective
-          maxLength: 255
-        seeded:
-          description: For Base Entity Type Seeded is true and false for Custom Object/Entity Types by default.
-          type: boolean
-          example: false
-        sourceType:
-          description: Indicates whether this type can be source type or not in Risk
-          type: boolean
-          example: false
-        riskType:
-          description: Indicates whether this type can be risk type or not in Risk
-          type: boolean
-          example: true
-        eligibleForEntityLink:
-          description: Indicates whether entity type is eligible for linking/relating with risk or not
-          type: boolean
-          example: false
-        enabled:
-          description: Indicates whether the entity type is enabled or not.
-          type: boolean
-          example: false
-        moduleName:
-          description: Name of the module
-          type: string
-          example: Objective
-          maxLength: 255
-      required:
-      - id
-    TechRiskCompliance-Risk_AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
+          description: Unique Identifier for the Entity
           type: string
           format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+          example: e549ec16-b42a-4612-a402-3fcce7cc5f78
+        name:
+          description: Name for the Entity
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-Risk_AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
+          example: Acme Corp, John Doe
+          maxLength: 300
     TechRiskCompliance-Risk_BasicStageDetailTranslation:
       type: object
       properties:
@@ -693,149 +571,7 @@ components:
           type: string
           example: New
           maxLength: 50
-    TechRiskCompliance-Risk_InventoryInformation:
-      type: object
-      properties:
-        inventoryId:
-          description: Unique Identifier of the Inventory
-          type: string
-          format: uuid
-          example: 57a87cd3-0a1f-4439-bd5b-917e1d23eb5c
-        inventoryName:
-          description: Name of the Inventory
-          type: string
-          example: Raw Materials Inventory
-          maxLength: 2000
-        inventoryType:
-          description: Type of the Inventory
-          type: string
-          example: VENDORS
-          enum:
-          - ASSETS
-          - PROCESSING_ACTIVITIES
-          - VENDORS
-          - ENTITIES
-          deprecated: true
-        sourceType:
-          description: Type of Inventory
-          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
-        softInherited:
-          description: Soft Inherited flag
-          type: boolean
-          example: true
-        organizationId:
-          description: Unique Identifier of the organization
-          type: string
-          format: uuid
-          example: f8583fd1-21cb-4c7c-a337-2982246418e5
-    TechRiskCompliance-Risk_VulnerabilityInformation:
-      type: object
-      properties:
-        id:
-          description: Vulnerability Id
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        name:
-          description: Vulnerability Name
-          type: string
-          example: Cross-Site Scripting (XSS)
-        identifier:
-          description: Vulnerability Identifier
-          type: string
-          example: VULN123456
-    TechRiskCompliance-Risk_RiskCategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Risk Category unique identifier
-          type: string
-          format: uuid
-          example: 46c58be9-4ab9-42ca-8f49-29fec6a5fb6e
-        name:
-          description: Risk Category name
-          type: string
-          example: Financial
-          maxLength: 100
-        nameKey:
-          description: Risk Category nameKey for localization support
-          type: string
-          example: RiskCategory.Financial
-          maxLength: 100
-        seeded:
-          description: Seeded category
-          type: boolean
-          example: false
-    TechRiskCompliance-Risk_RiskSourceInformation:
-      type: object
-      properties:
-        id:
-          description: Source Entity Id
-          type: string
-          format: uuid
-          example: d974c78a-c2f0-480a-aa27-4d40c44bb890
-        type:
-          description: Source Type for the risk
-          type: string
-          example: PIA
-          enum:
-          - PIA
-          - GRA
-          - INVENTORY
-          - INCIDENT
-          - ENGAGEMENT
-          - GENERIC
-          deprecated: true
-        sourceType:
-          description: Source type information of the risk
-          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
-        name:
-          description: Source Entity Name
-          type: string
-          example: Raw Materials and Sales Inventory
-        additionalAttributes:
-          description: Additional information about the Source Entity. This will be a Map of String Key and Object value. 'inventoryType' key is mandatory to be passed when sourceType is 'Inventory', and it can have one of the following values, 20 - Assets, 30 - Processing Activities, 50 - Vendors, 60 - Entities
-          type: object
-          additionalProperties:
-            type: object
-      required:
-      - id
-      - name
-    TechRiskCompliance-Risk_RiskExceptionRequest:
-      type: object
-      properties:
-        comment:
-          description: Comment to Update
-          type: string
-          example: Requesting exception for risk
-          maxLength: 4000
-          minLength: 0
-    TechRiskCompliance-Risk_ThreatInformation:
-      type: object
-      properties:
-        id:
-          description: Threat Id
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        name:
-          description: Threat Name
-          type: string
-          example: Malware
-        identifier:
-          description: Threat Identifier
-          type: string
-          example: THRT123456
-    TechRiskCompliance-Risk_RiskSubmitRequest:
-      type: object
-      properties:
-        comment:
-          description: Comment to Update
-          type: string
-          example: Submitting risk for approval
-          maxLength: 4000
-          minLength: 0
-    TechRiskCompliance-Risk_RiskGrantExceptionRequest:
+    TechRiskCompliance-Risk_RiskApproveRequest:
       type: object
       properties:
         result:
@@ -849,35 +585,64 @@ components:
           - Transferred
           - Ignored
         resultId:
+          description: ID of the Risk
           type: string
           format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
         residualRiskLevelId:
           description: Residual Risk Level Id
           type: integer
           format: int64
+          example: 2
         residualProbabilityLevelId:
           description: Residual Probability Level Id
           type: integer
           format: int64
+          example: 2
         residualImpactLevelId:
           description: Residual Impact Level Id
           type: integer
           format: int64
+          example: 2
         residualRiskScore:
           description: Residual Risk Score
           type: number
+          example: 2
         comment:
           description: Comment to Update
           type: string
+          example: This Risk was reviewed and Accepted
+          maxLength: 4000
+          minLength: 0
         attributeValues:
           description: Supported Risk Score Attributes Values
           type: object
+          example:
+            attributeSingleSelectValue.value1:
+            - id: 0d2455f5-0a3d-463c-831a-671b620f5d8c
+              value: '1'
+              valueKey: Risk.Attributes.44cc7a47-fc22-4339-a4f9-8bba492eba7f
+            attributeSingleSelectValue.value2: []
+            attributeSingleSelectValue.value11: []
+            attributeSingleSelectValue.value12: []
+            attributeSingleSelectValue.value18: []
           additionalProperties:
             type: array
             items:
               $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
       required:
+      - residualRiskLevelId
+      - residualRiskScore
       - result
+    TechRiskCompliance-Risk_RiskExceptionRequest:
+      type: object
+      properties:
+        comment:
+          description: Comment to Update
+          type: string
+          example: Requesting exception for risk
+          maxLength: 4000
+          minLength: 0
     TechRiskCompliance-Risk_RiskInformation:
       type: object
       properties:
@@ -1258,29 +1023,101 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TechRiskCompliance-Risk_BasicEntityDetail'
-    TechRiskCompliance-Risk_RiskReferenceInformation:
+    TechRiskCompliance-Risk_ThreatInformation:
       type: object
       properties:
         id:
+          description: Threat Id
           type: string
           format: uuid
-        type:
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        name:
+          description: Threat Name
           type: string
+          example: Malware
+        identifier:
+          description: Threat Identifier
+          type: string
+          example: THRT123456
+    TechRiskCompliance-Risk_RiskSourceInformation:
+      type: object
+      properties:
+        id:
+          description: Source Entity Id
+          type: string
+          format: uuid
+          example: d974c78a-c2f0-480a-aa27-4d40c44bb890
+        type:
+          description: Source Type for the risk
+          type: string
+          example: PIA
           enum:
-          - ASSESSMENT
+          - PIA
+          - GRA
           - INVENTORY
           - INCIDENT
           - ENGAGEMENT
           - GENERIC
           deprecated: true
-        referenceType:
+        sourceType:
+          description: Source type information of the risk
           $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
         name:
+          description: Source Entity Name
           type: string
+          example: Raw Materials and Sales Inventory
         additionalAttributes:
+          description: Additional information about the Source Entity. This will be a Map of String Key and Object value. 'inventoryType' key is mandatory to be passed when sourceType is 'Inventory', and it can have one of the following values, 20 - Assets, 30 - Processing Activities, 50 - Vendors, 60 - Entities
           type: object
           additionalProperties:
             type: object
+      required:
+      - id
+      - name
+    TechRiskCompliance-Risk_EntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Entity Type ID. This can be Assets, Entities, PIA, Engagement, Custom Object GUID in form of String.
+          type: string
+          example: 3f99b4ac-7c66-45b6-8ff4-63a67a3ec7be
+        label:
+          description: Entity Type Name
+          type: string
+          example: Inventory
+          maxLength: 512
+        translationKey:
+          description: Translation Key of Entity Type ID
+          type: string
+          example: OBJ.Objective
+          maxLength: 255
+        seeded:
+          description: For Base Entity Type Seeded is true and false for Custom Object/Entity Types by default.
+          type: boolean
+          example: false
+        sourceType:
+          description: Indicates whether this type can be source type or not in Risk
+          type: boolean
+          example: false
+        riskType:
+          description: Indicates whether this type can be risk type or not in Risk
+          type: boolean
+          example: true
+        eligibleForEntityLink:
+          description: Indicates whether entity type is eligible for linking/relating with risk or not
+          type: boolean
+          example: false
+        enabled:
+          description: Indicates whether the entity type is enabled or not.
+          type: boolean
+          example: false
+        moduleName:
+          description: Name of the module
+          type: string
+          example: Objective
+          maxLength: 255
+      required:
+      - id
     TechRiskCompliance-Risk_BasicStageApproverDetails:
       type: object
       properties:
@@ -1308,69 +1145,6 @@ components:
           description: status of the review
           type: string
           example: Accepted
-    TechRiskCompliance-Risk_RiskApproveRequest:
-      type: object
-      properties:
-        result:
-          description: 'Result to set on Risk as part of approval '
-          type: string
-          enum:
-          - Accepted
-          - Avoided
-          - Reduced
-          - Rejected
-          - Transferred
-          - Ignored
-        resultId:
-          description: ID of the Risk
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        residualRiskLevelId:
-          description: Residual Risk Level Id
-          type: integer
-          format: int64
-          example: 2
-        residualProbabilityLevelId:
-          description: Residual Probability Level Id
-          type: integer
-          format: int64
-          example: 2
-        residualImpactLevelId:
-          description: Residual Impact Level Id
-          type: integer
-          format: int64
-          example: 2
-        residualRiskScore:
-          description: Residual Risk Score
-          type: number
-          example: 2
-        comment:
-          description: Comment to Update
-          type: string
-          example: This Risk was reviewed and Accepted
-          maxLength: 4000
-          minLength: 0
-        attributeValues:
-          description: Supported Risk Score Attributes Values
-          type: object
-          example:
-            attributeSingleSelectValue.value1:
-            - id: 0d2455f5-0a3d-463c-831a-671b620f5d8c
-              value: '1'
-              valueKey: Risk.Attributes.44cc7a47-fc22-4339-a4f9-8bba492eba7f
-            attributeSingleSelectValue.value2: []
-            attributeSingleSelectValue.value11: []
-            attributeSingleSelectValue.value12: []
-            attributeSingleSelectValue.value18: []
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
-      required:
-      - residualRiskLevelId
-      - residualRiskScore
-      - result
     TechRiskCompliance-Risk_RiskReopenRequest:
       type: object
       properties:
@@ -1388,19 +1162,157 @@ components:
         runStageRules:
           description: Should run workflow stage rule for Risk?
           type: boolean
-    TechRiskCompliance-Risk_BasicEntityDetail:
+    TechRiskCompliance-Risk_RiskLevelDetails:
+      type: object
+      properties:
+        levelId:
+          description: Risk level identifier
+          type: integer
+          format: int64
+        level:
+          description: Risk level name
+          type: string
+        impactLevelId:
+          description: Impact level identifier
+          type: integer
+          format: int64
+        impactLevel:
+          description: Impact level name
+          type: string
+        probabilityLevelId:
+          description: Probability level identifier
+          type: integer
+          format: int64
+        probabilityLevel:
+          description: Probability level name
+          type: string
+        riskScore:
+          description: Calculated risk score
+          type: number
+        levelGuid:
+          description: Risk level unique identifier
+          type: string
+          format: uuid
+        levelKey:
+          description: Risk level key
+          type: string
+        colorCode:
+          description: Risk level color code
+          type: string
+        impactLevelGuid:
+          description: Impact level unique identifier
+          type: string
+          format: uuid
+        impactLevelKey:
+          description: Impact level key
+          type: string
+        probabilityLevelGuid:
+          description: Probability level unique identifier
+          type: string
+          format: uuid
+        probabilityLevelKey:
+          description: Probability level key
+          type: string
+    TechRiskCompliance-Risk_InventoryInformation:
+      type: object
+      properties:
+        inventoryId:
+          description: Unique Identifier of the Inventory
+          type: string
+          format: uuid
+          example: 57a87cd3-0a1f-4439-bd5b-917e1d23eb5c
+        inventoryName:
+          description: Name of the Inventory
+          type: string
+          example: Raw Materials Inventory
+          maxLength: 2000
+        inventoryType:
+          description: Type of the Inventory
+          type: string
+          example: VENDORS
+          enum:
+          - ASSETS
+          - PROCESSING_ACTIVITIES
+          - VENDORS
+          - ENTITIES
+          deprecated: true
+        sourceType:
+          description: Type of Inventory
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        softInherited:
+          description: Soft Inherited flag
+          type: boolean
+          example: true
+        organizationId:
+          description: Unique Identifier of the organization
+          type: string
+          format: uuid
+          example: f8583fd1-21cb-4c7c-a337-2982246418e5
+    TechRiskCompliance-Risk_RiskGrantExceptionRequest:
+      type: object
+      properties:
+        result:
+          description: 'Result to set on Risk as part of approval '
+          type: string
+          enum:
+          - Accepted
+          - Avoided
+          - Reduced
+          - Rejected
+          - Transferred
+          - Ignored
+        resultId:
+          type: string
+          format: uuid
+        residualRiskLevelId:
+          description: Residual Risk Level Id
+          type: integer
+          format: int64
+        residualProbabilityLevelId:
+          description: Residual Probability Level Id
+          type: integer
+          format: int64
+        residualImpactLevelId:
+          description: Residual Impact Level Id
+          type: integer
+          format: int64
+        residualRiskScore:
+          description: Residual Risk Score
+          type: number
+        comment:
+          description: Comment to Update
+          type: string
+        attributeValues:
+          description: Supported Risk Score Attributes Values
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/TechRiskCompliance-Risk_AttributeValueInformation'
+      required:
+      - result
+    TechRiskCompliance-Risk_AssociatedAttributeValueInformation:
       type: object
       properties:
         id:
-          description: Unique Identifier for the Entity
+          description: Unique identifier for the attribute option
           type: string
           format: uuid
-          example: e549ec16-b42a-4612-a402-3fcce7cc5f78
-        name:
-          description: Name for the Entity
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
           type: string
-          example: Acme Corp, John Doe
-          maxLength: 300
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
     TechRiskCompliance-Risk_RiskSendBackRequest:
       type: object
       properties:
@@ -1410,6 +1322,55 @@ components:
           example: Send back for more information
           maxLength: 4000
           minLength: 0
+    TechRiskCompliance-Risk_RiskSubmitRequest:
+      type: object
+      properties:
+        comment:
+          description: Comment to Update
+          type: string
+          example: Submitting risk for approval
+          maxLength: 4000
+          minLength: 0
+    TechRiskCompliance-Risk_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-Risk_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
     TechRiskCompliance-Risk_BasicEntityDetailTranslation:
       type: object
       properties:
@@ -1433,28 +1394,67 @@ components:
           type: string
           example: New
           maxLength: 50
-    TechRiskCompliance-Risk_AssociatedAttributeValueInformation:
+    TechRiskCompliance-Risk_RiskCategoryInformation:
       type: object
       properties:
         id:
-          description: Unique identifier for the attribute option
+          description: Risk Category unique identifier
+          type: string
+          format: uuid
+          example: 46c58be9-4ab9-42ca-8f49-29fec6a5fb6e
+        name:
+          description: Risk Category name
+          type: string
+          example: Financial
+          maxLength: 100
+        nameKey:
+          description: Risk Category nameKey for localization support
+          type: string
+          example: RiskCategory.Financial
+          maxLength: 100
+        seeded:
+          description: Seeded category
+          type: boolean
+          example: false
+    TechRiskCompliance-Risk_RiskReferenceInformation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - ASSESSMENT
+          - INVENTORY
+          - INCIDENT
+          - ENGAGEMENT
+          - GENERIC
+          deprecated: true
+        referenceType:
+          $ref: '#/components/schemas/TechRiskCompliance-Risk_EntityTypeInformation'
+        name:
+          type: string
+        additionalAttributes:
+          type: object
+          additionalProperties:
+            type: object
+    TechRiskCompliance-Risk_VulnerabilityInformation:
+      type: object
+      properties:
+        id:
+          description: Vulnerability Id
           type: string
           format: uuid
           example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+        name:
+          description: Vulnerability Name
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
+          example: Cross-Site Scripting (XSS)
+        identifier:
+          description: Vulnerability Identifier
           type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-      required:
-      - value
+          example: VULN123456
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

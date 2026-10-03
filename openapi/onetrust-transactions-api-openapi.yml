@@ -192,13 +192,6 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_TransactionWithdrawResult:
-      type: object
-      properties:
-        Status:
-          description: Message representing the consent withdrawal status
-          type: string
-          example: Consent withdrawn successfully
     ConsentPreferences-UniversalConsentPreferenceManag_WithdrawOnBehalfOfRequest:
       type: object
       properties:
@@ -217,6 +210,13 @@ components:
           example: API
       required:
       - PurposeId
+    ConsentPreferences-UniversalConsentPreferenceManag_TransactionWithdrawResult:
+      type: object
+      properties:
+        Status:
+          description: Message representing the consent withdrawal status
+          type: string
+          example: Consent withdrawn successfully
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

@@ -389,6 +389,33 @@ paths:
         - DATA_CATALOG_WRITE
 components:
   schemas:
+    DataUseGovernance-DataCatalog_customAttributes:
+      type: object
+      properties:
+        name:
+          description: Name of the custom attribute
+          type: string
+          example: Term other users
+          minLength: 1
+        value:
+          description: Value of the custom attribute
+          type: string
+          example: User of the term
+        options:
+          type: array
+          items:
+            type: string
+            description: Options of the custom attribute
+            example: alice@ot.com
+    DataUseGovernance-DataCatalog_OneTrustResponseOfListOfAttributeInformation:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeInformation'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
     DataUseGovernance-DataCatalog_AttributeOptionInformation:
       type: object
       properties:
@@ -430,28 +457,48 @@ components:
           $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeOptionMetadata'
       required:
       - option
-    DataUseGovernance-DataCatalog_AttributeOptionMetadata:
+    DataUseGovernance-DataCatalog_OneTrustSort:
       type: object
       properties:
-        hint:
-          description: Hint
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
           type: string
-        hintKey:
-          description: Hint key which can be used for translation
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
           type: string
-    DataUseGovernance-DataCatalog_OneTrustMetadata:
+    DataUseGovernance-DataCatalog_OneTrustPage:
       type: object
       properties:
-        page:
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
           description: The page number of the results.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
-    DataUseGovernance-DataCatalog_OneTrustResponseOfExternalTermResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_ExternalTermResponse'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
     DataUseGovernance-DataCatalog_TermResponse:
       type: object
       properties:
@@ -560,69 +607,108 @@ components:
           items:
             $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
             description: Associated tag's detail
-    DataUseGovernance-DataCatalog_TermCreateRequestV2:
+    DataUseGovernance-DataCatalog_OneTrustResponseOfListofStringWrapper:
       type: object
       properties:
-        name:
-          description: Name of the term
-          type: string
-          example: Account Number
-        type:
-          description: Type of the term
-          type: string
-          example: Data Element
-          enum:
-          - Data Element
-          - Business Term
-          - Acronym
-          - Key Performance Indicator
-          - Metric
-          - Type of Individual
-        glossaryName:
-          description: Valid glossary name
-          type: string
-          example: Business glossary
-        createAsApproved:
-          description: Create a term as approved
-          type: boolean
-          example: true
-        shortDescription:
-          description: Short description about term
-          type: string
-          example: This is the eight-digit account number which is used to uniquely identify the bank customer
-        example:
-          description: Example Value for the term
-          type: string
-          example: 123-423-45
-        notes:
-          description: Notes for the term
-          type: string
-          example: This is the term which is used for the Banking data
-        technicalOwner:
-          description: Technical owner usernames or group names
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
-        businessOwner:
-          description: Business owner usernames or group names
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
-        dataSteward:
-          description: Data steward usernames or group names
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
-        tags:
+        data:
           type: array
           items:
             type: string
-            description: Tags to associate to the Term
-            example: Financial
-          uniqueItems: true
-        customAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_customAttributes'
-            description: Custom Attributes of the term
-      required:
-      - glossaryName
-      - name
-      - type
+            example: Notes
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_OneTrustResponseOfExternalTermResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_ExternalTermResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
+    DataUseGovernance-DataCatalog_TagResponse:
+      type: object
+      properties:
+        id:
+          description: UUID of the tag
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        tagId:
+          description: Numeric identifier for the tag
+          type: integer
+          format: int64
+          example: 45
+        name:
+          description: Name of the tag
+          type: string
+          example: Resume
+        description:
+          description: Description of the tag
+          type: string
+          example: This tag is used for any information related to Resume
+        type:
+          description: Type of the tag
+          type: string
+          example: CLASSIFICATION
+        createdBy:
+          description: UUID of the user who created the tag
+          type: string
+          format: uuid
+          example: 897e4567-e89b-12d3-2345-426614174789
+        createdDate:
+          description: Tag creation timestamp
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        updatedBy:
+          description: UUID of the user who updated the tag
+          type: string
+          format: uuid
+          example: 897e4567-e89b-12d3-2345-426614174789
+        updatedDate:
+          description: Tag update timestamp
+          type: string
+          format: date-time
+          example: '2023-01-02T00:00:00Z'
+        athenaId:
+          description: Athena Id for the tag
+          type: string
+          format: uuid
+          example: 754e4567-de34-12d3-a456-ddf414174777
+    DataUseGovernance-DataCatalog_AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: Option Source Entity Type
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: Basic Url for the Option source Service
+          type: string
+          example: /api/location
+        optionUrl:
+          description: Api URL for the Drop Down Api
+          type: string
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: This will help to identify the view type of list
+          type: string
+    DataUseGovernance-DataCatalog_CustomAttibuteDto:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        value:
+          type: object
+        custom:
+          type: boolean
     DataUseGovernance-DataCatalog_AssociatedAttributeInformation:
       type: object
       properties:
@@ -707,214 +793,6 @@ components:
       - fieldName
       - id
       - responseType
-    DataUseGovernance-DataCatalog_OneTrustResponseOfListOfAttributeInformation:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_AttributeInformation'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Category unique identifier
-          type: string
-          format: uuid
-        name:
-          description: Category name
-          type: string
-          example: Financial Category
-        nameKey:
-          description: Category nameKey for localization support
-          type: string
-          example: IM.FinancialCategoryName
-    DataUseGovernance-DataCatalog_IntakeQuestion:
-      type: object
-      properties:
-        nameKey:
-          type: string
-          maxLength: 100
-          minLength: 0
-        name:
-          type: string
-          maxLength: 500
-          minLength: 0
-        descriptionKey:
-          type: string
-          maxLength: 100
-          minLength: 0
-        description:
-          type: string
-          maxLength: 500
-          minLength: 0
-    DataUseGovernance-DataCatalog_ExternalTermResponse:
-      type: object
-      properties:
-        id:
-          description: Unique identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the entity
-          type: string
-          example: Sample Name
-        nameKey:
-          description: Key used for name localization
-          type: string
-          example: SAMPLE_NAME_KEY
-        type:
-          description: Type of the term
-          type: string
-          example: Business
-        typeKey:
-          description: Key used for type localization
-          type: string
-          example: BUSINESS_TYPE
-        shortDescription:
-          description: Brief description of the term
-          type: string
-          example: A short explanation of what this term means
-        glossary:
-          description: Glossary information containing the term
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_IdValueKeyDto'
-        numericId:
-          type: integer
-          format: int64
-        example:
-          type: string
-        businessOwner:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        technicalOwner:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        dataSteward:
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-        notes:
-          type: string
-        source:
-          type: string
-        createdDate:
-          type: string
-          format: date-time
-        lastUpdatedDate:
-          type: string
-          format: date-time
-        createdBy:
-          type: string
-          format: uuid
-        lastUpdatedBy:
-          type: string
-          format: uuid
-        customAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_CustomAttibuteDto'
-        status:
-          type: string
-        associatedTags:
-          type: array
-          items:
-            type: string
-            format: uuid
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
-    DataUseGovernance-DataCatalog_TagResponse:
-      type: object
-      properties:
-        id:
-          description: UUID of the tag
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        tagId:
-          description: Numeric identifier for the tag
-          type: integer
-          format: int64
-          example: 45
-        name:
-          description: Name of the tag
-          type: string
-          example: Resume
-        description:
-          description: Description of the tag
-          type: string
-          example: This tag is used for any information related to Resume
-        type:
-          description: Type of the tag
-          type: string
-          example: CLASSIFICATION
-        createdBy:
-          description: UUID of the user who created the tag
-          type: string
-          format: uuid
-          example: 897e4567-e89b-12d3-2345-426614174789
-        createdDate:
-          description: Tag creation timestamp
-          type: string
-          format: date-time
-          example: '2023-01-01T00:00:00Z'
-        updatedBy:
-          description: UUID of the user who updated the tag
-          type: string
-          format: uuid
-          example: 897e4567-e89b-12d3-2345-426614174789
-        updatedDate:
-          description: Tag update timestamp
-          type: string
-          format: date-time
-          example: '2023-01-02T00:00:00Z'
-        athenaId:
-          description: Athena Id for the tag
-          type: string
-          format: uuid
-          example: 754e4567-de34-12d3-a456-ddf414174777
-    DataUseGovernance-DataCatalog_OneTrustSort:
-      type: object
-      properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
-          type: string
-    DataUseGovernance-DataCatalog_AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: Option Source Entity Type
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: Basic Url for the Option source Service
-          type: string
-          example: /api/location
-        optionUrl:
-          description: Api URL for the Drop Down Api
-          type: string
-          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
-        viewType:
-          description: This will help to identify the view type of list
-          type: string
     DataUseGovernance-DataCatalog_IdValueKeyDto:
       type: object
       properties:
@@ -931,88 +809,6 @@ components:
           description: Key used for localization
           type: string
           example: SAMPLE_KEY
-    DataUseGovernance-DataCatalog_customAttributes:
-      type: object
-      properties:
-        name:
-          description: Name of the custom attribute
-          type: string
-          example: Term other users
-          minLength: 1
-        value:
-          description: Value of the custom attribute
-          type: string
-          example: User of the term
-        options:
-          type: array
-          items:
-            type: string
-            description: Options of the custom attribute
-            example: alice@ot.com
-    DataUseGovernance-DataCatalog_OneTrustResponseOfListofStringWrapper:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: string
-            example: Notes
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_OneTrustResponseOfTermResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_OneTrustPage:
-      type: object
-      properties:
-        first:
-          description: This parameter indicates whether the current page is the first page of the list.
-          type: boolean
-        last:
-          description: This parameter indicates whether the current page is the last page of the list.
-          type: boolean
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int64
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int64
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
-    DataUseGovernance-DataCatalog_UserAndGroupNames:
-      type: object
-      properties:
-        userEmails:
-          type: array
-          items:
-            type: string
-            description: Valid user email
-            example: mallory@ot.com
-        groupNames:
-          type: array
-          items:
-            type: string
-            description: Group name
-            example: Audit group
     DataUseGovernance-DataCatalog_AttributeInformation:
       type: object
       properties:
@@ -1196,17 +992,221 @@ components:
       - enabled
       - fieldName
       - name
-    DataUseGovernance-DataCatalog_CustomAttibuteDto:
+    DataUseGovernance-DataCatalog_IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+    DataUseGovernance-DataCatalog_UserAndGroupNames:
+      type: object
+      properties:
+        userEmails:
+          type: array
+          items:
+            type: string
+            description: Valid user email
+            example: mallory@ot.com
+        groupNames:
+          type: array
+          items:
+            type: string
+            description: Group name
+            example: Audit group
+    DataUseGovernance-DataCatalog_ExternalTermResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the entity
+          type: string
+          example: Sample Name
+        nameKey:
+          description: Key used for name localization
+          type: string
+          example: SAMPLE_NAME_KEY
+        type:
+          description: Type of the term
+          type: string
+          example: Business
+        typeKey:
+          description: Key used for type localization
+          type: string
+          example: BUSINESS_TYPE
+        shortDescription:
+          description: Brief description of the term
+          type: string
+          example: A short explanation of what this term means
+        glossary:
+          description: Glossary information containing the term
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_IdValueKeyDto'
+        numericId:
+          type: integer
+          format: int64
+        example:
+          type: string
+        businessOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        technicalOwner:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        dataSteward:
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+        notes:
+          type: string
+        source:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          format: uuid
+        lastUpdatedBy:
+          type: string
+          format: uuid
+        customAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_CustomAttibuteDto'
+        status:
+          type: string
+        associatedTags:
+          type: array
+          items:
+            type: string
+            format: uuid
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TagResponse'
+    DataUseGovernance-DataCatalog_AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
+    DataUseGovernance-DataCatalog_OneTrustResponseOfTermResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_TermCreateRequestV2:
       type: object
       properties:
         name:
+          description: Name of the term
           type: string
-        displayName:
+          example: Account Number
+        type:
+          description: Type of the term
           type: string
-        value:
-          type: object
-        custom:
+          example: Data Element
+          enum:
+          - Data Element
+          - Business Term
+          - Acronym
+          - Key Performance Indicator
+          - Metric
+          - Type of Individual
+        glossaryName:
+          description: Valid glossary name
+          type: string
+          example: Business glossary
+        createAsApproved:
+          description: Create a term as approved
           type: boolean
+          example: true
+        shortDescription:
+          description: Short description about term
+          type: string
+          example: This is the eight-digit account number which is used to uniquely identify the bank customer
+        example:
+          description: Example Value for the term
+          type: string
+          example: 123-423-45
+        notes:
+          description: Notes for the term
+          type: string
+          example: This is the term which is used for the Banking data
+        technicalOwner:
+          description: Technical owner usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        businessOwner:
+          description: Business owner usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        dataSteward:
+          description: Data steward usernames or group names
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_UserAndGroupNames'
+        tags:
+          type: array
+          items:
+            type: string
+            description: Tags to associate to the Term
+            example: Financial
+          uniqueItems: true
+        customAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_customAttributes'
+            description: Custom Attributes of the term
+      required:
+      - glossaryName
+      - name
+      - type
+    DataUseGovernance-DataCatalog_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

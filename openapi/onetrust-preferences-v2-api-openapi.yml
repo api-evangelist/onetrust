@@ -179,27 +179,6 @@ components:
         geolocation:
           description: The geolocation details of the consent receipt.
           $ref: '#/components/schemas/DataSubjectGeolocationDto'
-    DataSubjectGeolocationDto:
-      type: object
-      properties:
-        receiptGuid:
-          description: The unique identifier of the consent receipt for which geolocation details were sent.
-          type: string
-          format: uuid
-          example: 788ba071-61b0-485f-81a0-a2245777b432
-        country:
-          description: The country where the consent interaction occurred.
-          type: string
-          example: US
-        state:
-          description: The state code where the consent interaction occurred.
-          type: string
-          example: GA
-        stateName:
-          description: The name of the state where the consent interaction occurred.
-          type: string
-          example: Georgia
-      title: DataSubjectGeolocationDto
     CustomPreferencesDto:
       type: array
       items:
@@ -221,6 +200,27 @@ components:
                   type: string
                   format: uuid
                   example: 7590d76b-c69f-4c68-805d-bd326595a213
+    DataSubjectGeolocationDto:
+      type: object
+      properties:
+        receiptGuid:
+          description: The unique identifier of the consent receipt for which geolocation details were sent.
+          type: string
+          format: uuid
+          example: 788ba071-61b0-485f-81a0-a2245777b432
+        country:
+          description: The country where the consent interaction occurred.
+          type: string
+          example: US
+        state:
+          description: The state code where the consent interaction occurred.
+          type: string
+          example: GA
+        stateName:
+          description: The name of the state where the consent interaction occurred.
+          type: string
+          example: Georgia
+      title: DataSubjectGeolocationDto
 x-onetrust:
   spec-label: OpenAPI 3.1.0
 x-readme:

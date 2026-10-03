@@ -3135,6 +3135,39 @@ paths:
     - url: https://customer.my.onetrust.com/api
 components:
   schemas:
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: Field Name
+          type: string
+          maxLength: 200
+          minLength: 0
+        name:
+          description: Attribute Name
+          type: string
+          minLength: 1
+        nameKey:
+          description: Attribute Name Key. Used for Translation
+          type: string
+          maxLength: 200
+          minLength: 0
+        description:
+          description: Attribute Description
+          type: string
+        descriptionKey:
+          description: Attribute Description Key
+          type: string
+          maxLength: 200
+          minLength: 0
+        options:
+          description: Attribute Options
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+          minItems: 1
+      required:
+      - name
     AttributeOptionRequest:
       type: object
       properties:
@@ -3181,6 +3214,184 @@ components:
       required:
       - option
       title: Attribute Option Request
+    AttributeValueResponse:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the attribute value
+          type: string
+          example: 91e37a36-ca61-499b-b3c3-7d556aef5cde
+        value:
+          description: Value of the attribute option
+          type: string
+          example: Option 1
+        valueKey:
+          description: Key used for value translation
+          type: string
+          example: VendorsOption1
+        hint:
+          description: Hint text for the attribute value
+          type: string
+          example: Select this option if...
+        hintKey:
+          description: Key used for hint translation
+          type: string
+          example: VendorsOption1Hint
+        status:
+          description: Status of the attribute value
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        seeded:
+          description: Flag indicating if the attribute value is seeded (system-provided)
+          type: boolean
+          example: true
+        sequence:
+          description: Sequence number for ordering
+          type: integer
+          format: int32
+          example: 1
+          minimum: 1
+        colorCode:
+          description: Color code for visual representation
+          type: string
+          example: '#FF5733'
+        selectionValue:
+          description: Selection value for numerical attributes
+          type: string
+          example: 5
+    AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
+      example:
+        hint: This option provides additional information about the attribute
+        hintKey: attribute.option.hint.key
+    KeyNameDto:
+      type: object
+      properties:
+        key:
+          description: The key identifier
+          type: string
+          example: active
+        name:
+          description: The display name associated with the key
+          type: string
+          example: Active
+      required:
+      - key
+    AssociatedAttributeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        fieldName:
+          type: string
+          maxLength: 100
+          minLength: 0
+        nameKey:
+          type: string
+          maxLength: 400
+          minLength: 0
+        description:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 400
+          minLength: 0
+        status:
+          type: string
+          maxLength: 50
+          minLength: 0
+        responseType:
+          type: string
+          maxLength: 2147483647
+          minLength: 0
+        responseSubType:
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          type: string
+        schemaName:
+          type: string
+          maxLength: 50
+          minLength: 0
+        hidden:
+          type: boolean
+        readOnly:
+          type: boolean
+        Attribute options:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeValueResponse'
+      required:
+      - hidden
+    AbacAssignmentAssociation:
+      type: object
+      properties:
+        assignments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbacBasicAssignmentInfo'
+        objectType:
+          type: string
+    AttributeContext:
+      type: object
+      properties:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    AttributeDataSourceDto:
+      type: object
+      properties:
+        Attribute Data Source Key:
+          type: string
+          maxLength: 256
+          minLength: 0
+        Attribute Data Source Name:
+          type: string
+          maxLength: 256
+          minLength: 0
+        Attribute Data Source Name Key for translation:
+          type: string
+          maxLength: 128
+          minLength: 0
+      required:
+      - Attribute Data Source Key
+      - Attribute Data Source Name
+      - Attribute Data Source Name Key for translation
+    BulkAttributeStatusUpdateRequest:
+      type: object
+      properties:
+        fieldNames:
+          description: List of attribute field names to be updated.
+          type: array
+          items:
+            type: string
+          example:
+          - status
+          - category
+          - owner
+          minItems: 1
     AttributeValueUpdateRequest:
       type: object
       properties:
@@ -3216,85 +3427,19 @@ components:
       required:
       - AttributeId
       - Value
-    AttributeOptionMetadata:
+    SchemaSummaryDto:
       type: object
       properties:
-        hint:
-          description: Hint
+        id:
           type: string
-        hintKey:
-          description: Hint key which can be used for translation
-          type: string
-      example:
-        hint: This option provides additional information about the attribute
-        hintKey: attribute.option.hint.key
-    AttributeContext:
-      type: object
-      properties:
-        parameters:
-          additionalProperties:
-            type: object
-          type: object
-    AssociatedAttribute:
-      type: object
-      properties:
-        fieldName:
-          description: Field Name
-          type: string
-          maxLength: 200
-          minLength: 0
         name:
-          description: Attribute Name
           type: string
-          minLength: 1
-        nameKey:
-          description: Attribute Name Key. Used for Translation
-          type: string
-          maxLength: 200
-          minLength: 0
         description:
-          description: Attribute Description
           type: string
-        descriptionKey:
-          description: Attribute Description Key
-          type: string
-          maxLength: 200
-          minLength: 0
-        options:
-          description: Attribute Options
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-          minItems: 1
-      required:
-      - name
-    IntakeQuestion:
-      type: object
-      properties:
         nameKey:
-          description: Key used for intake question name translation
           type: string
-          example: VendorsIntakeQuestionName
-          maxLength: 100
-          minLength: 0
-        name:
-          description: Name of the intake question
+        uri:
           type: string
-          example: What is your preferred vendor category?
-          maxLength: 500
-          minLength: 0
-        descriptionKey:
-          description: Key used for intake question description translation
-          type: string
-          example: VendorsIntakeQuestionDesc
-          maxLength: 100
-          minLength: 0
-        description:
-          description: Description of the intake question
-          type: string
-          example: Please select the category that best describes your vendor
-          maxLength: 500
-          minLength: 0
     AttributeCreateRequest:
       type: object
       properties:
@@ -3386,100 +3531,6 @@ components:
       - description
       - name
       - responseType
-    AttributeValueCreateRequest:
-      type: object
-      properties:
-        value:
-          description: Value of the attribute option
-          type: string
-          example: Option 1
-        hint:
-          description: Hint text for the attribute value
-          type: string
-          example: Select this option if...
-        defaultValue:
-          description: Default value for the attribute
-          type: string
-          example: true
-        colorCode:
-          description: Color code for visual representation
-          type: string
-          example: '#FF5733'
-        selectionValue:
-          description: Selection value for numerical attributes
-          type: string
-          example: 5
-        selectionValueAsDouble:
-          type: number
-          format: double
-      required:
-      - value
-    SchemaSummaryDto:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        nameKey:
-          type: string
-        uri:
-          type: string
-    AttributeDataSourceDto:
-      type: object
-      properties:
-        Attribute Data Source Key:
-          type: string
-          maxLength: 256
-          minLength: 0
-        Attribute Data Source Name:
-          type: string
-          maxLength: 256
-          minLength: 0
-        Attribute Data Source Name Key for translation:
-          type: string
-          maxLength: 128
-          minLength: 0
-      required:
-      - Attribute Data Source Key
-      - Attribute Data Source Name
-      - Attribute Data Source Name Key for translation
-    BulkAttributeStatusUpdateRequest:
-      type: object
-      properties:
-        fieldNames:
-          description: List of attribute field names to be updated.
-          type: array
-          items:
-            type: string
-          example:
-          - status
-          - category
-          - owner
-          minItems: 1
-    AbacBasicAssignmentInfo:
-      type: object
-      properties:
-        assignmentId:
-          description: GUID of the linked assignment
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assignmentName:
-          description: Name of the linked assignment
-          type: string
-          example: Assignment1
-        policyStatus:
-          description: Policy status of the linked assignment
-          type: string
-          example: ACTIVE
-          enum:
-          - INACTIVE
-          - ACTIVE
-          - PROCESSING
-          - FAILED
     AttributeDetailResponse:
       type: object
       properties:
@@ -3631,142 +3682,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AssociatedAttributeResponse'
-    AssociatedAttributeResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-          maxLength: 2000
-          minLength: 0
-        fieldName:
-          type: string
-          maxLength: 100
-          minLength: 0
-        nameKey:
-          type: string
-          maxLength: 400
-          minLength: 0
-        description:
-          type: string
-          maxLength: 2000
-          minLength: 0
-        descriptionKey:
-          type: string
-          maxLength: 400
-          minLength: 0
-        status:
-          type: string
-          maxLength: 50
-          minLength: 0
-        responseType:
-          type: string
-          maxLength: 2147483647
-          minLength: 0
-        responseSubType:
-          type: string
-          enum:
-          - Standard
-          - Formula
-          - Matrix
-          - RollUp
-        formula:
-          type: string
-        schemaName:
-          type: string
-          maxLength: 50
-          minLength: 0
-        hidden:
-          type: boolean
-        readOnly:
-          type: boolean
-        Attribute options:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeValueResponse'
-      required:
-      - hidden
-    AttributeValueResponse:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the attribute value
-          type: string
-          example: 91e37a36-ca61-499b-b3c3-7d556aef5cde
-        value:
-          description: Value of the attribute option
-          type: string
-          example: Option 1
-        valueKey:
-          description: Key used for value translation
-          type: string
-          example: VendorsOption1
-        hint:
-          description: Hint text for the attribute value
-          type: string
-          example: Select this option if...
-        hintKey:
-          description: Key used for hint translation
-          type: string
-          example: VendorsOption1Hint
-        status:
-          description: Status of the attribute value
-          type: string
-          example: enabled
-          enum:
-          - enabled
-          - disabled
-        seeded:
-          description: Flag indicating if the attribute value is seeded (system-provided)
-          type: boolean
-          example: true
-        sequence:
-          description: Sequence number for ordering
-          type: integer
-          format: int32
-          example: 1
-          minimum: 1
-        colorCode:
-          description: Color code for visual representation
-          type: string
-          example: '#FF5733'
-        selectionValue:
-          description: Selection value for numerical attributes
-          type: string
-          example: 5
-    AbacAssignmentAssociation:
-      type: object
-      properties:
-        assignments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AbacBasicAssignmentInfo'
-        objectType:
-          type: string
-    AssociatedAttributeRequest:
-      type: object
-      properties:
-        associatedAttributes:
-          description: Associated attributes
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttribute'
-          minItems: 1
-    KeyNameDto:
-      type: object
-      properties:
-        key:
-          description: The key identifier
-          type: string
-          example: active
-        name:
-          description: The display name associated with the key
-          type: string
-          example: Active
-      required:
-      - key
     AttributeResponse:
       type: object
       properties:
@@ -3906,6 +3821,91 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AssociatedAttributeResponse'
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: Key used for intake question name translation
+          type: string
+          example: VendorsIntakeQuestionName
+          maxLength: 100
+          minLength: 0
+        name:
+          description: Name of the intake question
+          type: string
+          example: What is your preferred vendor category?
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          description: Key used for intake question description translation
+          type: string
+          example: VendorsIntakeQuestionDesc
+          maxLength: 100
+          minLength: 0
+        description:
+          description: Description of the intake question
+          type: string
+          example: Please select the category that best describes your vendor
+          maxLength: 500
+          minLength: 0
+    AbacBasicAssignmentInfo:
+      type: object
+      properties:
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+        policyStatus:
+          description: Policy status of the linked assignment
+          type: string
+          example: ACTIVE
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - PROCESSING
+          - FAILED
+    AttributeValueCreateRequest:
+      type: object
+      properties:
+        value:
+          description: Value of the attribute option
+          type: string
+          example: Option 1
+        hint:
+          description: Hint text for the attribute value
+          type: string
+          example: Select this option if...
+        defaultValue:
+          description: Default value for the attribute
+          type: string
+          example: true
+        colorCode:
+          description: Color code for visual representation
+          type: string
+          example: '#FF5733'
+        selectionValue:
+          description: Selection value for numerical attributes
+          type: string
+          example: 5
+        selectionValueAsDouble:
+          type: number
+          format: double
+      required:
+      - value
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: Associated attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+          minItems: 1
     AttributeResponse_2:
       type: object
       properties:

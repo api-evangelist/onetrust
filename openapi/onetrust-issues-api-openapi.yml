@@ -808,6 +808,71 @@ paths:
         - ISSUE_READ
 components:
   schemas:
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The fields and values used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The key terms for the search criteria.
+          type: string
+      example:
+        fullText: Expired Policies
+        filters:
+        - field: organization
+          value:
+          - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
+          operator: EQUAL_TO
+        - field: owner
+          value:
+          - f4894a72-c2a1-4b1d-85af-176bf16558f8
+          - aca8be12-c379-4577-a9ff-6d31e70299c1
+          operator: EQUAL_TO
+    AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute option.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: The name of the attribute option.
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: The fallback name of the attribute option that is used if a translation is not provided for a language.
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: The sequential order in which the attribute options display.
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: This flag indicates whether the attribute option is enabled.
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: The metadata of the attribute option.
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      required:
+      - option
     AttributeInformation:
       type: object
       properties:
@@ -1009,6 +1074,586 @@ components:
       - enabled
       - fieldName
       - name
+    IssueRelatedTasksDto:
+      type: object
+      properties:
+        issueId:
+          description: The unique identifier of the issue. This value is obtained using the [Get Issue API](/onetrust/reference/findAllIssuesByFilter).
+          type: string
+          format: uuid
+          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+        taskId:
+          description: The unique identifier of the task.
+          type: string
+          format: uuid
+          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
+        taskName:
+          description: The name of the task.
+          type: string
+          example: Review Policy Task
+        deadline:
+          description: The date and time by which the task should be completed.
+          type: string
+          format: date-time
+          example: '2024-12-31T01:00:00'
+        status:
+          description: The status of the task.
+          type: string
+          example: Completed
+        priority:
+          description: The priority level of the task.
+          type: string
+          example: High
+        description:
+          description: The description of the task.
+          type: string
+          example: Review and update the policies.
+        orgGroupId:
+          description: The unique identifier of the organization associated with the task.
+          type: string
+          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
+        assigneeId:
+          description: The unique identifier of the user assigned to the task.
+          type: string
+          format: uuid
+          example: 84819d7e-8e52-4dba-957c-71f0b7c201c6
+        collaboratorIds:
+          description: The unique identifiers of the users added as collaborators on the task.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: '[''84819d7e-8e52-4dba-957c-71f0b7c201c6'']'
+        createdDate:
+          description: The date and time that the task was created.
+          type: string
+          format: date-time
+          example: '2024-12-18T01:00:00'
+        createdBy:
+          description: The unique identifier of the user who created the task.
+          type: string
+          example: 00000000-0000-0000-0000-000000000000
+        modifiedDate:
+          description: The date and time that the task was last modified.
+          type: string
+          format: date-time
+          example: '2024-12-18T01:00:00'
+        modifiedBy:
+          description: The unique identifier of the user who last modified the task.
+          type: string
+          example: 00000000-0000-0000-0000-000000000000
+    AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: The hint of the attribute option.
+          type: string
+        hintKey:
+          description: The fallback hint of the attribute option that is used if a translation is not provided for a language.
+          type: string
+    IssuePatchRequest:
+      type: object
+      properties:
+        fields:
+          description: The issue parameters to update, can contain simple values or complex attribute objects.
+          type: object
+          example:
+            name: Updated Issue Name
+          additionalProperties:
+            type: object
+        empty:
+          description: The flag that indicates whether the request is empty.
+          type: boolean
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the issue was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the issue was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the issue.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the issue.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    IssueUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The name that describes the issue.
+          type: string
+          example: Expired Policies
+          maxLength: 300
+        orgGroupId:
+          description: The unique identifier of the organization associated with the issue.
+          type: string
+          format: uuid
+          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
+        priority:
+          description: The priority level of the issue.
+          type: string
+          example: High
+          enum:
+          - Low
+          - Medium
+          - High
+          - Critical
+        description:
+          description: The description of the issue.
+          type: string
+          example: System would be at risk if we do not renew access policies
+          maxLength: 4000
+        deadline:
+          description: The date by which the issue should be resolved.
+          type: string
+          format: date
+          example: '2021-12-31'
+        ownerIds:
+          description: The unique identifiers of the issue owners who will remediate the issue.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+        approverIds:
+          description: The unique identifier(s) of the users assigned as approvers of the issue.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+        reasonForClosure:
+          description: The reason why the issue was closed.
+          type: string
+          example: Resolved
+        category:
+          description: The category of the issue.
+          type: string
+          example: General
+        note:
+          description: The notes related to resolving the issue.
+          type: string
+          example: Closed the issue as its been resolved
+        actionPlan:
+          description: The remediation plan for the issue.
+          type: string
+          example: "1. Disabled user's unauthorized access.\n 2. Informed relevant teams."
+        attributes:
+          description: The details of the associated attributes.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - name
+      - orgGroupId
+      - priority
+    CreateIssueLinkRequest:
+      type: object
+      properties:
+        linkTypeLabel:
+          description: The label of the relationship.
+          type: string
+          example: is related to
+          enum:
+          - is related to
+        relatedEntityType:
+          description: The entity type of the related record.
+          type: string
+          example: Risk
+          enum:
+          - Control
+          - Evidence
+          - Initiative
+          - Issue
+          - Risk
+          - assessment
+          - assets
+          - entities
+          - policies
+          - procedures
+          - processing-activities
+          - standards
+          - vendors
+        relatedEntityId:
+          description: The unique identifier of the related record.
+          type: string
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+      required:
+      - linkTypeLabel
+      - relatedEntityId
+      - relatedEntityType
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the attribute.
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: The value of the attribute.
+          type: string
+          example: Text Value
+        valueKey:
+          description: The fallback value of the attribute that is used if a translation is not provided for a language.
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: The value used for scoring and reporting.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: The label that displays for the attribute option.
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: The details of the associated attribute options.
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: This flag indicates whether the attribute option is disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    AttributeDomainOptionOverrideInformation:
+      type: object
+      properties:
+        id:
+          description: Override Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attributeDomainOptionId:
+          description: Domain Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
+        targetAttributeId:
+          description: Target Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        targetOptionId:
+          description: Target Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+        optionKey:
+          description: Option name key
+          type: string
+          example: TypeB
+        optionSelectionValue:
+          description: Option selection value
+          type: string
+          example: 10
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        optionSelectionValueAsDouble:
+          type: number
+          format: double
+    EntityDetails:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the related record.
+          type: string
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+        name:
+          description: The name of the related record.
+          type: string
+          example: Test risk
+      required:
+      - id
+      - name
+    IssueCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name that describes the issue.
+          type: string
+          example: Expired Policies
+          maxLength: 300
+        orgGroupId:
+          description: The unique identifier of the organization associated with the issue.
+          type: string
+          format: uuid
+          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
+        priority:
+          description: The priority level of the issue.
+          type: string
+          example: High
+          enum:
+          - Low
+          - Medium
+          - High
+          - Critical
+        description:
+          description: The description of the issue.
+          type: string
+          example: System would be at risk if we do not renew access policies
+          maxLength: 4000
+        deadline:
+          description: The date by which the issue should be resolved.
+          type: string
+          format: date
+          example: '2021-12-31'
+        ownerIds:
+          description: The unique identifiers of the issue owners who will remediate the issue.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+        approverIds:
+          description: The unique identifier(s) of the users assigned as approvers of the issue.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+        reasonForClosure:
+          description: The reason why the issue was closed.
+          type: string
+          example: Resolved
+        category:
+          description: The category of the issue.
+          type: string
+          example: General
+        sourceType:
+          description: The entity type of the source record.
+          type: string
+          example: Risk
+          enum:
+          - Control
+          - Evidence
+          - Initiative
+          - Issue
+          - Risk
+          - assessment
+          - assets
+          - entities
+          - policies
+          - procedures
+          - processing-activities
+          - standards
+          - vendors
+        sourceId:
+          description: The unique identifier of the source record.
+          type: string
+          format: uuid
+          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
+        note:
+          description: The notes related to resolving the issue.
+          type: string
+          example: Closed the issue as its been resolved
+        actionPlan:
+          description: The remediation plan for the issue.
+          type: string
+          example: "1. Disabled user's unauthorized access.\n 2. Informed relevant teams."
+        attributes:
+          description: The details of the associated attributes.
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            priorityLevel:
+            - id: f27598c0-c5b9-466d-8a2e-9afdf61e6fe3
+              value: High
+              valueKey: IM.Issue.Attribute.PriorityLevel.Option.High
+              colorCode: '#cd491d'
+              optionSelectionValue: '20'
+              displayLabel: null
+              disabled: false
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - name
+      - orgGroupId
+      - priority
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: The type of system list used to source the attribute option.
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: The base path of the API URL used to source the attribute option.
+          type: string
+          example: /api/location
+        optionUrl:
+          description: The API URL path used to source the attribute option.
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
+        optionListUrl:
+          description: The API URL to retrieve the complete list of entities for the dropdown.
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
+        viewType:
+          description: The display format of the attribute option.
+          type: string
+        optionType:
+          description: The type of option.
+          type: string
+          example: BusinessLocations
+        permissions:
+          description: The permissions required to access the attribute options.
+          type: array
+          items:
+            type: string
+          example: '[features.core-constructs.view]'
+        applicationUrl:
+          description: The URL of the application where the attribute options are managed.
+          type: string
+          example: /settings/location-management/location/Location
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the issue.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the issue.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the issue.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the issue.
+          type: string
+          example: FL
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the category.
+          type: string
+          format: uuid
+        name:
+          description: The name of the category.
+          type: string
+          example: Financial Category
+        nameKey:
+          description: The fallback name of the category that is used if a translation is not provided for a language.
+          type: string
+          example: IM.FinancialCategoryName
+    PageSearchRequest:
+      type: object
+      properties:
+        criteria:
+          description: The details of the filter criteria.
+          example:
+            fullText: Expired Policies
+            filters:
+            - field: organization
+              value:
+              - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
+              operator: EQUAL_TO
+            - field: owner
+              value:
+              - f4894a72-c2a1-4b1d-85af-176bf16558f8
+              - aca8be12-c379-4577-a9ff-6d31e70299c1
+              operator: EQUAL_TO
+          $ref: '#/components/schemas/AttributeQueryCriteria'
     AssociatedAttributeInformation:
       type: object
       properties:
@@ -1099,338 +1744,6 @@ components:
       - id
       - name
       - responseType
-    AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: The hint of the attribute option.
-          type: string
-        hintKey:
-          description: The fallback hint of the attribute option that is used if a translation is not provided for a language.
-          type: string
-    IssueRelatedTasksDto:
-      type: object
-      properties:
-        issueId:
-          description: The unique identifier of the issue. This value is obtained using the [Get Issue API](/onetrust/reference/findAllIssuesByFilter).
-          type: string
-          format: uuid
-          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
-        taskId:
-          description: The unique identifier of the task.
-          type: string
-          format: uuid
-          example: 2aa71ead-0c9a-416a-8471-bdfb67c8d113
-        taskName:
-          description: The name of the task.
-          type: string
-          example: Review Policy Task
-        deadline:
-          description: The date and time by which the task should be completed.
-          type: string
-          format: date-time
-          example: '2024-12-31T01:00:00'
-        status:
-          description: The status of the task.
-          type: string
-          example: Completed
-        priority:
-          description: The priority level of the task.
-          type: string
-          example: High
-        description:
-          description: The description of the task.
-          type: string
-          example: Review and update the policies.
-        orgGroupId:
-          description: The unique identifier of the organization associated with the task.
-          type: string
-          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
-        assigneeId:
-          description: The unique identifier of the user assigned to the task.
-          type: string
-          format: uuid
-          example: 84819d7e-8e52-4dba-957c-71f0b7c201c6
-        collaboratorIds:
-          description: The unique identifiers of the users added as collaborators on the task.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: '[''84819d7e-8e52-4dba-957c-71f0b7c201c6'']'
-        createdDate:
-          description: The date and time that the task was created.
-          type: string
-          format: date-time
-          example: '2024-12-18T01:00:00'
-        createdBy:
-          description: The unique identifier of the user who created the task.
-          type: string
-          example: 00000000-0000-0000-0000-000000000000
-        modifiedDate:
-          description: The date and time that the task was last modified.
-          type: string
-          format: date-time
-          example: '2024-12-18T01:00:00'
-        modifiedBy:
-          description: The unique identifier of the user who last modified the task.
-          type: string
-          example: 00000000-0000-0000-0000-000000000000
-    IssueUpdateRequest:
-      type: object
-      properties:
-        name:
-          description: The name that describes the issue.
-          type: string
-          example: Expired Policies
-          maxLength: 300
-        orgGroupId:
-          description: The unique identifier of the organization associated with the issue.
-          type: string
-          format: uuid
-          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
-        priority:
-          description: The priority level of the issue.
-          type: string
-          example: High
-          enum:
-          - Low
-          - Medium
-          - High
-          - Critical
-        description:
-          description: The description of the issue.
-          type: string
-          example: System would be at risk if we do not renew access policies
-          maxLength: 4000
-        deadline:
-          description: The date by which the issue should be resolved.
-          type: string
-          format: date
-          example: '2021-12-31'
-        ownerIds:
-          description: The unique identifiers of the issue owners who will remediate the issue.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-        approverIds:
-          description: The unique identifier(s) of the users assigned as approvers of the issue.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-        reasonForClosure:
-          description: The reason why the issue was closed.
-          type: string
-          example: Resolved
-        category:
-          description: The category of the issue.
-          type: string
-          example: General
-        note:
-          description: The notes related to resolving the issue.
-          type: string
-          example: Closed the issue as its been resolved
-        actionPlan:
-          description: The remediation plan for the issue.
-          type: string
-          example: "1. Disabled user's unauthorized access.\n 2. Informed relevant teams."
-        attributes:
-          description: The details of the associated attributes.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - name
-      - orgGroupId
-      - priority
-    IntakeQuestion:
-      type: object
-      properties:
-        nameKey:
-          description: The fallback name of the question that is used if a translation is not provided for a language.
-          type: string
-        name:
-          description: The name of the question.
-          type: string
-        descriptionKey:
-          description: The fallback description of the question that is used if a translation is not provided for a language.
-          type: string
-        description:
-          description: The description of the question.
-          type: string
-    AttributeOptionInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the attribute option.
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        option:
-          description: The name of the attribute option.
-          type: string
-          example: TypeA
-          maxLength: 255
-          minLength: 1
-        optionKey:
-          description: The fallback name of the attribute option that is used if a translation is not provided for a language.
-          type: string
-          example: IM.TypeA
-          maxLength: 255
-        colorCode:
-          description: The color code associated with the attribute option.
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: The sequential order in which the attribute options display.
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: This flag indicates whether the attribute option is enabled.
-          type: boolean
-          example: true
-          default: 'true'
-        metadata:
-          description: The metadata of the attribute option.
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-      required:
-      - option
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the issue was created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the issue was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The creation details of the issue.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The last modified details of the issue.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last modified the issue.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the issue.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the issue.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the issue.
-          type: string
-          example: FL
-    CreateIssueLinkResponse:
-      type: object
-      properties:
-        linkId:
-          description: The unique identifier of the relationship link.
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-        linkType:
-          description: The type of relationship between the related records.
-          type: string
-          example: issue-related
-        entity1:
-          description: The details of the related record.
-          $ref: '#/components/schemas/EntityDetails'
-        entity2:
-          description: The details of the related record.
-          $ref: '#/components/schemas/EntityDetails'
-      required:
-      - entity1
-      - entity2
-      - linkId
-      - linkType
-    IssueLinkResponse:
-      type: object
-      properties:
-        issueId:
-          description: 'The unique identifier of the issue. '
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-        issueName:
-          description: The name that describes the issue.
-          type: string
-          example: Security Issue
-        relatedId:
-          description: The unique identifier of the related record.
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-        relatedName:
-          description: The name of the related record.
-          type: string
-          example: Storage Asset
-        relatedType:
-          description: The entity type of the related record.
-          type: string
-          example: assets
-        relationshipType:
-          description: The type of relationship between the related records.
-          type: string
-          example: issue-related
-        relationshipLabel:
-          description: The label that describes the relationship between the related records.
-          type: string
-          example: is related to
-    PageSearchRequest:
-      type: object
-      properties:
-        criteria:
-          description: The details of the filter criteria.
-          example:
-            fullText: Expired Policies
-            filters:
-            - field: organization
-              value:
-              - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
-              operator: EQUAL_TO
-            - field: owner
-              value:
-              - f4894a72-c2a1-4b1d-85af-176bf16558f8
-              - aca8be12-c379-4577-a9ff-6d31e70299c1
-              operator: EQUAL_TO
-          $ref: '#/components/schemas/AttributeQueryCriteria'
     IssueResponse:
       type: object
       properties:
@@ -1560,11 +1873,11 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
-    AttributeValueInformation:
+    AssociatedAttributeValueInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the attribute.
+          description: The unique identifier of the attribute option.
           type: string
           format: uuid
           example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
@@ -1580,253 +1893,8 @@ components:
           description: The color code associated with the attribute option.
           type: string
           example: red
-        optionSelectionValue:
-          description: The value used for scoring and reporting.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: The label that displays for the attribute option.
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: The details of the associated attribute options.
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
-        disabled:
-          description: This flag indicates whether the attribute option is disabled.
-          type: boolean
-          example: false
-          default: 'false'
       required:
       - value
-    AttributeDomainOptionOverrideInformation:
-      type: object
-      properties:
-        id:
-          description: Override Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attributeDomainOptionId:
-          description: Domain Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        targetAttributeId:
-          description: Target Attribute GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        targetOptionId:
-          description: Target Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440003
-        option:
-          description: Option name
-          type: string
-          example: TypeA
-        optionKey:
-          description: Option name key
-          type: string
-          example: TypeB
-        optionSelectionValue:
-          description: Option selection value
-          type: string
-          example: 10
-        colorCode:
-          description: Color code for the option
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
-          type: boolean
-          example: true
-          default: 'true'
-        optionSelectionValueAsDouble:
-          type: number
-          format: double
-    AbacBasicAssignmentInfo:
-      type: object
-      properties:
-        assignmentId:
-          description: The unique identifier of the linked assignment.
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assignmentName:
-          description: The name of the linked assignment.
-          type: string
-          example: Assignment1
-    IssueCreateRequest:
-      type: object
-      properties:
-        name:
-          description: The name that describes the issue.
-          type: string
-          example: Expired Policies
-          maxLength: 300
-        orgGroupId:
-          description: The unique identifier of the organization associated with the issue.
-          type: string
-          format: uuid
-          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
-        priority:
-          description: The priority level of the issue.
-          type: string
-          example: High
-          enum:
-          - Low
-          - Medium
-          - High
-          - Critical
-        description:
-          description: The description of the issue.
-          type: string
-          example: System would be at risk if we do not renew access policies
-          maxLength: 4000
-        deadline:
-          description: The date by which the issue should be resolved.
-          type: string
-          format: date
-          example: '2021-12-31'
-        ownerIds:
-          description: The unique identifiers of the issue owners who will remediate the issue.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-        approverIds:
-          description: The unique identifier(s) of the users assigned as approvers of the issue.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-        reasonForClosure:
-          description: The reason why the issue was closed.
-          type: string
-          example: Resolved
-        category:
-          description: The category of the issue.
-          type: string
-          example: General
-        sourceType:
-          description: The entity type of the source record.
-          type: string
-          example: Risk
-          enum:
-          - Control
-          - Evidence
-          - Initiative
-          - Issue
-          - Risk
-          - assessment
-          - assets
-          - entities
-          - policies
-          - procedures
-          - processing-activities
-          - standards
-          - vendors
-        sourceId:
-          description: The unique identifier of the source record.
-          type: string
-          format: uuid
-          example: ad49a0f1-3d3d-4352-9daf-71f6ea2b2c86
-        note:
-          description: The notes related to resolving the issue.
-          type: string
-          example: Closed the issue as its been resolved
-        actionPlan:
-          description: The remediation plan for the issue.
-          type: string
-          example: "1. Disabled user's unauthorized access.\n 2. Informed relevant teams."
-        attributes:
-          description: The details of the associated attributes.
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            priorityLevel:
-            - id: f27598c0-c5b9-466d-8a2e-9afdf61e6fe3
-              value: High
-              valueKey: IM.Issue.Attribute.PriorityLevel.Option.High
-              colorCode: '#cd491d'
-              optionSelectionValue: '20'
-              displayLabel: null
-              disabled: false
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - name
-      - orgGroupId
-      - priority
-    CreateIssueLinkRequest:
-      type: object
-      properties:
-        linkTypeLabel:
-          description: The label of the relationship.
-          type: string
-          example: is related to
-          enum:
-          - is related to
-        relatedEntityType:
-          description: The entity type of the related record.
-          type: string
-          example: Risk
-          enum:
-          - Control
-          - Evidence
-          - Initiative
-          - Issue
-          - Risk
-          - assessment
-          - assets
-          - entities
-          - policies
-          - procedures
-          - processing-activities
-          - standards
-          - vendors
-        relatedEntityId:
-          description: The unique identifier of the related record.
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-      required:
-      - linkTypeLabel
-      - relatedEntityId
-      - relatedEntityType
-    EntityDetails:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the related record.
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-        name:
-          description: The name of the related record.
-          type: string
-          example: Test risk
-      required:
-      - id
-      - name
     EntityWorkflowInformation:
       type: object
       properties:
@@ -1874,157 +1942,89 @@ components:
       - stageId
       - stageName
       - type
-    IssuePatchRequest:
+    IntakeQuestion:
       type: object
       properties:
-        fields:
-          description: The issue parameters to update, can contain simple values or complex attribute objects.
-          type: object
-          example:
-            name: Updated Issue Name
-          additionalProperties:
-            type: object
-        empty:
-          description: The flag that indicates whether the request is empty.
-          type: boolean
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field name used to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
-    AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: The type of system list used to source the attribute option.
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: The base path of the API URL used to source the attribute option.
-          type: string
-          example: /api/location
-        optionUrl:
-          description: The API URL path used to source the attribute option.
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
-        optionListUrl:
-          description: The API URL to retrieve the complete list of entities for the dropdown.
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
-        viewType:
-          description: The display format of the attribute option.
-          type: string
-        optionType:
-          description: The type of option.
-          type: string
-          example: BusinessLocations
-        permissions:
-          description: The permissions required to access the attribute options.
-          type: array
-          items:
-            type: string
-          example: '[features.core-constructs.view]'
-        applicationUrl:
-          description: The URL of the application where the attribute options are managed.
-          type: string
-          example: /settings/location-management/location/Location
-    AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the attribute option.
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: The value of the attribute.
-          type: string
-          example: Text Value
-        valueKey:
-          description: The fallback value of the attribute that is used if a translation is not provided for a language.
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: The color code associated with the attribute option.
-          type: string
-          example: red
-      required:
-      - value
-    CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the category.
-          type: string
-          format: uuid
-        name:
-          description: The name of the category.
-          type: string
-          example: Financial Category
         nameKey:
-          description: The fallback name of the category that is used if a translation is not provided for a language.
+          description: The fallback name of the question that is used if a translation is not provided for a language.
           type: string
-          example: IM.FinancialCategoryName
-    AttributeQueryCriteria:
+        name:
+          description: The name of the question.
+          type: string
+        descriptionKey:
+          description: The fallback description of the question that is used if a translation is not provided for a language.
+          type: string
+        description:
+          description: The description of the question.
+          type: string
+    AbacBasicAssignmentInfo:
       type: object
       properties:
-        filters:
-          description: The fields and values used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The key terms for the search criteria.
+        assignmentId:
+          description: The unique identifier of the linked assignment.
           type: string
-      example:
-        fullText: Expired Policies
-        filters:
-        - field: organization
-          value:
-          - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
-          operator: EQUAL_TO
-        - field: owner
-          value:
-          - f4894a72-c2a1-4b1d-85af-176bf16558f8
-          - aca8be12-c379-4577-a9ff-6d31e70299c1
-          operator: EQUAL_TO
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: The name of the linked assignment.
+          type: string
+          example: Assignment1
+    IssueLinkResponse:
+      type: object
+      properties:
+        issueId:
+          description: 'The unique identifier of the issue. '
+          type: string
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+        issueName:
+          description: The name that describes the issue.
+          type: string
+          example: Security Issue
+        relatedId:
+          description: The unique identifier of the related record.
+          type: string
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+        relatedName:
+          description: The name of the related record.
+          type: string
+          example: Storage Asset
+        relatedType:
+          description: The entity type of the related record.
+          type: string
+          example: assets
+        relationshipType:
+          description: The type of relationship between the related records.
+          type: string
+          example: issue-related
+        relationshipLabel:
+          description: The label that describes the relationship between the related records.
+          type: string
+          example: is related to
+    CreateIssueLinkResponse:
+      type: object
+      properties:
+        linkId:
+          description: The unique identifier of the relationship link.
+          type: string
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+        linkType:
+          description: The type of relationship between the related records.
+          type: string
+          example: issue-related
+        entity1:
+          description: The details of the related record.
+          $ref: '#/components/schemas/EntityDetails'
+        entity2:
+          description: The details of the related record.
+          $ref: '#/components/schemas/EntityDetails'
+      required:
+      - entity1
+      - entity2
+      - linkId
+      - linkType
   securitySchemes:
     OAUTH2:
       type: oauth2

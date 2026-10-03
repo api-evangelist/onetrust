@@ -991,34 +991,110 @@ paths:
         - USER
 components:
   schemas:
-    Platform-AccessManagement_SortObject:
+    Platform-AccessManagement_PublicUserGroupResponse:
       type: object
       properties:
-        empty:
-          description: Indicates whether the result set is empty, meaning no records were found.
-          type: boolean
-        sorted:
-          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
-          type: boolean
-        unsorted:
-          description: The indicator of whether the results are unsorted.
-          type: boolean
-    Platform-AccessManagement_PublicAccessLevelRequest:
+        id:
+          description: The internal identifier of the user group.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the user group.
+          type: string
+          example: My User Group
+          maxLength: 100
+        description:
+          description: The description of the user group.
+          type: string
+          example: User group used for grouping users
+          maxLength: 300
+        createdBy:
+          description: The unique identifier of the user who created the user group.
+          type: string
+          format: uuid
+          example: 52b6b7df-9e69-4d6f-9fd3-75c1d4626366
+        createdDate:
+          description: The timestamp of when the user group was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+        lastModifiedBy:
+          description: The unique identifier of the user who last modified the user group.
+          type: string
+          format: uuid
+          example: 52b6b7df-9e69-4d6f-9fd3-75c1d4626366
+        lastModifiedDate:
+          description: The timestamp of when the user group was last modified.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+    Platform-AccessManagement_PublicAccessLevelUpdateDto:
       type: object
       properties:
-        organizationId:
-          description: The unique identifier of the organization.
+        currentOrganizationId:
+          description: The unique identifier of the organization currently associated with the user group.
           type: string
           format: uuid
           example: 323e4567-e89b-12d3-a456-426614174000
-        roleId:
-          description: The unique identifier of the role.
+        currentRoleId:
+          description: The unique identifier of the role currently associated with the user group.
           type: string
           format: uuid
-          example: 223e4567-e89b-12d3-a456-426614174000
+          example: 823e4567-e89b-12d3-a456-426614174000
+        newOrganizationId:
+          description: The unique identifier of the replacement organization.
+          type: string
+          format: uuid
+          example: 923e4567-e89b-12d3-a456-426614174000
+        newRoleId:
+          description: The unique identifier of the replacement role.
+          type: string
+          format: uuid
+          example: 813e4567-e89b-12d3-a456-426614174000
       required:
-      - organizationId
-      - roleId
+      - currentOrganizationId
+      - currentRoleId
+      - newOrganizationId
+      - newRoleId
+    Platform-AccessManagement_PublicMemberResponse:
+      type: object
+      properties:
+        fullName:
+          description: The full name of the member.
+          type: string
+          example: John Doe
+          maxLength: 201
+        email:
+          description: The email address of the member.
+          type: string
+          format: email
+          example: jdoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        memberId:
+          description: The unique identifier of the member.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        enabled:
+          description: The indicator of whether the member is enabled.
+          type: boolean
+          example: true
+        internal:
+          description: The indicator of whether the member is an internal user.
+          type: boolean
+          example: false
+        createdBy:
+          description: The unique identifier of the user who added the member to the group.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The timestamp of when the member was added to the group.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
     Platform-AccessManagement_PublicAddMembersRequest:
       type: object
       properties:
@@ -1048,60 +1124,6 @@ components:
           maxLength: 300
       required:
       - name
-    Platform-AccessManagement_PublicAccessLevelResponse:
-      type: object
-      properties:
-        organizationId:
-          description: The unique identifier of the organization.
-          type: string
-          format: uuid
-          example: 423e4567-e89b-12d3-a456-426614174000
-        organizationName:
-          description: The name of the organization.
-          type: string
-          example: My Org
-          maxLength: 100
-          minLength: 1
-        roleId:
-          description: The unique identifier of the role.
-          type: string
-          format: uuid
-          example: 423e4567-e89b-12d3-a456-426614174001
-        roleName:
-          description: The name of the role.
-          type: string
-          example: Audit Manager
-          maxLength: 256
-          minLength: 1
-    Platform-AccessManagement_PublicCreateGroupRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the user group.
-          type: string
-          example: My User Group
-          maxLength: 100
-          minLength: 1
-        description:
-          description: The description of the user group.
-          type: string
-          example: User group used for grouping users
-          maxLength: 300
-      required:
-      - name
-    Platform-AccessManagement_PublicDeleteMembersRequest:
-      type: object
-      properties:
-        members:
-          description: The list of user identifiers to be removed from the user group.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440000
-            minItems: 1
-          minItems: 1
-          uniqueItems: true
     Platform-AccessManagement_PagePublicUserGroupResponse:
       type: object
       properties:
@@ -1161,6 +1183,88 @@ components:
               nullHandling: NATIVE
               property: name
             unpaged: false
+    Platform-AccessManagement_PublicAccessLevelRequest:
+      type: object
+      properties:
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 323e4567-e89b-12d3-a456-426614174000
+        roleId:
+          description: The unique identifier of the role.
+          type: string
+          format: uuid
+          example: 223e4567-e89b-12d3-a456-426614174000
+      required:
+      - organizationId
+      - roleId
+    Platform-AccessManagement_PublicCreateGroupRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the user group.
+          type: string
+          example: My User Group
+          maxLength: 100
+          minLength: 1
+        description:
+          description: The description of the user group.
+          type: string
+          example: User group used for grouping users
+          maxLength: 300
+      required:
+      - name
+    Platform-AccessManagement_PublicAccessLevelResponse:
+      type: object
+      properties:
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 423e4567-e89b-12d3-a456-426614174000
+        organizationName:
+          description: The name of the organization.
+          type: string
+          example: My Org
+          maxLength: 100
+          minLength: 1
+        roleId:
+          description: The unique identifier of the role.
+          type: string
+          format: uuid
+          example: 423e4567-e89b-12d3-a456-426614174001
+        roleName:
+          description: The name of the role.
+          type: string
+          example: Audit Manager
+          maxLength: 256
+          minLength: 1
+    Platform-AccessManagement_PublicDeleteMembersRequest:
+      type: object
+      properties:
+        members:
+          description: The list of user identifiers to be removed from the user group.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+            minItems: 1
+          minItems: 1
+          uniqueItems: true
+    Platform-AccessManagement_SortObject:
+      type: object
+      properties:
+        empty:
+          description: Indicates whether the result set is empty, meaning no records were found.
+          type: boolean
+        sorted:
+          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          type: boolean
+        unsorted:
+          description: The indicator of whether the results are unsorted.
+          type: boolean
     Platform-AccessManagement_PagePublicMemberResponse:
       type: object
       properties:
@@ -1220,110 +1324,6 @@ components:
               nullHandling: NATIVE
               property: name
             unpaged: false
-    Platform-AccessManagement_PublicAccessLevelUpdateDto:
-      type: object
-      properties:
-        currentOrganizationId:
-          description: The unique identifier of the organization currently associated with the user group.
-          type: string
-          format: uuid
-          example: 323e4567-e89b-12d3-a456-426614174000
-        currentRoleId:
-          description: The unique identifier of the role currently associated with the user group.
-          type: string
-          format: uuid
-          example: 823e4567-e89b-12d3-a456-426614174000
-        newOrganizationId:
-          description: The unique identifier of the replacement organization.
-          type: string
-          format: uuid
-          example: 923e4567-e89b-12d3-a456-426614174000
-        newRoleId:
-          description: The unique identifier of the replacement role.
-          type: string
-          format: uuid
-          example: 813e4567-e89b-12d3-a456-426614174000
-      required:
-      - currentOrganizationId
-      - currentRoleId
-      - newOrganizationId
-      - newRoleId
-    Platform-AccessManagement_PublicUserGroupResponse:
-      type: object
-      properties:
-        id:
-          description: The internal identifier of the user group.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: The name of the user group.
-          type: string
-          example: My User Group
-          maxLength: 100
-        description:
-          description: The description of the user group.
-          type: string
-          example: User group used for grouping users
-          maxLength: 300
-        createdBy:
-          description: The unique identifier of the user who created the user group.
-          type: string
-          format: uuid
-          example: 52b6b7df-9e69-4d6f-9fd3-75c1d4626366
-        createdDate:
-          description: The timestamp of when the user group was created.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
-        lastModifiedBy:
-          description: The unique identifier of the user who last modified the user group.
-          type: string
-          format: uuid
-          example: 52b6b7df-9e69-4d6f-9fd3-75c1d4626366
-        lastModifiedDate:
-          description: The timestamp of when the user group was last modified.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
-    Platform-AccessManagement_PublicMemberResponse:
-      type: object
-      properties:
-        fullName:
-          description: The full name of the member.
-          type: string
-          example: John Doe
-          maxLength: 201
-        email:
-          description: The email address of the member.
-          type: string
-          format: email
-          example: jdoe@onetrust.com
-          maxLength: 255
-          minLength: 5
-        memberId:
-          description: The unique identifier of the member.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        enabled:
-          description: The indicator of whether the member is enabled.
-          type: boolean
-          example: true
-        internal:
-          description: The indicator of whether the member is an internal user.
-          type: boolean
-          example: false
-        createdBy:
-          description: The unique identifier of the user who added the member to the group.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        createdDate:
-          description: The timestamp of when the member was added to the group.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

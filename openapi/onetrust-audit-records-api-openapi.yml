@@ -276,6 +276,66 @@ components:
           type: string
           format: date-time
           example: '2024-09-13T23:02:21.659738Z'
+    Platform-AccessManagement_PageLoginHistoryResponse:
+      type: object
+      properties:
+        content:
+          description: The list of login history records in the current page.
+          items:
+            $ref: '#/components/schemas/Platform-AccessManagement_LoginHistoryResponse'
+          type: array
+        empty:
+          description: Indicates whether the result set is empty.
+          type: boolean
+        first:
+          description: Indicates whether this is the first page.
+          type: boolean
+        last:
+          description: Indicates whether this is the last page.
+          type: boolean
+        number:
+          description: The current page number.
+          type: integer
+          format: int32
+        numberOfElements:
+          description: The number of records in the current page.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The total number of records across all pages.
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          description: The total number of pages available.
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          description: The pagination details for this response.
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort order for the results.
+          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
+        pageable:
+          description: The pagination details for this response.
+          type: object
+          example:
+            offset: 0
+            pageNumber: 0
+            pageSize: 20
+            paged: true
+            sort:
+            - ascending: true
+              descending: false
+              direction: ASC
+              ignoreCase: false
+              nullHandling: NATIVE
+              property: name
+            unpaged: false
     AuditRecords_PageUserActivityResponse:
       type: object
       properties:
@@ -347,6 +407,15 @@ components:
         unsorted:
           description: The indicator of whether the results are unsorted.
           type: boolean
+    AuditRecords_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     Platform-AccessManagement_LoginHistoryResponse:
       type: object
       properties:
@@ -386,75 +455,6 @@ components:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174001
-    AuditRecords_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    Platform-AccessManagement_PageLoginHistoryResponse:
-      type: object
-      properties:
-        content:
-          description: The list of login history records in the current page.
-          items:
-            $ref: '#/components/schemas/Platform-AccessManagement_LoginHistoryResponse'
-          type: array
-        empty:
-          description: Indicates whether the result set is empty.
-          type: boolean
-        first:
-          description: Indicates whether this is the first page.
-          type: boolean
-        last:
-          description: Indicates whether this is the last page.
-          type: boolean
-        number:
-          description: The current page number.
-          type: integer
-          format: int32
-        numberOfElements:
-          description: The number of records in the current page.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The total number of records across all pages.
-          type: integer
-          format: int32
-          example: 20
-        totalElements:
-          description: The total number of pages available.
-          type: integer
-          format: int64
-          example: 1
-        totalPages:
-          description: The pagination details for this response.
-          type: integer
-          format: int32
-          example: 1
-        sort:
-          description: Sort order for the results.
-          $ref: '#/components/schemas/Platform-AccessManagement_SortObject'
-        pageable:
-          description: The pagination details for this response.
-          type: object
-          example:
-            offset: 0
-            pageNumber: 0
-            pageSize: 20
-            paged: true
-            sort:
-            - ascending: true
-              descending: false
-              direction: ASC
-              ignoreCase: false
-              nullHandling: NATIVE
-              property: name
-            unpaged: false
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

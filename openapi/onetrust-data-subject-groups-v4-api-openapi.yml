@@ -526,78 +526,6 @@ components:
           type: string
           format: date-time
           example: '2020-05-30T12:23:42.145Z'
-    ConsentAPI_LinkedIdentityGroupRequestDto:
-      type: object
-      properties:
-        groupName:
-          description: A user-defined name for the group of linked identities.
-          type: string
-          example: LIG_1
-        memberIdentifiers:
-          description: A list of all member identifiers that belong to the group.
-          type: array
-          items:
-            type: string
-          example:
-          - user_12345@ot.com
-          - user_67890@ot.com
-          - user_54321@ot.com
-        primaryIdentifiers:
-          description: A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive.
-          type: array
-          items:
-            type: string
-          example:
-          - user_primary@ot.com
-      required:
-      - groupName
-      - memberIdentifiers
-      - primaryIdentifiers
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentAPI_LinkedIdentityGroupPageItemSliceDto:
-      type: object
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupPageItemDto'
-          type: array
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentAPI_PageableObject'
-        last:
-          description: Flag indicating whether this is the last page or not.
-          type: boolean
-          example: false
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-        requestContinuation:
-          description: The token used to paginate a response if the number of records is more than a page.
-          type: string
-          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
     ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto:
       type: object
       properties:
@@ -659,6 +587,77 @@ components:
           format: int32
         unpaged:
           type: boolean
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentAPI_LinkedIdentityGroupResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the linked identity group
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        createdDate:
+          description: Date and time when the group was created
+          type: string
+          format: date-time
+          example: '2024-11-12T10:15:30'
+        groupName:
+          description: Name of the group
+          type: string
+          example: UserAccountGroup
+        primaryDataSubjects:
+          description: List of primary data subjects in the group
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto'
+        memberDataSubjects:
+          description: List of member data subjects in the group
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto'
+    ConsentAPI_LinkedIdentityGroupPageItemSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupPageItemDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
     ConsentAPI_LinkedIdentityGroupDtoSliceDto:
       type: object
       properties:
@@ -695,32 +694,33 @@ components:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
           example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
-    ConsentAPI_LinkedIdentityGroupResponseDto:
+    ConsentAPI_LinkedIdentityGroupRequestDto:
       type: object
       properties:
-        id:
-          description: Unique identifier of the linked identity group
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
-        createdDate:
-          description: Date and time when the group was created
-          type: string
-          format: date-time
-          example: '2024-11-12T10:15:30'
         groupName:
-          description: Name of the group
+          description: A user-defined name for the group of linked identities.
           type: string
-          example: UserAccountGroup
-        primaryDataSubjects:
-          description: List of primary data subjects in the group
+          example: LIG_1
+        memberIdentifiers:
+          description: A list of all member identifiers that belong to the group.
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto'
-        memberDataSubjects:
-          description: List of member data subjects in the group
+            type: string
+          example:
+          - user_12345@ot.com
+          - user_67890@ot.com
+          - user_54321@ot.com
+        primaryIdentifiers:
+          description: A List of all identifiers that are primary identifiers. The members in this list need not be present in member identifiers list as they are mutually exclusive.
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto'
+            type: string
+          example:
+          - user_primary@ot.com
+      required:
+      - groupName
+      - memberIdentifiers
+      - primaryIdentifiers
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

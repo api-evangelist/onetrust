@@ -366,69 +366,6 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
-      type: object
-      properties:
-        fileName:
-          description: Attached file name
-          type: string
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
-          description: ID of attached file
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        statusId:
-          description: Status ID of the attachment
-          type: integer
-          format: int64
-          example: 10
-        resourcePath:
-          description: Resource path of the attachment
-          type: string
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-      required:
-      - fileId
-      - fileName
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_VerificationMethodV2CommentsDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for this comment.
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        verificationMethodId:
-          description: The identifier of the verification method this comment belongs to.
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        comment:
-          description: The text content of the comment providing details about the verification process.
-          type: string
-          example: Passport verified with photo matching the requester's profile picture.
-        lastModifiedDate:
-          description: The timestamp when this comment was last modified.
-          type: string
-          format: date-time
-          example: '2020-01-08T11:49:48.657Z'
-        type:
-          description: The type of comment, represented as an integer code.
-          type: integer
-          format: int32
-          example: 1
-        attachments:
-          description: A list of attachments associated with this comment, such as scanned documents or screenshots used in the verification process.
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
-      required:
-      - comment
-      - id
-      - verificationMethodId
     PrivacyAutomation-DataSubjectRequestDSRAutomation_VerificationMethodV2DTO:
       type: object
       properties:
@@ -482,6 +419,69 @@ components:
           type: string
           format: date-time
           example: '2020-01-03T12:41:13.820Z'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_VerificationMethodV2CommentsDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for this comment.
+          type: string
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        verificationMethodId:
+          description: The identifier of the verification method this comment belongs to.
+          type: string
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        comment:
+          description: The text content of the comment providing details about the verification process.
+          type: string
+          example: Passport verified with photo matching the requester's profile picture.
+        lastModifiedDate:
+          description: The timestamp when this comment was last modified.
+          type: string
+          format: date-time
+          example: '2020-01-08T11:49:48.657Z'
+        type:
+          description: The type of comment, represented as an integer code.
+          type: integer
+          format: int32
+          example: 1
+        attachments:
+          description: A list of attachments associated with this comment, such as scanned documents or screenshots used in the verification process.
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
+      required:
+      - comment
+      - id
+      - verificationMethodId
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
+      type: object
+      properties:
+        fileName:
+          description: Attached file name
+          type: string
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          description: ID of attached file
+          type: string
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        statusId:
+          description: Status ID of the attachment
+          type: integer
+          format: int64
+          example: 10
+        resourcePath:
+          description: Resource path of the attachment
+          type: string
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+      required:
+      - fileId
+      - fileName
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

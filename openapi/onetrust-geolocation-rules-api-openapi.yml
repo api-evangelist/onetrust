@@ -345,320 +345,6 @@ components:
           example: 1
         default:
           type: boolean
-    GeoRuleGroupAssignRequestDto:
-      type: object
-      properties:
-        domainIds:
-          description: List of domain IDs to assign to the geo rule group.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - f2229953-b4b5-4042-8cb9-b78038cc4c46
-          - a1234567-b4b5-4042-8cb9-b78038cc4c47
-          maxItems: 1000
-          minItems: 0
-        applicationIds:
-          description: List of application IDs to assign to the geo rule group.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - c3456789-b4b5-4042-8cb9-b78038cc4c48
-          - d4567890-b4b5-4042-8cb9-b78038cc4c49
-          maxItems: 1000
-          minItems: 0
-    AttributeDto:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        value:
-          type: object
-        audit:
-          description: Indicates if this attribute should be audited
-          type: boolean
-          example: true
-        translatable:
-          description: Indicates if this attribute is translatable
-          type: boolean
-          example: false
-        type:
-          type: string
-          enum:
-          - STRING
-          - LONG
-          - BOOLEAN
-          - UUID
-        customized:
-          description: Indicates if this attribute is customized
-          type: boolean
-          example: false
-    GeoRuleDto:
-      type: object
-      properties:
-        geoRuleId:
-          description: Unique identifier of the geo rule.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        geoRuleName:
-          description: Name of the geo rule.
-          type: string
-          example: Europe Rule
-          maxLength: 255
-          minLength: 1
-        consentModel:
-          description: Consent model applied to this geo rule.
-          type: string
-          example: Opt-In
-          maxLength: 50
-          minLength: 1
-        default:
-          type: boolean
-        global:
-          type: boolean
-    StateResponseDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the state.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the state.
-          type: string
-          example: California
-        code:
-          description: State code.
-          type: string
-          example: CA
-        countryCode:
-          description: ISO country code of the country this state belongs to.
-          type: string
-          example: US
-    CookieCategoryDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the cookie category.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the cookie category.
-          type: string
-          example: Strictly Necessary
-          maxLength: 255
-          minLength: 1
-        status:
-          description: Consent status for this category.
-          type: string
-          example: Opt-out
-          maxLength: 50
-          minLength: 1
-        customCategoryName:
-          description: Custom category name.
-          type: string
-          example: C0001
-          maxLength: 255
-          minLength: 1
-        customCategoryId:
-          description: Unique identifier of the custom category.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        type:
-          description: Type of the cookie category.
-          type: string
-          example: COOKIE
-          maxLength: 50
-          minLength: 1
-        doNotTrackEnabled:
-          description: Indicates if Do Not Track is enabled for this category.
-          type: boolean
-          example: false
-        globalPrivacyControlEnabled:
-          description: Indicates if Global Privacy Control is enabled for this category.
-          type: boolean
-          example: false
-        cookiepediaCategoryId:
-          description: Cookiepedia category ID.
-          type: integer
-          format: int32
-          example: 123
-        sequence:
-          description: Sequence of the cookie category.
-          type: integer
-          format: int32
-          example: 1
-    CountryResponseDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the country.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the country.
-          type: string
-          example: Germany
-        code:
-          description: ISO country code.
-          type: string
-          example: DE
-        regionCode:
-          description: ISO region code of the region this country belongs to.
-          type: string
-          example: AS
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          description: The starting position for paginated results.
-          type: integer
-          format: int64
-        sort:
-          description: The sorting configuration applied to the results.
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          description: This flag indicates whether pagination is enabled.
-          type: boolean
-        pageSize:
-          description: The number of items displayed per page.
-          type: integer
-          format: int32
-        pageNumber:
-          description: The current page number in the pagination sequence.
-          type: integer
-          format: int32
-        unpaged:
-          description: This flag indicates whether pagination is disabled.
-          type: boolean
-    GeoRuleGroupDetailDto:
-      type: object
-      properties:
-        geoRuleGroupId:
-          description: Unique identifier of the geo rule group.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        geoRuleGroupName:
-          description: Name of the geo rule group.
-          type: string
-          example: My new Geo Rule Group
-          maxLength: 255
-          minLength: 1
-        geoRules:
-          description: List of geo rules within this group.
-          type: array
-          items:
-            $ref: '#/components/schemas/GeoRuleDetailDto'
-          example:
-          - geoRuleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            geoRuleName: Europe Rule
-            isDefault: false
-            isGlobal: false
-            audienceLogicEnabled: true
-            showBanner: true
-            enableGoogleConsent: false
-            consentModel: Opt-In
-            regions:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: Europe
-            countries:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: Germany
-              code: DE
-            states:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: California
-              code: CA
-            cookieCategories:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-              name: Strictly Necessary
-              status: Opt-out
-              customCategoryName: C0001
-              type: COOKIE
-              sequence: 1
-            templateName: Default Template
-            templateId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          maxItems: 1000
-          minItems: 0
-        defaultConsentModel:
-          description: Default consent model for the geo rule group.
-          type: string
-          example: Opt-In
-          maxLength: 50
-          minLength: 1
-        associatedDomains:
-          description: Map of domain IDs to domain URLs associated with this geo rule group.
-          type: object
-          example:
-            f2229953-b4b5-4042-8cb9-b78038cc4c46: example.com
-            a1234567-b4b5-4042-8cb9-b78038cc4c47: test.com
-          additionalProperties:
-            type: string
-        assignedMobileApps:
-          description: Map of mobile app IDs to app names assigned to this geo rule group.
-          type: object
-          example:
-            c3456789-b4b5-4042-8cb9-b78038cc4c48: MyApp
-            d4567890-b4b5-4042-8cb9-b78038cc4c49: TestApp
-          additionalProperties:
-            type: string
-        status:
-          description: Current status of the geo rule group.
-          type: string
-          example: ACTIVATED
-          enum:
-          - DRAFT
-          - ACTIVATED
-          - PUBLISHED
-          - DISABLED
-        orgId:
-          description: Organization ID that owns this geo rule group.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        orgName:
-          description: Organization name
-          type: string
-          example: OneTrust
-          maxLength: 255
-          minLength: 1
-        description:
-          description: Description of the geo rule group.
-          type: string
-          example: Default Geo Rule Group for all regions
-          maxLength: 1000
-          minLength: 1
-        version:
-          description: Version number of the geo rule group.
-          type: integer
-          format: int64
-          example: 1
-        default:
-          type: boolean
-    RegionResponseDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the region.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the region.
-          type: string
-          example: Europe
     GeoRuleDetailDto:
       type: object
       properties:
@@ -776,17 +462,61 @@ components:
           type: boolean
         global:
           type: boolean
-    SortObject:
+    StateResponseDto:
       type: object
       properties:
-        empty:
-          description: This flag indicates whether the result set is empty.
+        id:
+          description: Unique identifier of the state.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the state.
+          type: string
+          example: California
+        code:
+          description: State code.
+          type: string
+          example: CA
+        countryCode:
+          description: ISO country code of the country this state belongs to.
+          type: string
+          example: US
+    RegionResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the region.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the region.
+          type: string
+          example: Europe
+    GeoRuleDto:
+      type: object
+      properties:
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        consentModel:
+          description: Consent model applied to this geo rule.
+          type: string
+          example: Opt-In
+          maxLength: 50
+          minLength: 1
+        default:
           type: boolean
-        sorted:
-          description: This flag indicates whether the results are sorted.
-          type: boolean
-        unsorted:
-          description: This flag indicates whether the results are in unsorted order.
+        global:
           type: boolean
     PageGeoRuleGroupDto:
       type: object
@@ -820,6 +550,276 @@ components:
           format: int32
         empty:
           type: boolean
+    GeoRuleGroupDetailDto:
+      type: object
+      properties:
+        geoRuleGroupId:
+          description: Unique identifier of the geo rule group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleGroupName:
+          description: Name of the geo rule group.
+          type: string
+          example: My new Geo Rule Group
+          maxLength: 255
+          minLength: 1
+        geoRules:
+          description: List of geo rules within this group.
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoRuleDetailDto'
+          example:
+          - geoRuleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            geoRuleName: Europe Rule
+            isDefault: false
+            isGlobal: false
+            audienceLogicEnabled: true
+            showBanner: true
+            enableGoogleConsent: false
+            consentModel: Opt-In
+            regions:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: Europe
+            countries:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: Germany
+              code: DE
+            states:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: California
+              code: CA
+            cookieCategories:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+              name: Strictly Necessary
+              status: Opt-out
+              customCategoryName: C0001
+              type: COOKIE
+              sequence: 1
+            templateName: Default Template
+            templateId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          maxItems: 1000
+          minItems: 0
+        defaultConsentModel:
+          description: Default consent model for the geo rule group.
+          type: string
+          example: Opt-In
+          maxLength: 50
+          minLength: 1
+        associatedDomains:
+          description: Map of domain IDs to domain URLs associated with this geo rule group.
+          type: object
+          example:
+            f2229953-b4b5-4042-8cb9-b78038cc4c46: example.com
+            a1234567-b4b5-4042-8cb9-b78038cc4c47: test.com
+          additionalProperties:
+            type: string
+        assignedMobileApps:
+          description: Map of mobile app IDs to app names assigned to this geo rule group.
+          type: object
+          example:
+            c3456789-b4b5-4042-8cb9-b78038cc4c48: MyApp
+            d4567890-b4b5-4042-8cb9-b78038cc4c49: TestApp
+          additionalProperties:
+            type: string
+        status:
+          description: Current status of the geo rule group.
+          type: string
+          example: ACTIVATED
+          enum:
+          - DRAFT
+          - ACTIVATED
+          - PUBLISHED
+          - DISABLED
+        orgId:
+          description: Organization ID that owns this geo rule group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        orgName:
+          description: Organization name
+          type: string
+          example: OneTrust
+          maxLength: 255
+          minLength: 1
+        description:
+          description: Description of the geo rule group.
+          type: string
+          example: Default Geo Rule Group for all regions
+          maxLength: 1000
+          minLength: 1
+        version:
+          description: Version number of the geo rule group.
+          type: integer
+          format: int64
+          example: 1
+        default:
+          type: boolean
+    CountryResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the country.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the country.
+          type: string
+          example: Germany
+        code:
+          description: ISO country code.
+          type: string
+          example: DE
+        regionCode:
+          description: ISO region code of the region this country belongs to.
+          type: string
+          example: AS
+    GeoRuleGroupAssignRequestDto:
+      type: object
+      properties:
+        domainIds:
+          description: List of domain IDs to assign to the geo rule group.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - f2229953-b4b5-4042-8cb9-b78038cc4c46
+          - a1234567-b4b5-4042-8cb9-b78038cc4c47
+          maxItems: 1000
+          minItems: 0
+        applicationIds:
+          description: List of application IDs to assign to the geo rule group.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - c3456789-b4b5-4042-8cb9-b78038cc4c48
+          - d4567890-b4b5-4042-8cb9-b78038cc4c49
+          maxItems: 1000
+          minItems: 0
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          description: The starting position for paginated results.
+          type: integer
+          format: int64
+        sort:
+          description: The sorting configuration applied to the results.
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          description: This flag indicates whether pagination is enabled.
+          type: boolean
+        pageSize:
+          description: The number of items displayed per page.
+          type: integer
+          format: int32
+        pageNumber:
+          description: The current page number in the pagination sequence.
+          type: integer
+          format: int32
+        unpaged:
+          description: This flag indicates whether pagination is disabled.
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          description: This flag indicates whether the result set is empty.
+          type: boolean
+        sorted:
+          description: This flag indicates whether the results are sorted.
+          type: boolean
+        unsorted:
+          description: This flag indicates whether the results are in unsorted order.
+          type: boolean
+    AttributeDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        value:
+          type: object
+        audit:
+          description: Indicates if this attribute should be audited
+          type: boolean
+          example: true
+        translatable:
+          description: Indicates if this attribute is translatable
+          type: boolean
+          example: false
+        type:
+          type: string
+          enum:
+          - STRING
+          - LONG
+          - BOOLEAN
+          - UUID
+        customized:
+          description: Indicates if this attribute is customized
+          type: boolean
+          example: false
+    CookieCategoryDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the cookie category.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the cookie category.
+          type: string
+          example: Strictly Necessary
+          maxLength: 255
+          minLength: 1
+        status:
+          description: Consent status for this category.
+          type: string
+          example: Opt-out
+          maxLength: 50
+          minLength: 1
+        customCategoryName:
+          description: Custom category name.
+          type: string
+          example: C0001
+          maxLength: 255
+          minLength: 1
+        customCategoryId:
+          description: Unique identifier of the custom category.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        type:
+          description: Type of the cookie category.
+          type: string
+          example: COOKIE
+          maxLength: 50
+          minLength: 1
+        doNotTrackEnabled:
+          description: Indicates if Do Not Track is enabled for this category.
+          type: boolean
+          example: false
+        globalPrivacyControlEnabled:
+          description: Indicates if Global Privacy Control is enabled for this category.
+          type: boolean
+          example: false
+        cookiepediaCategoryId:
+          description: Cookiepedia category ID.
+          type: integer
+          format: int32
+          example: 123
+        sequence:
+          description: Sequence of the cookie category.
+          type: integer
+          format: int32
+          example: 1
   securitySchemes:
     OAUTH2:
       type: oauth2

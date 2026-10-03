@@ -433,60 +433,6 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
-    DataUseGovernance-DataDiscovery_PageWrapperScanProfileDto:
-      type: object
-      properties:
-        content:
-          description: The content of this page.
-          example:
-          - id: 1
-            name: Item
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScanProfileV2Dto'
-          type: array
-        number:
-          description: Current page number.
-          type: integer
-          format: int32
-          example: 0
-        size:
-          description: The size of the page (number of elements per page).
-          type: integer
-          format: int32
-          example: 20
-        numberOfElements:
-          description: The number of elements on the current page.
-          type: integer
-          format: int32
-          example: 15
-        totalElements:
-          description: The total number of elements across all pages.
-          type: integer
-          format: int32
-          example: 150
-        totalPages:
-          description: The total number of pages.
-          type: integer
-          format: int32
-          example: 8
-        first:
-          description: Indicates if this is the first page.
-          type: boolean
-          example: true
-        last:
-          description: Indicates if this is the last page.
-          type: boolean
-          example: false
-        empty:
-          description: Indicates if the page is empty.
-          type: boolean
-          example: false
-        sort:
-          description: Sorting information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
-        pageable:
-          description: Pagination information for the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
     DataUseGovernance-DataDiscovery_ScanProfileV2Dto:
       type: object
       properties:
@@ -569,13 +515,6 @@ components:
       - scanType
       - systemName
       - systemType
-    DataUseGovernance-DataDiscovery_Sort:
-      type: object
-      properties:
-        sort:
-          type: array
-          items:
-            type: string
     DataUseGovernance-DataDiscovery_ScanProfileRequestV2Dto:
       type: object
       properties:
@@ -641,6 +580,67 @@ components:
       - scanType
       - systemName
       - systemType
+    DataUseGovernance-DataDiscovery_PageWrapperScanProfileDto:
+      type: object
+      properties:
+        content:
+          description: The content of this page.
+          example:
+          - id: 1
+            name: Item
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_ScanProfileV2Dto'
+          type: array
+        number:
+          description: Current page number.
+          type: integer
+          format: int32
+          example: 0
+        size:
+          description: The size of the page (number of elements per page).
+          type: integer
+          format: int32
+          example: 20
+        numberOfElements:
+          description: The number of elements on the current page.
+          type: integer
+          format: int32
+          example: 15
+        totalElements:
+          description: The total number of elements across all pages.
+          type: integer
+          format: int32
+          example: 150
+        totalPages:
+          description: The total number of pages.
+          type: integer
+          format: int32
+          example: 8
+        first:
+          description: Indicates if this is the first page.
+          type: boolean
+          example: true
+        last:
+          description: Indicates if this is the last page.
+          type: boolean
+          example: false
+        empty:
+          description: Indicates if the page is empty.
+          type: boolean
+          example: false
+        sort:
+          description: Sorting information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Sort'
+        pageable:
+          description: Pagination information for the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
+    DataUseGovernance-DataDiscovery_Sort:
+      type: object
+      properties:
+        sort:
+          type: array
+          items:
+            type: string
     DataUseGovernance-DataDiscovery_Pageable:
       type: object
       properties:

@@ -273,27 +273,6 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentAPI_PageableObjectWithContinuationToken:
-      type: object
-      properties:
-        paged:
-          type: boolean
-        pageNumber:
-          type: integer
-          format: int32
-        offset:
-          type: integer
-          format: int64
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        requestContinuation:
-          description: The token used to paginate a response if the number of records is more than a page.
-          type: string
     ConsentAPI_PurposeInformationDtoV2:
       type: object
       properties:
@@ -391,42 +370,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_DsAttachments'
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentAPI_TopicLanguageDtoV2:
-      type: object
-      properties:
-        name:
-          description: The Topic name
-          type: string
-        language:
-          description: The Topic content language code
-          type: string
-        default:
-          description: Whether this language is the default one for the Topic
-          type: boolean
-    ConsentAPI_CustomPreferenceOptionDtoV2:
-      type: object
-      properties:
-        id:
-          type: string
-        transactionType:
-          type: string
-        label:
-          description: The Option label
-          type: string
-        order:
-          type: integer
-          format: int32
-        isDefault:
-          type: boolean
     ConsentAPI_ReceiptInformationDetailDto:
       type: object
       properties:
@@ -552,6 +495,132 @@ components:
         source:
           description: The source details of the consent interaction.
           $ref: '#/components/schemas/ConsentAPI_Source'
+    ConsentAPI_ConsentString:
+      type: object
+      properties:
+        type:
+          description: The type of the consent string.
+          type: string
+        content:
+          description: The content of the consent string.
+          type: string
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentAPI_DsGeolocation:
+      type: object
+      properties:
+        country:
+          description: The country of the captured consent.
+          type: string
+          example: US
+        state:
+          description: The abbreviated state of the captured consent.
+          type: string
+          example: CA
+        stateName:
+          description: The state of the captured consent.
+          type: string
+          example: California
+        purposeIds:
+          description: A list of unique identifiers of the Purpose for which Geolocation parameters are sent.
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
+    ConsentAPI_CustomPreferenceOptionDtoV2:
+      type: object
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          description: The Option label
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentAPI_ContinuationToken:
+      type: object
+      properties:
+        requestContinuation:
+          description: Request continuation token used to paginate. If the number of records in the response is more than a page, it returns a `requestContinuation` token in the response. This `requestContinuation` token should be passed to the next request's body to paginate.
+          type: string
+          example:
+            compositeToken:
+              token: +RID:iNFkAI-ei-4uLDsAAAAAAA==#RT:2#SRC:1#TRC:40#RTD:0Idx9i7ua9Rq4VL3LfZOBTMxMzMuMjMuMjpVMjY7NTo7MjIvMzE5Nzo1AA==#ISV:2#IEO:65567#QCF:8#FPC:AgHq7OoGADE1APzASusCAABA7GoAIVt//sFH5/+hQP9/EUD/f/JAn8/9/xFAv/9DQP/7v//f/yJA//f/+2FC//sxQf9/IUD/O1FA/38RQP7/IUD7/5VA/7/t/93u93+2/xFA/58hQH/6MUB/+xhAv2//99v//f+//ev//+EfAA==
+              range:
+                min: ''
+                max: FF
+            orderByItems:
+            - item: '2022-12-19T15:49:11.236953'
+            rid: iNFkAI-ei-4FKjsAAAAAAA==
+            inclusive: true
+        nextMarker:
+          description: Request continuation token used to paginate over historical receipts
+          type: string
+          example: TGp8AqS3Gfnzwc5srJKeaA==
+    ConsentAPI_PageableObjectWithContinuationToken:
+      type: object
+      properties:
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int64
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+    ConsentAPI_DownStreamRuleAction:
+      type: object
+      properties:
+        actionType:
+          type: string
+          enum:
+          - SEND_EMAIL
+          - DATA_SUBJECT_UPDATE
+          - DATA_SUBJECT_PROFILE_UPDATE
+          - PUBLISH_INTEGRATION_EVENT
+        ruleAction:
+          type: string
+        ruleActionParameter:
+          type: string
+    ConsentAPI_Source:
+      type: object
+      properties:
+        type:
+          description: The type of source that captured the consent interaction.
+          type: string
+        content:
+          description: The URL or identifier of the source where the consent interaction took place.
+          type: string
+        purposeIds:
+          description: The unique identifiers of the purposes that the data subject must consent to in order for the source to be captured, such as the purpose ID for Advanced analytics or similar.
+          type: array
+          items:
+            type: string
+            format: uuid
+          uniqueItems: true
     ConsentAPI_ReceiptInformationDetailSliceDto:
       type: object
       properties:
@@ -584,21 +653,26 @@ components:
           format: int32
         empty:
           type: boolean
-    ConsentAPI_ConsentString:
+    ConsentAPI_CustomPreferenceLanguageDtoV2:
       type: object
       properties:
-        type:
-          description: The type of the consent string.
+        name:
+          description: The name identifying the Custom Preference
           type: string
-        content:
-          description: The content of the consent string.
+        description:
+          description: Whether this language is the default one for the Custom Preference
           type: string
-    ConsentAPI_DsAttachments:
-      type: object
-      properties:
-        id:
+        language:
+          description: The Custom Preference content language code
           type: string
-          format: uuid
+        default:
+          description: Whether this language is the default one for the Custom Preference
+          type: boolean
+        options:
+          description: Options associated with a Custom Preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceOptionDtoV2'
     ConsentAPI_PurposeCustomPreferenceDtoV2:
       type: object
       properties:
@@ -641,6 +715,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_DownStreamRuleAction'
+    ConsentAPI_PurposeTopicDtoV2:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the purpose and topic relation.
+          type: string
+          format: uuid
+        transactionType:
+          type: string
+        name:
+          description: The name of the purpose topic.
+          type: string
+        integrationKey:
+          description: The topic integration key (combination of purpose and topic names).
+          type: string
+        languages:
+          description: A list of languages for a topic.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_TopicLanguageDtoV2'
     ConsentAPI_RuleEvaluationResult:
       type: object
       properties:
@@ -674,63 +768,6 @@ components:
           type: object
           additionalProperties:
             type: object
-    ConsentAPI_DsPurposeScope:
-      type: object
-      properties:
-        key:
-          type: string
-        value:
-          type: string
-    ConsentAPI_PurposeTopicDtoV2:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the purpose and topic relation.
-          type: string
-          format: uuid
-        transactionType:
-          type: string
-        name:
-          description: The name of the purpose topic.
-          type: string
-        integrationKey:
-          description: The topic integration key (combination of purpose and topic names).
-          type: string
-        languages:
-          description: A list of languages for a topic.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_TopicLanguageDtoV2'
-    ConsentAPI_Source:
-      type: object
-      properties:
-        type:
-          description: The type of source that captured the consent interaction.
-          type: string
-        content:
-          description: The URL or identifier of the source where the consent interaction took place.
-          type: string
-        purposeIds:
-          description: The unique identifiers of the purposes that the data subject must consent to in order for the source to be captured, such as the purpose ID for Advanced analytics or similar.
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-    ConsentAPI_DownStreamRuleAction:
-      type: object
-      properties:
-        actionType:
-          type: string
-          enum:
-          - SEND_EMAIL
-          - DATA_SUBJECT_UPDATE
-          - DATA_SUBJECT_PROFILE_UPDATE
-          - PUBLISH_INTEGRATION_EVENT
-        ruleAction:
-          type: string
-        ruleActionParameter:
-          type: string
     ConsentAPI_PurposeNoteDtoV2:
       type: object
       properties:
@@ -752,68 +789,31 @@ components:
         isValidNote:
           description: The flag that indicates if the purpose note is valid.
           type: boolean
-    ConsentAPI_DsGeolocation:
+    ConsentAPI_DsAttachments:
       type: object
       properties:
-        country:
-          description: The country of the captured consent.
+        id:
           type: string
-          example: US
-        state:
-          description: The abbreviated state of the captured consent.
-          type: string
-          example: CA
-        stateName:
-          description: The state of the captured consent.
-          type: string
-          example: California
-        purposeIds:
-          description: A list of unique identifiers of the Purpose for which Geolocation parameters are sent.
-          type: array
-          items:
-            type: string
-            format: uuid
-          uniqueItems: true
-    ConsentAPI_ContinuationToken:
+          format: uuid
+    ConsentAPI_DsPurposeScope:
       type: object
       properties:
-        requestContinuation:
-          description: Request continuation token used to paginate. If the number of records in the response is more than a page, it returns a `requestContinuation` token in the response. This `requestContinuation` token should be passed to the next request's body to paginate.
+        key:
           type: string
-          example:
-            compositeToken:
-              token: +RID:iNFkAI-ei-4uLDsAAAAAAA==#RT:2#SRC:1#TRC:40#RTD:0Idx9i7ua9Rq4VL3LfZOBTMxMzMuMjMuMjpVMjY7NTo7MjIvMzE5Nzo1AA==#ISV:2#IEO:65567#QCF:8#FPC:AgHq7OoGADE1APzASusCAABA7GoAIVt//sFH5/+hQP9/EUD/f/JAn8/9/xFAv/9DQP/7v//f/yJA//f/+2FC//sxQf9/IUD/O1FA/38RQP7/IUD7/5VA/7/t/93u93+2/xFA/58hQH/6MUB/+xhAv2//99v//f+//ev//+EfAA==
-              range:
-                min: ''
-                max: FF
-            orderByItems:
-            - item: '2022-12-19T15:49:11.236953'
-            rid: iNFkAI-ei-4FKjsAAAAAAA==
-            inclusive: true
-        nextMarker:
-          description: Request continuation token used to paginate over historical receipts
+        value:
           type: string
-          example: TGp8AqS3Gfnzwc5srJKeaA==
-    ConsentAPI_CustomPreferenceLanguageDtoV2:
+    ConsentAPI_TopicLanguageDtoV2:
       type: object
       properties:
         name:
-          description: The name identifying the Custom Preference
-          type: string
-        description:
-          description: Whether this language is the default one for the Custom Preference
+          description: The Topic name
           type: string
         language:
-          description: The Custom Preference content language code
+          description: The Topic content language code
           type: string
         default:
-          description: Whether this language is the default one for the Custom Preference
+          description: Whether this language is the default one for the Topic
           type: boolean
-        options:
-          description: Options associated with a Custom Preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_CustomPreferenceOptionDtoV2'
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

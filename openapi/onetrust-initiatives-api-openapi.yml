@@ -298,47 +298,229 @@ paths:
         - COMPLIANCE_AUTOMATION_WRITE
 components:
   schemas:
-    AttributePredicate:
+    InventoryDetailIdentifier:
       type: object
       properties:
-        field:
-          description: The field by which to filter results.
+        id:
+          description: The unique identifier of the inventory record associated with the iniatiative.
           type: string
-        operator:
-          description: The relationship that must be met between the field and the value.
+          format: uuid
+          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
+        name:
+          description: The name of the inventory record associated with the initiative.
           type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: The value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
+          example: Azure SQL Server
+        organization:
+          description: The details of the organization responsible for the inventory record.
+          $ref: '#/components/schemas/OrgGroupBasicDetailResponse'
+        inventoryType:
+          description: The type of inventory record associated with the initiative.
+          type: string
+          example: Assets
+        number:
+          description: The sequential number of the inventory record associated with the initiative.
+          type: integer
+          format: int64
+          example: 1
+    OrgGroupBasicDetailResponse:
+      type: object
+      properties:
+        guid:
+          description: The unique identifier of the organization responsible for the inventory record.
+          type: string
+          format: uuid
+        name:
+          description: The name of the organization responsible for the inventory record.
+          type: string
+        languageId:
+          description: The ID of the default language for the organization responsible for the inventory record.
+          type: integer
+          format: int64
+    AttributeQueryCriteria:
+      type: object
+      properties:
+        filters:
+          description: The criteria used to filter results.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributePredicate'
+          uniqueItems: true
+        fullText:
+          description: The search terms by which to filter results. A maximum of 500 characters is allowed.
+          type: string
+          maxLength: 500
+          minLength: 0
+      example:
+        fullText: Expired Policies
+        filters:
+        - field: organization
+          value:
+          - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
+          operator: EQUAL_TO
+        - field: owner
+          value:
+          - f4894a72-c2a1-4b1d-85af-176bf16558f8
+          - aca8be12-c379-4577-a9ff-6d31e70299c1
+          operator: EQUAL_TO
+    InitiativeUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the initiative.
+          type: string
+          example: NIST 800-53 Compliance Initiative
+        observationStartDT:
+          description: The start date and time for which the initiative will be observed.
+          type: string
+          format: date-time
+          example: '2024-12-31T23:59:59Z'
+        observationEndDT:
+          description: The end date and time for which the initiative will be observed.
+          type: string
+          format: date-time
+          example: '2025-12-31T23:59:59Z'
+        ownerIds:
+          description: The list of unique identifiers of the users responsible for the initiative.
+          type: array
+          items:
+            type: string
             format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: The end value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
+            description: List of owner IDs
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the initiative.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the initiative.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the initiative.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the initiative.
+          type: string
+          example: FL
+    PageSearchRequest:
+      type: object
+      properties:
+        criteria:
+          description: The details of the filter criteria.
+          example:
+            fullText: Expired Policies
+            filters:
+            - field: organization
+              value:
+              - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
+              operator: EQUAL_TO
+            - field: owner
+              value:
+              - f4894a72-c2a1-4b1d-85af-176bf16558f8
+              - aca8be12-c379-4577-a9ff-6d31e70299c1
+              operator: EQUAL_TO
+          $ref: '#/components/schemas/AttributeQueryCriteria'
+    UserInfo:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user responsible for the initiative.
+          type: string
+          format: uuid
+          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
+        active:
+          description: This flag indicates whether the user responsible for the initiative is active.
+          type: boolean
+          example: true
+        name:
+          description: The name of the user responsible for the initiative.
+          type: string
+          example: John Smith
+    LegislationInformation:
+      type: object
+      properties:
+        name:
+          description: The name of the standard or framework.
+          type: string
+          example: GDPR Privacy (2018)
+        frameworkId:
+          description: The unique identifier of the standard or framework.
+          type: string
+          format: uuid
+          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
+        otFrameworkIdentifier:
+          description: The OneTrust system identifier of the standard or framework.
+          type: string
+          format: uuid
+          example: 78a6237c-f99e-4d18-9dcb-fea88a72f0fd
+    EntityWorkflowInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the workflow.
+          type: string
+          format: uuid
+          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Vendor On-Boarding Workflow
+        type:
+          description: The type of workflow.
+          type: string
+          example: Vendor
+        workflowMode:
+          description: The mode in which the workflow was created.
+          type: string
+          example: BASIC
+          enum:
+          - ADVANCED, BASIC
+        stageId:
+          description: The unique identifier of the workflow stage.
+          type: string
+          format: uuid
+          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
+        stageName:
+          description: The name of the workflow stage.
+          type: string
+          example: Start On-Boarding
       required:
-      - field
+      - id
+      - name
+      - stageId
+      - stageName
+      - type
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the initiative was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the initiative was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The details of the user who created the initiative.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The details of the user who last modified the initiative.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
     InitiativeResponse:
       type: object
       properties:
@@ -418,229 +600,47 @@ components:
         auditFields:
           description: The activity details of when the initiative was created and last updated.
           $ref: '#/components/schemas/EntityRecordAuditInformation'
-    LegislationInformation:
+    AttributePredicate:
       type: object
       properties:
-        name:
-          description: The name of the standard or framework.
+        field:
+          description: The field by which to filter results.
           type: string
-          example: GDPR Privacy (2018)
-        frameworkId:
-          description: The unique identifier of the standard or framework.
+        operator:
+          description: The relationship that must be met between the field and the value.
           type: string
-          format: uuid
-          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
-        otFrameworkIdentifier:
-          description: The OneTrust system identifier of the standard or framework.
-          type: string
-          format: uuid
-          example: 78a6237c-f99e-4d18-9dcb-fea88a72f0fd
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the initiative was created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the initiative was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The details of the user who created the initiative.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The details of the user who last modified the initiative.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last modified the initiative.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the initiative.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the initiative.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the initiative.
-          type: string
-          example: FL
-    InventoryDetailIdentifier:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the inventory record associated with the iniatiative.
-          type: string
-          format: uuid
-          example: ab129a431-3d3d-4352-9daf-71f6ea2b3d70
-        name:
-          description: The name of the inventory record associated with the initiative.
-          type: string
-          example: Azure SQL Server
-        organization:
-          description: The details of the organization responsible for the inventory record.
-          $ref: '#/components/schemas/OrgGroupBasicDetailResponse'
-        inventoryType:
-          description: The type of inventory record associated with the initiative.
-          type: string
-          example: Assets
-        number:
-          description: The sequential number of the inventory record associated with the initiative.
-          type: integer
-          format: int64
-          example: 1
-    InitiativeUpdateRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the initiative.
-          type: string
-          example: NIST 800-53 Compliance Initiative
-        observationStartDT:
-          description: The start date and time for which the initiative will be observed.
-          type: string
-          format: date-time
-          example: '2024-12-31T23:59:59Z'
-        observationEndDT:
-          description: The end date and time for which the initiative will be observed.
-          type: string
-          format: date-time
-          example: '2025-12-31T23:59:59Z'
-        ownerIds:
-          description: The list of unique identifiers of the users responsible for the initiative.
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: List of owner IDs
-    PageSearchRequest:
-      type: object
-      properties:
-        criteria:
-          description: The details of the filter criteria.
-          example:
-            fullText: Expired Policies
-            filters:
-            - field: organization
-              value:
-              - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
-              operator: EQUAL_TO
-            - field: owner
-              value:
-              - f4894a72-c2a1-4b1d-85af-176bf16558f8
-              - aca8be12-c379-4577-a9ff-6d31e70299c1
-              operator: EQUAL_TO
-          $ref: '#/components/schemas/AttributeQueryCriteria'
-    OrgGroupBasicDetailResponse:
-      type: object
-      properties:
-        guid:
-          description: The unique identifier of the organization responsible for the inventory record.
-          type: string
-          format: uuid
-        name:
-          description: The name of the organization responsible for the inventory record.
-          type: string
-        languageId:
-          description: The ID of the default language for the organization responsible for the inventory record.
-          type: integer
-          format: int64
-    AttributeQueryCriteria:
-      type: object
-      properties:
-        filters:
-          description: The criteria used to filter results.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributePredicate'
-          uniqueItems: true
-        fullText:
-          description: The search terms by which to filter results. A maximum of 500 characters is allowed.
-          type: string
-          maxLength: 500
-          minLength: 0
-      example:
-        fullText: Expired Policies
-        filters:
-        - field: organization
-          value:
-          - ff9e09ee-3a89-4af7-acc0-ccc45ba34970
-          operator: EQUAL_TO
-        - field: owner
-          value:
-          - f4894a72-c2a1-4b1d-85af-176bf16558f8
-          - aca8be12-c379-4577-a9ff-6d31e70299c1
-          operator: EQUAL_TO
-    EntityWorkflowInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the workflow.
-          type: string
-          format: uuid
-          example: b271c01a-89a9-41b1-8185-0a3e2bfdad84
-        name:
-          description: The name of the workflow.
-          type: string
-          example: Vendor On-Boarding Workflow
-        type:
-          description: The type of workflow.
-          type: string
-          example: Vendor
-        workflowMode:
-          description: The mode in which the workflow was created.
-          type: string
-          example: BASIC
           enum:
-          - ADVANCED, BASIC
-        stageId:
-          description: The unique identifier of the workflow stage.
-          type: string
-          format: uuid
-          example: 9fc111cb-c379-4f08-8aff-5be954c1a6e6
-        stageName:
-          description: The name of the workflow stage.
-          type: string
-          example: Start On-Boarding
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
       required:
-      - id
-      - name
-      - stageId
-      - stageName
-      - type
-    UserInfo:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user responsible for the initiative.
-          type: string
-          format: uuid
-          example: cb49a431-3d3d-4352-9daf-71f6ea2b3d89
-        active:
-          description: This flag indicates whether the user responsible for the initiative is active.
-          type: boolean
-          example: true
-        name:
-          description: The name of the user responsible for the initiative.
-          type: string
-          example: John Smith
+      - field
   securitySchemes:
     OAUTH2:
       type: oauth2

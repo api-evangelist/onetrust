@@ -294,40 +294,7 @@ components:
           description: Default Language of the Notice Version
           type: boolean
           example: true
-    PrivacyNoticeVersionDtoV2:
-      type: object
-      properties:
-        id:
-          description: Unique Identifier identifying a Privacy Notice Version
-          type: string
-          format: uuid
-          example: 625ba071-61b0-485f-81a0-a2245777b400
-        name:
-          description: Name of the Privacy Notice
-          type: string
-          example: California Privacy Policy
-          maxLength: 200
-          minLength: 1
-        publishedDate:
-          description: The date Privacy Notice version was published on
-          type: string
-          format: date-time
-          example: '2020-05-14T00:00:48.62'
-        status:
-          description: The Status of Privacy Notice Version
-          type: string
-          example: ACTIVE
-          enum:
-          - ACTIVE
-          - DRAFT
-          - RETIRED
-          - INACTIVE
-        version:
-          description: The Version of Privacy Notice
-          type: integer
-          format: int64
-          example: 3
-    PagePrivacyNoticeDtoV2:
+    PagePrivacyNoticeVersionDetailsDtoV2:
       type: object
       properties:
         totalElements:
@@ -341,7 +308,7 @@ components:
           format: int32
         content:
           items:
-            $ref: '#/components/schemas/PrivacyNoticeDtoV2'
+            $ref: '#/components/schemas/PrivacyNoticeVersionDetailsDtoV2'
           type: array
         number:
           type: integer
@@ -435,56 +402,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PrivacyNoticeVersionDetailDtoV2'
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    PagePrivacyNoticeVersionDetailsDtoV2:
-      type: object
-      properties:
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        size:
-          type: integer
-          format: int32
-        content:
-          items:
-            $ref: '#/components/schemas/PrivacyNoticeVersionDetailsDtoV2'
-          type: array
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        first:
-          type: boolean
-        last:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        empty:
-          type: boolean
     PrivacyNoticeVersionDetailDtoV2:
       type: object
       properties:
@@ -542,6 +459,79 @@ components:
         version:
           description: Version of the privacy notice which was active at the given date and time
           $ref: '#/components/schemas/PrivacyNoticeVersionDtoV2'
+    PagePrivacyNoticeDtoV2:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          items:
+            $ref: '#/components/schemas/PrivacyNoticeDtoV2'
+          type: array
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        empty:
+          type: boolean
+    PrivacyNoticeVersionDtoV2:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Privacy Notice Version
+          type: string
+          format: uuid
+          example: 625ba071-61b0-485f-81a0-a2245777b400
+        name:
+          description: Name of the Privacy Notice
+          type: string
+          example: California Privacy Policy
+          maxLength: 200
+          minLength: 1
+        publishedDate:
+          description: The date Privacy Notice version was published on
+          type: string
+          format: date-time
+          example: '2020-05-14T00:00:48.62'
+        status:
+          description: The Status of Privacy Notice Version
+          type: string
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - DRAFT
+          - RETIRED
+          - INACTIVE
+        version:
+          description: The Version of Privacy Notice
+          type: integer
+          format: int64
+          example: 3
+    PrivacyNoticeVersionStatus:
+      type: string
+      example: ACTIVE
+      enum:
+      - ACTIVE
+      - DRAFT
+      - RETIRED
+      - INACTIVE
     SortObject:
       type: object
       properties:
@@ -551,14 +541,24 @@ components:
           type: boolean
         unsorted:
           type: boolean
-    PrivacyNoticeVersionStatus:
-      type: string
-      example: ACTIVE
-      enum:
-      - ACTIVE
-      - DRAFT
-      - RETIRED
-      - INACTIVE
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
   securitySchemes:
     OAUTH2:
       type: oauth2

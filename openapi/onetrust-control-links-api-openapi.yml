@@ -85,50 +85,6 @@ paths:
         - CONTROL
 components:
   schemas:
-    TechRiskCompliance-ITRiskManagement_LinkTypeInformation:
-      type: object
-      properties:
-        id:
-          description: Link Type Information Identifier
-          type: string
-          format: uuid
-        name:
-          description: Link Type Information Name
-          type: string
-        nameKey:
-          description: Link Type Information Name Key used for translation
-          type: string
-    TechRiskCompliance-ITRiskManagement_LinkInformation:
-      type: object
-      properties:
-        id:
-          description: Link Information Identifier
-          type: string
-          format: uuid
-        sourceId:
-          description: Link Information Source Identifier
-          type: string
-          format: uuid
-        sourceType:
-          description: Link Information Source Type
-          type: string
-        destinationId:
-          description: Link Information Destination Identifier
-          type: string
-          format: uuid
-        destinationType:
-          description: Link Information Destination Type
-          type: string
-        destinationName:
-          description: Link Information Destination Name
-          type: string
-        destinationOrgGroupId:
-          description: Link Information Destination Organization Group Identifier
-          type: string
-          format: uuid
-        linkType:
-          description: Link Information Link Type Information
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_LinkTypeInformation'
     TechRiskCompliance-ITRiskManagement_LinkableEntity:
       type: object
       properties:
@@ -182,6 +138,50 @@ components:
       - destinations
       - linkTypeNameKey
       - source
+    TechRiskCompliance-ITRiskManagement_LinkTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Link Type Information Identifier
+          type: string
+          format: uuid
+        name:
+          description: Link Type Information Name
+          type: string
+        nameKey:
+          description: Link Type Information Name Key used for translation
+          type: string
+    TechRiskCompliance-ITRiskManagement_LinkInformation:
+      type: object
+      properties:
+        id:
+          description: Link Information Identifier
+          type: string
+          format: uuid
+        sourceId:
+          description: Link Information Source Identifier
+          type: string
+          format: uuid
+        sourceType:
+          description: Link Information Source Type
+          type: string
+        destinationId:
+          description: Link Information Destination Identifier
+          type: string
+          format: uuid
+        destinationType:
+          description: Link Information Destination Type
+          type: string
+        destinationName:
+          description: Link Information Destination Name
+          type: string
+        destinationOrgGroupId:
+          description: Link Information Destination Organization Group Identifier
+          type: string
+          format: uuid
+        linkType:
+          description: Link Information Link Type Information
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_LinkTypeInformation'
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

@@ -144,6 +144,50 @@ paths:
         - CONSENT_READ
 components:
   schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_LinkTokenDto:
+      properties:
+        DataSubjectId:
+          description: The unique identifier of the Data Subject (e.g., email address)
+          type: string
+          example: example@otprivacy.com
+        LinkToken:
+          description: The secure token used to authenticate the Data Subject in the Preference Center
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
+        UrlEncodedLinkToken:
+          description: URL-encoded version of the link token for use in URLs
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ%2F7PsfC%2BAHFN8JqvZHPGzJQ%3D
+        ExpiryDate:
+          description: The date and time when the link token will expire
+          type: string
+          format: date-time
+          example: '2023-12-31T23:59:59.999Z'
+        CreatedDate:
+          description: The date and time when the link token was created
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+      required:
+      - DataSubjectId
+      - LinkToken
     ConsentPreferences-UniversalConsentPreferenceManag_PageLinkTokenDto:
       type: object
       properties:
@@ -193,50 +237,6 @@ components:
           type: integer
           format: int32
           example: 20
-    ConsentPreferences-UniversalConsentPreferenceManag_LinkTokenDto:
-      properties:
-        DataSubjectId:
-          description: The unique identifier of the Data Subject (e.g., email address)
-          type: string
-          example: example@otprivacy.com
-        LinkToken:
-          description: The secure token used to authenticate the Data Subject in the Preference Center
-          type: string
-          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
-        UrlEncodedLinkToken:
-          description: URL-encoded version of the link token for use in URLs
-          type: string
-          example: jNJW2e8vm8eWb6DlWyGbZ%2F7PsfC%2BAHFN8JqvZHPGzJQ%3D
-        ExpiryDate:
-          description: The date and time when the link token will expire
-          type: string
-          format: date-time
-          example: '2023-12-31T23:59:59.999Z'
-        CreatedDate:
-          description: The date and time when the link token was created
-          type: string
-          format: date-time
-          example: '2023-01-01T00:00:00Z'
-      required:
-      - DataSubjectId
-      - LinkToken
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
       properties:
         empty:

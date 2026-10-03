@@ -571,7 +571,7 @@ paths:
         - USER
 components:
   schemas:
-    Platform-AccessManagement_CreateGroupRequest:
+    Platform-AccessManagement_UpdateGroupRequest:
       type: object
       properties:
         name:
@@ -581,22 +581,10 @@ components:
           maxLength: 100
           minLength: 1
         description:
-          description: The brief description of the user group.
+          description: A brief description of the user group.
           type: string
           example: Group for system administrators
           maxLength: 300
-    Platform-AccessManagement_SortObject:
-      type: object
-      properties:
-        empty:
-          description: Indicates whether the result set is empty, meaning no records were found.
-          type: boolean
-        sorted:
-          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
-          type: boolean
-        unsorted:
-          description: The indicator of whether the results are unsorted.
-          type: boolean
     Platform-AccessManagement_PageMemberResponse:
       type: object
       properties:
@@ -657,129 +645,6 @@ components:
               nullHandling: NATIVE
               property: name
             unpaged: false
-    Platform-AccessManagement_UpdateGroupRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the user group.
-          type: string
-          example: Administrators
-          maxLength: 100
-          minLength: 1
-        description:
-          description: A brief description of the user group.
-          type: string
-          example: Group for system administrators
-          maxLength: 300
-    Platform-AccessManagement_AddMembersRequest:
-      type: object
-      properties:
-        members:
-          description: The list of user identifiers to be added to the user group.
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-        groupId:
-          description: The unique identifier of the user group.
-          type: string
-          format: uuid
-          example: a739211d-d216-4398-a1c2-f7a20412692d
-    Platform-AccessManagement_DeleteMembersRequest:
-      type: object
-      properties:
-        members:
-          description: 'The list of user identifiers of the user group. '
-          type: array
-          items:
-            type: string
-            format: uuid
-            example: 550e8400-e29b-41d4-a716-446655440000
-          uniqueItems: true
-        groupId:
-          description: The unique identifier of the user group.
-          type: string
-          format: uuid
-          example: a739211d-d216-4398-a1c2-f7a20412692d
-    Platform-AccessManagement_MemberResponse:
-      type: object
-      properties:
-        fullName:
-          description: The user's full name.
-          type: string
-          example: John Doe
-          maxLength: 201
-        email:
-          description: The user's email address.
-          type: string
-          format: email
-          example: jdoe@onetrust.com
-          maxLength: 255
-          minLength: 5
-        memberId:
-          description: The unique identifier of the group member.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        enabled:
-          description: Indicates whether the user account is active.
-          type: boolean
-          example: true
-        internal:
-          description: Indicates whether this is an internal system record.
-          type: boolean
-          example: false
-        createdBy:
-          description: The unique identifier of the user who created this record.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        createdDate:
-          description: The date and time when the record was created.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
-    Platform-AccessManagement_UserGroupResponse:
-      type: object
-      properties:
-        userGroupId:
-          description: The unique identifier of the user group.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: The name of the user group.
-          type: string
-          example: Administrators
-          maxLength: 100
-          minLength: 1
-        description:
-          description: The brief description of the user group.
-          type: string
-          example: Group for system administrators
-          maxLength: 250
-        createdBy:
-          description: The unique identifier of the user who created this record.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        createdDate:
-          description: The date and time the record was created.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
-        lastModifiedBy:
-          description: The unique identifier of the user who last modified the record.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        lastModifiedDate:
-          description: The date and time the record was last modified.
-          type: string
-          format: date-time
-          example: '2022-05-01T12:34:56Z'
     Platform-AccessManagement_PageUserGroupResponse:
       type: object
       properties:
@@ -840,6 +705,141 @@ components:
               nullHandling: NATIVE
               property: name
             unpaged: false
+    Platform-AccessManagement_AddMembersRequest:
+      type: object
+      properties:
+        members:
+          description: The list of user identifiers to be added to the user group.
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_CreateGroupRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the user group.
+          type: string
+          example: Administrators
+          maxLength: 100
+          minLength: 1
+        description:
+          description: The brief description of the user group.
+          type: string
+          example: Group for system administrators
+          maxLength: 300
+    Platform-AccessManagement_UserGroupResponse:
+      type: object
+      properties:
+        userGroupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: The name of the user group.
+          type: string
+          example: Administrators
+          maxLength: 100
+          minLength: 1
+        description:
+          description: The brief description of the user group.
+          type: string
+          example: Group for system administrators
+          maxLength: 250
+        createdBy:
+          description: The unique identifier of the user who created this record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The date and time the record was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+        lastModifiedBy:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        lastModifiedDate:
+          description: The date and time the record was last modified.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
+    Platform-AccessManagement_SortObject:
+      type: object
+      properties:
+        empty:
+          description: Indicates whether the result set is empty, meaning no records were found.
+          type: boolean
+        sorted:
+          description: Indicates whether the results are sorted in a specific order, such as ascending or descending.
+          type: boolean
+        unsorted:
+          description: The indicator of whether the results are unsorted.
+          type: boolean
+    Platform-AccessManagement_DeleteMembersRequest:
+      type: object
+      properties:
+        members:
+          description: 'The list of user identifiers of the user group. '
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: 550e8400-e29b-41d4-a716-446655440000
+          uniqueItems: true
+        groupId:
+          description: The unique identifier of the user group.
+          type: string
+          format: uuid
+          example: a739211d-d216-4398-a1c2-f7a20412692d
+    Platform-AccessManagement_MemberResponse:
+      type: object
+      properties:
+        fullName:
+          description: The user's full name.
+          type: string
+          example: John Doe
+          maxLength: 201
+        email:
+          description: The user's email address.
+          type: string
+          format: email
+          example: jdoe@onetrust.com
+          maxLength: 255
+          minLength: 5
+        memberId:
+          description: The unique identifier of the group member.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        enabled:
+          description: Indicates whether the user account is active.
+          type: boolean
+          example: true
+        internal:
+          description: Indicates whether this is an internal system record.
+          type: boolean
+          example: false
+        createdBy:
+          description: The unique identifier of the user who created this record.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        createdDate:
+          description: The date and time when the record was created.
+          type: string
+          format: date-time
+          example: '2022-05-01T12:34:56Z'
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

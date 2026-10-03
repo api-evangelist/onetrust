@@ -370,85 +370,6 @@ paths:
         - ITRM
 components:
   schemas:
-    TechRiskCompliance-ITRiskManagement_IdResponseUUID:
-      type: object
-      properties:
-        id:
-          description: Primary identifier of the created or updated entity, typically a UUID.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-      required:
-      - id
-    TechRiskCompliance-ITRiskManagement_IdResponseListUUID:
-      type: object
-      properties:
-        id:
-          description: Primary identifier of the created or updated entity, typically a UUID
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 123e4567-e89b-12d3-a456-426614174000
-          - 456a4567-e89b-12d3-123e-426614174001
-      required:
-      - id
-    TechRiskCompliance-ITRiskManagement_AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
-      type: object
-      properties:
-        filters:
-          description: Filters used in search.
-          type: array
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
-          uniqueItems: true
-        fullText:
-          description: Full text search terms.
-          type: string
-          example: firewall
-        excludeTotalRecordsCount:
-          type: boolean
     TechRiskCompliance-ITRiskManagement_FilterInformation:
       type: object
       properties:
@@ -492,18 +413,35 @@ components:
       required:
       - field
       - value
-    TechRiskCompliance-ITRiskManagement_OrganizationInformation:
+    TechRiskCompliance-ITRiskManagement_IdResponseListUUID:
       type: object
       properties:
         id:
-          description: Primary Identifier.
+          description: Primary identifier of the created or updated entity, typically a UUID
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 123e4567-e89b-12d3-a456-426614174000
+          - 456a4567-e89b-12d3-123e-426614174001
+      required:
+      - id
+    TechRiskCompliance-ITRiskManagement_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
         name:
-          description: Organization Name.
+          description: Category name
           type: string
-          example: ABC Corp
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
     TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation:
       type: object
       properties:
@@ -526,71 +464,6 @@ components:
           example: red
       required:
       - value
-    TechRiskCompliance-ITRiskManagement_FrameworkInformation:
-      type: object
-      properties:
-        id:
-          description: Primary Identifier.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Framework Name of Control.
-          type: string
-          example: ISO 27001
-        nameKey:
-          description: Framework Name key for Translation.
-          type: string
-          example: framework.key.iso
-    TechRiskCompliance-ITRiskManagement_PageThreatDto:
-      type: object
-      properties:
-        content:
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ThreatDto'
-          type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
-        sort:
-          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
     TechRiskCompliance-ITRiskManagement_ThreatCreateRequestDto:
       type: object
       properties:
@@ -643,6 +516,133 @@ components:
       - identifier
       - name
       - orgGroupId
+    TechRiskCompliance-ITRiskManagement_IdResponseUUID:
+      type: object
+      properties:
+        id:
+          description: Primary identifier of the created or updated entity, typically a UUID.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+      required:
+      - id
+    TechRiskCompliance-ITRiskManagement_FrameworkInformation:
+      type: object
+      properties:
+        id:
+          description: Primary Identifier.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Framework Name of Control.
+          type: string
+          example: ISO 27001
+        nameKey:
+          description: Framework Name key for Translation.
+          type: string
+          example: framework.key.iso
+    TechRiskCompliance-ITRiskManagement_AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    TechRiskCompliance-ITRiskManagement_OrganizationInformation:
+      type: object
+      properties:
+        id:
+          description: Primary Identifier.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Organization Name.
+          type: string
+          example: ABC Corp
+    TechRiskCompliance-ITRiskManagement_PageThreatDto:
+      type: object
+      properties:
+        content:
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_ThreatDto'
+          type: array
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Pageable'
+        sort:
+          $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
     TechRiskCompliance-ITRiskManagement_Sort:
       type: object
       properties:
@@ -711,21 +711,6 @@ components:
       - identifier
       - name
       - orgGroup
-    TechRiskCompliance-ITRiskManagement_CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Category unique identifier
-          type: string
-          format: uuid
-        name:
-          description: Category name
-          type: string
-          example: Financial Category
-        nameKey:
-          description: Category nameKey for localization support
-          type: string
-          example: IM.FinancialCategoryName
     TechRiskCompliance-ITRiskManagement_Pageable:
       type: object
       properties:
@@ -755,6 +740,21 @@ components:
           type: boolean
           example: false
       title: Pageable
+    TechRiskCompliance-ITRiskManagement_SearchCriteriaInformation:
+      type: object
+      properties:
+        filters:
+          description: Filters used in search.
+          type: array
+          items:
+            $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_FilterInformation'
+          uniqueItems: true
+        fullText:
+          description: Full text search terms.
+          type: string
+          example: firewall
+        excludeTotalRecordsCount:
+          type: boolean
     TechRiskCompliance-ITRiskManagement_ThreatUpdateRequest:
       type: object
       properties:

@@ -1835,58 +1835,7 @@ paths:
     - url: https://customer.my.onetrust.com/api
 components:
   schemas:
-    EntityInventoryCreateRequest:
-      type: object
-      properties:
-        name:
-          description: Name of the inventory
-          type: string
-          example: Test Entity
-          minLength: 1
-        organization:
-          description: Organization reference
-          example:
-            value: aws
-            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
-          $ref: '#/components/schemas/ObjectReference'
-        primaryOperatingLocation:
-          description: Primary operating location reference (required for entities)
-          example:
-            value: US East
-            id: b2c4d6e8-1234-5678-9abc-def012345678
-          $ref: '#/components/schemas/ObjectReference'
-      required:
-      - name
-      - organization
-      - primaryOperatingLocation
-    PAInventoryCreateRequest:
-      type: object
-      properties:
-        name:
-          description: Name of the inventory
-          type: string
-          example: Test Processing Activity
-          minLength: 1
-        organization:
-          description: Organization reference
-          example:
-            value: aws
-            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
-          $ref: '#/components/schemas/ObjectReference'
-      required:
-      - name
-      - organization
-    InventoryWorkflowStageDto:
-      type: object
-      properties:
-        stage:
-          description: Reference to the workflow stage
-          $ref: '#/components/schemas/ObjectReference'
-        badgeColor:
-          description: Color code for the workflow stage badge
-          type: string
-          example: '#4CAF50'
-    VendorInventory:
+    Inventory:
       type: object
       properties:
         id:
@@ -2138,28 +2087,108 @@ components:
           - field1
           - field2
           uniqueItems: true
-        type:
-          description: Type reference
-          example:
-            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
-            value: Regulatory
-          $ref: '#/components/schemas/ObjectReference'
         editable:
           type: boolean
         deletable:
           type: boolean
-    BasicInventoryAttachmentRequest:
+    ObjectReference:
       type: object
       properties:
-        AttachmentId:
+        id:
           type: string
           format: uuid
-          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-        Description:
+        value:
           type: string
-          example: Attachment Description
-      required:
-      - AttachmentId
+        valueKey:
+          type: string
+    CriteriaDefinition:
+      type: object
+      properties:
+        attributeKey:
+          description: The key or path of the attribute to filter on (e.g., 'name', 'status.key', 'customFields.someCustomField').
+          type: string
+          example: name
+        dataType:
+          description: 'The data type of the attribute being filtered. (Note: Consider replacing with a more descriptive enum or String if specific integer values have meanings, e.g., 0 for String, 1 for Number, 2 for Date). For now, assuming it''s an internal type identifier.'
+          type: integer
+          format: int32
+          example: 0
+          enum:
+          - '0'
+          - '1'
+          - '2'
+        operator:
+          description: The operator to use for comparing the attribute with the provided values (e.g., EQUALS, CONTAINS, GREATER_THAN).
+          type: string
+          example: CONTAINS
+          enum:
+          - FilterOperator.EQUAL_TO(description=Equal To)
+          - FilterOperator.NOT_EQUAL_TO(description=Not Equal To)
+          - FilterOperator.EQ(description=Equals)
+          - FilterOperator.LT(description=LessThan)
+          - FilterOperator.GT(description=GreaterThan)
+          - FilterOperator.LE(description=LessThanOrEquals)
+          - FilterOperator.GE(description=GreaterThanOrEquals)
+          - FilterOperator.IN_BETWEEN(description=InBetween)
+          - FilterOperator.CONTAINS(description=Contains)
+          - FilterOperator.DOES_NOT_CONTAIN(description=DoesNotContain)
+          - EQUAL_TO
+          - EQ
+          - LT
+          - GT
+          - LE
+          - GE
+          - IN_BETWEEN
+          - CONTAINS
+          - DOES_NOT_CONTAIN
+          - NOT_EQUAL_TO
+        values:
+          description: An array of string values to match against the attribute. For operators like 'IN', multiple values can be provided. For others, typically one value is used.
+          type: array
+          items:
+            type: string
+          example:
+          - Server Alpha
+          - Server Beta
+        date:
+          description: A DTO for specifying date values, used when the attribute is a date type and the operator requires date comparison (e.g., DATE_EQUALS, DATE_BETWEEN).
+          $ref: '#/components/schemas/DateDto'
+    InventoriesPaginatedListResponseMeta:
+      type: object
+      properties:
+        page:
+          description: Pagination information
+          $ref: '#/components/schemas/InventoriesPaginatedListResponsePage'
+    InventoryValue:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory value
+          type: string
+          format: uuid
+          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
+        value:
+          description: The display value
+          type: string
+          example: High Risk
+        valueKey:
+          description: The key of the value
+          type: string
+          example: HIGH_RISK
+        colorCode:
+          description: Color code associated with the value
+          type: string
+          example: '#FF0000'
+        selectionValue:
+          description: Selection value
+          type: string
+          example: high
+    OneTrustResponseOfEntityInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/EntityInventory'
     AssetInventory:
       type: object
       properties:
@@ -2422,30 +2451,13 @@ components:
           type: boolean
         deletable:
           type: boolean
-    BasicInventoryFilterRequest:
-      type: object
-      properties:
-        filters:
-          description: A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND.
-          type: array
-          items:
-            $ref: '#/components/schemas/CriteriaDefinition'
-          example:
-          - attributeKey: name
-            operator: CONTAINS
-            values:
-            - Server
-          - attributeKey: status.key
-            operator: EQUALS
-            values:
-            - active
-    VendorInventoryCreateRequest:
+    AssetInventoryCreateRequest:
       type: object
       properties:
         name:
           description: Name of the inventory
           type: string
-          example: Test Vendor
+          example: Test Asset
           minLength: 1
         organization:
           description: Organization reference
@@ -2453,18 +2465,135 @@ components:
             value: aws
             id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
           $ref: '#/components/schemas/ObjectReference'
-        type:
-          description: Type reference
+        location:
+          description: Location reference (required for assets)
           example:
-            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
-            value: Regulatory
-            seeded: true
-            sequence: 0
-          $ref: '#/components/schemas/InventoryTypeReference'
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
+      required:
+      - location
+      - name
+      - organization
+    InventoriesPaginatedListResponsePage:
+      type: object
+      properties:
+        first:
+          type: boolean
+          example: true
+        last:
+          type: boolean
+          example: true
+        number:
+          type: integer
+          format: int32
+          example: 0
+        size:
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          example: 1
+        totalPages:
+          type: integer
+          format: int32
+          example: 1
+        sort:
+          description: Sort information
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoriesPaginatedListResponseSort'
+    EntityInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Entity
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+        primaryOperatingLocation:
+          description: Primary operating location reference (required for entities)
+          example:
+            value: US East
+            id: b2c4d6e8-1234-5678-9abc-def012345678
+          $ref: '#/components/schemas/ObjectReference'
       required:
       - name
       - organization
-      - type
+      - primaryOperatingLocation
+    JsonNode:
+      type: object
+    OneTrustResponseOfInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/Inventory'
+    OneTrustResponseOfVendorInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/VendorInventory'
+    KeyNameDto:
+      type: object
+      properties:
+        key:
+          description: The key identifier
+          type: string
+          example: active
+        name:
+          description: The display name associated with the key
+          type: string
+          example: Active
+      required:
+      - key
+    SimilarRecordDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        organization:
+          $ref: '#/components/schemas/ObjectReference'
+        location:
+          $ref: '#/components/schemas/ObjectReference'
+        hasAccessToSimilarRecord:
+          type: boolean
+    UpdateInventoryRequest:
+      type: object
+      properties:
+        inventoryIds:
+          description: List of inventory record UUIDs to be updated.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+          minItems: 1
+        inventoryRequest:
+          description: The inventory update payload as a JSON object.
+          example:
+            name: New Vendor
+            status: active
+          $ref: '#/components/schemas/JsonNode'
+      example:
+        inventoryIds:
+        - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        inventoryRequest:
+          name: New Vendor
+          status: active
     InventoryTypeReference:
       type: object
       properties:
@@ -2494,6 +2623,334 @@ components:
           description: Optional hint key
           type: string
           example: someHintKey
+    OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage'
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          type: string
+    VendorInventory:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory item
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        organization:
+          description: Organization reference to which the inventory belongs
+          $ref: '#/components/schemas/ObjectReference'
+        canViewDetails:
+          description: Flag indicating if the current user can view inventory details
+          type: boolean
+          example: true
+        name:
+          description: Name of the inventory
+          type: string
+          example: Vendor XYZ
+        riskLevel:
+          description: Risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        riskScore:
+          description: Risk score of the inventory
+          type: number
+          example: 8.5
+        status:
+          description: Status of the inventory
+          example:
+            key: active
+            name: Active
+          $ref: '#/components/schemas/KeyNameDto'
+        externalId:
+          description: External identifier of the inventory
+          type: string
+          example: EXT-12345
+        createdDate:
+          description: Date and time when the inventory was created
+          type: string
+          format: date-time
+          example: '2023-01-15T10:30:45.123Z'
+        createdBy:
+          description: Reference to the user who created the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        updatedDate:
+          description: Date and time when the inventory was last updated
+          type: string
+          format: date-time
+          example: '2023-02-20T14:15:30.456Z'
+        updatedBy:
+          description: Reference to the user who last updated the inventory
+          example:
+            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+            value: null
+          $ref: '#/components/schemas/ObjectReference'
+        selectFields:
+          description: Map of select fields with their values
+          type: object
+          example:
+            data-residency:
+            - key: us
+              value: US
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+        textFields:
+          description: Map of text fields with their values
+          type: object
+          example:
+            description: Sample description
+          additionalProperties:
+            type: string
+        number:
+          description: Sequence number of the inventory
+          type: integer
+          format: int64
+          example: 123
+        isParent:
+          description: Flag indicating if this inventory is a parent
+          type: boolean
+          example: true
+        inheritFromMaster:
+          description: Flag indicating if this inventory inherits from master
+          type: boolean
+          example: true
+        parentInventoryId:
+          description: ID of the parent inventory
+          type: string
+          format: uuid
+          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
+        masterRecord:
+          description: Reference to the master record
+          type: string
+          example: MASTER-001
+        workflow:
+          description: Reference to the workflow associated with this inventory
+          example:
+            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
+            value: Vendor Review Workflow
+          $ref: '#/components/schemas/ObjectReference'
+        workflowStage:
+          description: Current workflow stage of the inventory
+          example:
+            stage:
+              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
+              value: In Review
+            badgeColor: '#4CAF50'
+          $ref: '#/components/schemas/InventoryWorkflowStageDto'
+        inherentRiskLevel:
+          description: Inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        inherentRiskScore:
+          description: Inherent risk score of the inventory
+          type: number
+          example: 6.5
+        targetRiskLevel:
+          description: Target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        targetRiskScore:
+          description: Target risk score of the inventory
+          type: number
+          example: 3
+        totalHierarchyRiskLevel:
+          description: Total hierarchy risk level of the inventory
+          type: string
+          example: HIGH
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyRiskScore:
+          description: Total hierarchy risk score of the inventory
+          type: number
+          example: 8
+        totalHierarchyInherentRiskLevel:
+          description: Total hierarchy inherent risk level of the inventory
+          type: string
+          example: MEDIUM
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyInherentRiskScore:
+          description: Total hierarchy inherent risk score of the inventory
+          type: number
+          example: 6
+        totalHierarchyTargetRiskLevel:
+          description: Total hierarchy target risk level of the inventory
+          type: string
+          example: LOW
+          enum:
+          - ZERO
+          - LOW
+          - MEDIUM
+          - HIGH
+          - VERY_HIGH
+        totalHierarchyTargetRiskScore:
+          description: Total hierarchy target risk score of the inventory
+          type: number
+          example: 3
+        inventoryDeleteType:
+          description: Type of deletion for the inventory
+          type: string
+          example: SOFT
+          enum:
+          - HARD
+          - SOFT
+          - NONE
+        deletedReason:
+          description: Reason for deletion of the inventory
+          type: string
+          example: No longer required
+        deletedBy:
+          description: ID of the user who deleted the inventory
+          type: string
+          format: uuid
+          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
+        deletedDate:
+          description: Date and time when the inventory was deleted
+          type: string
+          format: date-time
+          example: '2023-03-01T12:00:00.000Z'
+        isGlobalAttributeConfigurationEnabled:
+          description: Flag indicating if global attribute configuration is enabled
+          type: boolean
+          example: true
+        sourceId:
+          description: ID of the source inventory
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        integrationWorkflowId:
+          description: ID of the integration workflow
+          type: string
+          example: wf-123
+        sourceType:
+          description: Type of the source inventory
+          type: string
+          example: API_INTEGRATION
+        reviewType:
+          description: Type of review for the inventory
+          type: string
+          example: ANNUAL
+        similarRecord:
+          description: Similar record detail for the inventory
+          example:
+            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+            name: Vendor ABC
+            hasAccessToSimilarRecord: true
+          $ref: '#/components/schemas/SimilarRecordDetail'
+        detailsUri:
+          description: URI for viewing the inventory details page
+          type: string
+          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        redacted:
+          description: Field names that should be redacted when user lacks advanced view access
+          type: array
+          items:
+            type: string
+          example:
+          - field1
+          - field2
+          uniqueItems: true
+        type:
+          description: Type reference
+          example:
+            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+            value: Regulatory
+          $ref: '#/components/schemas/ObjectReference'
+        editable:
+          type: boolean
+        deletable:
+          type: boolean
+    InventoriesPaginatedListResponse:
+      type: object
+      properties:
+        data:
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/Inventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    PAInventoryCreateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the inventory
+          type: string
+          example: Test Processing Activity
+          minLength: 1
+        organization:
+          description: Organization reference
+          example:
+            value: aws
+            id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
+          $ref: '#/components/schemas/ObjectReference'
+      required:
+      - name
+      - organization
+    BasicInventoryFilterRequest:
+      type: object
+      properties:
+        filters:
+          description: A list of criteria definitions to apply. All criteria in this list are typically combined with a logical AND.
+          type: array
+          items:
+            $ref: '#/components/schemas/CriteriaDefinition'
+          example:
+          - attributeKey: name
+            operator: CONTAINS
+            values:
+            - Server
+          - attributeKey: status.key
+            operator: EQUALS
+            values:
+            - active
+    OneTrustResponseOfAssetInventory:
+      type: object
+      properties:
+        data:
+          description: Inventory details
+          $ref: '#/components/schemas/AssetInventory'
     OneTrustResponse:
       type: object
       properties:
@@ -2505,44 +2962,6 @@ components:
             type: object
         meta:
           $ref: '#/components/schemas/OneTrustMetadata'
-    OneTrustSort:
-      type: object
-      properties:
-        direction:
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          type: string
-    DateDto:
-      type: object
-      properties:
-        fromDateValue:
-          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
-          type: string
-          example: '2023-01-01'
-          maxLength: 60
-          minLength: 0
-        toDateValue:
-          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
-          type: string
-          example: '2023-01-31'
-          maxLength: 60
-          minLength: 0
-      required:
-      - fromDateValue
-    AssetInventoriesPaginatedListResponse:
-      type: object
-      properties:
-        data:
-          description: List of inventories
-          type: array
-          items:
-            $ref: '#/components/schemas/AssetInventory'
-        meta:
-          description: Response metadata
-          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
     EntityInventory:
       type: object
       properties:
@@ -2805,12 +3224,6 @@ components:
           type: boolean
         deletable:
           type: boolean
-    OneTrustResponseOfEntityInventory:
-      type: object
-      properties:
-        data:
-          description: Inventory details
-          $ref: '#/components/schemas/EntityInventory'
     BulkUpsertInventoryResponse:
       type: object
       properties:
@@ -2852,413 +3265,13 @@ components:
         meta:
           description: Response metadata
           $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
-    InventoriesPaginatedListResponseSort:
-      type: object
-      properties:
-        direction:
-          type: string
-          example: ASC
-        property:
-          type: string
-          example: name
-    OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/OneTrustPage'
-    InventoryValue:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the inventory value
-          type: string
-          format: uuid
-          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
-        value:
-          description: The display value
-          type: string
-          example: High Risk
-        valueKey:
-          description: The key of the value
-          type: string
-          example: HIGH_RISK
-        colorCode:
-          description: Color code associated with the value
-          type: string
-          example: '#FF0000'
-        selectionValue:
-          description: Selection value
-          type: string
-          example: high
-    Inventory:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the inventory item
-          type: string
-          format: uuid
-          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
-        organization:
-          description: Organization reference to which the inventory belongs
-          $ref: '#/components/schemas/ObjectReference'
-        canViewDetails:
-          description: Flag indicating if the current user can view inventory details
-          type: boolean
-          example: true
-        name:
-          description: Name of the inventory
-          type: string
-          example: Vendor XYZ
-        riskLevel:
-          description: Risk level of the inventory
-          type: string
-          example: HIGH
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        riskScore:
-          description: Risk score of the inventory
-          type: number
-          example: 8.5
-        status:
-          description: Status of the inventory
-          example:
-            key: active
-            name: Active
-          $ref: '#/components/schemas/KeyNameDto'
-        externalId:
-          description: External identifier of the inventory
-          type: string
-          example: EXT-12345
-        createdDate:
-          description: Date and time when the inventory was created
-          type: string
-          format: date-time
-          example: '2023-01-15T10:30:45.123Z'
-        createdBy:
-          description: Reference to the user who created the inventory
-          example:
-            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
-            value: null
-          $ref: '#/components/schemas/ObjectReference'
-        updatedDate:
-          description: Date and time when the inventory was last updated
-          type: string
-          format: date-time
-          example: '2023-02-20T14:15:30.456Z'
-        updatedBy:
-          description: Reference to the user who last updated the inventory
-          example:
-            id: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
-            value: null
-          $ref: '#/components/schemas/ObjectReference'
-        selectFields:
-          description: Map of select fields with their values
-          type: object
-          example:
-            data-residency:
-            - key: us
-              value: US
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/InventoryValue'
-        textFields:
-          description: Map of text fields with their values
-          type: object
-          example:
-            description: Sample description
-          additionalProperties:
-            type: string
-        number:
-          description: Sequence number of the inventory
-          type: integer
-          format: int64
-          example: 123
-        isParent:
-          description: Flag indicating if this inventory is a parent
-          type: boolean
-          example: true
-        inheritFromMaster:
-          description: Flag indicating if this inventory inherits from master
-          type: boolean
-          example: true
-        parentInventoryId:
-          description: ID of the parent inventory
-          type: string
-          format: uuid
-          example: 96214230-ffbb-4870-b6c4-0f30c3bfec60
-        masterRecord:
-          description: Reference to the master record
-          type: string
-          example: MASTER-001
-        workflow:
-          description: Reference to the workflow associated with this inventory
-          example:
-            id: 0cfe2b89-1d73-4c07-8c6b-ff1a5a6c8b88
-            value: Vendor Review Workflow
-          $ref: '#/components/schemas/ObjectReference'
-        workflowStage:
-          description: Current workflow stage of the inventory
-          example:
-            stage:
-              id: c2c9a3b4-1d20-4bd4-8b86-5a6ef5a3b2a1
-              value: In Review
-            badgeColor: '#4CAF50'
-          $ref: '#/components/schemas/InventoryWorkflowStageDto'
-        inherentRiskLevel:
-          description: Inherent risk level of the inventory
-          type: string
-          example: MEDIUM
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        inherentRiskScore:
-          description: Inherent risk score of the inventory
-          type: number
-          example: 6.5
-        targetRiskLevel:
-          description: Target risk level of the inventory
-          type: string
-          example: LOW
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        targetRiskScore:
-          description: Target risk score of the inventory
-          type: number
-          example: 3
-        totalHierarchyRiskLevel:
-          description: Total hierarchy risk level of the inventory
-          type: string
-          example: HIGH
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        totalHierarchyRiskScore:
-          description: Total hierarchy risk score of the inventory
-          type: number
-          example: 8
-        totalHierarchyInherentRiskLevel:
-          description: Total hierarchy inherent risk level of the inventory
-          type: string
-          example: MEDIUM
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        totalHierarchyInherentRiskScore:
-          description: Total hierarchy inherent risk score of the inventory
-          type: number
-          example: 6
-        totalHierarchyTargetRiskLevel:
-          description: Total hierarchy target risk level of the inventory
-          type: string
-          example: LOW
-          enum:
-          - ZERO
-          - LOW
-          - MEDIUM
-          - HIGH
-          - VERY_HIGH
-        totalHierarchyTargetRiskScore:
-          description: Total hierarchy target risk score of the inventory
-          type: number
-          example: 3
-        inventoryDeleteType:
-          description: Type of deletion for the inventory
-          type: string
-          example: SOFT
-          enum:
-          - HARD
-          - SOFT
-          - NONE
-        deletedReason:
-          description: Reason for deletion of the inventory
-          type: string
-          example: No longer required
-        deletedBy:
-          description: ID of the user who deleted the inventory
-          type: string
-          format: uuid
-          example: ab0b11d9-8ba2-46f3-b845-2ca50bef4efc
-        deletedDate:
-          description: Date and time when the inventory was deleted
-          type: string
-          format: date-time
-          example: '2023-03-01T12:00:00.000Z'
-        isGlobalAttributeConfigurationEnabled:
-          description: Flag indicating if global attribute configuration is enabled
-          type: boolean
-          example: true
-        sourceId:
-          description: ID of the source inventory
-          type: string
-          format: uuid
-          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-        integrationWorkflowId:
-          description: ID of the integration workflow
-          type: string
-          example: wf-123
-        sourceType:
-          description: Type of the source inventory
-          type: string
-          example: API_INTEGRATION
-        reviewType:
-          description: Type of review for the inventory
-          type: string
-          example: ANNUAL
-        similarRecord:
-          description: Similar record detail for the inventory
-          example:
-            id: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-            name: Vendor ABC
-            hasAccessToSimilarRecord: true
-          $ref: '#/components/schemas/SimilarRecordDetail'
-        detailsUri:
-          description: URI for viewing the inventory details page
-          type: string
-          example: https://app.onetrust.com/inventory/details/vendors/c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-        redacted:
-          description: Field names that should be redacted when user lacks advanced view access
-          type: array
-          items:
-            type: string
-          example:
-          - field1
-          - field2
-          uniqueItems: true
-        editable:
-          type: boolean
-        deletable:
-          type: boolean
-    SimilarRecordDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        organization:
-          $ref: '#/components/schemas/ObjectReference'
-        location:
-          $ref: '#/components/schemas/ObjectReference'
-        hasAccessToSimilarRecord:
-          type: boolean
-    JsonNode:
-      type: object
-    OneTrustResponseOfInventory:
-      type: object
-      properties:
-        data:
-          description: Inventory details
-          $ref: '#/components/schemas/Inventory'
-    UpdateInventoryRequest:
-      type: object
-      properties:
-        inventoryIds:
-          description: List of inventory record UUIDs to be updated.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-          minItems: 1
-        inventoryRequest:
-          description: The inventory update payload as a JSON object.
-          example:
-            name: New Vendor
-            status: active
-          $ref: '#/components/schemas/JsonNode'
-      example:
-        inventoryIds:
-        - c79fb1a9-9406-4e9b-bff7-c72e635ee82b
-        inventoryRequest:
-          name: New Vendor
-          status: active
-    InventoriesPaginatedListResponsePage:
-      type: object
-      properties:
-        first:
-          type: boolean
-          example: true
-        last:
-          type: boolean
-          example: true
-        number:
-          type: integer
-          format: int32
-          example: 0
-        size:
-          type: integer
-          format: int32
-          example: 20
-        totalElements:
-          type: integer
-          format: int64
-          example: 1
-        totalPages:
-          type: integer
-          format: int32
-          example: 1
-        sort:
-          description: Sort information
-          type: array
-          items:
-            $ref: '#/components/schemas/InventoriesPaginatedListResponseSort'
-    InventoriesPaginatedListResponse:
-      type: object
-      properties:
-        data:
-          description: List of inventories
-          type: array
-          items:
-            $ref: '#/components/schemas/Inventory'
-        meta:
-          description: Response metadata
-          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
-    KeyNameDto:
-      type: object
-      properties:
-        key:
-          description: The key identifier
-          type: string
-          example: active
-        name:
-          description: The display name associated with the key
-          type: string
-          example: Active
-      required:
-      - key
-    OneTrustResponseOfAssetInventory:
-      type: object
-      properties:
-        data:
-          description: Inventory details
-          $ref: '#/components/schemas/AssetInventory'
-    AssetInventoryCreateRequest:
+    VendorInventoryCreateRequest:
       type: object
       properties:
         name:
           description: Name of the inventory
           type: string
-          example: Test Asset
+          example: Test Vendor
           minLength: 1
         organization:
           description: Organization reference
@@ -3266,38 +3279,41 @@ components:
             value: aws
             id: 01d5d6db-a3f0-424e-9956-cfa205dc8af7
           $ref: '#/components/schemas/ObjectReference'
-        location:
-          description: Location reference (required for assets)
+        type:
+          description: Type reference
           example:
-            value: US East
-            id: b2c4d6e8-1234-5678-9abc-def012345678
-          $ref: '#/components/schemas/ObjectReference'
+            id: cc11c8a5-bbb3-4377-a33d-52a23b1455f9
+            value: Regulatory
+            seeded: true
+            sequence: 0
+          $ref: '#/components/schemas/InventoryTypeReference'
       required:
-      - location
       - name
       - organization
-    ObjectReference:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        value:
-          type: string
-        valueKey:
-          type: string
-    InventoriesPaginatedListResponseMeta:
-      type: object
-      properties:
-        page:
-          description: Pagination information
-          $ref: '#/components/schemas/InventoriesPaginatedListResponsePage'
-    OneTrustResponseOfVendorInventory:
+      - type
+    VendorInventoriesPaginatedListResponse:
       type: object
       properties:
         data:
-          description: Inventory details
-          $ref: '#/components/schemas/VendorInventory'
+          description: List of inventories
+          type: array
+          items:
+            $ref: '#/components/schemas/VendorInventory'
+        meta:
+          description: Response metadata
+          $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    BasicInventoryAttachmentRequest:
+      type: object
+      properties:
+        AttachmentId:
+          type: string
+          format: uuid
+          example: c79fb1a9-9406-4e9b-bff7-c72e635ee82b
+        Description:
+          type: string
+          example: Attachment Description
+      required:
+      - AttachmentId
     OneTrustPage:
       type: object
       properties:
@@ -3321,69 +3337,53 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OneTrustSort'
-    CriteriaDefinition:
-      type: object
-      properties:
-        attributeKey:
-          description: The key or path of the attribute to filter on (e.g., 'name', 'status.key', 'customFields.someCustomField').
-          type: string
-          example: name
-        dataType:
-          description: 'The data type of the attribute being filtered. (Note: Consider replacing with a more descriptive enum or String if specific integer values have meanings, e.g., 0 for String, 1 for Number, 2 for Date). For now, assuming it''s an internal type identifier.'
-          type: integer
-          format: int32
-          example: 0
-          enum:
-          - '0'
-          - '1'
-          - '2'
-        operator:
-          description: The operator to use for comparing the attribute with the provided values (e.g., EQUALS, CONTAINS, GREATER_THAN).
-          type: string
-          example: CONTAINS
-          enum:
-          - FilterOperator.EQUAL_TO(description=Equal To)
-          - FilterOperator.NOT_EQUAL_TO(description=Not Equal To)
-          - FilterOperator.EQ(description=Equals)
-          - FilterOperator.LT(description=LessThan)
-          - FilterOperator.GT(description=GreaterThan)
-          - FilterOperator.LE(description=LessThanOrEquals)
-          - FilterOperator.GE(description=GreaterThanOrEquals)
-          - FilterOperator.IN_BETWEEN(description=InBetween)
-          - FilterOperator.CONTAINS(description=Contains)
-          - FilterOperator.DOES_NOT_CONTAIN(description=DoesNotContain)
-          - EQUAL_TO
-          - EQ
-          - LT
-          - GT
-          - LE
-          - GE
-          - IN_BETWEEN
-          - CONTAINS
-          - DOES_NOT_CONTAIN
-          - NOT_EQUAL_TO
-        values:
-          description: An array of string values to match against the attribute. For operators like 'IN', multiple values can be provided. For others, typically one value is used.
-          type: array
-          items:
-            type: string
-          example:
-          - Server Alpha
-          - Server Beta
-        date:
-          description: A DTO for specifying date values, used when the attribute is a date type and the operator requires date comparison (e.g., DATE_EQUALS, DATE_BETWEEN).
-          $ref: '#/components/schemas/DateDto'
-    VendorInventoriesPaginatedListResponse:
+    AssetInventoriesPaginatedListResponse:
       type: object
       properties:
         data:
           description: List of inventories
           type: array
           items:
-            $ref: '#/components/schemas/VendorInventory'
+            $ref: '#/components/schemas/AssetInventory'
         meta:
           description: Response metadata
           $ref: '#/components/schemas/InventoriesPaginatedListResponseMeta'
+    InventoriesPaginatedListResponseSort:
+      type: object
+      properties:
+        direction:
+          type: string
+          example: ASC
+        property:
+          type: string
+          example: name
+    DateDto:
+      type: object
+      properties:
+        fromDateValue:
+          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-01'
+          maxLength: 60
+          minLength: 0
+        toDateValue:
+          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
+          type: string
+          example: '2023-01-31'
+          maxLength: 60
+          minLength: 0
+      required:
+      - fromDateValue
+    InventoryWorkflowStageDto:
+      type: object
+      properties:
+        stage:
+          description: Reference to the workflow stage
+          $ref: '#/components/schemas/ObjectReference'
+        badgeColor:
+          description: Color code for the workflow stage badge
+          type: string
+          example: '#4CAF50'
   securitySchemes:
     OAUTH2:
       type: oauth2

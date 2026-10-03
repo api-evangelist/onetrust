@@ -590,6 +590,85 @@ paths:
         - AI_GOVERNANCE_WRITE
 components:
   schemas:
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: Field Name
+          type: string
+          maxLength: 200
+          minLength: 0
+        name:
+          description: Attribute Name
+          type: string
+          minLength: 1
+        nameKey:
+          description: Attribute Name Key. Used for Translation
+          type: string
+          maxLength: 200
+          minLength: 0
+        description:
+          description: Attribute Description
+          type: string
+        descriptionKey:
+          description: Attribute Description Key
+          type: string
+          maxLength: 200
+          minLength: 0
+        options:
+          description: Attribute Options
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+          minItems: 1
+      required:
+      - name
+    AttributeOptionRequest:
+      type: object
+      properties:
+        option:
+          description: The option text to be displayed
+          type: string
+          example: Example Option
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option key which can be used for translation and internationalization
+          type: string
+          example: example_option
+          maxLength: 255
+        optionSelectionValue:
+          description: Option selection value used to identify the option in forms or programmatic interfaces
+          type: string
+          example: value1
+          maxLength: 255
+        colorCode:
+          description: Color code in hexadecimal format for UI representation
+          type: string
+          example: '#FFFFFF'
+          enum:
+          - '#000000'
+          - '#FFFFFF'
+          - '#FF0000'
+          - '#00FF00'
+          - '#0000FF'
+          maxLength: 7
+          minLength: 4
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+        metadata:
+          description: Additional metadata associated with the attribute option
+          example:
+            hint: This option provides additional information about the attribute
+            hintKey: attribute.option.hint.key
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      example:
+        option: Example Option
+        optionKey: example_option
+        optionSelectionValue: value1
+        colorCode: '#FFFFFF'
+      required:
+      - option
+      title: Attribute Option Request
     AttributeFormulaDetail:
       type: object
       properties:
@@ -597,6 +676,404 @@ components:
           type: string
         formulaType:
           type: string
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    AttributeOptionInformation:
+      type: object
+      properties:
+        id:
+          description: Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: Option Key which can be used for translation
+          type: string
+          example: IM.TypeA
+          maxLength: 255
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      required:
+      - option
+    AssociatedAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Associated Attribute GUID
+          type: string
+          format: uuid
+        name:
+          description: Name
+          type: string
+          example: Count of members
+          minLength: 1
+        nameKey:
+          description: Name key
+          type: string
+          example: IM.CountOfMembersName
+        description:
+          description: Description
+          type: string
+          example: Provide details about count associated with this attribute
+        descriptionKey:
+          description: Description Key
+          type: string
+          example: IM.CountOfMembersDesc
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: risk
+        fieldName:
+          description: Attribute field name
+          type: string
+          example: countOfMembers
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: count
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+        responseType:
+          description: Response Type
+          type: string
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        responseSubType:
+          description: Response sub type
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          description: Formula for attribute
+          type: string
+          example: sum(1, 3)
+        options:
+          description: Attribute options
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionInformation'
+        optionsByDomain:
+          description: Override options by Domain
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeDomainOptionOverrideInformation'
+      required:
+      - enabled
+      - fieldName
+      - id
+      - responseType
+    AttributeCreateRequest:
+      type: object
+      properties:
+        fieldName:
+          description: Field name used to uniquely identify the attribute
+          type: string
+          example: nameOfRecord
+          maxLength: 200
+          minLength: 0
+        name:
+          description: Attribute name
+          type: string
+          example: Type of the Record
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: Attribute name key used for translation
+          type: string
+          example: IM.Name
+          maxLength: 200
+          minLength: 0
+        description:
+          description: Attribute description
+          type: string
+          example: Gather Type for the record - provide some value related to nature of record
+          maxLength: 1000
+        descriptionKey:
+          description: Attribute description key used for translation
+          type: string
+          example: IM.Name.Description
+          maxLength: 200
+          minLength: 0
+        required:
+          description: Indicates if this attribute is required
+          type: boolean
+          example: false
+          default: 'false'
+        allowOther:
+          description: Indicates if user-specified values are allowed
+          type: boolean
+          example: false
+          default: 'false'
+        responseType:
+          description: Response type for the attribute
+          type: string
+          example: Text
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - Formula
+          - Score
+          - Level
+          - Range
+        optionType:
+          description: Source for attribute options
+          type: string
+          example: None
+          default: None
+          enum:
+          - None
+          - Static
+          - Dynamic
+          maxLength: 200
+          minLength: 0
+        options:
+          description: List of options for the attribute (applicable for SingleSelect and MultiSelect)
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+        referenceCategoryIds:
+          description: List of category IDs associated with the attribute
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+        formula:
+          description: Formula expression for calculated attributes
+          type: string
+          example: Default:Field4 + Default:Field3 + 100
+          maxLength: 8000
+          minLength: 0
+        context:
+          description: Attribute context data
+          $ref: '#/components/schemas/AttributeContext'
+        source:
+          description: Source of the attribute
+          type: string
+          example: system
+          maxLength: 50
+        responseSubType:
+          description: Response sub type for the attribute
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - FORMULA
+          - MATRIX
+        associatedAttributeRequest:
+          description: Associated attribute request information
+          $ref: '#/components/schemas/AssociatedAttributeRequest'
+        maxMultiSelectAllowedOptionValues:
+          description: Maximum number of option values allowed for MultiSelect attributes
+          type: integer
+          format: int32
+          example: 10
+          maximum: 100
+          minimum: 1
+        encrypted:
+          description: Indicates if this attribute should be encrypted
+          type: boolean
+          example: false
+          default: 'false'
+        metadata:
+          description: Metadata about the attribute in JSON format
+          type: string
+          example:
+            sortable: true
+            filterOperators:
+            - EQUAL_TO
+            - NOT_EQUAL_TO
+        intakeQuestion:
+          description: Attribute intake question details
+          $ref: '#/components/schemas/IntakeQuestion'
+        validationRuleId:
+          description: ID of the validation rule to associate with the attribute
+          type: string
+          example: email
+          maxLength: 255
+        abacBasicAssignmentInfo:
+          description: GUID, name and the objectType of the linked assignment
+          type: array
+          items:
+            $ref: '#/components/schemas/AbacBasicAssignmentInfo'
+      required:
+      - fieldName
+      - name
+      - responseType
+    AbacBasicAssignmentInfo:
+      type: object
+      properties:
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+        policyStatus:
+          description: Policy status of the linked assignment
+          type: string
+          example: ACTIVE
+          enum:
+          - INACTIVE
+          - ACTIVE
+          - PROCESSING
+          - FAILED
+    AttributeDomainOptionOverrideInformation:
+      type: object
+      properties:
+        id:
+          description: Override Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attributeDomainOptionId:
+          description: Domain Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
+        targetAttributeId:
+          description: Target Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        targetOptionId:
+          description: Target Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+        optionKey:
+          description: Option name key
+          type: string
+          example: TypeB
+        optionSelectionValue:
+          description: Option selection value
+          type: string
+          example: 10
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+        metadata:
+          description: Additional metadata for the attribute option
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+        optionSelectionValueAsDouble:
+          type: number
+          format: double
+        optionAsDouble:
+          type: number
+          format: double
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        name:
+          type: string
+          maxLength: 500
+          minLength: 0
+        descriptionKey:
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: Associated attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+          minItems: 1
     AttributeInformation:
       type: object
       properties:
@@ -816,155 +1293,22 @@ components:
       - enabled
       - fieldName
       - name
-    AttributeDomainOptionOverrideInformation:
+    AttributeContext:
       type: object
       properties:
-        id:
-          description: Override Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attributeDomainOptionId:
-          description: Domain Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        targetAttributeId:
-          description: Target Attribute GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        targetOptionId:
-          description: Target Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440003
-        option:
-          description: Option name
-          type: string
-          example: TypeA
-        optionKey:
-          description: Option name key
-          type: string
-          example: TypeB
-        optionSelectionValue:
-          description: Option selection value
-          type: string
-          example: 10
-        colorCode:
-          description: Color code for the option
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
-          type: boolean
-          example: true
-          default: 'true'
-        metadata:
-          description: Additional metadata for the attribute option
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-        optionSelectionValueAsDouble:
-          type: number
-          format: double
-        optionAsDouble:
-          type: number
-          format: double
-    AttributeOptionRequest:
+        parameters:
+          additionalProperties:
+            type: object
+          type: object
+    AttributeOptionMetadata:
       type: object
       properties:
-        option:
-          description: The option text to be displayed
+        hint:
+          description: Hint
           type: string
-          example: Example Option
-          maxLength: 255
-          minLength: 1
-        optionKey:
-          description: Option key which can be used for translation and internationalization
+        hintKey:
+          description: Hint key which can be used for translation
           type: string
-          example: example_option
-          maxLength: 255
-        optionSelectionValue:
-          description: Option selection value used to identify the option in forms or programmatic interfaces
-          type: string
-          example: value1
-          maxLength: 255
-        colorCode:
-          description: Color code in hexadecimal format for UI representation
-          type: string
-          example: '#FFFFFF'
-          enum:
-          - '#000000'
-          - '#FFFFFF'
-          - '#FF0000'
-          - '#00FF00'
-          - '#0000FF'
-          maxLength: 7
-          minLength: 4
-          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
-        metadata:
-          description: Additional metadata associated with the attribute option
-          example:
-            hint: This option provides additional information about the attribute
-            hintKey: attribute.option.hint.key
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-      example:
-        option: Example Option
-        optionKey: example_option
-        optionSelectionValue: value1
-        colorCode: '#FFFFFF'
-      required:
-      - option
-      title: Attribute Option Request
-    AssociatedAttribute:
-      type: object
-      properties:
-        fieldName:
-          description: Field Name
-          type: string
-          maxLength: 200
-          minLength: 0
-        name:
-          description: Attribute Name
-          type: string
-          minLength: 1
-        nameKey:
-          description: Attribute Name Key. Used for Translation
-          type: string
-          maxLength: 200
-          minLength: 0
-        description:
-          description: Attribute Description
-          type: string
-        descriptionKey:
-          description: Attribute Description Key
-          type: string
-          maxLength: 200
-          minLength: 0
-        options:
-          description: Attribute Options
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-          minItems: 1
-      required:
-      - name
-    AssociatedAttributeRequest:
-      type: object
-      properties:
-        associatedAttributes:
-          description: Associated attributes
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttribute'
-          minItems: 1
     AttributeOptionMetadataInformation:
       type: object
       properties:
@@ -1001,350 +1345,6 @@ components:
           description: Application Url
           type: string
           example: /settings/location-management/location/Location
-    AbacBasicAssignmentInfo:
-      type: object
-      properties:
-        assignmentId:
-          description: GUID of the linked assignment
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assignmentName:
-          description: Name of the linked assignment
-          type: string
-          example: Assignment1
-        policyStatus:
-          description: Policy status of the linked assignment
-          type: string
-          example: ACTIVE
-          enum:
-          - INACTIVE
-          - ACTIVE
-          - PROCESSING
-          - FAILED
-    IntakeQuestion:
-      type: object
-      properties:
-        nameKey:
-          type: string
-          maxLength: 100
-          minLength: 0
-        name:
-          type: string
-          maxLength: 500
-          minLength: 0
-        descriptionKey:
-          type: string
-          maxLength: 100
-          minLength: 0
-        description:
-          type: string
-          maxLength: 500
-          minLength: 0
-    AttributeCreateRequest:
-      type: object
-      properties:
-        fieldName:
-          description: Field name used to uniquely identify the attribute
-          type: string
-          example: nameOfRecord
-          maxLength: 200
-          minLength: 0
-        name:
-          description: Attribute name
-          type: string
-          example: Type of the Record
-          maxLength: 255
-          minLength: 1
-        nameKey:
-          description: Attribute name key used for translation
-          type: string
-          example: IM.Name
-          maxLength: 200
-          minLength: 0
-        description:
-          description: Attribute description
-          type: string
-          example: Gather Type for the record - provide some value related to nature of record
-          maxLength: 1000
-        descriptionKey:
-          description: Attribute description key used for translation
-          type: string
-          example: IM.Name.Description
-          maxLength: 200
-          minLength: 0
-        required:
-          description: Indicates if this attribute is required
-          type: boolean
-          example: false
-          default: 'false'
-        allowOther:
-          description: Indicates if user-specified values are allowed
-          type: boolean
-          example: false
-          default: 'false'
-        responseType:
-          description: Response type for the attribute
-          type: string
-          example: Text
-          enum:
-          - Text
-          - SingleSelect
-          - MultiSelect
-          - Date
-          - Formula
-          - Score
-          - Level
-          - Range
-        optionType:
-          description: Source for attribute options
-          type: string
-          example: None
-          default: None
-          enum:
-          - None
-          - Static
-          - Dynamic
-          maxLength: 200
-          minLength: 0
-        options:
-          description: List of options for the attribute (applicable for SingleSelect and MultiSelect)
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-        referenceCategoryIds:
-          description: List of category IDs associated with the attribute
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 550e8400-e29b-41d4-a716-446655440000
-        formula:
-          description: Formula expression for calculated attributes
-          type: string
-          example: Default:Field4 + Default:Field3 + 100
-          maxLength: 8000
-          minLength: 0
-        context:
-          description: Attribute context data
-          $ref: '#/components/schemas/AttributeContext'
-        source:
-          description: Source of the attribute
-          type: string
-          example: system
-          maxLength: 50
-        responseSubType:
-          description: Response sub type for the attribute
-          type: string
-          example: STANDARD
-          enum:
-          - STANDARD
-          - FORMULA
-          - MATRIX
-        associatedAttributeRequest:
-          description: Associated attribute request information
-          $ref: '#/components/schemas/AssociatedAttributeRequest'
-        maxMultiSelectAllowedOptionValues:
-          description: Maximum number of option values allowed for MultiSelect attributes
-          type: integer
-          format: int32
-          example: 10
-          maximum: 100
-          minimum: 1
-        encrypted:
-          description: Indicates if this attribute should be encrypted
-          type: boolean
-          example: false
-          default: 'false'
-        metadata:
-          description: Metadata about the attribute in JSON format
-          type: string
-          example:
-            sortable: true
-            filterOperators:
-            - EQUAL_TO
-            - NOT_EQUAL_TO
-        intakeQuestion:
-          description: Attribute intake question details
-          $ref: '#/components/schemas/IntakeQuestion'
-        validationRuleId:
-          description: ID of the validation rule to associate with the attribute
-          type: string
-          example: email
-          maxLength: 255
-        abacBasicAssignmentInfo:
-          description: GUID, name and the objectType of the linked assignment
-          type: array
-          items:
-            $ref: '#/components/schemas/AbacBasicAssignmentInfo'
-      required:
-      - fieldName
-      - name
-      - responseType
-    AttributeOptionInformation:
-      type: object
-      properties:
-        id:
-          description: Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        option:
-          description: Option name
-          type: string
-          example: TypeA
-          maxLength: 255
-          minLength: 1
-        optionKey:
-          description: Option Key which can be used for translation
-          type: string
-          example: IM.TypeA
-          maxLength: 255
-        colorCode:
-          description: Color code for the option
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
-          type: boolean
-          example: true
-          default: 'true'
-        metadata:
-          description: Additional metadata for the attribute option
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-      required:
-      - option
-    AssociatedAttributeInformation:
-      type: object
-      properties:
-        id:
-          description: Associated Attribute GUID
-          type: string
-          format: uuid
-        name:
-          description: Name
-          type: string
-          example: Count of members
-          minLength: 1
-        nameKey:
-          description: Name key
-          type: string
-          example: IM.CountOfMembersName
-        description:
-          description: Description
-          type: string
-          example: Provide details about count associated with this attribute
-        descriptionKey:
-          description: Description Key
-          type: string
-          example: IM.CountOfMembersDesc
-        schemaId:
-          description: Attribute Schema GUID
-          type: string
-          format: uuid
-        schemaName:
-          description: Attribute Schema Name
-          type: string
-          example: risk
-        fieldName:
-          description: Attribute field name
-          type: string
-          example: countOfMembers
-          minLength: 1
-        mappedFieldName:
-          description: Mapped Attribute field name. Should be used for sorting
-          type: string
-          example: count
-        enabled:
-          description: Indicator for attribute enabled/disabled
-          type: boolean
-        responseType:
-          description: Response Type
-          type: string
-          enum:
-          - Text
-          - SingleSelect
-          - MultiSelect
-          - Date
-          - DateTime
-          - NumericalText
-          - NumericalSingleSelect
-          - RadioButton
-          - TextArea
-          - Formula
-          - Level
-          - Range
-          - Score
-          - System
-        responseSubType:
-          description: Response sub type
-          type: string
-          enum:
-          - Standard
-          - Formula
-          - Matrix
-          - RollUp
-        formula:
-          description: Formula for attribute
-          type: string
-          example: sum(1, 3)
-        options:
-          description: Attribute options
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionInformation'
-        optionsByDomain:
-          description: Override options by Domain
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeDomainOptionOverrideInformation'
-      required:
-      - enabled
-      - fieldName
-      - id
-      - responseType
-    CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Category unique identifier
-          type: string
-          format: uuid
-        name:
-          description: Category name
-          type: string
-          example: Financial Category
-        nameKey:
-          description: Category nameKey for localization support
-          type: string
-          example: IM.FinancialCategoryName
-    AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: Hint
-          type: string
-        hintKey:
-          description: Hint key which can be used for translation
-          type: string
-    AttributeContext:
-      type: object
-      properties:
-        parameters:
-          additionalProperties:
-            type: object
-          type: object
   securitySchemes:
     OAUTH2:
       type: oauth2

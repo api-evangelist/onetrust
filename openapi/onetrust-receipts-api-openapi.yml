@@ -274,6 +274,16 @@ paths:
         - CONSENT_READ
 components:
   schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_ConsentStringDto:
+      properties:
+        type:
+          description: Type of the consent string (e.g., IAB_TCF_V2, ONETRUST)
+          type: string
+          example: IAB_TCF_V2
+        content:
+          description: The actual consent string content (base64 encoded string)
+          example: COzQOA8O1zG3YCABBDEA0CsAP_AAH_AAAAAI6td_H__bX9j-em_6bftr9Bf7a_9tfuA0mGcc1ZcnAkigTgQhRfmkfbO2JwY6D5Y6G1AAQhoQHtH6EGAAaEBAgIAAoACAIQAgQAgACBAAAAA
+          type: string
     ConsentPreferences-UniversalConsentPreferenceManag_DownStreamRuleAction:
       properties:
         actionType:
@@ -287,50 +297,6 @@ components:
           type: string
         ruleActionParameter:
           type: string
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2:
-      properties:
-        name:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_DsAttachments:
-      properties:
-        id:
-          type: string
-          format: uuid
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2:
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
     ConsentPreferences-UniversalConsentPreferenceManag_ReceiptInformationDetailSliceDto:
       type: object
       properties:
@@ -363,6 +329,14 @@ components:
           format: int32
         empty:
           type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_RuleActionResult:
       properties:
         ruleAction:
@@ -380,257 +354,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DownStreamRuleAction'
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeInformationDtoV2:
-      properties:
-        id:
-          description: Unique identifier of the purpose
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: Name of the purpose
-          type: string
-          example: Marketing Communications
-        description:
-          description: Detailed description of the purpose's data processing activities
-          type: string
-          example: Collect customer emails for marketing purposes
-        status:
-          description: Current status of the purpose
-          type: string
-          example: ACTIVE
-          enum:
-          - DRAFT
-          - ACTIVE
-          - RETIRED
-        version:
-          description: Version number of the purpose
-          type: integer
-          format: int64
-          example: 2
-        purposeType:
-          description: Classification type of the purpose
-          type: string
-          example: STANDARD
-          enum:
-          - STANDARD
-          - COOKIE
-          - IAB
-          - MOBILE
-          - NOTIFICATION_OPT_OUT
-        consentLifeSpan:
-          description: Duration in seconds that consents for this purpose remain valid
-          type: integer
-          format: int64
-          example: 7889238
-        transactionType:
-          description: Type of transaction associated with the purpose
-          type: string
-          example: CONFIRMED
-          enum:
-          - PENDING
-          - CONFIRMED
-          - WITHDRAWN
-          - EXPIRED
-          - NOTGIVEN
-          - OPT_OUT
-          - NO_CHOICE
-          - HARD_OPT_OUT
-          - EXTEND
-          - CHANGE_PREFERENCES
-          - OPT_IN
-          - NO_OPT_OUT
-          - CANCEL
-          - IMPLICIT
-        topics:
-          description: List of topics associated with this purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2'
-        reactivationDate:
-          description: Indicates the date and time on which a consent will be reactivated. This is set when a purpose is snoozed until the specified date and time. The consent remains snoozed until this date, after which it is automatically reactivated and becomes active again.
-          type: string
-          format: date-time
-        purposeAttachments:
-          description: List of file attachments or documents associated with the purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DsAttachments'
-        purposeScopes:
-          description: List of scopes or contexts where this purpose applies
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DsPurposeScope'
-        customPreferences:
-          description: List of custom preferences associated with this purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2'
-        purposeNote:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeNoteDtoV2'
-        attributes:
-          description: Key-value pairs of custom attributes associated with the purpose
-          type: object
-          additionalProperties:
-            type: array
-            description: Key-value pairs of custom attributes associated with the purpose
-            items:
-              type: string
-              description: Key-value pairs of custom attributes associated with the purpose
-    ConsentPreferences-UniversalConsentPreferenceManag_DsGeolocation:
-      properties:
-        country:
-          description: Country of the DataSubject
-          type: string
-          example: US
-        state:
-          description: State Code of the DataSubject
-          type: string
-          example: GA
-        stateName:
-          description: State Name of the DataSubject
-          type: string
-          example: Georgia
-        purposeIds:
-          description: List of Unique Identifiers of the Purpose for which Geolocation parameters are sent
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: List of Unique Identifiers of the Purpose for which Geolocation parameters are sent
-          example: '[f2229953-b4b5-4042-8cb9-b78038cc4c46, bc4836e2-c117-461b-a7a2-2b268c037a97]'
-          uniqueItems: true
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2:
-      properties:
-        id:
-          description: Unique identifier of the purpose-custom preference relationship
-          type: string
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: Name of the custom preference
-          type: string
-          example: Email Frequency
-        displayAs:
-          description: Display type for rendering the custom preference in the UI
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        customPreferenceOptions:
-          description: List of available options for this custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
-        languages:
-          description: List of language-specific content for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2'
-      required:
-      - displayAs
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_ConsentStringDto:
-      properties:
-        type:
-          description: Type of the consent string (e.g., IAB_TCF_V2, ONETRUST)
-          type: string
-          example: IAB_TCF_V2
-        content:
-          description: The actual consent string content (base64 encoded string)
-          example: COzQOA8O1zG3YCABBDEA0CsAP_AAH_AAAAAI6td_H__bX9j-em_6bftr9Bf7a_9tfuA0mGcc1ZcnAkigTgQhRfmkfbO2JwY6D5Y6G1AAQhoQHtH6EGAAaEBAgIAAoACAIQAgQAgACBAAAAA
-          type: string
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2:
-      properties:
-        id:
-          type: string
-        transactionType:
-          type: string
-        label:
-          type: string
-        order:
-          type: integer
-          format: int32
-        isDefault:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeNoteDtoV2:
-      properties:
-        noteId:
-          description: Unique identifier of the reason template
-          type: string
-          format: uuid
-        noteType:
-          description: The type of the note
-          type: string
-          enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: The language of the note
-          type: string
-        noteText:
-          description: The actual text of the note
-          type: string
-        isValidNote:
-          description: Flag indicating if the note is a valid reason template
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2:
-      properties:
-        id:
-          description: Unique identifier of the purpose-topic relationship
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        transactionType:
-          description: Type of transaction associated with the topic
-          type: string
-          example: OPT_IN
-        name:
-          description: Name of the topic
-          type: string
-          example: Car Marketing
-        integrationKey:
-          description: Integration key formed by combining purpose and topic names
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        languages:
-          description: List of language-specific content for the topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2'
-        canDelete:
-          description: Indicates whether this topic can be deleted
-          type: boolean
-          example: true
-      required:
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_SourceDto:
-      properties:
-        type:
-          description: Type of the source (e.g., 'WEB', 'MOBILE_APP', 'API')
-          type: string
-          example: WEB
-        content:
-          description: Content or identifier from the source system
-          example: https://example.com/consent
-          type: string
-        purposeIds:
-          description: List of purpose IDs associated with this source
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: List of purpose IDs associated with this source
-          example: '[550e8400-e29b-41d4-a716-446655440000]'
     ConsentPreferences-UniversalConsentPreferenceManag_DsPurposeScope:
       properties:
         key:
@@ -663,6 +386,42 @@ components:
           type: object
           additionalProperties:
             type: object
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_DsAttachments:
+      properties:
+        id:
+          type: string
+          format: uuid
     ConsentPreferences-UniversalConsentPreferenceManag_ReceiptInformationDetailDto:
       type: object
       properties:
@@ -795,6 +554,247 @@ components:
       required:
       - id
       - receiptJwt
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_DsGeolocation:
+      properties:
+        country:
+          description: Country of the DataSubject
+          type: string
+          example: US
+        state:
+          description: State Code of the DataSubject
+          type: string
+          example: GA
+        stateName:
+          description: State Name of the DataSubject
+          type: string
+          example: Georgia
+        purposeIds:
+          description: List of Unique Identifiers of the Purpose for which Geolocation parameters are sent
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: List of Unique Identifiers of the Purpose for which Geolocation parameters are sent
+          example: '[f2229953-b4b5-4042-8cb9-b78038cc4c46, bc4836e2-c117-461b-a7a2-2b268c037a97]'
+          uniqueItems: true
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2'
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeInformationDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Name of the purpose
+          type: string
+          example: Marketing Communications
+        description:
+          description: Detailed description of the purpose's data processing activities
+          type: string
+          example: Collect customer emails for marketing purposes
+        status:
+          description: Current status of the purpose
+          type: string
+          example: ACTIVE
+          enum:
+          - DRAFT
+          - ACTIVE
+          - RETIRED
+        version:
+          description: Version number of the purpose
+          type: integer
+          format: int64
+          example: 2
+        purposeType:
+          description: Classification type of the purpose
+          type: string
+          example: STANDARD
+          enum:
+          - STANDARD
+          - COOKIE
+          - IAB
+          - MOBILE
+          - NOTIFICATION_OPT_OUT
+        consentLifeSpan:
+          description: Duration in seconds that consents for this purpose remain valid
+          type: integer
+          format: int64
+          example: 7889238
+        transactionType:
+          description: Type of transaction associated with the purpose
+          type: string
+          example: CONFIRMED
+          enum:
+          - PENDING
+          - CONFIRMED
+          - WITHDRAWN
+          - EXPIRED
+          - NOTGIVEN
+          - OPT_OUT
+          - NO_CHOICE
+          - HARD_OPT_OUT
+          - EXTEND
+          - CHANGE_PREFERENCES
+          - OPT_IN
+          - NO_OPT_OUT
+          - CANCEL
+          - IMPLICIT
+        topics:
+          description: List of topics associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2'
+        reactivationDate:
+          description: Indicates the date and time on which a consent will be reactivated. This is set when a purpose is snoozed until the specified date and time. The consent remains snoozed until this date, after which it is automatically reactivated and becomes active again.
+          type: string
+          format: date-time
+        purposeAttachments:
+          description: List of file attachments or documents associated with the purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DsAttachments'
+        purposeScopes:
+          description: List of scopes or contexts where this purpose applies
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DsPurposeScope'
+        customPreferences:
+          description: List of custom preferences associated with this purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2'
+        purposeNote:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PurposeNoteDtoV2'
+        attributes:
+          description: Key-value pairs of custom attributes associated with the purpose
+          type: object
+          additionalProperties:
+            type: array
+            description: Key-value pairs of custom attributes associated with the purpose
+            items:
+              type: string
+              description: Key-value pairs of custom attributes associated with the purpose
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeNoteDtoV2:
+      properties:
+        noteId:
+          description: Unique identifier of the reason template
+          type: string
+          format: uuid
+        noteType:
+          description: The type of the note
+          type: string
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The language of the note
+          type: string
+        noteText:
+          description: The actual text of the note
+          type: string
+        isValidNote:
+          description: Flag indicating if the note is a valid reason template
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2:
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SourceDto:
+      properties:
+        type:
+          description: Type of the source (e.g., 'WEB', 'MOBILE_APP', 'API')
+          type: string
+          example: WEB
+        content:
+          description: Content or identifier from the source system
+          example: https://example.com/consent
+          type: string
+        purposeIds:
+          description: List of purpose IDs associated with this source
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: List of purpose IDs associated with this source
+          example: '[550e8400-e29b-41d4-a716-446655440000]'
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

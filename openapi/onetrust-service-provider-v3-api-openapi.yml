@@ -83,6 +83,61 @@ paths:
         - SCIM
 components:
   schemas:
+    ServiceProviderConfig:
+      type: object
+      properties:
+        schemas:
+          description: A collection of resource types supported by the service provider
+          type: array
+          items:
+            type: string
+            description: A collection of resource types supported by the service provider
+            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
+          uniqueItems: true
+        patch:
+          $ref: '#/components/schemas/Supported'
+        bulk:
+          $ref: '#/components/schemas/BulkSupported'
+        filter:
+          $ref: '#/components/schemas/FilterSupported'
+        changePassword:
+          $ref: '#/components/schemas/Supported'
+        sort:
+          $ref: '#/components/schemas/Supported'
+        etag:
+          $ref: '#/components/schemas/Supported'
+        xmlDataFormat:
+          $ref: '#/components/schemas/Supported'
+        authenticationSchemes:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthenticationScheme'
+        meta:
+          $ref: '#/components/schemas/Meta'
+          readOnly: true
+      title: ServiceProviderConfig
+    BulkSupported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+        maxOperations:
+          type: integer
+          format: int32
+        maxPayloadSize:
+          type: integer
+          format: int32
+    Supported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
     AuthenticationScheme:
       type: object
       properties:
@@ -110,6 +165,16 @@ components:
           description: Indicates whether the authentication scheme is primary
           type: boolean
           example: true
+    FilterSupported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+        maxResults:
+          type: integer
+          format: int32
     Meta:
       type: object
       properties:
@@ -159,71 +224,6 @@ components:
           minLength: 1
       readOnly: true
       title: Meta
-    ServiceProviderConfig:
-      type: object
-      properties:
-        schemas:
-          description: A collection of resource types supported by the service provider
-          type: array
-          items:
-            type: string
-            description: A collection of resource types supported by the service provider
-            example: '["urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig"]'
-          example:
-          - urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig
-          uniqueItems: true
-        patch:
-          $ref: '#/components/schemas/Supported'
-        bulk:
-          $ref: '#/components/schemas/BulkSupported'
-        filter:
-          $ref: '#/components/schemas/FilterSupported'
-        changePassword:
-          $ref: '#/components/schemas/Supported'
-        sort:
-          $ref: '#/components/schemas/Supported'
-        etag:
-          $ref: '#/components/schemas/Supported'
-        xmlDataFormat:
-          $ref: '#/components/schemas/Supported'
-        authenticationSchemes:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuthenticationScheme'
-        meta:
-          $ref: '#/components/schemas/Meta'
-          readOnly: true
-      title: ServiceProviderConfig
-    FilterSupported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-        maxResults:
-          type: integer
-          format: int32
-    BulkSupported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-        maxOperations:
-          type: integer
-          format: int32
-        maxPayloadSize:
-          type: integer
-          format: int32
-    Supported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
   securitySchemes:
     OAUTH2:
       type: oauth2

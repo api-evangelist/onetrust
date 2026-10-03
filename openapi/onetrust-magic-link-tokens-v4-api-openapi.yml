@@ -262,6 +262,24 @@ components:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
           example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
     ConsentAPI_EmailLinkTokenResponseDto:
       type: object
       properties:
@@ -291,24 +309,6 @@ components:
         sorted:
           type: boolean
         unsorted:
-          type: boolean
-    ConsentAPI_PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
           type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:

@@ -97,56 +97,18 @@ paths:
         - RISK_READ
 components:
   schemas:
-    TechRiskCompliance-RiskTemplate_RiskLevelDetails:
-      type: object
-      properties:
-        levelId:
-          description: The numeric identifier for target standard risk scoring.
-          type: integer
-          format: int64
-          example: 1
-        level:
-          description: The target risk level name for standard scoring methodology.
-          type: string
-          example: Low
-        impactLevelId:
-          description: The numeric identifier for target impact in matrix scoring.
-          type: integer
-          format: int64
-          example: 1
-        impactLevel:
-          description: The target impact level name for matrix methodology.
-          type: string
-          example: Low
-        probabilityLevelId:
-          description: The numeric identifier for target probability in matrix scoring.
-          type: integer
-          format: int64
-          example: 1
-        probabilityLevel:
-          description: The target probability level name for matrix methodology.
-          type: string
-          example: Low
-        riskScore:
-          description: The target numeric risk score value after mitigation.
-          type: number
-          example: 2
-    TechRiskCompliance-RiskTemplate_RiskCategoryInformation:
+    TechRiskCompliance-RiskTemplate_BasicEntityDetail:
       type: object
       properties:
         id:
-          description: The unique identifier of the risk category.
+          description: The unique identifier of the organization entity.
           type: string
           format: uuid
-          example: d7e5c1a2-42a0-4cd7-83b1-d0a2ff064cb7
+          example: 7009201b-3808-4eaa-8afa-97f50c6c3cf1
         name:
-          description: The display name of the risk category.
+          description: The display name of the organization entity.
           type: string
-          example: Category Name
-        nameKey:
-          description: The translation key used for localizing the category name.
-          type: string
-          example: RiskCategory.Availability
+          example: Entity name
     TechRiskCompliance-RiskTemplate_ThreatInformation:
       type: object
       properties:
@@ -233,22 +195,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/TechRiskCompliance-RiskTemplate_AttributeValueInformation'
-    TechRiskCompliance-RiskTemplate_VulnerabilityInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the vulnerability entity.
-          type: string
-          format: uuid
-          example: 6e4b2d9a-7fc7-4ef2-8129-3a4f84e7d314
-        name:
-          description: The display name of the vulnerability.
-          type: string
-          example: Threat Name
-        identifier:
-          description: The reference identifier of the vulnerability.
-          type: string
-          example: '245'
     TechRiskCompliance-RiskTemplate_ControlInformation:
       type: object
       properties:
@@ -265,18 +211,6 @@ components:
           description: The reference identifier of the control.
           type: string
           example: '123'
-    TechRiskCompliance-RiskTemplate_BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the organization entity.
-          type: string
-          format: uuid
-          example: 7009201b-3808-4eaa-8afa-97f50c6c3cf1
-        name:
-          description: The display name of the organization entity.
-          type: string
-          example: Entity name
     TechRiskCompliance-RiskTemplate_AttributeValueInformation:
       type: object
       properties:
@@ -312,6 +246,72 @@ components:
           default: 'false'
       required:
       - value
+    TechRiskCompliance-RiskTemplate_RiskLevelDetails:
+      type: object
+      properties:
+        levelId:
+          description: The numeric identifier for target standard risk scoring.
+          type: integer
+          format: int64
+          example: 1
+        level:
+          description: The target risk level name for standard scoring methodology.
+          type: string
+          example: Low
+        impactLevelId:
+          description: The numeric identifier for target impact in matrix scoring.
+          type: integer
+          format: int64
+          example: 1
+        impactLevel:
+          description: The target impact level name for matrix methodology.
+          type: string
+          example: Low
+        probabilityLevelId:
+          description: The numeric identifier for target probability in matrix scoring.
+          type: integer
+          format: int64
+          example: 1
+        probabilityLevel:
+          description: The target probability level name for matrix methodology.
+          type: string
+          example: Low
+        riskScore:
+          description: The target numeric risk score value after mitigation.
+          type: number
+          example: 2
+    TechRiskCompliance-RiskTemplate_RiskCategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the risk category.
+          type: string
+          format: uuid
+          example: d7e5c1a2-42a0-4cd7-83b1-d0a2ff064cb7
+        name:
+          description: The display name of the risk category.
+          type: string
+          example: Category Name
+        nameKey:
+          description: The translation key used for localizing the category name.
+          type: string
+          example: RiskCategory.Availability
+    TechRiskCompliance-RiskTemplate_VulnerabilityInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the vulnerability entity.
+          type: string
+          format: uuid
+          example: 6e4b2d9a-7fc7-4ef2-8129-3a4f84e7d314
+        name:
+          description: The display name of the vulnerability.
+          type: string
+          example: Threat Name
+        identifier:
+          description: The reference identifier of the vulnerability.
+          type: string
+          example: '245'
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

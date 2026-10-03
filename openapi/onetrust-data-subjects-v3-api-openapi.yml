@@ -285,237 +285,33 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    DSPreferneceCache_DataSubjectProfilePurposeDto:
+    DSPreferneceCache_PurposeSimpleDetailsDtoV1:
       type: object
       properties:
-        id:
-          description: Unique Identifier identifying a Purpose
+        Id:
+          description: The unique identifier of the purpose
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        lastReceiptId:
-          description: Unique Identifier identifying a Receipt
+          example: cbac5669-1445-4520-ba15-b1993902b295
+        Name:
+          description: The name of the purpose
           type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The Purpose name
-          type: string
-          example: Marketing Communications
-        version:
-          description: Version of the Purpose
-          type: integer
-          format: int64
-          example: 2
-        status:
-          description: Status of the Purpose
-          type: string
-          example: ACTIVE
-        firstTransactionDate:
-          description: The Date the first transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        lastTransactionDate:
-          description: The Date the last transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        withdrawalDate:
-          description: The Date the withdrawal transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        reactivationDate:
-          description: Indicates the date and time on which a consent will be reactivated. This is set to snooze a purpose until the specified date and time. The consent remains snoozed until this date, then is automatically reactivated and becomes active again.
-          type: string
-          format: date-time
-          example: '2020-06-12T16:11:25.479'
-        consentDate:
-          description: The Date the Data Subject consented to this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-07T13:18:23.123Z'
-        expiryDate:
-          description: The Date the Data Subject's consent expires for this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-07T13:18:23.123Z'
-        totalTransactionCount:
-          description: The total number of Transactions recorded against this Purpose
-          type: integer
-          format: int64
-          example: 3
-        topics:
-          description: A list containing the Purpose's Topics
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileTopic'
-        customPreferences:
-          description: A list containing the Purpose's Custom Preferences
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceDto'
-        lastTransactionCollectionPointId:
-          type: string
-          format: uuid
-        lastTransactionCollectionPointVersion:
-          type: integer
-          format: int64
-        purposeNote:
-          description: Note for a purpose
-          $ref: '#/components/schemas/DSPreferneceCache_PurposeNoteDto'
-        groupEffectiveStatus:
-          description: A List of Effective Status of all purposes in consent group reference
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_PurposesGroupEffectiveStatusDto'
-        lastUpdatedDate:
-          description: 'Date/Time of the most recent interaction that resulted in an update for this Purpose to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        lastInteractionDate:
-          description: Date/Time of the most recent Data Subject interaction for this Purpose Receipt API
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        attributes:
-          description: Attributes attached to the purpose
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-        purposeAttachments:
-          description: Documents attached to Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_CosmosDsAttachment'
-        geolocation:
-          description: Geolocation parameters of the DataSubject received for this Purpose
-          $ref: '#/components/schemas/DSPreferneceCache_DataSubjectGeolocation'
-    DSPreferneceCache_DataSubjectProfilesPurposeDto:
+          example: Entity Name
+    DSPreferneceCache_DataSubjectGeolocation:
       type: object
       properties:
-        id:
-          description: Unique Identifier identifying a Purpose
+        dataSubjectId:
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        lastReceiptId:
-          description: Unique Identifier identifying a Receipt
+        country:
+          type: string
+        state:
+          type: string
+        stateName:
+          type: string
+        receiptGuid:
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The Purpose name
-          type: string
-          example: Marketing Communications
-        version:
-          description: Version of the Purpose
-          type: integer
-          format: int64
-          example: 2
-        status:
-          description: Status of the Purpose
-          type: string
-          example: ACTIVE
-        firstTransactionDate:
-          description: The Date the first transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        lastTransactionDate:
-          description: The Date the last transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        withdrawalDate:
-          description: The Date the withdrawal transaction was recorded against this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        reactivationDate:
-          description: Indicates the date and time on which a consent will be reactivated. This is set to snooze a purpose until the specified date and time. The consent remains snoozed until this date, then is automatically reactivated and becomes active again.
-          type: string
-          format: date-time
-          example: '2020-06-12T16:11:25.479'
-        consentDate:
-          description: The Date the Data Subject consented to this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-07T13:18:23.123Z'
-        expiryDate:
-          description: The Date the Data Subject's consent expires for this Purpose
-          type: string
-          format: date-time
-          example: '2020-01-07T13:18:23.123Z'
-        totalTransactionCount:
-          description: The total number of Transactions recorded against this Purpose
-          type: integer
-          format: int64
-          example: 3
-        preferences:
-          description: A list containing the Purpose's Topics
-          type: array
-          items:
-            type: string
-            format: uuid
-          writeOnly: true
-        topics:
-          description: A list containing the Purpose's Topics
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileTopic'
-        Preferences:
-          description: A list containing the Purpose's Custom Preferences
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-              format: uuid
-          writeOnly: true
-        customPreferences:
-          description: A list containing the Purpose's Custom Preferences
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceDto'
-        lastTransactionCollectionPointId:
-          type: string
-          format: uuid
-        lastTransactionCollectionPointVersion:
-          type: integer
-          format: int64
-        purposeNote:
-          description: Note for a purpose
-          $ref: '#/components/schemas/DSPreferneceCache_PurposeNoteDto'
-        lastUpdatedDate:
-          description: 'Date/Time of the most recent interaction that resulted in an update for this Purpose to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        lastInteractionDate:
-          description: Date/Time of the most recent Data Subject interaction for this Purpose Receipt API
-          type: string
-          format: date-time
-          example: '2020-01-05T11:34:30.974Z'
-        attributes:
-          description: Attributes attached to the purpose
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-        purposeAttachments:
-          description: Documents attached to Purpose
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_CosmosDsAttachment'
-        geolocation:
-          description: Geolocation parameters of the DataSubject received for this Purpose
-          $ref: '#/components/schemas/DSPreferneceCache_DataSubjectGeolocation'
     DSPreferneceCache_DataSubjectProfileDto:
       type: object
       properties:
@@ -646,6 +442,434 @@ components:
           type: integer
           format: int64
           example: 1
+    DSPreferneceCache_CosmosDsAttachment:
+      type: object
+      properties:
+        attachmentId:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        uploadedBy:
+          type: string
+        uploadDate:
+          type: string
+          format: date-time
+    DSPreferneceCache_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/DSPreferneceCache_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+        paged:
+          type: boolean
+    DSPreferneceCache_DataSubjectProfilesSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfilesDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/DSPreferneceCache_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/DSPreferneceCache_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
+          type: boolean
+    DSPreferneceCache_DataSubjectProfileCustomPreferenceDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying the Custom Preference.
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: The Custom Preference name.
+          type: string
+          example: Email Frequency
+        options:
+          description: List containing the Custom Preference's Options.
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceOptionDto'
+    DSPreferneceCache_LinkToken:
+      type: object
+      properties:
+        instantLinkToken:
+          type: string
+    DSPreferneceCache_DataSubjectProfileCustomPreferenceOptionDto:
+      type: object
+      properties:
+        Id:
+          description: Unique Identifier identifying a Custom Preference Option
+          type: string
+          format: uuid
+          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
+        name:
+          description: The Option name
+          type: string
+          example: Weekly
+    DSPreferneceCache_PurposeNoteDto:
+      type: object
+      properties:
+        noteId:
+          description: Unique identifier of the reason template
+          type: string
+          format: uuid
+        noteType:
+          description: The type of the note
+          type: string
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The language of the note
+          type: string
+        noteText:
+          description: The actual text of the note
+          type: string
+        isValidNote:
+          description: Flag indicating if the note is a valid reason template
+          type: boolean
+    DSPreferneceCache_DataSubjectProfilePurposeDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        lastReceiptId:
+          description: Unique Identifier identifying a Receipt
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        version:
+          description: Version of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        status:
+          description: Status of the Purpose
+          type: string
+          example: ACTIVE
+        firstTransactionDate:
+          description: The Date the first transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastTransactionDate:
+          description: The Date the last transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        withdrawalDate:
+          description: The Date the withdrawal transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        reactivationDate:
+          description: Indicates the date and time on which a consent will be reactivated. This is set to snooze a purpose until the specified date and time. The consent remains snoozed until this date, then is automatically reactivated and becomes active again.
+          type: string
+          format: date-time
+          example: '2020-06-12T16:11:25.479'
+        consentDate:
+          description: The Date the Data Subject consented to this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        expiryDate:
+          description: The Date the Data Subject's consent expires for this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        totalTransactionCount:
+          description: The total number of Transactions recorded against this Purpose
+          type: integer
+          format: int64
+          example: 3
+        topics:
+          description: A list containing the Purpose's Topics
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileTopic'
+        customPreferences:
+          description: A list containing the Purpose's Custom Preferences
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceDto'
+        lastTransactionCollectionPointId:
+          type: string
+          format: uuid
+        lastTransactionCollectionPointVersion:
+          type: integer
+          format: int64
+        purposeNote:
+          description: Note for a purpose
+          $ref: '#/components/schemas/DSPreferneceCache_PurposeNoteDto'
+        groupEffectiveStatus:
+          description: A List of Effective Status of all purposes in consent group reference
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_PurposesGroupEffectiveStatusDto'
+        lastUpdatedDate:
+          description: 'Date/Time of the most recent interaction that resulted in an update for this Purpose to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastInteractionDate:
+          description: Date/Time of the most recent Data Subject interaction for this Purpose Receipt API
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        attributes:
+          description: Attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        purposeAttachments:
+          description: Documents attached to Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_CosmosDsAttachment'
+        geolocation:
+          description: Geolocation parameters of the DataSubject received for this Purpose
+          $ref: '#/components/schemas/DSPreferneceCache_DataSubjectGeolocation'
+    DSPreferneceCache_PurposesGroupEffectiveStatusDto:
+      type: object
+      properties:
+        groupId:
+          description: Unique identifier for identifying a Consent group
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        effectiveStatus:
+          description: Purpose status in a Consent Group
+          type: string
+          example: ACTIVE
+    DSPreferneceCache_CollectionPointNoticeProfilesDto:
+      type: object
+      properties:
+        id:
+          description: The collection point notice unique identifier
+          type: string
+          format: uuid
+          example: 05e30742-7e6c-4916-a5a1-7742a14ee984
+        name:
+          description: The collection point notice name
+          type: string
+          example: Marketing Notice
+        url:
+          description: The url to a linked privacy notice
+          type: string
+          example: www.onetrust.com
+        privacyNoticeGuid:
+          description: The unique identifier of a embedded privacy notice
+          type: string
+          format: uuid
+          example: 1439b150-ef4c-444c-a20e-44622c8ccaf3
+        type:
+          description: The type of the collection point notice
+          type: string
+          example: EMBEDDED
+          enum:
+          - LINKED
+          - EMBEDDED
+        purposes:
+          description: The set of purposes linked to the collection point notice
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_PurposeSimpleDetailsDto'
+          uniqueItems: true
+        privacyNoticeVersion:
+          description: The active version of this collection point notice
+          $ref: '#/components/schemas/DSPreferneceCache_SimpleNameVersionDto'
+        collectionPoint:
+          description: The collection point this notice is attached to
+          $ref: '#/components/schemas/DSPreferneceCache_SimpleNameVersionDto'
+    DSPreferneceCache_DataSubjectElementDto:
+      type: object
+      properties:
+        name:
+          description: The Data Element name.
+          type: string
+          example: Work Email
+        value:
+          description: The Data Element value.
+          type: object
+          example: example@otprivacy.com, [Red, Blue]
+        doNotCall:
+          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list.
+          type: boolean
+          example: true
+    DSPreferneceCache_DataSubjectProfileTopic:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Purpose Topic
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        name:
+          description: The Topic name
+          type: string
+          example: Car Marketing
+    DSPreferneceCache_DataSubjectProfilesPurposeDto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier identifying a Purpose
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        lastReceiptId:
+          description: Unique Identifier identifying a Receipt
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The Purpose name
+          type: string
+          example: Marketing Communications
+        version:
+          description: Version of the Purpose
+          type: integer
+          format: int64
+          example: 2
+        status:
+          description: Status of the Purpose
+          type: string
+          example: ACTIVE
+        firstTransactionDate:
+          description: The Date the first transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastTransactionDate:
+          description: The Date the last transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        withdrawalDate:
+          description: The Date the withdrawal transaction was recorded against this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        reactivationDate:
+          description: Indicates the date and time on which a consent will be reactivated. This is set to snooze a purpose until the specified date and time. The consent remains snoozed until this date, then is automatically reactivated and becomes active again.
+          type: string
+          format: date-time
+          example: '2020-06-12T16:11:25.479'
+        consentDate:
+          description: The Date the Data Subject consented to this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        expiryDate:
+          description: The Date the Data Subject's consent expires for this Purpose
+          type: string
+          format: date-time
+          example: '2020-01-07T13:18:23.123Z'
+        totalTransactionCount:
+          description: The total number of Transactions recorded against this Purpose
+          type: integer
+          format: int64
+          example: 3
+        preferences:
+          description: A list containing the Purpose's Topics
+          type: array
+          items:
+            type: string
+            format: uuid
+          writeOnly: true
+        topics:
+          description: A list containing the Purpose's Topics
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileTopic'
+        Preferences:
+          description: A list containing the Purpose's Custom Preferences
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+              format: uuid
+          writeOnly: true
+        customPreferences:
+          description: A list containing the Purpose's Custom Preferences
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceDto'
+        lastTransactionCollectionPointId:
+          type: string
+          format: uuid
+        lastTransactionCollectionPointVersion:
+          type: integer
+          format: int64
+        purposeNote:
+          description: Note for a purpose
+          $ref: '#/components/schemas/DSPreferneceCache_PurposeNoteDto'
+        lastUpdatedDate:
+          description: 'Date/Time of the most recent interaction that resulted in an update for this Purpose to any of: Purpose version, Purpose Status, or Topic/Custom Preference selections'
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        lastInteractionDate:
+          description: Date/Time of the most recent Data Subject interaction for this Purpose Receipt API
+          type: string
+          format: date-time
+          example: '2020-01-05T11:34:30.974Z'
+        attributes:
+          description: Attributes attached to the purpose
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        purposeAttachments:
+          description: Documents attached to Purpose
+          type: array
+          items:
+            $ref: '#/components/schemas/DSPreferneceCache_CosmosDsAttachment'
+        geolocation:
+          description: Geolocation parameters of the DataSubject received for this Purpose
+          $ref: '#/components/schemas/DSPreferneceCache_DataSubjectGeolocation'
     DSPreferneceCache_DataSubjectProfilesDto:
       type: object
       properties:
@@ -703,161 +927,27 @@ components:
         latestGeoLocation:
           description: Latest Geolocation parameters of the DataSubject
           $ref: '#/components/schemas/DSPreferneceCache_DataSubjectGeolocation'
-    DSPreferneceCache_PurposeNoteDto:
+    DSPreferneceCache_PurposeSimpleDetailsDto:
       type: object
       properties:
-        noteId:
-          description: Unique identifier of the reason template
+        guid:
+          description: The unique identifier of the purpose
           type: string
           format: uuid
-        noteType:
-          description: The type of the note
-          type: string
-          enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: The language of the note
-          type: string
-        noteText:
-          description: The actual text of the note
-          type: string
-        isValidNote:
-          description: Flag indicating if the note is a valid reason template
-          type: boolean
-    DSPreferneceCache_CollectionPointNoticeProfilesDto:
-      type: object
-      properties:
-        id:
-          description: The collection point notice unique identifier
-          type: string
-          format: uuid
-          example: 05e30742-7e6c-4916-a5a1-7742a14ee984
+          example: cbac5669-1445-4520-ba15-b1993902b295
         name:
-          description: The collection point notice name
+          description: The name of the purpose
           type: string
-          example: Marketing Notice
-        url:
-          description: The url to a linked privacy notice
-          type: string
-          example: www.onetrust.com
-        privacyNoticeGuid:
-          description: The unique identifier of a embedded privacy notice
-          type: string
-          format: uuid
-          example: 1439b150-ef4c-444c-a20e-44622c8ccaf3
-        type:
-          description: The type of the collection point notice
-          type: string
-          example: EMBEDDED
-          enum:
-          - LINKED
-          - EMBEDDED
-        purposes:
-          description: The set of purposes linked to the collection point notice
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_PurposeSimpleDetailsDto'
-          uniqueItems: true
-        privacyNoticeVersion:
-          description: The active version of this collection point notice
-          $ref: '#/components/schemas/DSPreferneceCache_SimpleNameVersionDto'
-        collectionPoint:
-          description: The collection point this notice is attached to
-          $ref: '#/components/schemas/DSPreferneceCache_SimpleNameVersionDto'
-    DSPreferneceCache_DataSubjectProfileCustomPreferenceDto:
+          example: Entity Name
+    DSPreferneceCache_SortObject:
       type: object
       properties:
-        id:
-          description: Unique Identifier identifying the Custom Preference.
-          type: string
-          format: uuid
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: The Custom Preference name.
-          type: string
-          example: Email Frequency
-        options:
-          description: List containing the Custom Preference's Options.
-          type: array
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfileCustomPreferenceOptionDto'
-    DSPreferneceCache_DataSubjectProfilesSliceDto:
-      type: object
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/DSPreferneceCache_DataSubjectProfilesDto'
-          type: array
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/DSPreferneceCache_PageableObject'
-        last:
-          description: Flag indicating whether this is the last page or not.
-          type: boolean
-          example: false
-        sort:
-          $ref: '#/components/schemas/DSPreferneceCache_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
         empty:
           type: boolean
-    DSPreferneceCache_DataSubjectProfileCustomPreferenceOptionDto:
-      type: object
-      properties:
-        Id:
-          description: Unique Identifier identifying a Custom Preference Option
-          type: string
-          format: uuid
-          example: ca0fc41b-b28a-4335-804c-44d1f0f782ed
-        name:
-          description: The Option name
-          type: string
-          example: Weekly
-    DSPreferneceCache_LinkToken:
-      type: object
-      properties:
-        instantLinkToken:
-          type: string
-    DSPreferneceCache_DataSubjectElementDto:
-      type: object
-      properties:
-        name:
-          description: The Data Element name.
-          type: string
-          example: Work Email
-        value:
-          description: The Data Element value.
-          type: object
-          example: example@otprivacy.com, [Red, Blue]
-        doNotCall:
-          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list.
+        unsorted:
           type: boolean
-          example: true
-    DSPreferneceCache_CosmosDsAttachment:
-      type: object
-      properties:
-        attachmentId:
-          type: string
-          format: uuid
-        fileName:
-          type: string
-        uploadedBy:
-          type: string
-        uploadDate:
-          type: string
-          format: date-time
+        sorted:
+          type: boolean
     DSPreferneceCache_SimpleNameVersionDtoV1:
       type: object
       properties:
@@ -880,96 +970,6 @@ components:
           type: integer
           format: int64
           example: 1
-    DSPreferneceCache_DataSubjectGeolocation:
-      type: object
-      properties:
-        dataSubjectId:
-          type: string
-          format: uuid
-        country:
-          type: string
-        state:
-          type: string
-        stateName:
-          type: string
-        receiptGuid:
-          type: string
-          format: uuid
-    DSPreferneceCache_DataSubjectProfileTopic:
-      type: object
-      properties:
-        id:
-          description: Unique Identifier identifying a Purpose Topic
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        name:
-          description: The Topic name
-          type: string
-          example: Car Marketing
-    DSPreferneceCache_PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/DSPreferneceCache_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-        paged:
-          type: boolean
-    DSPreferneceCache_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        unsorted:
-          type: boolean
-        sorted:
-          type: boolean
-    DSPreferneceCache_PurposesGroupEffectiveStatusDto:
-      type: object
-      properties:
-        groupId:
-          description: Unique identifier for identifying a Consent group
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        effectiveStatus:
-          description: Purpose status in a Consent Group
-          type: string
-          example: ACTIVE
-    DSPreferneceCache_PurposeSimpleDetailsDtoV1:
-      type: object
-      properties:
-        Id:
-          description: The unique identifier of the purpose
-          type: string
-          format: uuid
-          example: cbac5669-1445-4520-ba15-b1993902b295
-        Name:
-          description: The name of the purpose
-          type: string
-          example: Entity Name
-    DSPreferneceCache_PurposeSimpleDetailsDto:
-      type: object
-      properties:
-        guid:
-          description: The unique identifier of the purpose
-          type: string
-          format: uuid
-          example: cbac5669-1445-4520-ba15-b1993902b295
-        name:
-          description: The name of the purpose
-          type: string
-          example: Entity Name
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

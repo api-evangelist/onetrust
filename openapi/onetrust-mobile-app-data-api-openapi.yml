@@ -122,19 +122,29 @@ paths:
           description: The Domain or Application hasn't been published yet
 components:
   schemas:
-    DomainResponse:
+    Rule:
       type: object
       properties:
-        domain:
-          $ref: '#/components/schemas/domain'
-        culture:
-          $ref: '#/components/schemas/culture'
-    culture:
-      properties:
-        DomainData:
-          $ref: '#/components/schemas/DomainData'
-        CommonData:
-          $ref: '#/components/schemas/CommonData'
+        Id:
+          type: string
+          format: UUID
+        Name:
+          type: string
+        Countries:
+          type: array
+          items:
+            type: string
+        States:
+          type: object
+        LanguageSwitcherPlaceholder:
+          type: object
+        BannerPushesDown:
+          type: boolean
+        Default:
+          type: boolean
+        Global:
+          type: boolean
+      title: Rule
     ConsentIntegration:
       type: object
       properties:
@@ -143,34 +153,181 @@ components:
         RequestInformation:
           type: string
       title: ConsentIntegration
-    IabData:
+    DomainResponse:
       type: object
       properties:
-        cookieVersion:
+        domain:
+          $ref: '#/components/schemas/domain'
+        culture:
+          $ref: '#/components/schemas/culture'
+    CommonData:
+      properties:
+        IabThirdPartyCookieUrl:
           type: string
-        createdTime:
+          example: cookies-dev.onetrust.mgr.consensu.org
+        OptanonHideAcceptButton:
           type: string
-        updatedTime:
+          example: hide-accept-button
+        OptanonStyle:
           type: string
-        cmpId:
+          example: modern
+        OptanonStaticContentLocation:
           type: string
-        cmpVersion:
+          example: ''
+        BannerCustomCSS:
           type: string
-        consentScreen:
+          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
+        PCCustomCSS:
           type: string
-        consentLanguage:
+          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
+        PcTextColor:
           type: string
-        vendorListVersion:
-          type: integer
-        maxVendorId:
-          type: integer
-        encodingType:
+          example: '#F1F1F1'
+        PcButtonColor:
           type: string
-        iabVendorJson:
+          example: '#148FC7'
+        PcButtonTextColor:
           type: string
-        globalVendorListUrl:
+          example: '#FeFF23'
+        PcBacgroundTextColor:
           type: string
-      title: IabData
+          example: '#000000'
+        PcMenuColor:
+          type: string
+          example: '#AC7422'
+        PcMenuHighLightColor:
+          type: string
+          example: '#F56310'
+        TextColor:
+          type: string
+          example: '#23FF53'
+        ButtonColor:
+          type: string
+          example: '#19c3a2'
+        ButtonTextColor:
+          type: string
+          example: '#20D4B3'
+        BackgroundColor:
+          type: string
+          example: '#b5cedf'
+        OptanonLogo:
+          type: string
+          example: NEED EXAMPLE
+        OptanonCookieDomain:
+          type: string
+          description: This is the name of the Domain or Application
+          example: OneTrust CCPA App
+        OptanonGroupIdPerformanceCookies:
+          type: string
+          example: C0002
+        OptanonGroupIdFunctionalityCookies:
+          type: string
+          example: C0003
+        OptanonGroupIdTargetingCookies:
+          type: string
+          example: C0004
+        OptanonGroupIdSocialCookies:
+          type: string
+          example: C0005
+        ShowSubGroupCookies:
+          type: boolean
+          example: false
+        ShowSubGroupDescription:
+          type: boolean
+          example: true
+        LegacyBannerLayout:
+          type: string
+          example: default_flat_bottom_two_button_black
+        OptanonHideCookieSettingsButton:
+          type: string
+          example: NEED EXAMPLE
+        UseRTL:
+          type: boolean
+          example: false
+        ShowBannerAcceptButton:
+          type: boolean
+          example: true
+        ShowBannerCookieSettings:
+          type: boolean
+          example: true
+        ShowCookieList:
+          type: boolean
+          example: false
+        PCShowCookieHost:
+          type: boolean
+          example: true
+        PCShowCookieDuration:
+          type: boolean
+          example: true
+        PCShowCookieType:
+          type: boolean
+          example: true
+        PCShowCookieCategory:
+          type: boolean
+          example: true
+        PCShowCookieDescription:
+          type: boolean
+          example: true
+        AllowHostOptOut:
+          type: boolean
+          example: false
+        CookieListTitleColor:
+          type: string
+          example: '#8A898A'
+        CookieListGroupNameColor:
+          type: string
+          example: '#D6D6D6'
+        CookieListTableHeaderColor:
+          type: string
+          example: '#688DC0'
+        CookieListPrimaryColor:
+          type: string
+          example: '#76C350'
+        CookieListCustomoCss:
+          type: string
+          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
+    domain:
+      properties:
+        CookieSPAEnabled:
+          type: boolean
+          description: Indicates if tenant has a CookieSPA feature toggle enabled.
+          example: false
+        UseV2:
+          type: boolean
+          description: Indicates if data is formatted to support new cookies flow.
+          example: true
+        MobileSDK:
+          type: boolean
+          description: Indicates if data was built as a Mobile Application or Website.
+          example: true
+        SkipGeolocation:
+          type: boolean
+          description: If false, only one geolocation rule exists so no need to call. geolocation API
+          example: false
+        ScriptType:
+          type: string
+          description: Indicates if the script is a Test Script or Production Script.
+          example: Production
+        Version:
+          type: string
+          description: Current OneTrust platform version. This does not indicate the version of this data.
+          example: 5.10.0
+        OptanonDataJSON:
+          type: string
+          description: The Domain or Application ID. This should match the value passed into the header when making this call.
+          example: b97c9cf3-6801-4463-8cf8-f557a00a4052
+        GeolocationUrl:
+          type: string
+          description: API that can be used to determine the user's geographic location based on IP lookup.
+          example: https://geolocation.1trust.app/cookieconsentpub/v1/geo/location
+        RuleSet:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+        IabData:
+          $ref: '#/components/schemas/IabData'
+        ConsentIntegration:
+          $ref: '#/components/schemas/ConsentIntegration'
     DomainData:
       properties:
         cctId:
@@ -464,197 +621,40 @@ components:
         PCFirstPartyCookieListText:
           type: string
           example: First Party Cookies
-    domain:
-      properties:
-        CookieSPAEnabled:
-          type: boolean
-          description: Indicates if tenant has a CookieSPA feature toggle enabled.
-          example: false
-        UseV2:
-          type: boolean
-          description: Indicates if data is formatted to support new cookies flow.
-          example: true
-        MobileSDK:
-          type: boolean
-          description: Indicates if data was built as a Mobile Application or Website.
-          example: true
-        SkipGeolocation:
-          type: boolean
-          description: If false, only one geolocation rule exists so no need to call. geolocation API
-          example: false
-        ScriptType:
-          type: string
-          description: Indicates if the script is a Test Script or Production Script.
-          example: Production
-        Version:
-          type: string
-          description: Current OneTrust platform version. This does not indicate the version of this data.
-          example: 5.10.0
-        OptanonDataJSON:
-          type: string
-          description: The Domain or Application ID. This should match the value passed into the header when making this call.
-          example: b97c9cf3-6801-4463-8cf8-f557a00a4052
-        GeolocationUrl:
-          type: string
-          description: API that can be used to determine the user's geographic location based on IP lookup.
-          example: https://geolocation.1trust.app/cookieconsentpub/v1/geo/location
-        RuleSet:
-          type: array
-          items:
-            $ref: '#/components/schemas/Rule'
-        IabData:
-          $ref: '#/components/schemas/IabData'
-        ConsentIntegration:
-          $ref: '#/components/schemas/ConsentIntegration'
-    CommonData:
-      properties:
-        IabThirdPartyCookieUrl:
-          type: string
-          example: cookies-dev.onetrust.mgr.consensu.org
-        OptanonHideAcceptButton:
-          type: string
-          example: hide-accept-button
-        OptanonStyle:
-          type: string
-          example: modern
-        OptanonStaticContentLocation:
-          type: string
-          example: ''
-        BannerCustomCSS:
-          type: string
-          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
-        PCCustomCSS:
-          type: string
-          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
-        PcTextColor:
-          type: string
-          example: '#F1F1F1'
-        PcButtonColor:
-          type: string
-          example: '#148FC7'
-        PcButtonTextColor:
-          type: string
-          example: '#FeFF23'
-        PcBacgroundTextColor:
-          type: string
-          example: '#000000'
-        PcMenuColor:
-          type: string
-          example: '#AC7422'
-        PcMenuHighLightColor:
-          type: string
-          example: '#F56310'
-        TextColor:
-          type: string
-          example: '#23FF53'
-        ButtonColor:
-          type: string
-          example: '#19c3a2'
-        ButtonTextColor:
-          type: string
-          example: '#20D4B3'
-        BackgroundColor:
-          type: string
-          example: '#b5cedf'
-        OptanonLogo:
-          type: string
-          example: NEED EXAMPLE
-        OptanonCookieDomain:
-          type: string
-          description: This is the name of the Domain or Application
-          example: OneTrust CCPA App
-        OptanonGroupIdPerformanceCookies:
-          type: string
-          example: C0002
-        OptanonGroupIdFunctionalityCookies:
-          type: string
-          example: C0003
-        OptanonGroupIdTargetingCookies:
-          type: string
-          example: C0004
-        OptanonGroupIdSocialCookies:
-          type: string
-          example: C0005
-        ShowSubGroupCookies:
-          type: boolean
-          example: false
-        ShowSubGroupDescription:
-          type: boolean
-          example: true
-        LegacyBannerLayout:
-          type: string
-          example: default_flat_bottom_two_button_black
-        OptanonHideCookieSettingsButton:
-          type: string
-          example: NEED EXAMPLE
-        UseRTL:
-          type: boolean
-          example: false
-        ShowBannerAcceptButton:
-          type: boolean
-          example: true
-        ShowBannerCookieSettings:
-          type: boolean
-          example: true
-        ShowCookieList:
-          type: boolean
-          example: false
-        PCShowCookieHost:
-          type: boolean
-          example: true
-        PCShowCookieDuration:
-          type: boolean
-          example: true
-        PCShowCookieType:
-          type: boolean
-          example: true
-        PCShowCookieCategory:
-          type: boolean
-          example: true
-        PCShowCookieDescription:
-          type: boolean
-          example: true
-        AllowHostOptOut:
-          type: boolean
-          example: false
-        CookieListTitleColor:
-          type: string
-          example: '#8A898A'
-        CookieListGroupNameColor:
-          type: string
-          example: '#D6D6D6'
-        CookieListTableHeaderColor:
-          type: string
-          example: '#688DC0'
-        CookieListPrimaryColor:
-          type: string
-          example: '#76C350'
-        CookieListCustomoCss:
-          type: string
-          example: '#onetrust-pc-sdk .pc-logo {\n height: 40px;\n width: 120px;\n margin-bottom: 20px;\n  background-color: #FFFFFF !important;\n  background-repeat: no-repeat !important;\n}'
-    Rule:
+    IabData:
       type: object
       properties:
-        Id:
+        cookieVersion:
           type: string
-          format: UUID
-        Name:
+        createdTime:
           type: string
-        Countries:
-          type: array
-          items:
-            type: string
-        States:
-          type: object
-        LanguageSwitcherPlaceholder:
-          type: object
-        BannerPushesDown:
-          type: boolean
-        Default:
-          type: boolean
-        Global:
-          type: boolean
-      title: Rule
+        updatedTime:
+          type: string
+        cmpId:
+          type: string
+        cmpVersion:
+          type: string
+        consentScreen:
+          type: string
+        consentLanguage:
+          type: string
+        vendorListVersion:
+          type: integer
+        maxVendorId:
+          type: integer
+        encodingType:
+          type: string
+        iabVendorJson:
+          type: string
+        globalVendorListUrl:
+          type: string
+      title: IabData
+    culture:
+      properties:
+        DomainData:
+          $ref: '#/components/schemas/DomainData'
+        CommonData:
+          $ref: '#/components/schemas/CommonData'
 x-readme:
   explorer-enabled: false
   metrics-enabled: false
