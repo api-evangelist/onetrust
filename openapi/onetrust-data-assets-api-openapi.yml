@@ -411,160 +411,87 @@ paths:
         - DATA_CATALOG_WRITE
 components:
   schemas:
-    DataUseGovernance-DataAssetManagement_DataAssetTermAssociationRequest:
+    DataUseGovernance-DataAssetManagement_MetadataValueDto:
+      type: object
+      properties:
+        name:
+          description: The name of the attribute.
+          type: string
+          example: DS Multi Select
+          maxLength: 100
+          minLength: 1
+        displayName:
+          description: The display name of the attribute.
+          type: string
+          example: DS Multi Select
+          maxLength: 100
+          minLength: 1
+        value:
+          description: The value of the attribute.
+          type: object
+          example:
+          - value: Option1
+          - value: Option2
+          - value: Option3
+        dataType:
+          description: The data type of the attribute.
+          type: string
+          example: STRING
+          enum:
+          - LONG
+          - STRING
+          - DATE
+          - TIMESTAMP
+        custom:
+          description: This flag indicates whether the attribute is a custom attribute.
+          type: boolean
+          example: true
+      required:
+      - name
+      - value
+    DataUseGovernance-DataAssetManagement_DataAssetTermAssociationResponse:
       type: object
       properties:
         termId:
-          description: Unique identifier of the Glossary Term
+          description: The unique identifier of the term.
           type: string
           format: uuid
-          example: 29d09995-6040-403f-b520-fa9b38ce0bf5
+          example: b83f9fd5-7fdc-4481-90c5-20077239ecc9
         termName:
-          description: Name of the Glossary Term
+          description: The name of the term.
           type: string
           example: Social Security Number
-      required:
-      - termId
-      - termName
-    DataUseGovernance-DataAssetManagement_DataSource:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the data source.
-          type: string
-          format: uuid
-          example: 9fc8e1a8-b7d1-47c5-8f4b-7ebd451506f8
-        name:
-          description: The name of the data source.
-          type: string
-          example: Onetrust-smb
-        systemType:
-          description: The type of data source.
-          type: string
-          example: Snowflake
-          enum:
-          - AWS
-          - Azure
-          - AzureCosmos
-          - AzureStorage
-          - Box
-          - Cassandra
-          - Databricks
-          - IBMDB2
-          - Exchange
-          - GCP
-          - GoogleWorkspaceGmail
-          - GoogleBigQuery
-          - GoogleBigTable
-          - MongoDB
-          - MySQL
-          - Netezza
-          - Office365
-          - OneDrive
-          - OracleRDBMS
-          - PostgreSQL
-          - AmazonS3
-          - AmazonSageMaker
-          - SalesForce
-          - SAPHana
-          - ServiceNow
-          - SharePoint
-          - SMB
-          - Snowflake
-          - MicrosoftSQL
-          - Teradata
-          - Workday
-          - Zendesk
-          - AmazonRDSforSQLServer
-          - AzureSQLServer
-          - Redshift
-          - GoogleDrive
-          - CustomConnector
-          - AmazonDynamoDB
-          - AmazonAthena
-          - Hive
-          - SharePoint2019OnPrem
-          - GenericJDBC
-          - SFTP
-          - NFS
-          - GCS
-          - Redis
-          - ElasticSearch
-          - MicrosoftTeams
-          - Slack
-          - AlibabaCloudOSS
-          - AzureFiles
-          - Iceberg
-          - NGFSFILES
-          - Github
-          - RELATIONAL_DATABASE
-          - NON_RELATIONAL_DATABASE
-          - FILE
-          - API
-          - Kafka
-    DataUseGovernance-DataAssetManagement_DataAssetPatchRequest:
-      type: object
-      properties:
-        shortDescription:
-          description: Short Description of the Data Asset
-          type: string
-          example: Professional resume
-          maxLength: 4000
-        oneTrustSourceSystemId:
-          description: Unique identifier of the Onetrust Source System
-          type: string
-          format: uuid
-          example: 9fc8e1a8-b7d1-47c5-8f4b-7ebd451506f8
-        technicalOwners:
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Technical Owners of the Data Asset
-            example: 705992a2-e6a2-4fd7-a3f9-6190caa2365b
-        businessOwners:
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Business Owners of the Data Asset
-            example: 70ab1943-4b55-41d4-8183-6fa372579c6a
-        dataStewards:
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Data Stewards of the Source/Data Asset
-            example: 32d50775-17c3-44f0-88da-575b8a10c9fb
-        pii:
-          description: Indicates whether Data Asset is classified as PII or not
+          maxLength: 100
+          minLength: 1
+        recommended:
+          description: This flag indicates whether the term was recommended via Data Discovery scan.
           type: boolean
           example: true
-          default: 'false'
-        additionalAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_MetadataValueDto'
-        terms:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_DataAssetTermAssociationRequest'
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_DataAssetTagAssociationRequest'
-    DataUseGovernance-DataAssetManagement_DataAssetUser:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last updated the data asset.
+        status:
+          description: The recommendation status of the term.
           type: string
-          format: uuid
-          example: 78d09995-6040-403f-b520-fa9b38ce0bf5
-        name:
-          description: The name of the user who last updated the data asset.
+          enum:
+          - PENDING
+          - FLAGGED
+          - APPROVED
+          - REJECTED
+          - DELETED
+        source:
+          description: The source of the term association.
           type: string
-          example: Stephen F
+          enum:
+          - BULK_IMPORT
+          - DATA_DISCOVERY
+          - DATA_DISCOVERY_REVIEW
+          - CATALOG
+          - SYNC
+          - PARTIAL_SYNC
+          - AUTO_APPROVAL_CLASSIFICATION
+          - BULK_ACTION
+          - GLOSSARY
+          - EXTERNAL
+          - CLOUD_DATA_DISCOVERY
+          - AI_GOVERNANCE
     DataUseGovernance-DataAssetManagement_DataAssetTagAssociationResponse:
       type: object
       properties:
@@ -612,52 +539,18 @@ components:
           - EXTERNAL
           - CLOUD_DATA_DISCOVERY
           - AI_GOVERNANCE
-    DataUseGovernance-DataAssetManagement_DataAssetBasicResponse:
+    DataUseGovernance-DataAssetManagement_DataAssetUser:
       type: object
       properties:
         id:
-          description: The unique identifier of the data asset.
+          description: The unique identifier of the user who last updated the data asset.
           type: string
           format: uuid
-          example: 6756206c-845c-4ecc-8826-0e25d12b0d0c
-    DataUseGovernance-DataAssetManagement_MetadataValueDto:
-      type: object
-      properties:
+          example: 78d09995-6040-403f-b520-fa9b38ce0bf5
         name:
-          description: The name of the attribute.
+          description: The name of the user who last updated the data asset.
           type: string
-          example: DS Multi Select
-          maxLength: 100
-          minLength: 1
-        displayName:
-          description: The display name of the attribute.
-          type: string
-          example: DS Multi Select
-          maxLength: 100
-          minLength: 1
-        value:
-          description: The value of the attribute.
-          type: object
-          example:
-          - value: Option1
-          - value: Option2
-          - value: Option3
-        dataType:
-          description: The data type of the attribute.
-          type: string
-          example: STRING
-          enum:
-          - LONG
-          - STRING
-          - DATE
-          - TIMESTAMP
-        custom:
-          description: This flag indicates whether the attribute is a custom attribute.
-          type: boolean
-          example: true
-      required:
-      - name
-      - value
+          example: Stephen F
     DataUseGovernance-DataAssetManagement_DataAssetUpsertRequest:
       type: object
       properties:
@@ -752,21 +645,65 @@ components:
       - name
       - parentId
       - type
-    DataUseGovernance-DataAssetManagement_DataAssetTagAssociationRequest:
+    DataUseGovernance-DataAssetManagement_DataAssetPatchRequest:
       type: object
       properties:
-        tagId:
-          description: Unique identifier of the Glossary Tag
+        shortDescription:
+          description: Short Description of the Data Asset
+          type: string
+          example: Professional resume
+          maxLength: 4000
+        oneTrustSourceSystemId:
+          description: Unique identifier of the Onetrust Source System
           type: string
           format: uuid
-          example: 29d09995-6040-403f-b520-fa9b38ce0bf5
-        tagName:
-          description: Name of the Glossary Tag
+          example: 9fc8e1a8-b7d1-47c5-8f4b-7ebd451506f8
+        technicalOwners:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Technical Owners of the Data Asset
+            example: 705992a2-e6a2-4fd7-a3f9-6190caa2365b
+        businessOwners:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Business Owners of the Data Asset
+            example: 70ab1943-4b55-41d4-8183-6fa372579c6a
+        dataStewards:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Data Stewards of the Source/Data Asset
+            example: 32d50775-17c3-44f0-88da-575b8a10c9fb
+        pii:
+          description: Indicates whether Data Asset is classified as PII or not
+          type: boolean
+          example: true
+          default: 'false'
+        additionalAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_MetadataValueDto'
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_DataAssetTermAssociationRequest'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_DataAssetTagAssociationRequest'
+    DataUseGovernance-DataAssetManagement_DataAssetBasicResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the data asset.
           type: string
-          example: Confidential
-      required:
-      - tagId
-      - tagName
+          format: uuid
+          example: 6756206c-845c-4ecc-8826-0e25d12b0d0c
     DataUseGovernance-DataAssetManagement_DataAssetResponse:
       type: object
       properties:
@@ -873,49 +810,112 @@ components:
           type: string
           format: uuid
           example: 6756206c-845c-4ecc-8826-0e25d12b0d0c
-    DataUseGovernance-DataAssetManagement_DataAssetTermAssociationResponse:
+    DataUseGovernance-DataAssetManagement_DataAssetTermAssociationRequest:
       type: object
       properties:
         termId:
-          description: The unique identifier of the term.
+          description: Unique identifier of the Glossary Term
           type: string
           format: uuid
-          example: b83f9fd5-7fdc-4481-90c5-20077239ecc9
+          example: 29d09995-6040-403f-b520-fa9b38ce0bf5
         termName:
-          description: The name of the term.
+          description: Name of the Glossary Term
           type: string
           example: Social Security Number
-          maxLength: 100
-          minLength: 1
-        recommended:
-          description: This flag indicates whether the term was recommended via Data Discovery scan.
-          type: boolean
-          example: true
-        status:
-          description: The recommendation status of the term.
+      required:
+      - termId
+      - termName
+    DataUseGovernance-DataAssetManagement_DataAssetTagAssociationRequest:
+      type: object
+      properties:
+        tagId:
+          description: Unique identifier of the Glossary Tag
           type: string
-          enum:
-          - PENDING
-          - FLAGGED
-          - APPROVED
-          - REJECTED
-          - DELETED
-        source:
-          description: The source of the term association.
+          format: uuid
+          example: 29d09995-6040-403f-b520-fa9b38ce0bf5
+        tagName:
+          description: Name of the Glossary Tag
           type: string
+          example: Confidential
+      required:
+      - tagId
+      - tagName
+    DataUseGovernance-DataAssetManagement_DataSource:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the data source.
+          type: string
+          format: uuid
+          example: 9fc8e1a8-b7d1-47c5-8f4b-7ebd451506f8
+        name:
+          description: The name of the data source.
+          type: string
+          example: Onetrust-smb
+        systemType:
+          description: The type of data source.
+          type: string
+          example: Snowflake
           enum:
-          - BULK_IMPORT
-          - DATA_DISCOVERY
-          - DATA_DISCOVERY_REVIEW
-          - CATALOG
-          - SYNC
-          - PARTIAL_SYNC
-          - AUTO_APPROVAL_CLASSIFICATION
-          - BULK_ACTION
-          - GLOSSARY
-          - EXTERNAL
-          - CLOUD_DATA_DISCOVERY
-          - AI_GOVERNANCE
+          - AWS
+          - Azure
+          - AzureCosmos
+          - AzureStorage
+          - Box
+          - Cassandra
+          - Databricks
+          - IBMDB2
+          - Exchange
+          - GCP
+          - GoogleWorkspaceGmail
+          - GoogleBigQuery
+          - GoogleBigTable
+          - MongoDB
+          - MySQL
+          - Netezza
+          - Office365
+          - OneDrive
+          - OracleRDBMS
+          - PostgreSQL
+          - AmazonS3
+          - AmazonSageMaker
+          - SalesForce
+          - SAPHana
+          - ServiceNow
+          - SharePoint
+          - SMB
+          - Snowflake
+          - MicrosoftSQL
+          - Teradata
+          - Workday
+          - Zendesk
+          - AmazonRDSforSQLServer
+          - AzureSQLServer
+          - Redshift
+          - GoogleDrive
+          - CustomConnector
+          - AmazonDynamoDB
+          - AmazonAthena
+          - Hive
+          - SharePoint2019OnPrem
+          - GenericJDBC
+          - SFTP
+          - NFS
+          - GCS
+          - Redis
+          - ElasticSearch
+          - MicrosoftTeams
+          - Slack
+          - AlibabaCloudOSS
+          - AzureFiles
+          - Iceberg
+          - NGFSFILES
+          - Github
+          - RELATIONAL_DATABASE
+          - NON_RELATIONAL_DATABASE
+          - FILE
+          - API
+          - Kafka
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

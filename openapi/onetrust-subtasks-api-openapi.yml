@@ -910,103 +910,6 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskListV2Dto:
-      type: object
-      properties:
-        requestApprover:
-          description: Approver of the parent request
-          type: string
-          example: John Doe
-        requestQueueRefId:
-          description: The request reference ID
-          type: string
-          example: SL244HWD6D
-        requestOrgName:
-          description: Organization name of the request
-          type: string
-          example: Example Organization
-        subTaskStatus:
-          description: Current status of the subtask
-          type: string
-          example: OPEN
-        subTaskType:
-          description: Type of the subtask
-          type: string
-          example: MANUAL
-        subTaskName:
-          description: Name of the subtask
-          type: string
-          example: Data Discovery
-        subTaskDescription:
-          description: Description of the subtask
-          type: string
-          example: Discover all data related to the subject
-        subTaskAssignee:
-          description: Person assigned to the subtask
-          type: string
-          example: Jane Smith
-        subTaskRequired:
-          description: Whether the subtask is required
-          type: boolean
-          example: true
-        requestQueueDateCreated:
-          description: Date when the parent request was created
-          type: string
-          format: date-time
-          example: '2023-08-01T10:15:30Z'
-        requestQueueDeadline:
-          description: Deadline for the parent request
-          type: string
-          format: date-time
-          example: '2023-09-01T10:15:30Z'
-        subTaskCreatedDate:
-          description: Date when the subtask was created
-          type: string
-          format: date-time
-          example: '2023-08-02T14:30:45Z'
-        subTaskLastUpdatedDate:
-          description: Date when the subtask was last updated
-          type: string
-          format: date-time
-          example: '2023-08-15T09:20:15Z'
-        subTaskReminderDate:
-          description: Reminder date for the subtask
-          type: string
-          format: date-time
-          example: '2023-08-25T10:15:30Z'
-        subTaskDeadline:
-          description: Deadline for the subtask
-          type: string
-          format: date-time
-          example: '2023-09-01T10:15:30Z'
-        requestTypes:
-          description: Types of the parent request
-          type: array
-          items:
-            type: string
-          example:
-          - Data Portability
-          - Update Data
-        subjectTypes:
-          description: Subject types of the parent request
-          type: array
-          items:
-            type: string
-          example:
-          - Customer
-          - Employee
-        subTaskResolution:
-          description: Resolution code for the subtask if completed or rejected
-          type: string
-          example: Completed Successfully
-        requestQueueId:
-          type: string
-          format: uuid
-        assignedToGroup:
-          type: boolean
-        subTaskId:
-          type: string
-          format: uuid
     PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedFileDto:
       type: object
       properties:
@@ -1020,14 +923,6 @@ components:
       required:
       - fileId
       - fileName
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_ReprocessSystemSubtaskDto:
-      type: object
-      properties:
-        Comment:
-          description: Internal comment to identify reason for reprocessing the subtask. Longer comments may impact system performance.
-          type: string
-          example: Reprocessing due to configuration update
-          maxLength: 1500000
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DateRangeDto:
       type: object
       properties:
@@ -1039,78 +934,59 @@ components:
           description: End date for filter, provide in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format
           type: string
           example: '2019-05-31T12:44:24.173Z'
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskUpdateV2Dto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
       type: object
       properties:
-        userEmail:
-          description: Email of the user associated with the subtask
+        fileName:
+          description: Attached file name
           type: string
-          format: email
-          example: user@example.com
-          maxLength: 255
-        description:
-          description: Description of the subtask
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          description: ID of attached file
           type: string
-          example: This subtask is for data discovery
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        statusId:
+          description: Status ID of the attachment
+          type: integer
+          format: int64
+          example: 10
+        resourcePath:
+          description: Resource path of the attachment
+          type: string
+          example: /storage/attachments/sample.txt
           maxLength: 1000
-          minLength: 1
-        deadline:
-          description: Deadline for the subtask
-          type: string
-          format: date-time
-          example: '2023-09-08T12:49:47.920Z'
-        reminder:
-          description: Reminder date for the subtask
-          type: string
-          format: date-time
-          example: '2023-09-05T12:49:47.920Z'
-        required:
-          description: Whether the subtask is required
-          type: boolean
-          example: true
-          default: 'false'
-        assignedTogroup:
-          description: Whether the subtask is assigned to a group
-          type: boolean
-          example: false
-          default: 'false'
-        groupName:
-          description: Name of the group if assigned to a group
-          type: string
-          example: Data Privacy Team
-          maxLength: 255
-        taskName:
-          description: Name of the task
-          type: string
-          example: Data Discovery
-          maxLength: 100
-          minLength: 1
       required:
-      - description
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_UpdateSubtaskStatusRequest:
+      - fileId
+      - fileName
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskCompleteV2Dto:
       type: object
       properties:
         comment:
-          description: Comments can be updated for system subtask status call - this can be used for reason for failure. Longer comments may impact system performance.
+          description: Comment for the subtask completion. Longer comments may impact system performance.
           type: string
-          example: Updating the status for this reason
+          example: Task completed successfully
           maxLength: 1500000
-        status:
-          description: Status to be updated to completed or failed
-          type: string
-          example: FAILED
-          enum:
-          - IN_PROGRESS
-          - FAILED
-          - COMPLETED
-          - REJECTED
+          minLength: 1
+        markAsComplete:
+          description: Whether to mark the subtask as complete
+          type: boolean
+          example: true
+          default: 'false'
         resolutionId:
-          description: Resolution ID (can only be passed if the subtask status is updated to COMPLETED or REJECTED)
+          description: Resolution ID for the subtask
           type: string
           format: uuid
           example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        attachments:
+          description: List of attachments for the subtask
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
       required:
-      - status
+      - comment
     PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskByIdDto:
       type: object
       properties:
@@ -1186,6 +1062,36 @@ components:
             $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedCommentDto'
         subTaskResolution:
           type: string
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedCommentDto:
+      type: object
+      properties:
+        commentId:
+          type: string
+          format: uuid
+          example: b1d99fa8-fb30-4501-81b4-9158e09c7c6f
+        comment:
+          type: string
+          example: <p>qasdxcfvb n </p>
+        commenterName:
+          type: string
+          example: abcd
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedFileDto'
+        isEditable:
+          type: boolean
+          example: true
+        isEdited:
+          type: boolean
+          example: true
+        isInternal:
+          type: boolean
+          example: true
+      required:
+      - comment
+      - commentId
+      - commenterName
     PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskV2Dto:
       type: object
       properties:
@@ -1375,6 +1281,36 @@ components:
           type: boolean
           example: true
           default: 'false'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_UpdateSubtaskStatusRequest:
+      type: object
+      properties:
+        comment:
+          description: Comments can be updated for system subtask status call - this can be used for reason for failure. Longer comments may impact system performance.
+          type: string
+          example: Updating the status for this reason
+          maxLength: 1500000
+        status:
+          description: Status to be updated to completed or failed
+          type: string
+          example: FAILED
+          enum:
+          - IN_PROGRESS
+          - FAILED
+          - COMPLETED
+          - REJECTED
+        resolutionId:
+          description: Resolution ID (can only be passed if the subtask status is updated to COMPLETED or REJECTED)
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+      required:
+      - status
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskDataDiscoveryRequest:
+      type: object
+      example:
+        Status: '25'
+        another key: value2
+        key: value1
     PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskFromTemplateV2Dto:
       type: object
       properties:
@@ -1388,95 +1324,6 @@ components:
           type: string
           format: uuid
           example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedCommentDto:
-      type: object
-      properties:
-        commentId:
-          type: string
-          format: uuid
-          example: b1d99fa8-fb30-4501-81b4-9158e09c7c6f
-        comment:
-          type: string
-          example: <p>qasdxcfvb n </p>
-        commenterName:
-          type: string
-          example: abcd
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_SubtaskExposedFileDto'
-        isEditable:
-          type: boolean
-          example: true
-        isEdited:
-          type: boolean
-          example: true
-        isInternal:
-          type: boolean
-          example: true
-      required:
-      - comment
-      - commentId
-      - commenterName
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskCompleteV2Dto:
-      type: object
-      properties:
-        comment:
-          description: Comment for the subtask completion. Longer comments may impact system performance.
-          type: string
-          example: Task completed successfully
-          maxLength: 1500000
-          minLength: 1
-        markAsComplete:
-          description: Whether to mark the subtask as complete
-          type: boolean
-          example: true
-          default: 'false'
-        resolutionId:
-          description: Resolution ID for the subtask
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        attachments:
-          description: List of attachments for the subtask
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto'
-      required:
-      - comment
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskDataDiscoveryRequest:
-      type: object
-      example:
-        Status: '25'
-        another key: value2
-        key: value1
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
-      type: object
-      properties:
-        fileName:
-          description: Attached file name
-          type: string
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
-          description: ID of attached file
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        statusId:
-          description: Status ID of the attachment
-          type: integer
-          format: int64
-          example: 10
-        resourcePath:
-          description: Resource path of the attachment
-          type: string
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-      required:
-      - fileId
-      - fileName
     PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskCreateV2Dto:
       type: object
       properties:
@@ -1699,6 +1546,159 @@ components:
           type: string
           example: NEW
           maxLength: 100
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskUpdateV2Dto:
+      type: object
+      properties:
+        userEmail:
+          description: Email of the user associated with the subtask
+          type: string
+          format: email
+          example: user@example.com
+          maxLength: 255
+        description:
+          description: Description of the subtask
+          type: string
+          example: This subtask is for data discovery
+          maxLength: 1000
+          minLength: 1
+        deadline:
+          description: Deadline for the subtask
+          type: string
+          format: date-time
+          example: '2023-09-08T12:49:47.920Z'
+        reminder:
+          description: Reminder date for the subtask
+          type: string
+          format: date-time
+          example: '2023-09-05T12:49:47.920Z'
+        required:
+          description: Whether the subtask is required
+          type: boolean
+          example: true
+          default: 'false'
+        assignedTogroup:
+          description: Whether the subtask is assigned to a group
+          type: boolean
+          example: false
+          default: 'false'
+        groupName:
+          description: Name of the group if assigned to a group
+          type: string
+          example: Data Privacy Team
+          maxLength: 255
+        taskName:
+          description: Name of the task
+          type: string
+          example: Data Discovery
+          maxLength: 100
+          minLength: 1
+      required:
+      - description
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SubTaskListV2Dto:
+      type: object
+      properties:
+        requestApprover:
+          description: Approver of the parent request
+          type: string
+          example: John Doe
+        requestQueueRefId:
+          description: The request reference ID
+          type: string
+          example: SL244HWD6D
+        requestOrgName:
+          description: Organization name of the request
+          type: string
+          example: Example Organization
+        subTaskStatus:
+          description: Current status of the subtask
+          type: string
+          example: OPEN
+        subTaskType:
+          description: Type of the subtask
+          type: string
+          example: MANUAL
+        subTaskName:
+          description: Name of the subtask
+          type: string
+          example: Data Discovery
+        subTaskDescription:
+          description: Description of the subtask
+          type: string
+          example: Discover all data related to the subject
+        subTaskAssignee:
+          description: Person assigned to the subtask
+          type: string
+          example: Jane Smith
+        subTaskRequired:
+          description: Whether the subtask is required
+          type: boolean
+          example: true
+        requestQueueDateCreated:
+          description: Date when the parent request was created
+          type: string
+          format: date-time
+          example: '2023-08-01T10:15:30Z'
+        requestQueueDeadline:
+          description: Deadline for the parent request
+          type: string
+          format: date-time
+          example: '2023-09-01T10:15:30Z'
+        subTaskCreatedDate:
+          description: Date when the subtask was created
+          type: string
+          format: date-time
+          example: '2023-08-02T14:30:45Z'
+        subTaskLastUpdatedDate:
+          description: Date when the subtask was last updated
+          type: string
+          format: date-time
+          example: '2023-08-15T09:20:15Z'
+        subTaskReminderDate:
+          description: Reminder date for the subtask
+          type: string
+          format: date-time
+          example: '2023-08-25T10:15:30Z'
+        subTaskDeadline:
+          description: Deadline for the subtask
+          type: string
+          format: date-time
+          example: '2023-09-01T10:15:30Z'
+        requestTypes:
+          description: Types of the parent request
+          type: array
+          items:
+            type: string
+          example:
+          - Data Portability
+          - Update Data
+        subjectTypes:
+          description: Subject types of the parent request
+          type: array
+          items:
+            type: string
+          example:
+          - Customer
+          - Employee
+        subTaskResolution:
+          description: Resolution code for the subtask if completed or rejected
+          type: string
+          example: Completed Successfully
+        requestQueueId:
+          type: string
+          format: uuid
+        assignedToGroup:
+          type: boolean
+        subTaskId:
+          type: string
+          format: uuid
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_ReprocessSystemSubtaskDto:
+      type: object
+      properties:
+        Comment:
+          description: Internal comment to identify reason for reprocessing the subtask. Longer comments may impact system performance.
+          type: string
+          example: Reprocessing due to configuration update
+          maxLength: 1500000
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

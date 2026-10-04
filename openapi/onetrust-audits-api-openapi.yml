@@ -507,21 +507,6 @@ components:
       required:
       - controlId
       title: ScopesAssignmentRequest
-    FrameworkAssignmentModel:
-      type: object
-      properties:
-        id:
-          description: Framework Identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Framework Name
-          type: string
-          example: ISO 27001
-      required:
-      - id
-      title: FrameworkAssignmentModel
     UserAssignmentModel:
       type: object
       properties:
@@ -532,99 +517,120 @@ components:
       required:
       - email
       title: UserAssignmentModel
-    FilterInformation:
+    OrgGroupAssignmentModel:
       type: object
       properties:
-        field:
-          description: Field name to filter on
+        id:
+          description: Audit Organization Group Identifier
           type: string
-          example: status
-        operator:
-          description: Operator to apply for filtering (e.g., EQUAL_TO, CONTAINS, GREATER_THAN)
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174001
+        name:
+          description: Audit Organization Group
           type: string
-          example: EQUAL_TO
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - BETWEEN
-          - GREATER_THAN
-          - LESS_THAN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
+          example: Finance Department
       required:
-      - field
-      title: FilterInformation
-    PageAuditDetailListInformation:
+      - id
+      title: OrgGroupAssignmentModel
+    AuditUpdateModel:
       type: object
       properties:
-        content:
-          description: The list of items for the current page
-          items:
-            $ref: '#/components/schemas/AuditDetailListInformation'
+        header:
+          description: Audit Header
+          example:
+            name: Annual Security Audit
+            goal: Assess security controls
+          $ref: '#/components/schemas/AuditHeaderModel'
+        auditors:
+          description: List of auditors. A minimum of one auditor has to be assigned to the audit
           type: array
-        empty:
-          description: The flag to check if the entity is empty or not.
-          type: boolean
-          example: false
-        first:
-          description: The flag to check if the entity is first entity or not.
-          type: boolean
-          example: true
-        last:
-          description: The flag to check if the entity is last entity or not.
-          type: boolean
-          example: false
-        number:
-          description: The number associated with the result.
-          type: integer
-          format: int32
-          example: 0
-        numberOfElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/Pageable'
-        sort:
-          $ref: '#/components/schemas/Sort'
-        totalPages:
-          description: Total number of pages in the result list.
-          type: integer
-          format: int32
-          example: 5
-        totalElements:
-          description: Total number of elements in the result.
-          type: integer
-          format: int64
-          example: 50
-        size:
-          description: Size of the result list.
-          type: integer
-          format: int32
-          example: 20
-          maximum: 2000
-          minimum: 0
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        approvers:
+          description: List of approvers. A minimum of one approver has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        auditorAssignmentType:
+          type: string
+          enum:
+          - THROW_EXCEPTION_ON_AUDITOR_REMOVAL_IF_SCOPES_ASSIGNED
+          - UNASSIGN_SCOPES_ON_AUDITOR_REMOVAL
+        attributes:
+          description: Custom Attributes
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+      required:
+      - approvers
+      - auditorAssignmentType
+      - auditors
+      - header
+      title: AuditUpdateModel
+    BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: ID of the entity
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the Entity
+          type: string
+          example: Security Entity
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Sample Entity
+      required:
+      - id
+      title: BasicEntityDetail
+    AuditorInformation:
+      type: object
+      properties:
+        auditorId:
+          description: Auditor Identifier
+          type: string
+          format: uuid
+          example: f3d38630-9246-45be-898a-69878bd108e4
+        fullName:
+          description: Auditor Name
+          type: string
+          example: Jane Smith
+      title: AuditorInformation
+    AuditHeaderModel:
+      type: object
+      properties:
+        name:
+          description: Audit Name
+          type: string
+          example: Annual Security Compliance Audit
+          minLength: 1
+        auditTypeId:
+          description: Audit Type Identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174002
+        goal:
+          description: The goal of the Audit.
+          type: string
+          example: To assess compliance with information security controls and identify areas for improvement
+        startDate:
+          description: Audit Start Date
+          type: string
+          format: date
+          example: '2025-06-01'
+        endDate:
+          description: Audit End Date
+          type: string
+          format: date
+          example: '2025-06-30'
+      required:
+      - auditTypeId
+      - name
+      title: AuditHeaderModel
     AuditDetailInformation:
       type: object
       properties:
@@ -733,60 +739,61 @@ components:
             items:
               $ref: '#/components/schemas/AttributeValueInformation'
       title: AuditDetailInformation
-    StageInformation:
+    AuditCreateModel:
       type: object
       properties:
-        id:
-          description: ID of the entity
+        header:
+          description: Audit Header
+          $ref: '#/components/schemas/AuditHeaderModel'
+        auditSourceType:
+          description: Audit source type
           type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the Entity
-          type: string
-          example: Security Entity
-        nameKey:
-          description: Namekey of the entity for localization
-          type: string
-          example: workflow.stage.in_progress
-        badgeColor:
-          description: Workflow Stage Badge Color
-          type: string
-          example: blue
+          example: NONE
+          enum:
+          - NONE
+          - VENDOR
+          - ASSET
+          - PROCESING_ACTIVITY
+        orgGroup:
+          description: Audit Organization Group
+          $ref: '#/components/schemas/OrgGroupAssignmentModel'
+        framework:
+          description: Framework
+          $ref: '#/components/schemas/FrameworkAssignmentModel'
+        auditors:
+          description: List of auditors. A minimum of one auditor has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        approvers:
+          description: List of approvers. A minimum of one approver has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAssignmentModel'
+        scopes:
+          description: List of scopes (controls). A minimum of one scope has to be assigned to the audit
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopesAssignmentRequest'
+        attributes:
+          description: Custom Attributes
+          type: object
+          example:
+            priority:
+            - value: High
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
       required:
-      - id
-      title: StageInformation
-    BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          description: ID of the entity
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the Entity
-          type: string
-          example: Security Entity
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: Sample Entity
-      required:
-      - id
-      title: BasicEntityDetail
-    AuditorInformation:
-      type: object
-      properties:
-        auditorId:
-          description: Auditor Identifier
-          type: string
-          format: uuid
-          example: f3d38630-9246-45be-898a-69878bd108e4
-        fullName:
-          description: Auditor Name
-          type: string
-          example: Jane Smith
-      title: AuditorInformation
+      - approvers
+      - auditSourceType
+      - auditors
+      - framework
+      - header
+      - orgGroup
+      - scopes
+      title: AuditCreateModel
     AuditDetailListInformation:
       type: object
       properties:
@@ -892,21 +899,29 @@ components:
           type: string
           example: JohnJohn
       title: ApproverInformation
-    OrgGroupAssignmentModel:
+    BasicEntityDetailTranslation:
       type: object
       properties:
         id:
-          description: Audit Organization Group Identifier
+          description: ID of the entity
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
+          example: 123e4567-e89b-12d3-a456-426614174000
         name:
-          description: Audit Organization Group
+          description: Name of the Entity
           type: string
-          example: Finance Department
+          example: Security Entity
+        nameKey:
+          description: Namekey of the entity for localization
+          type: string
+          example: workflow.stage.in_progress
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: In Progress
+        nameKey: workflow.stage.in_progress
       required:
       - id
-      title: OrgGroupAssignmentModel
+      title: BasicEntityDetailTranslation
     AttributeValueInformation:
       type: object
       properties:
@@ -942,43 +957,66 @@ components:
           default: 'false'
       required:
       - value
-    AuditUpdateModel:
+    FrameworkAssignmentModel:
       type: object
       properties:
-        header:
-          description: Audit Header
-          example:
-            name: Annual Security Audit
-            goal: Assess security controls
-          $ref: '#/components/schemas/AuditHeaderModel'
-        auditors:
-          description: List of auditors. A minimum of one auditor has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        approvers:
-          description: List of approvers. A minimum of one approver has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        auditorAssignmentType:
+        id:
+          description: Framework Identifier
           type: string
-          enum:
-          - THROW_EXCEPTION_ON_AUDITOR_REMOVAL_IF_SCOPES_ASSIGNED
-          - UNASSIGN_SCOPES_ON_AUDITOR_REMOVAL
-        attributes:
-          description: Custom Attributes
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Framework Name
+          type: string
+          example: ISO 27001
       required:
-      - approvers
-      - auditorAssignmentType
-      - auditors
-      - header
-      title: AuditUpdateModel
+      - id
+      title: FrameworkAssignmentModel
+    FilterInformation:
+      type: object
+      properties:
+        field:
+          description: Field name to filter on
+          type: string
+          example: status
+        operator:
+          description: Operator to apply for filtering (e.g., EQUAL_TO, CONTAINS, GREATER_THAN)
+          type: string
+          example: EQUAL_TO
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - BETWEEN
+          - GREATER_THAN
+          - LESS_THAN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 7"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+      title: FilterInformation
+    Sort:
+      type: object
+      title: Sort
     SearchCriteriaRequest:
       type: object
       properties:
@@ -997,99 +1035,58 @@ components:
           type: string
           example: Security Compliance
       title: SearchCriteriaRequest
-    Sort:
-      type: object
-      title: Sort
-    AuditCreateModel:
+    PageAuditDetailListInformation:
       type: object
       properties:
-        header:
-          description: Audit Header
-          $ref: '#/components/schemas/AuditHeaderModel'
-        auditSourceType:
-          description: Audit source type
-          type: string
-          example: NONE
-          enum:
-          - NONE
-          - VENDOR
-          - ASSET
-          - PROCESING_ACTIVITY
-        orgGroup:
-          description: Audit Organization Group
-          $ref: '#/components/schemas/OrgGroupAssignmentModel'
-        framework:
-          description: Framework
-          $ref: '#/components/schemas/FrameworkAssignmentModel'
-        auditors:
-          description: List of auditors. A minimum of one auditor has to be assigned to the audit
-          type: array
+        content:
+          description: The list of items for the current page
           items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        approvers:
-          description: List of approvers. A minimum of one approver has to be assigned to the audit
+            $ref: '#/components/schemas/AuditDetailListInformation'
           type: array
-          items:
-            $ref: '#/components/schemas/UserAssignmentModel'
-        scopes:
-          description: List of scopes (controls). A minimum of one scope has to be assigned to the audit
-          type: array
-          items:
-            $ref: '#/components/schemas/ScopesAssignmentRequest'
-        attributes:
-          description: Custom Attributes
-          type: object
-          example:
-            priority:
-            - value: High
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-      required:
-      - approvers
-      - auditSourceType
-      - auditors
-      - framework
-      - header
-      - orgGroup
-      - scopes
-      title: AuditCreateModel
-    Pageable:
-      type: object
-      title: Pageable
-    AuditHeaderModel:
-      type: object
-      properties:
-        name:
-          description: Audit Name
-          type: string
-          example: Annual Security Compliance Audit
-          minLength: 1
-        auditTypeId:
-          description: Audit Type Identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174002
-        goal:
-          description: The goal of the Audit.
-          type: string
-          example: To assess compliance with information security controls and identify areas for improvement
-        startDate:
-          description: Audit Start Date
-          type: string
-          format: date
-          example: '2025-06-01'
-        endDate:
-          description: Audit End Date
-          type: string
-          format: date
-          example: '2025-06-30'
-      required:
-      - auditTypeId
-      - name
-      title: AuditHeaderModel
-    BasicEntityDetailTranslation:
+        empty:
+          description: The flag to check if the entity is empty or not.
+          type: boolean
+          example: false
+        first:
+          description: The flag to check if the entity is first entity or not.
+          type: boolean
+          example: true
+        last:
+          description: The flag to check if the entity is last entity or not.
+          type: boolean
+          example: false
+        number:
+          description: The number associated with the result.
+          type: integer
+          format: int32
+          example: 0
+        numberOfElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalPages:
+          description: Total number of pages in the result list.
+          type: integer
+          format: int32
+          example: 5
+        totalElements:
+          description: Total number of elements in the result.
+          type: integer
+          format: int64
+          example: 50
+        size:
+          description: Size of the result list.
+          type: integer
+          format: int32
+          example: 20
+          maximum: 2000
+          minimum: 0
+    StageInformation:
       type: object
       properties:
         id:
@@ -1105,13 +1102,16 @@ components:
           description: Namekey of the entity for localization
           type: string
           example: workflow.stage.in_progress
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: In Progress
-        nameKey: workflow.stage.in_progress
+        badgeColor:
+          description: Workflow Stage Badge Color
+          type: string
+          example: blue
       required:
       - id
-      title: BasicEntityDetailTranslation
+      title: StageInformation
+    Pageable:
+      type: object
+      title: Pageable
   securitySchemes:
     OAUTH2:
       type: oauth2

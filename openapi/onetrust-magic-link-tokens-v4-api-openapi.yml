@@ -226,42 +226,15 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentAPI_EmailLinkTokenSliceDto:
+    ConsentAPI_SortObject:
       type: object
       properties:
-        content:
-          items:
-            $ref: '#/components/schemas/ConsentAPI_EmailLinkTokenResponseDto'
-          type: array
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentAPI_PageableObject'
-        last:
-          description: Flag indicating whether this is the last page or not.
-          type: boolean
-          example: false
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
         empty:
           type: boolean
-        requestContinuation:
-          description: The token used to paginate a response if the number of records is more than a page.
-          type: string
-          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentAPI_PageableObject:
       type: object
       properties:
@@ -301,15 +274,42 @@ components:
           type: string
           format: date-time
           example: '2024-02-01T00:00:00.000'
-    ConsentAPI_SortObject:
+    ConsentAPI_EmailLinkTokenSliceDto:
       type: object
       properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_EmailLinkTokenResponseDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
+          type: string
+          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

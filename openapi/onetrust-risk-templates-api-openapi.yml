@@ -97,34 +97,6 @@ paths:
         - RISK_READ
 components:
   schemas:
-    TechRiskCompliance-RiskTemplate_BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the organization entity.
-          type: string
-          format: uuid
-          example: 7009201b-3808-4eaa-8afa-97f50c6c3cf1
-        name:
-          description: The display name of the organization entity.
-          type: string
-          example: Entity name
-    TechRiskCompliance-RiskTemplate_ThreatInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the threat entity.
-          type: string
-          format: uuid
-          example: f3e9e8b4-1c5e-4f3e-9c58-92d8d6d2ea7a
-        name:
-          description: The display name of the threat.
-          type: string
-          example: Threat Name
-        identifier:
-          description: The reference identifier of the threat.
-          type: string
-          example: '456'
     TechRiskCompliance-RiskTemplate_RiskTemplateInformation:
       type: object
       properties:
@@ -195,22 +167,66 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/TechRiskCompliance-RiskTemplate_AttributeValueInformation'
-    TechRiskCompliance-RiskTemplate_ControlInformation:
+    TechRiskCompliance-RiskTemplate_VulnerabilityInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the control entity.
+          description: The unique identifier of the vulnerability entity.
           type: string
           format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+          example: 6e4b2d9a-7fc7-4ef2-8129-3a4f84e7d314
         name:
-          description: The display name of the control.
+          description: The display name of the vulnerability.
           type: string
-          example: Control Name
+          example: Threat Name
         identifier:
-          description: The reference identifier of the control.
+          description: The reference identifier of the vulnerability.
           type: string
-          example: '123'
+          example: '245'
+    TechRiskCompliance-RiskTemplate_RiskCategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the risk category.
+          type: string
+          format: uuid
+          example: d7e5c1a2-42a0-4cd7-83b1-d0a2ff064cb7
+        name:
+          description: The display name of the risk category.
+          type: string
+          example: Category Name
+        nameKey:
+          description: The translation key used for localizing the category name.
+          type: string
+          example: RiskCategory.Availability
+    TechRiskCompliance-RiskTemplate_BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization entity.
+          type: string
+          format: uuid
+          example: 7009201b-3808-4eaa-8afa-97f50c6c3cf1
+        name:
+          description: The display name of the organization entity.
+          type: string
+          example: Entity name
+    TechRiskCompliance-RiskTemplate_ThreatInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the threat entity.
+          type: string
+          format: uuid
+          example: f3e9e8b4-1c5e-4f3e-9c58-92d8d6d2ea7a
+        name:
+          description: The display name of the threat.
+          type: string
+          example: Threat Name
+        identifier:
+          description: The reference identifier of the threat.
+          type: string
+          example: '456'
     TechRiskCompliance-RiskTemplate_AttributeValueInformation:
       type: object
       properties:
@@ -280,38 +296,22 @@ components:
           description: The target numeric risk score value after mitigation.
           type: number
           example: 2
-    TechRiskCompliance-RiskTemplate_RiskCategoryInformation:
+    TechRiskCompliance-RiskTemplate_ControlInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the risk category.
+          description: The unique identifier of the control entity.
           type: string
           format: uuid
-          example: d7e5c1a2-42a0-4cd7-83b1-d0a2ff064cb7
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
         name:
-          description: The display name of the risk category.
+          description: The display name of the control.
           type: string
-          example: Category Name
-        nameKey:
-          description: The translation key used for localizing the category name.
-          type: string
-          example: RiskCategory.Availability
-    TechRiskCompliance-RiskTemplate_VulnerabilityInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the vulnerability entity.
-          type: string
-          format: uuid
-          example: 6e4b2d9a-7fc7-4ef2-8129-3a4f84e7d314
-        name:
-          description: The display name of the vulnerability.
-          type: string
-          example: Threat Name
+          example: Control Name
         identifier:
-          description: The reference identifier of the vulnerability.
+          description: The reference identifier of the control.
           type: string
-          example: '245'
+          example: '123'
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

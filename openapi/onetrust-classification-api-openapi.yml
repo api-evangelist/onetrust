@@ -343,68 +343,95 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite:
-      type: object
-      properties:
-        minLength:
-          description: The minimum length requirement for the detected data.
-          type: integer
-          format: int32
-        requirements:
-          description: The list of requirements that must be satisfied for the detector.
-          type: array
-          items:
-            type: string
-        wordFilter:
-          description: The list of words used to filter detection results.
-          type: array
-          items:
-            type: string
-        wordFilterFlags:
-          description: The flags that control how word filtering is applied.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_FilterFlags'
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDefinition:
       type: object
       properties:
         name:
-          description: The classifier code for the existing detector being used as the base classifier.
+          description: The name of the classifier definition.
           type: string
-          example: system_address_uk
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_LikelihoodAdjustment:
-      type: object
-      properties:
-        adjustLikelihood:
-          description: The integer value used to adjust the likelihood level based on the current likelihood when detection rule criteria are met.
+          example: Employee Id
+        otCode:
+          description: The OneTrust code assigned to the classifier definition.
+          type: string
+          example: system_address_es
+          readOnly: true
+        isCustom:
+          description: This flag indicates whether the classifier definition is custom-created.
+          type: boolean
+          example: false
+          readOnly: true
+        VERSION:
+          description: The version number of the classifier definition.
           type: integer
-          format: int32
+          format: int64
           example: 1
-        setLikelihood:
-          description: The target likelihood level that is set when detection rule criteria are met regardless of the current level.
+          readOnly: true
+        SCHEMA_VERSION:
+          description: The schema version used for the classifier definition.
           type: string
-          example: VERY_LIKELY
-          enum:
-          - NO_MATCH
-          - VERY_UNLIKELY
-          - UNLIKELY
-          - POSSIBLE
-          - LIKELY
-          - VERY_LIKELY
-        type:
-          description: The strategy used to adjust the likelihood level when detection rule criteria are met.
-          type: string
-          example: SET
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_GlossaryTermDto:
+          example: 1.0.0
+          readOnly: true
+        metadata:
+          description: The metadata information associated with the classifier definition.
+          example:
+            displayName: Politics
+            otDisplayName: Politics
+            description: This Classifier represents someone's political affiliation based on political parties and ideologies.
+            sensitivityLevel: HIGH
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata'
+        detections:
+          description: The list of detectors used to establish the best matching criteria.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule'
+        detectionRules:
+          description: The list of detection rules used to validate and adjust the likelihood result.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectionRule'
+        evaluations:
+          description: The list of evaluation test cases used to validate the classifier.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation'
+          readOnly: true
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig:
       type: object
       properties:
-        name:
-          description: The name of the glossary term associated with the classifier.
+        regex:
+          description: The regular expression pattern used in the detection rule.
           type: string
-          example: Company ID
-        id:
-          description: The unique identifier of the glossary term associated with the classifier.
+          example: '[0-9]{1,10}'
+        flags:
+          description: The flags that control the regex pattern matching logic in the detection rule.
           type: string
-          format: uuid
-          example: a787c869-4628-493b-9393-0007ff6d7494
+          example: mi
+        groupIndexes:
+          description: The list of group indexes to extract from the detection rule regex match.
+          type: array
+          items:
+            type: integer
+            format: int32
+          example:
+          - 1
+          - 2
+      required:
+      - regex
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata:
+      type: object
+      properties:
+        XPATH:
+          description: The XPath expression used in the evaluation metadata.
+          type: string
+        OBJECT_NAME:
+          description: The object name used in the evaluation metadata.
+          type: string
+        OBJECT_PARENT:
+          description: The parent object name used in the evaluation metadata.
+          type: string
+        xpath:
+          description: The XPath expression used in the evaluation metadata.
+          type: string
     DataUseGovernance-DataDiscoveryCustomClassiferMana_FilterFlags:
       type: object
       properties:
@@ -428,19 +455,113 @@ components:
           - ALWAYS
           - NEVER
           - IGNORE
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_ContextConfig:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata:
       type: object
       properties:
-        windowBefore:
-          description: The maximum number of characters to include for context before the match.
-          type: integer
-          format: int32
-          example: 10
-        windowAfter:
-          description: The maximum number of characters to include for context after the match.
-          type: integer
-          format: int32
-          example: 15
+        displayName:
+          description: The display name used for the classifier in user interfaces.
+          type: string
+          example: Credit Card Number
+        otDisplayName:
+          description: The OneTrust display name used for the classifier.
+          type: string
+          example: Uniform Resource Locator
+        description:
+          description: The description of the classifier metadata.
+          type: string
+          example: Detects credit card numbers in text using pattern matching.
+        locations:
+          description: The list of geographic locations where the classifier applies.
+          type: array
+          items:
+            type: string
+            description: List of geographical locations relevant for the detector.
+            example: '["US","EU","APAC"]'
+          example:
+          - US
+          - EU
+          - APAC
+        languages:
+          description: The list of languages supported by the classifier.
+          type: array
+          items:
+            type: string
+            description: List of languages supported by this detector.
+            example: '["en","fr","de"]'
+          example:
+          - en
+          - fr
+          - de
+        industries:
+          description: The list of industries where the classifier is applicable.
+          type: array
+          items:
+            type: string
+            description: Industries where this detector is applicable.
+            example: '["Finance","Healthcare"]'
+          example:
+          - Finance
+          - Healthcare
+        categories:
+          description: The list of categories assigned to the classifier.
+          type: array
+          items:
+            type: string
+            description: Categories assigned to this detector for classification.
+            example: '["PII","Financial"]'
+          example:
+          - PII
+          - Financial
+        sensitivityLevel:
+          description: The sensitivity level assigned to the classifier data.
+          type: string
+          example: HIGH
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule:
+      type: object
+      properties:
+        type:
+          description: The type of detector used for pattern matching.
+          type: string
+          example: PATTERN
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+        pattern:
+          description: The pattern configuration used for detection matching.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig'
+        dictionary:
+          description: The dictionary configuration used for detection matching.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig'
+        surrogate:
+          description: The surrogate configuration used when using a template from an existing detector.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig'
+        likelihood:
+          description: The initial likelihood level assigned to the detector.
+          type: string
+          example: POSSIBLE
+          enum:
+          - NO_MATCH
+          - VERY_UNLIKELY
+          - UNLIKELY
+          - POSSIBLE
+          - LIKELY
+          - VERY_LIKELY
+        description:
+          description: The description of the detector used for pattern matching.
+          type: string
+          example: This detection will find unformatted ID
+        name:
+          description: The name of the detector used for pattern matching.
+          type: string
+          example: Find Unformatted ID
+        prerequisite:
+          description: The prerequisite conditions that must be met before applying the detector.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite'
+          readOnly: true
+      required:
+      - name
+      - type
     DataUseGovernance-DataDiscoveryCustomClassiferMana_ValidatorConfig:
       type: object
       properties:
@@ -553,58 +674,57 @@ components:
             type: object
       required:
       - type
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDefinition:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig:
       type: object
       properties:
         name:
-          description: The name of the classifier definition.
+          description: The classifier code for the existing detector being used as the base classifier.
           type: string
-          example: Employee Id
-        otCode:
-          description: The OneTrust code assigned to the classifier definition.
+          example: system_address_uk
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_GlossaryTermDto:
+      type: object
+      properties:
+        name:
+          description: The name of the glossary term associated with the classifier.
           type: string
-          example: system_address_es
-          readOnly: true
-        isCustom:
-          description: This flag indicates whether the classifier definition is custom-created.
+          example: Company ID
+        id:
+          description: The unique identifier of the glossary term associated with the classifier.
+          type: string
+          format: uuid
+          example: a787c869-4628-493b-9393-0007ff6d7494
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig:
+      type: object
+      properties:
+        terms:
+          description: The list of terms or keywords used in the detection rule dictionary.
+          type: array
+          items:
+            type: string
+          example:
+          - hello
+          - hello world
+        ignoreCase:
+          description: This flag indicates whether the detection rule dictionary ignores case sensitivity.
           type: boolean
           example: false
-          readOnly: true
-        VERSION:
-          description: The version number of the classifier definition.
-          type: integer
-          format: int64
-          example: 1
-          readOnly: true
-        SCHEMA_VERSION:
-          description: The schema version used for the classifier definition.
+          default: 'false'
+      required:
+      - terms
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation:
+      type: object
+      properties:
+        text:
+          description: The sample text used for evaluation testing.
           type: string
-          example: 1.0.0
-          readOnly: true
+        match:
+          description: The list of expected matches for the evaluation test case.
+          type: array
+          items:
+            type: string
         metadata:
-          description: The metadata information associated with the classifier definition.
-          example:
-            displayName: Politics
-            otDisplayName: Politics
-            description: This Classifier represents someone's political affiliation based on political parties and ideologies.
-            sensitivityLevel: HIGH
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata'
-        detections:
-          description: The list of detectors used to establish the best matching criteria.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule'
-        detectionRules:
-          description: The list of detection rules used to validate and adjust the likelihood result.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectionRule'
-        evaluations:
-          description: The list of evaluation test cases used to validate the classifier.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation'
-          readOnly: true
+          description: The metadata information associated with the evaluation test case.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata'
     DataUseGovernance-DataDiscoveryCustomClassiferMana_CustomDetectorDto:
       type: object
       properties:
@@ -801,146 +921,6 @@ components:
       - definition
       - isPII
       - name
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig:
-      type: object
-      properties:
-        terms:
-          description: The list of terms or keywords used in the detection rule dictionary.
-          type: array
-          items:
-            type: string
-          example:
-          - hello
-          - hello world
-        ignoreCase:
-          description: This flag indicates whether the detection rule dictionary ignores case sensitivity.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - terms
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorMetadata:
-      type: object
-      properties:
-        displayName:
-          description: The display name used for the classifier in user interfaces.
-          type: string
-          example: Credit Card Number
-        otDisplayName:
-          description: The OneTrust display name used for the classifier.
-          type: string
-          example: Uniform Resource Locator
-        description:
-          description: The description of the classifier metadata.
-          type: string
-          example: Detects credit card numbers in text using pattern matching.
-        locations:
-          description: The list of geographic locations where the classifier applies.
-          type: array
-          items:
-            type: string
-            description: List of geographical locations relevant for the detector.
-            example: '["US","EU","APAC"]'
-          example:
-          - US
-          - EU
-          - APAC
-        languages:
-          description: The list of languages supported by the classifier.
-          type: array
-          items:
-            type: string
-            description: List of languages supported by this detector.
-            example: '["en","fr","de"]'
-          example:
-          - en
-          - fr
-          - de
-        industries:
-          description: The list of industries where the classifier is applicable.
-          type: array
-          items:
-            type: string
-            description: Industries where this detector is applicable.
-            example: '["Finance","Healthcare"]'
-          example:
-          - Finance
-          - Healthcare
-        categories:
-          description: The list of categories assigned to the classifier.
-          type: array
-          items:
-            type: string
-            description: Categories assigned to this detector for classification.
-            example: '["PII","Financial"]'
-          example:
-          - PII
-          - Financial
-        sensitivityLevel:
-          description: The sensitivity level assigned to the classifier data.
-          type: string
-          example: HIGH
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata:
-      type: object
-      properties:
-        XPATH:
-          description: The XPath expression used in the evaluation metadata.
-          type: string
-        OBJECT_NAME:
-          description: The object name used in the evaluation metadata.
-          type: string
-        OBJECT_PARENT:
-          description: The parent object name used in the evaluation metadata.
-          type: string
-        xpath:
-          description: The XPath expression used in the evaluation metadata.
-          type: string
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_PotentialMatchRule:
-      type: object
-      properties:
-        type:
-          description: The type of detector used for pattern matching.
-          type: string
-          example: PATTERN
-          enum:
-          - PATTERN
-          - DICTIONARY
-          - SURROGATE
-        pattern:
-          description: The pattern configuration used for detection matching.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig'
-        dictionary:
-          description: The dictionary configuration used for detection matching.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_DictionaryConfig'
-        surrogate:
-          description: The surrogate configuration used when using a template from an existing detector.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_SurrogateConfig'
-        likelihood:
-          description: The initial likelihood level assigned to the detector.
-          type: string
-          example: POSSIBLE
-          enum:
-          - NO_MATCH
-          - VERY_UNLIKELY
-          - UNLIKELY
-          - POSSIBLE
-          - LIKELY
-          - VERY_LIKELY
-        description:
-          description: The description of the detector used for pattern matching.
-          type: string
-          example: This detection will find unformatted ID
-        name:
-          description: The name of the detector used for pattern matching.
-          type: string
-          example: Find Unformatted ID
-        prerequisite:
-          description: The prerequisite conditions that must be met before applying the detector.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite'
-          readOnly: true
-      required:
-      - name
-      - type
     DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectionRule:
       type: object
       properties:
@@ -993,42 +973,92 @@ components:
           default: 'false'
       required:
       - type
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_Evaluation:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_LikelihoodAdjustment:
       type: object
       properties:
-        text:
-          description: The sample text used for evaluation testing.
+        adjustLikelihood:
+          description: The integer value used to adjust the likelihood level based on the current likelihood when detection rule criteria are met.
+          type: integer
+          format: int32
+          example: 1
+        setLikelihood:
+          description: The target likelihood level that is set when detection rule criteria are met regardless of the current level.
           type: string
-        match:
-          description: The list of expected matches for the evaluation test case.
+          example: VERY_LIKELY
+          enum:
+          - NO_MATCH
+          - VERY_UNLIKELY
+          - UNLIKELY
+          - POSSIBLE
+          - LIKELY
+          - VERY_LIKELY
+        type:
+          description: The strategy used to adjust the likelihood level when detection rule criteria are met.
+          type: string
+          example: SET
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_Prerequisite:
+      type: object
+      properties:
+        minLength:
+          description: The minimum length requirement for the detected data.
+          type: integer
+          format: int32
+        requirements:
+          description: The list of requirements that must be satisfied for the detector.
           type: array
           items:
             type: string
-        metadata:
-          description: The metadata information associated with the evaluation test case.
-          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_Metadata'
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_RegexPatternConfig:
-      type: object
-      properties:
-        regex:
-          description: The regular expression pattern used in the detection rule.
-          type: string
-          example: '[0-9]{1,10}'
-        flags:
-          description: The flags that control the regex pattern matching logic in the detection rule.
-          type: string
-          example: mi
-        groupIndexes:
-          description: The list of group indexes to extract from the detection rule regex match.
+        wordFilter:
+          description: The list of words used to filter detection results.
           type: array
           items:
-            type: integer
-            format: int32
-          example:
-          - 1
-          - 2
-      required:
-      - regex
+            type: string
+        wordFilterFlags:
+          description: The flags that control how word filtering is applied.
+          $ref: '#/components/schemas/DataUseGovernance-DataDiscoveryCustomClassiferMana_FilterFlags'
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorSummaryDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the classifier.
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          description: The system-generated code of the classifier.
+          type: string
+          example: custom_employee_id
+        name:
+          description: The name of the classifier.
+          type: string
+          example: Employee Id
+        custom:
+          description: This flag indicates whether the classifier is custom-created.
+          type: boolean
+          example: true
+        enabled:
+          description: This flag indicates whether the classifier is active.
+          type: boolean
+          example: true
+        detectorType:
+          description: The type of detector used by the classifier to classify data.
+          type: string
+          example: DICTIONARY
+          enum:
+          - PATTERN
+          - DICTIONARY
+          - SURROGATE
+          - VALIDATOR
+          - TEMPLATE
+          - COMPLEX
+        glossaryTerm:
+          description: The details of the glossary term associated with the classifier.
+          type: string
+          example: ID
+        description:
+          description: The description of the classifier.
+          type: string
+          example: Detect Employee ID
     DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorDto:
       type: object
       properties:
@@ -1224,49 +1254,19 @@ components:
       required:
       - definition
       - isPII
-    DataUseGovernance-DataDiscoveryCustomClassiferMana_DetectorSummaryDto:
+    DataUseGovernance-DataDiscoveryCustomClassiferMana_ContextConfig:
       type: object
       properties:
-        id:
-          description: The unique identifier of the classifier.
-          type: string
-          format: uuid
-          readOnly: true
-        code:
-          description: The system-generated code of the classifier.
-          type: string
-          example: custom_employee_id
-        name:
-          description: The name of the classifier.
-          type: string
-          example: Employee Id
-        custom:
-          description: This flag indicates whether the classifier is custom-created.
-          type: boolean
-          example: true
-        enabled:
-          description: This flag indicates whether the classifier is active.
-          type: boolean
-          example: true
-        detectorType:
-          description: The type of detector used by the classifier to classify data.
-          type: string
-          example: DICTIONARY
-          enum:
-          - PATTERN
-          - DICTIONARY
-          - SURROGATE
-          - VALIDATOR
-          - TEMPLATE
-          - COMPLEX
-        glossaryTerm:
-          description: The details of the glossary term associated with the classifier.
-          type: string
-          example: ID
-        description:
-          description: The description of the classifier.
-          type: string
-          example: Detect Employee ID
+        windowBefore:
+          description: The maximum number of characters to include for context before the match.
+          type: integer
+          format: int32
+          example: 10
+        windowAfter:
+          description: The maximum number of characters to include for context after the match.
+          type: integer
+          format: int32
+          example: 15
   securitySchemes:
     DataUseGovernance-DataDiscovery_OAUTH2:
       type: oauth2

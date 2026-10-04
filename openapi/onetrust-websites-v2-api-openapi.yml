@@ -231,38 +231,6 @@ components:
           type: string
           description: List of valid URLs, one per line. URLs should start with "https://" or "http://"
           minLength: 1
-    PaginatedWebsiteResponseDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: List of domains scanned or pending to be scanned
-          items:
-            $ref: '#/components/schemas/ExposedWebsiteDetailsDto'
-        numberOfElements:
-          type: integer
-          format: int32
-          description: Total number of elements in the result list.
-        pageNumber:
-          type: integer
-          format: int32
-          description: Page number of the results list (0….N).
-        pageSize:
-          type: integer
-          format: int32
-          description: Number of records per page (0…N).
-        sort:
-          $ref: '#/components/schemas/Sort'
-        totalElements:
-          type: integer
-          format: int64
-          description: Total number of websites found.
-        totalPages:
-          type: integer
-          format: int32
-          description: Total number of pages in the result.
-      title: PaginatedWebsiteResponseDTO
-      description: Paginated websites scanned or pending to be scanned
     ExposedWebsiteDetailsDto:
       type: object
       properties:
@@ -308,6 +276,51 @@ components:
           type: string
           description: Status of the scan.
       title: ExposedWebsiteDetailsDto
+    PaginatedWebsiteResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: List of domains scanned or pending to be scanned
+          items:
+            $ref: '#/components/schemas/ExposedWebsiteDetailsDto'
+        numberOfElements:
+          type: integer
+          format: int32
+          description: Total number of elements in the result list.
+        pageNumber:
+          type: integer
+          format: int32
+          description: Page number of the results list (0….N).
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of records per page (0…N).
+        sort:
+          $ref: '#/components/schemas/Sort'
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of websites found.
+        totalPages:
+          type: integer
+          format: int32
+          description: Total number of pages in the result.
+      title: PaginatedWebsiteResponseDTO
+      description: Paginated websites scanned or pending to be scanned
+    Sort:
+      type: object
+      properties:
+        empty:
+          type: boolean
+          description: Flag to indicate if the results are empty or not.
+        sorted:
+          type: boolean
+          description: Flag to indicate if the results are sorted or not. If set to TRUE, the results are sorted.
+        unsorted:
+          type: boolean
+          description: Flag to indicate if the results are unsorted or not. If set to TRUE, the results are unsorted.
+      title: Sort
     ScanWebsiteDto:
       title: ScanWebsiteDto
       description: Website details for scan
@@ -378,19 +391,6 @@ components:
           type: boolean
           description: Flag to indicate if the rescan is required or not.
       title: ServiceResponseDto
-    Sort:
-      type: object
-      properties:
-        empty:
-          type: boolean
-          description: Flag to indicate if the results are empty or not.
-        sorted:
-          type: boolean
-          description: Flag to indicate if the results are sorted or not. If set to TRUE, the results are sorted.
-        unsorted:
-          type: boolean
-          description: Flag to indicate if the results are unsorted or not. If set to TRUE, the results are unsorted.
-      title: Sort
   securitySchemes:
     oauth2:
       type: oauth2

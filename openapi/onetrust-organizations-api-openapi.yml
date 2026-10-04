@@ -279,51 +279,6 @@ paths:
         - ORGANIZATION
 components:
   schemas:
-    Platform-AccessManagement_OrganizationExternalResponse:
-      type: object
-      properties:
-        organizationId:
-          description: The unique identifier of the organization.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        externalId:
-          description: The external identifier of the organization.
-          type: string
-          example: ext-org-123
-          maxLength: 100
-        parentOrganizationId:
-          description: The unique identifier of the parent organization.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174999
-        parentExternalId:
-          description: The external identifier of the parent organization.
-          type: string
-          example: ext-org-parent-456
-          maxLength: 100
-        name:
-          description: The name of the organization.
-          type: string
-          example: OneTrust
-          maxLength: 255
-        defaultApprover:
-          description: The email address of the default approver for the organization.
-          type: string
-          example: approver@onetrust.com
-          maxLength: 255
-          minLength: 5
-        defaultLanguageCode:
-          description: 'The ISO language code for the organization''s default language (for example: en, fr, de, es, zh).'
-          type: string
-          example: en
-          maxLength: 5
-          minLength: 2
-        description:
-          description: 'A brief description of the organization. '
-          type: string
-          example: Privacy, Security and Third-Party Risk Software
-          maxLength: 250
     Platform-AccessManagement_OrganizationExternalRequest:
       type: object
       properties:
@@ -430,6 +385,51 @@ components:
               name: DataGuidance
               parentExternalId: ext-org-parent-456
       title: OrganizationExternalBasicDetailResponse
+    Platform-AccessManagement_OrganizationExternalResponse:
+      type: object
+      properties:
+        organizationId:
+          description: The unique identifier of the organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        externalId:
+          description: The external identifier of the organization.
+          type: string
+          example: ext-org-123
+          maxLength: 100
+        parentOrganizationId:
+          description: The unique identifier of the parent organization.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174999
+        parentExternalId:
+          description: The external identifier of the parent organization.
+          type: string
+          example: ext-org-parent-456
+          maxLength: 100
+        name:
+          description: The name of the organization.
+          type: string
+          example: OneTrust
+          maxLength: 255
+        defaultApprover:
+          description: The email address of the default approver for the organization.
+          type: string
+          example: approver@onetrust.com
+          maxLength: 255
+          minLength: 5
+        defaultLanguageCode:
+          description: 'The ISO language code for the organization''s default language (for example: en, fr, de, es, zh).'
+          type: string
+          example: en
+          maxLength: 5
+          minLength: 2
+        description:
+          description: 'A brief description of the organization. '
+          type: string
+          example: Privacy, Security and Third-Party Risk Software
+          maxLength: 250
   securitySchemes:
     Platform-AccessManagement_OAUTH2:
       type: oauth2

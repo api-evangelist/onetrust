@@ -419,6 +419,33 @@ components:
           type: string
           format: date-time
           example: '2020-01-03T12:41:13.820Z'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
+      type: object
+      properties:
+        fileName:
+          description: Attached file name
+          type: string
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          description: ID of attached file
+          type: string
+          format: uuid
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+        statusId:
+          description: Status ID of the attachment
+          type: integer
+          format: int64
+          example: 10
+        resourcePath:
+          description: Resource path of the attachment
+          type: string
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+      required:
+      - fileId
+      - fileName
     PrivacyAutomation-DataSubjectRequestDSRAutomation_VerificationMethodV2CommentsDto:
       type: object
       properties:
@@ -455,33 +482,6 @@ components:
       - comment
       - id
       - verificationMethodId
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_AttachmentV2Dto:
-      type: object
-      properties:
-        fileName:
-          description: Attached file name
-          type: string
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
-          description: ID of attached file
-          type: string
-          format: uuid
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-        statusId:
-          description: Status ID of the attachment
-          type: integer
-          format: int64
-          example: 10
-        resourcePath:
-          description: Resource path of the attachment
-          type: string
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-      required:
-      - fileId
-      - fileName
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

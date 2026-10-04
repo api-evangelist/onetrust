@@ -433,6 +433,21 @@ paths:
         - DATA_DISCOVERY
 components:
   schemas:
+    DataUseGovernance-DataDiscovery_Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        sort:
+          type: array
+          items:
+            type: string
     DataUseGovernance-DataDiscovery_ScanProfileV2Dto:
       type: object
       properties:
@@ -515,6 +530,13 @@ components:
       - scanType
       - systemName
       - systemType
+    DataUseGovernance-DataDiscovery_Sort:
+      type: object
+      properties:
+        sort:
+          type: array
+          items:
+            type: string
     DataUseGovernance-DataDiscovery_ScanProfileRequestV2Dto:
       type: object
       properties:
@@ -634,28 +656,6 @@ components:
         pageable:
           description: Pagination information for the page.
           $ref: '#/components/schemas/DataUseGovernance-DataDiscovery_Pageable'
-    DataUseGovernance-DataDiscovery_Sort:
-      type: object
-      properties:
-        sort:
-          type: array
-          items:
-            type: string
-    DataUseGovernance-DataDiscovery_Pageable:
-      type: object
-      properties:
-        page:
-          type: integer
-          format: int32
-          minimum: 0
-        size:
-          type: integer
-          format: int32
-          minimum: 1
-        sort:
-          type: array
-          items:
-            type: string
   securitySchemes:
     DataUseGovernance-DataDiscovery_OAUTH2:
       type: oauth2

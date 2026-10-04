@@ -157,6 +157,28 @@ paths:
       - Preferences
 components:
   schemas:
+    DataSubjectGeolocationDto:
+      type: object
+      description: Provides geolocation information for a data subject if they have given consent to a purpose with geolocation tracking enabled.
+      properties:
+        receiptGuid:
+          type: string
+          format: uuid
+          example: 788ba071-61b0-485f-81a0-a2245777b432
+          description: Unique Identifier of the Receipt for which geolocation parameters were sent.
+        country:
+          type: string
+          example: US
+          description: Country of the DataSubject.
+        state:
+          type: string
+          description: State Code of the DataSubject.
+          example: GA
+        stateName:
+          type: string
+          description: State Name of the DataSubject.
+          example: Georgia
+      title: DataSubjectGeolocationDto
     PreferencesDto:
       type: object
       properties:
@@ -225,28 +247,6 @@ components:
         latestGeolocation:
           $ref: '#/components/schemas/DataSubjectGeolocationDto'
       title: PreferencesDto
-    DataSubjectGeolocationDto:
-      type: object
-      description: Provides geolocation information for a data subject if they have given consent to a purpose with geolocation tracking enabled.
-      properties:
-        receiptGuid:
-          type: string
-          format: uuid
-          example: 788ba071-61b0-485f-81a0-a2245777b432
-          description: Unique Identifier of the Receipt for which geolocation parameters were sent.
-        country:
-          type: string
-          example: US
-          description: Country of the DataSubject.
-        state:
-          type: string
-          description: State Code of the DataSubject.
-          example: GA
-        stateName:
-          type: string
-          description: State Name of the DataSubject.
-          example: Georgia
-      title: DataSubjectGeolocationDto
 x-readme:
   explorer-enabled: false
   metrics-enabled: false

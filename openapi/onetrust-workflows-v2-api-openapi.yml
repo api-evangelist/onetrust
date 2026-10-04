@@ -172,6 +172,28 @@ components:
           decryptionCredentialId:
             type: string
             format: uuid
+    ScheduledTrigger:
+      allOf:
+      - $ref: '#/components/schemas/BaseTrigger'
+      - type: object
+        properties:
+          cronExpression:
+            type: string
+          dateTime:
+            $ref: '#/components/schemas/ScheduleDateTime'
+          runManual:
+            type: boolean
+          isRunManual:
+            type: boolean
+    AndExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          expressions:
+            type: array
+            items:
+              $ref: '#/components/schemas/AbstractExpression'
     WorkflowActionsV2Request:
       type: object
       properties:
@@ -284,22 +306,6 @@ components:
       - name
       - trigger
       - workflowType
-    ConfigTrigger:
-      allOf:
-      - $ref: '#/components/schemas/BaseTrigger'
-      - type: object
-        properties:
-          eventCode:
-            type: string
-    AndExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          expressions:
-            type: array
-            items:
-              $ref: '#/components/schemas/AbstractExpression'
     LookupFields:
       type: object
       properties:
@@ -311,79 +317,30 @@ components:
         step:
           description: Value for step.
           type: string
-    OrExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          expressions:
-            type: array
-            items:
-              $ref: '#/components/schemas/AbstractExpression'
-    ScheduleDateTimeField:
+    FieldDescription:
       type: object
       properties:
-        label:
+        key:
+          description: Value for key.
           type: string
-        value:
+        name:
+          description: Value for name.
           type: string
-        cronExp:
+        body:
+          description: Value for body.
           type: string
-    ScheduleDateTime:
-      type: object
-      properties:
-        seconds:
+        example:
+          description: Value for example.
           type: string
-        minutes:
+        type:
+          description: Value for type.
           type: string
-        hours:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        dayOfMonth:
+        jsonPath:
+          description: Value for json path.
           type: string
-        month:
+        displayName:
+          description: Value for display name.
           type: string
-        dayOfWeek:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        startMonth:
-          type: string
-        year:
-          type: string
-        frequency:
-          $ref: '#/components/schemas/ScheduleDateTimeField'
-        frequencyIntervalTracker:
-          type: string
-    NotExpression:
-      allOf:
-      - $ref: '#/components/schemas/AbstractExpression'
-      - type: object
-        properties:
-          operand:
-            $ref: '#/components/schemas/AbstractExpression'
-    EventTrigger:
-      allOf:
-      - $ref: '#/components/schemas/BaseTrigger'
-      - type: object
-        properties:
-          eventCode:
-            type: string
-          condition:
-            oneOf:
-            - $ref: '#/components/schemas/AndExpression'
-            - $ref: '#/components/schemas/BinaryExpression'
-            - $ref: '#/components/schemas/NotExpression'
-            - $ref: '#/components/schemas/OrExpression'
-          baseCondition:
-            oneOf:
-            - $ref: '#/components/schemas/AndExpression'
-            - $ref: '#/components/schemas/BinaryExpression'
-            - $ref: '#/components/schemas/NotExpression'
-            - $ref: '#/components/schemas/OrExpression'
-          preCondition:
-            oneOf:
-            - $ref: '#/components/schemas/AndExpression'
-            - $ref: '#/components/schemas/BinaryExpression'
-            - $ref: '#/components/schemas/NotExpression'
-            - $ref: '#/components/schemas/OrExpression'
     WorkflowTriggerDto:
       type: object
       properties:
@@ -444,6 +401,15 @@ components:
       - name
       - triggerType
       - workflowId
+    SubflowTrigger:
+      allOf:
+      - $ref: '#/components/schemas/BaseTrigger'
+      - type: object
+        properties:
+          eventCode:
+            type: string
+          referenceUrl:
+            type: string
     AbstractExpression:
       type: object
       properties:
@@ -454,6 +420,32 @@ components:
           - OR_EXPRESSION
           - NOT_EXPRESSION
           - BINARY_EXPRESSION
+    OrExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          expressions:
+            type: array
+            items:
+              $ref: '#/components/schemas/AbstractExpression'
+    BaseTrigger:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - EVENT
+          - SCHEDULED
+          - WEBHOOK
+          - SUBFLOW
+          - CONFIG
+        webhook:
+          type: boolean
+        subFlow:
+          type: boolean
+        config:
+          type: boolean
     BinaryExpression:
       allOf:
       - $ref: '#/components/schemas/AbstractExpression'
@@ -484,69 +476,77 @@ components:
             type: string
       required:
       - operator
-    ScheduledTrigger:
-      allOf:
-      - $ref: '#/components/schemas/BaseTrigger'
-      - type: object
-        properties:
-          cronExpression:
-            type: string
-          dateTime:
-            $ref: '#/components/schemas/ScheduleDateTime'
-          runManual:
-            type: boolean
-          isRunManual:
-            type: boolean
-    SubflowTrigger:
+    EventTrigger:
       allOf:
       - $ref: '#/components/schemas/BaseTrigger'
       - type: object
         properties:
           eventCode:
             type: string
-          referenceUrl:
+          condition:
+            oneOf:
+            - $ref: '#/components/schemas/AndExpression'
+            - $ref: '#/components/schemas/BinaryExpression'
+            - $ref: '#/components/schemas/NotExpression'
+            - $ref: '#/components/schemas/OrExpression'
+          baseCondition:
+            oneOf:
+            - $ref: '#/components/schemas/AndExpression'
+            - $ref: '#/components/schemas/BinaryExpression'
+            - $ref: '#/components/schemas/NotExpression'
+            - $ref: '#/components/schemas/OrExpression'
+          preCondition:
+            oneOf:
+            - $ref: '#/components/schemas/AndExpression'
+            - $ref: '#/components/schemas/BinaryExpression'
+            - $ref: '#/components/schemas/NotExpression'
+            - $ref: '#/components/schemas/OrExpression'
+    ScheduleDateTime:
+      type: object
+      properties:
+        seconds:
+          type: string
+        minutes:
+          type: string
+        hours:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        dayOfMonth:
+          type: string
+        month:
+          type: string
+        dayOfWeek:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        startMonth:
+          type: string
+        year:
+          type: string
+        frequency:
+          $ref: '#/components/schemas/ScheduleDateTimeField'
+        frequencyIntervalTracker:
+          type: string
+    ScheduleDateTimeField:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        cronExp:
+          type: string
+    ConfigTrigger:
+      allOf:
+      - $ref: '#/components/schemas/BaseTrigger'
+      - type: object
+        properties:
+          eventCode:
             type: string
-    FieldDescription:
-      type: object
-      properties:
-        key:
-          description: Value for key.
-          type: string
-        name:
-          description: Value for name.
-          type: string
-        body:
-          description: Value for body.
-          type: string
-        example:
-          description: Value for example.
-          type: string
-        type:
-          description: Value for type.
-          type: string
-        jsonPath:
-          description: Value for json path.
-          type: string
-        displayName:
-          description: Value for display name.
-          type: string
-    BaseTrigger:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - EVENT
-          - SCHEDULED
-          - WEBHOOK
-          - SUBFLOW
-          - CONFIG
-        webhook:
-          type: boolean
-        subFlow:
-          type: boolean
-        config:
-          type: boolean
+    NotExpression:
+      allOf:
+      - $ref: '#/components/schemas/AbstractExpression'
+      - type: object
+        properties:
+          operand:
+            $ref: '#/components/schemas/AbstractExpression'
   securitySchemes:
     OAUTH2:
       type: oauth2

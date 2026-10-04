@@ -467,35 +467,32 @@ paths:
                 format: int32
 components:
   schemas:
-    Pageable:
+    CourseSupportedLanguageInfo:
+      type: array
+      description: Basic details of the languages supported by the course.
+      items:
+        $ref: '#/components/schemas/CourseSupportedLanguageObject'
+      title: CourseSupportedLanguageInfo
+    CourseSupportedLanguageObject:
       type: object
-      title: Pageable
       properties:
-        offset:
+        id:
+          type: string
+          format: uuid
+          description: Valid unique id assigned to each language.
+        name:
+          type: string
+          description: Valid unique name assigned to each language.
+        nameKey:
+          type: string
+          description: Valid unique nameKey assigned to each language.
+        courseVersion:
           type: integer
-          format: int64
-          example: 3
-          description: The offset of the list.
-        pageNumber:
+          description: Valid course version available for the language.
+        version:
           type: integer
-          format: int32
-          description: Page number of the results list (0….N).
-          example: 3
-        pageSize:
-          type: integer
-          format: int32
-          description: Number of records per page (0…N).
-          example: 23
-        paged:
-          type: boolean
-          description: The flag to determine if the list is paged. If set True, the list is paged.
-          example: true
-        sort:
-          $ref: '#/components/schemas/Sort'
-        unpaged:
-          type: boolean
-          description: The flag to determine if the list is not paged. If set True, the list is not paged.
-          example: false
+          description: Number of times the sql db gets updated.
+      title: CourseSupportedLanguageObject
     EnrollmentAssigneeInformation:
       type: object
       title: EnrollmentAssigneeInformation
@@ -584,12 +581,6 @@ components:
           format: uuid
           description: Valid unique id assigned to each user.
       title: UserDTO
-    OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          $ref: '#/components/schemas/OneTrustPage'
-      title: OneTrustMetadata
     CourseObject:
       type: object
       properties:
@@ -620,6 +611,81 @@ components:
           type: boolean
           description: The flag to get the status of the course. The value will be false if no users are enrolled to the course.
       title: CourseObject
+    CourseLanguageUpdatesInfo:
+      type: object
+      properties:
+        languageIds:
+          type: integer
+          description: Valid unique id assigned to each language.
+        languageKeys:
+          type: integer
+          description: Valid unique nameKey assigned to each language.
+      title: CourseLanguageUpdatesInfo
+    OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/OneTrustPage'
+      title: OneTrustMetadata
+    Pageable:
+      type: object
+      title: Pageable
+      properties:
+        offset:
+          type: integer
+          format: int64
+          example: 3
+          description: The offset of the list.
+        pageNumber:
+          type: integer
+          format: int32
+          description: Page number of the results list (0….N).
+          example: 3
+        pageSize:
+          type: integer
+          format: int32
+          description: Number of records per page (0…N).
+          example: 23
+        paged:
+          type: boolean
+          description: The flag to determine if the list is paged. If set True, the list is paged.
+          example: true
+        sort:
+          $ref: '#/components/schemas/Sort'
+        unpaged:
+          type: boolean
+          description: The flag to determine if the list is not paged. If set True, the list is not paged.
+          example: false
+    OneTrustPage:
+      type: object
+      properties:
+        first:
+          type: boolean
+          description: Flag to check if the result page is the first page.
+        last:
+          type: boolean
+          description: Flag to check if the result page is the last page.
+        number:
+          type: integer
+          format: int64
+          description: Number assigned to the page.
+        size:
+          type: integer
+          format: int64
+          description: Number of records in each page.
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneTrustSort'
+        totalElements:
+          type: integer
+          format: int64
+          description: Total number of elements in a page.
+        totalPages:
+          type: integer
+          format: int64
+          description: Total number of pages in the result.
+      title: OneTrustPage
     EnrollmentRequest:
       type: object
       required:
@@ -672,78 +738,23 @@ components:
           items:
             $ref: '#/components/schemas/UserDTO'
       title: EnrollmentRequest
-    CourseLanguageUpdatesInfo:
+    FilterInformation:
       type: object
+      title: FilterInformation
       properties:
-        languageIds:
-          type: integer
-          description: Valid unique id assigned to each language.
-        languageKeys:
-          type: integer
-          description: Valid unique nameKey assigned to each language.
-      title: CourseLanguageUpdatesInfo
-    OneTrustSort:
-      type: object
-      properties:
-        direction:
+        field:
           type: string
-          enum:
-          - ASC
-          - DESC
-        property:
+          description: "The field value to filter the results.\nAvailable field Values:\n  organization, assigneeId, assignedDate, status, score, languageId, deadline, completedDate, courseId"
+        operator:
           type: string
-      title: OneTrustSort
-    OneTrustPage:
-      type: object
-      properties:
-        first:
-          type: boolean
-          description: Flag to check if the result page is the first page.
-        last:
-          type: boolean
-          description: Flag to check if the result page is the last page.
-        number:
-          type: integer
-          format: int64
-          description: Number assigned to the page.
-        size:
-          type: integer
-          format: int64
-          description: Number of records in each page.
-        sort:
-          type: array
-          items:
-            $ref: '#/components/schemas/OneTrustSort'
-        totalElements:
-          type: integer
-          format: int64
-          description: Total number of elements in a page.
-        totalPages:
-          type: integer
-          format: int64
-          description: Total number of pages in the result.
-      title: OneTrustPage
-    EnrollmentReminder:
-      type: object
-      description: The reminder for course deadline.
-      properties:
-        numberOfDays:
-          type: integer
-          format: int32
-          description: The number of days as a reminder for course deadline.
-        type:
-          type: string
-          description: The reminder type for course deadline.
-          enum:
-          - BEFORE
-          - AFTER
-      title: EnrollmentReminder
-    CourseSupportedLanguageInfo:
-      type: array
-      description: Basic details of the languages supported by the course.
-      items:
-        $ref: '#/components/schemas/CourseSupportedLanguageObject'
-      title: CourseSupportedLanguageInfo
+          description: The search operator for the filter.
+          example: = , BW
+        value:
+          type: object
+          description: The search value to filter the results.
+          example: NameA
+        toValue:
+          type: object
     PageEnrollmentAssigneeInformation:
       type: object
       title: PageEnrollmentAssigneeInformation
@@ -793,43 +804,37 @@ components:
           format: int32
           description: Total pages returned in the list.
           example: 5
-    SearchCriteriaRequest:
-      type: array
-      description: This is a map of the field name and the field value.
-      title: SearchCriteriaRequest
-      items:
-        $ref: '#/components/schemas/FilterInformation'
-    FilterInformation:
+    Sort:
       type: object
-      title: FilterInformation
+      title: Sort
       properties:
-        field:
-          type: string
-          description: "The field value to filter the results.\nAvailable field Values:\n  organization, assigneeId, assignedDate, status, score, languageId, deadline, completedDate, courseId"
-        operator:
-          type: string
-          description: The search operator for the filter.
-          example: = , BW
-        value:
-          type: object
-          description: The search value to filter the results.
-          example: NameA
-        toValue:
-          type: object
-    CourseDetails:
+        empty:
+          type: boolean
+          description: The flag to determine if the list is empty.
+          example: true
+        sorted:
+          type: boolean
+          description: The flag to determine if the list is sorted. If set True, the list is sorted.
+          example: true
+        unsorted:
+          type: boolean
+          description: The flag to determine if the list is unsorted. If set True, the list is unsorted.
+          example: 'True'
+    EnrollmentReminder:
       type: object
+      description: The reminder for course deadline.
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/CourseObject'
-        errors:
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata'
-      title: CourseDetails
+        numberOfDays:
+          type: integer
+          format: int32
+          description: The number of days as a reminder for course deadline.
+        type:
+          type: string
+          description: The reminder type for course deadline.
+          enum:
+          - BEFORE
+          - AFTER
+      title: EnrollmentReminder
     EnrollmentStatusDetails:
       type: object
       title: EnrollmentStatusDetails
@@ -862,42 +867,37 @@ components:
           type: string
           format: date-time
           description: Completion Date for the course (If user is in COMPLETED status).
-    CourseSupportedLanguageObject:
+    SearchCriteriaRequest:
+      type: array
+      description: This is a map of the field name and the field value.
+      title: SearchCriteriaRequest
+      items:
+        $ref: '#/components/schemas/FilterInformation'
+    OneTrustSort:
       type: object
       properties:
-        id:
+        direction:
           type: string
-          format: uuid
-          description: Valid unique id assigned to each language.
-        name:
+          enum:
+          - ASC
+          - DESC
+        property:
           type: string
-          description: Valid unique name assigned to each language.
-        nameKey:
-          type: string
-          description: Valid unique nameKey assigned to each language.
-        courseVersion:
-          type: integer
-          description: Valid course version available for the language.
-        version:
-          type: integer
-          description: Number of times the sql db gets updated.
-      title: CourseSupportedLanguageObject
-    Sort:
+      title: OneTrustSort
+    CourseDetails:
       type: object
-      title: Sort
       properties:
-        empty:
-          type: boolean
-          description: The flag to determine if the list is empty.
-          example: true
-        sorted:
-          type: boolean
-          description: The flag to determine if the list is sorted. If set True, the list is sorted.
-          example: true
-        unsorted:
-          type: boolean
-          description: The flag to determine if the list is unsorted. If set True, the list is unsorted.
-          example: 'True'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseObject'
+        errors:
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
+      title: CourseDetails
   securitySchemes:
     oauth2:
       type: oauth2

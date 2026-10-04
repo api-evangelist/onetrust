@@ -411,61 +411,6 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Page:
-      properties:
-        id:
-          description: Unique identifier of the Data Subject
-          type: string
-          format: uuid
-          example: c43a9190-ffd6-4be3-aeff-95b46d0fa59f
-        identifier:
-          description: The identifier value of the Data Subject
-          type: string
-          example: example@otprivacy.com
-        identifierType:
-          description: The type of identifier used for the Data Subject (e.g., Email, Phone, CustomID)
-          type: string
-          example: Email
-      required:
-      - identifier
-      - identifierType
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Detailed:
-      type: object
-      properties:
-        id:
-          description: Globally unique identifier of a Linked Identity Group
-          type: string
-          format: uuid
-          example: b0a6b5da-4ea2-4a9f-a25a-fb3e212efc30
-        createdDate:
-          description: Creation date of a Linked Identity Group
-          type: string
-          format: date-time
-          example: '2020-05-30T10:52:30.974Z'
-        primaryDataSubject:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
-        primaryDataSubjects:
-          description: List of primary Data Subjects in the Linked Identity Group
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
-        dataSubjects:
-          description: A list of all the linked Data Subjects in the group
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
-        groupName:
-          description: The name of the linked identity group
-          type: string
-          example: Customer Group A
     ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Page:
       properties:
         id:
@@ -532,32 +477,24 @@ components:
           - PRIMARY
           - CHILD
           - GROUP_NAME
-    ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupRequest_Detailed:
-      type: object
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Page:
       properties:
-        identifiers:
-          description: A list of all the Data Subject identifiers to be added to the group; must be at least 2
-          type: array
-          items:
-            type: string
-          example:
-          - example@otprivacy.com
-          - example@onetrust.com
-          maxItems: 2147483647
-          minItems: 2
-        primaryIdentifier:
-          description: List of all primary Data Subject identifiers of the group; must be contained in the identifiers list
-          type: array
-          items:
-            type: string
-          example:
-          - example@otprivacy.com
-          maxItems: 2147483647
-          minItems: 1
-        groupName:
-          description: Name of the Linked Identity Group
+        id:
+          description: Unique identifier of the Data Subject
           type: string
-          example: Customer Support Group
+          format: uuid
+          example: c43a9190-ffd6-4be3-aeff-95b46d0fa59f
+        identifier:
+          description: The identifier value of the Data Subject
+          type: string
+          example: example@otprivacy.com
+        identifierType:
+          description: The type of identifier used for the Data Subject (e.g., Email, Phone, CustomID)
+          type: string
+          example: Email
+      required:
+      - identifier
+      - identifierType
     ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Page:
       properties:
         offset:
@@ -624,6 +561,69 @@ components:
           type: integer
           format: int32
           example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupRequest_Detailed:
+      type: object
+      properties:
+        identifiers:
+          description: A list of all the Data Subject identifiers to be added to the group; must be at least 2
+          type: array
+          items:
+            type: string
+          example:
+          - example@otprivacy.com
+          - example@onetrust.com
+          maxItems: 2147483647
+          minItems: 2
+        primaryIdentifier:
+          description: List of all primary Data Subject identifiers of the group; must be contained in the identifiers list
+          type: array
+          items:
+            type: string
+          example:
+          - example@otprivacy.com
+          maxItems: 2147483647
+          minItems: 1
+        groupName:
+          description: Name of the Linked Identity Group
+          type: string
+          example: Customer Support Group
+    ConsentPreferences-UniversalConsentPreferenceManag_LinkedIdentityGroupDto_Detailed:
+      type: object
+      properties:
+        id:
+          description: Globally unique identifier of a Linked Identity Group
+          type: string
+          format: uuid
+          example: b0a6b5da-4ea2-4a9f-a25a-fb3e212efc30
+        createdDate:
+          description: Creation date of a Linked Identity Group
+          type: string
+          format: date-time
+          example: '2020-05-30T10:52:30.974Z'
+        primaryDataSubject:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
+        primaryDataSubjects:
+          description: List of primary Data Subjects in the Linked Identity Group
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
+        dataSubjects:
+          description: A list of all the linked Data Subjects in the group
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed'
+        groupName:
+          description: The name of the linked identity group
+          type: string
+          example: Customer Group A
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Page:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectEntry_Detailed:
       properties:
         id:

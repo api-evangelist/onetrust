@@ -95,46 +95,6 @@ paths:
         - sub
 components:
   schemas:
-    PreferencesDto:
-      type: array
-      items:
-        type: object
-        properties:
-          identifier:
-            description: The data subject identifier of the data subject.
-            type: string
-            example: gpburdell@onetrust.com
-          identifierType:
-            description: The type of data subject identifier.
-            type: string
-            example: Email
-          dataElements:
-            description: The additional information about the data subject provided via a consent receipt.
-            type: object
-            example:
-              FirstName: John
-              LastName: Doe
-            additionalProperties:
-              type: string
-          additionalIdentifiers:
-            description: The additional data subject identifiers of the data subject.
-            type: object
-            example:
-              AccountId: A1234
-            additionalProperties:
-              type: string
-          purposes:
-            description: The details of the purposes that the data subject interacted with.
-            type: array
-            items:
-              $ref: '#/components/schemas/PurposeDto'
-          latestGeolocation:
-            description: The geolocation details of the most recent consent receipt.
-            $ref: '#/components/schemas/DataSubjectGeolocationDto'
-          language:
-            description: The language set for the data subject.
-            type: string
-            example: en-US
     PurposeDto:
       type: object
       properties:
@@ -179,27 +139,6 @@ components:
         geolocation:
           description: The geolocation details of the consent receipt.
           $ref: '#/components/schemas/DataSubjectGeolocationDto'
-    CustomPreferencesDto:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            description: The unique identifier of the purpose preference associated with the purpose.
-            type: string
-            format: uuid
-            example: 1ebe272a-736f-4bec-b4b3-77309bb6bdf3
-          options:
-            description: The unique identifiers of the purpose preference options that the data subject interacted with.
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  description: The unique identifiers of the purpose preference options.
-                  type: string
-                  format: uuid
-                  example: 7590d76b-c69f-4c68-805d-bd326595a213
     DataSubjectGeolocationDto:
       type: object
       properties:
@@ -221,6 +160,67 @@ components:
           type: string
           example: Georgia
       title: DataSubjectGeolocationDto
+    CustomPreferencesDto:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            description: The unique identifier of the purpose preference associated with the purpose.
+            type: string
+            format: uuid
+            example: 1ebe272a-736f-4bec-b4b3-77309bb6bdf3
+          options:
+            description: The unique identifiers of the purpose preference options that the data subject interacted with.
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  description: The unique identifiers of the purpose preference options.
+                  type: string
+                  format: uuid
+                  example: 7590d76b-c69f-4c68-805d-bd326595a213
+    PreferencesDto:
+      type: array
+      items:
+        type: object
+        properties:
+          identifier:
+            description: The data subject identifier of the data subject.
+            type: string
+            example: gpburdell@onetrust.com
+          identifierType:
+            description: The type of data subject identifier.
+            type: string
+            example: Email
+          dataElements:
+            description: The additional information about the data subject provided via a consent receipt.
+            type: object
+            example:
+              FirstName: John
+              LastName: Doe
+            additionalProperties:
+              type: string
+          additionalIdentifiers:
+            description: The additional data subject identifiers of the data subject.
+            type: object
+            example:
+              AccountId: A1234
+            additionalProperties:
+              type: string
+          purposes:
+            description: The details of the purposes that the data subject interacted with.
+            type: array
+            items:
+              $ref: '#/components/schemas/PurposeDto'
+          latestGeolocation:
+            description: The geolocation details of the most recent consent receipt.
+            $ref: '#/components/schemas/DataSubjectGeolocationDto'
+          language:
+            description: The language set for the data subject.
+            type: string
+            example: en-US
 x-onetrust:
   spec-label: OpenAPI 3.1.0
 x-readme:

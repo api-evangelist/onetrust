@@ -148,113 +148,6 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
-    PrivacyAutomation-DROPManagement_CreateRequestQueue:
-      type: object
-      properties:
-        dropRequestType:
-          type: string
-          description: Drop Request Type
-          enum:
-          - DataDeletion
-          - OptOut
-          example: DataDeletion
-        firstName:
-          type: string
-          description: First name of the respondent.
-          example: Test
-        lastName:
-          type: string
-          description: Last name of the respondent.
-          example: User
-        email:
-          type: string
-          description: Email address of the respondent.
-          example: testuser@onetrust.com
-        language:
-          type: string
-          description: 'The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc.'
-          example: en-us
-          minLength: 1
-        additionalData:
-          type: object
-          additionalProperties:
-            type: string
-          description: Additional fields in key value format, required for request processing. These could be webform or non webform fields
-          example:
-            key: value
-        requestTypes:
-          type: array
-          description: Respondents privacy request type. This should match with the webform request type.
-          example:
-          - opt-out
-          - Get My Data
-          items:
-            type: string
-        subjectTypes:
-          type: array
-          description: Respondents subject type or relation ship with tenant. This should match with the webform subject type.
-          example:
-          - Customer
-          - Authorized Agent
-          items:
-            type: string
-        multiselectFields:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-          description: Multi-select fields in key-value format where values are lists of selected options
-          example:
-            interests:
-            - marketing
-            - newsletters
-        requestTraceId:
-          type: string
-          format: uuid
-          description: Unique trace id for request
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        templateId:
-          type: string
-          format: uuid
-          description: Template ID for request creation
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attachments:
-          type: array
-          description: File attachment details for request.
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_AttachmentV2Dto'
-      required:
-      - dropRequestType
-      - language
-      - templateId
-    PrivacyAutomation-DROPManagement_AttachmentV2Dto:
-      type: object
-      properties:
-        statusId:
-          type: integer
-          format: int64
-          description: Status ID of the attachment
-          example: 10
-        resourcePath:
-          type: string
-          description: Resource path of the attachment
-          example: /storage/attachments/sample.txt
-          maxLength: 1000
-        fileName:
-          type: string
-          description: Attached file name
-          example: sample.txt
-          maxLength: 200
-          minLength: 1
-        fileId:
-          type: string
-          format: uuid
-          description: ID of attached file
-          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
-      required:
-      - fileId
-      - fileName
     PrivacyAutomation-DROPManagement_DropUpdateRequest:
       type: object
       properties:
@@ -392,6 +285,113 @@ components:
           - '0'
           - '10'
           example: PAUSED
+    PrivacyAutomation-DROPManagement_CreateRequestQueue:
+      type: object
+      properties:
+        dropRequestType:
+          type: string
+          description: Drop Request Type
+          enum:
+          - DataDeletion
+          - OptOut
+          example: DataDeletion
+        firstName:
+          type: string
+          description: First name of the respondent.
+          example: Test
+        lastName:
+          type: string
+          description: Last name of the respondent.
+          example: User
+        email:
+          type: string
+          description: Email address of the respondent.
+          example: testuser@onetrust.com
+        language:
+          type: string
+          description: 'The ISO language code for OneTrust supported languages. Examples: en-us for English, de for German, fr for French, etc.'
+          example: en-us
+          minLength: 1
+        additionalData:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional fields in key value format, required for request processing. These could be webform or non webform fields
+          example:
+            key: value
+        requestTypes:
+          type: array
+          description: Respondents privacy request type. This should match with the webform request type.
+          example:
+          - opt-out
+          - Get My Data
+          items:
+            type: string
+        subjectTypes:
+          type: array
+          description: Respondents subject type or relation ship with tenant. This should match with the webform subject type.
+          example:
+          - Customer
+          - Authorized Agent
+          items:
+            type: string
+        multiselectFields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Multi-select fields in key-value format where values are lists of selected options
+          example:
+            interests:
+            - marketing
+            - newsletters
+        requestTraceId:
+          type: string
+          format: uuid
+          description: Unique trace id for request
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        templateId:
+          type: string
+          format: uuid
+          description: Template ID for request creation
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attachments:
+          type: array
+          description: File attachment details for request.
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DROPManagement_AttachmentV2Dto'
+      required:
+      - dropRequestType
+      - language
+      - templateId
+    PrivacyAutomation-DROPManagement_AttachmentV2Dto:
+      type: object
+      properties:
+        statusId:
+          type: integer
+          format: int64
+          description: Status ID of the attachment
+          example: 10
+        resourcePath:
+          type: string
+          description: Resource path of the attachment
+          example: /storage/attachments/sample.txt
+          maxLength: 1000
+        fileName:
+          type: string
+          description: Attached file name
+          example: sample.txt
+          maxLength: 200
+          minLength: 1
+        fileId:
+          type: string
+          format: uuid
+          description: ID of attached file
+          example: 3b47744c-eebf-44bb-bf4c-680966a448dc
+      required:
+      - fileId
+      - fileName
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

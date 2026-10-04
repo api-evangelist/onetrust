@@ -326,6 +326,55 @@ components:
           type: string
           maxLength: 500
           minLength: 0
+    EntityTypeSettingInformation:
+      type: object
+      properties:
+        enableWorkflow:
+          description: Indicate workflow is enabled for given entity type
+          type: boolean
+          example: true
+        enableWorkflowStageTracking:
+          description: Indicate current setting to record entity workflow stage tracking history
+          type: boolean
+          example: true
+        assessable:
+          description: Indicate if entity type are assessable or not
+          type: boolean
+          example: false
+        enableTask:
+          description: Indicate tasks are enabled for given entity type
+          type: boolean
+          example: false
+        enableRisk:
+          description: Indicate risks are enabled for given entity type
+          type: boolean
+          example: false
+        enableDocument:
+          description: Indicate documents are enabled for given entity type
+          type: boolean
+          example: false
+        enableControl:
+          description: Indicate controls are enabled for given entity type
+          type: boolean
+          example: false
+        enableWebForm:
+          description: Indicate web forms are enabled for given entity type
+          type: boolean
+          example: false
+        enableComment:
+          description: Indicate comments are enabled for given entity type
+          type: boolean
+          example: false
+      required:
+      - assessable
+      - enableComment
+      - enableControl
+      - enableDocument
+      - enableRisk
+      - enableTask
+      - enableWebForm
+      - enableWorkflow
+      - enableWorkflowStageTracking
     EntityTypeInformation:
       type: object
       properties:
@@ -444,55 +493,33 @@ components:
       - id
       - name
       - settings
-    EntityTypeSettingInformation:
+    SortObject:
       type: object
       properties:
-        enableWorkflow:
-          description: Indicate workflow is enabled for given entity type
+        empty:
           type: boolean
-          example: true
-        enableWorkflowStageTracking:
-          description: Indicate current setting to record entity workflow stage tracking history
+        sorted:
           type: boolean
-          example: true
-        assessable:
-          description: Indicate if entity type are assessable or not
+        unsorted:
           type: boolean
-          example: false
-        enableTask:
-          description: Indicate tasks are enabled for given entity type
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
           type: boolean
-          example: false
-        enableRisk:
-          description: Indicate risks are enabled for given entity type
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
           type: boolean
-          example: false
-        enableDocument:
-          description: Indicate documents are enabled for given entity type
-          type: boolean
-          example: false
-        enableControl:
-          description: Indicate controls are enabled for given entity type
-          type: boolean
-          example: false
-        enableWebForm:
-          description: Indicate web forms are enabled for given entity type
-          type: boolean
-          example: false
-        enableComment:
-          description: Indicate comments are enabled for given entity type
-          type: boolean
-          example: false
-      required:
-      - assessable
-      - enableComment
-      - enableControl
-      - enableDocument
-      - enableRisk
-      - enableTask
-      - enableWebForm
-      - enableWorkflow
-      - enableWorkflowStageTracking
     EntityBasicUserInformation:
       type: object
       properties:
@@ -513,15 +540,6 @@ components:
           description: The initials for the first and last name of the user.
           type: string
           example: FL
-    SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     EntityRecordAuditInformation:
       type: object
       properties:
@@ -622,24 +640,6 @@ components:
           - type: number
       required:
       - field
-    PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
   securitySchemes:
     OAUTH2:
       type: oauth2

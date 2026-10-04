@@ -501,33 +501,70 @@ paths:
     - url: https://customer.my.onetrust.com/api/cookiemanager
 components:
   schemas:
-    DomainGroupRequestDto:
-      type: object
-      properties:
-        removeExisting:
-          description: This flag indicates whether to remove existing configurations before applying new ones.
-          type: boolean
-          example: false
-        urls:
-          description: The list of URLs to be processed or managed.
-          type: array
-          items:
-            type: string
-          example:
-          - example.com
-          - test.com
-          - onetrust.com
-          maxItems: 1000
-          minItems: 0
-      title: DomainGroupRequestDto
-    BrandingAttributesUpdateResponseDTO:
+    DomainBrandingAttributesResponseDTO:
       type: object
       properties:
         id:
-          description: Resource ID (Domain ID or Application ID)
+          description: Resource ID (Domain ID)
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        resourceName:
+          description: Resource name (Domain name)
+          type: string
+          example: www.example.com
+          maxLength: 255
+          minLength: 1
+        attributes:
+          description: Map of branding attributes keyed by attribute name
+          type: object
+          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
+          additionalProperties:
+            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
+    DomainScheduleRequest:
+      type: object
+      properties:
+        domainId:
+          description: The unique identifier of the domain.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        emailRecipient:
+          description: The email address that will receive notifications.
+          type: string
+          example: user1@gmail.com,user2@gmail.com
+          maxLength: 300
+          minLength: 0
+        nextScanDate:
+          description: The date and time when the next scan is scheduled.
+          type: string
+          format: date-time
+          example: '2025-04-25T10:15:30'
+        intervalType:
+          description: The frequency unit for recurring scans.
+          type: string
+          example: MONTH
+          enum:
+          - MONTH
+        timeInterval:
+          description: The frequency at which recurring scans are performed.
+          type: integer
+          format: int32
+          example: 2
+          maximum: 12
+          minimum: 1
+        geoLocation:
+          description: The geographic location settings for the scan.
+          type: string
+          example: eastus
+          enum:
+          - northeurope
+          - eastus
+      required:
+      - domainId
+      - geoLocation
+      - intervalType
+      - timeInterval
     EntityActionResponseDto:
       type: object
       properties:
@@ -709,70 +746,33 @@ components:
           - LONG
           - BOOLEAN
           - UUID
-    DomainBrandingAttributesResponseDTO:
+    BrandingAttributesUpdateResponseDTO:
       type: object
       properties:
         id:
-          description: Resource ID (Domain ID)
+          description: Resource ID (Domain ID or Application ID)
           type: string
           format: uuid
           example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        resourceName:
-          description: Resource name (Domain name)
-          type: string
-          example: www.example.com
-          maxLength: 255
-          minLength: 1
-        attributes:
-          description: Map of branding attributes keyed by attribute name
-          type: object
-          example: '["dPCenterCookiePolicyLinkScreenReader": {"name": "dPCenterCookiePolicyLinkScreenReader", "value": "#000000"}, {"name": "dPCenterButtonColor", "value": "#FFFFFF"}]'
-          additionalProperties:
-            $ref: '#/components/schemas/PublicDomainBrandingAttributeDTO'
-    DomainScheduleRequest:
+    DomainGroupRequestDto:
       type: object
       properties:
-        domainId:
-          description: The unique identifier of the domain.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        emailRecipient:
-          description: The email address that will receive notifications.
-          type: string
-          example: user1@gmail.com,user2@gmail.com
-          maxLength: 300
-          minLength: 0
-        nextScanDate:
-          description: The date and time when the next scan is scheduled.
-          type: string
-          format: date-time
-          example: '2025-04-25T10:15:30'
-        intervalType:
-          description: The frequency unit for recurring scans.
-          type: string
-          example: MONTH
-          enum:
-          - MONTH
-        timeInterval:
-          description: The frequency at which recurring scans are performed.
-          type: integer
-          format: int32
-          example: 2
-          maximum: 12
-          minimum: 1
-        geoLocation:
-          description: The geographic location settings for the scan.
-          type: string
-          example: eastus
-          enum:
-          - northeurope
-          - eastus
-      required:
-      - domainId
-      - geoLocation
-      - intervalType
-      - timeInterval
+        removeExisting:
+          description: This flag indicates whether to remove existing configurations before applying new ones.
+          type: boolean
+          example: false
+        urls:
+          description: The list of URLs to be processed or managed.
+          type: array
+          items:
+            type: string
+          example:
+          - example.com
+          - test.com
+          - onetrust.com
+          maxItems: 1000
+          minItems: 0
+      title: DomainGroupRequestDto
     DomainBrandingAttributesRequestDTO:
       type: object
       properties:

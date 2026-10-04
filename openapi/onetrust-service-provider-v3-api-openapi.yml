@@ -118,26 +118,6 @@ components:
           $ref: '#/components/schemas/Meta'
           readOnly: true
       title: ServiceProviderConfig
-    BulkSupported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
-        maxOperations:
-          type: integer
-          format: int32
-        maxPayloadSize:
-          type: integer
-          format: int32
-    Supported:
-      type: object
-      properties:
-        supported:
-          description: Indicates whether the service provider supports the operation
-          type: boolean
-          example: false
     AuthenticationScheme:
       type: object
       properties:
@@ -173,6 +153,19 @@ components:
           type: boolean
           example: false
         maxResults:
+          type: integer
+          format: int32
+    BulkSupported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
+        maxOperations:
+          type: integer
+          format: int32
+        maxPayloadSize:
           type: integer
           format: int32
     Meta:
@@ -224,6 +217,13 @@ components:
           minLength: 1
       readOnly: true
       title: Meta
+    Supported:
+      type: object
+      properties:
+        supported:
+          description: Indicates whether the service provider supports the operation
+          type: boolean
+          example: false
   securitySchemes:
     OAUTH2:
       type: oauth2

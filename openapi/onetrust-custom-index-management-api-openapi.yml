@@ -174,17 +174,28 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse:
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun:
       type: object
       properties:
-        runId:
-          description: Unique identifier for the pipeline run
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
         status:
-          description: Status of the pipeline trigger
+          description: Current status of the custom index creation
           type: string
           example: InProgress
+          enum:
+          - Submitted
+          - InProgress
+          - Success
+          - Failed
+          - Cancelled
+          - Pending
+        startTime:
+          description: Timestamp when the of the custom index creation started
+          type: string
+          format: date-time
+        endTime:
+          description: Timestamp when the the custom index creation ended.
+          type: string
+          format: date-time
     ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerRequest:
       type: object
       properties:
@@ -210,28 +221,17 @@ components:
       required:
       - operationName
       - parameters
-    ConsentPreferences-UniversalConsentPreferenceManag_PipelineRun:
+    ConsentPreferences-UniversalConsentPreferenceManag_PipelineTriggerResponse:
       type: object
       properties:
+        runId:
+          description: Unique identifier for the pipeline run
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
         status:
-          description: Current status of the custom index creation
+          description: Status of the pipeline trigger
           type: string
           example: InProgress
-          enum:
-          - Submitted
-          - InProgress
-          - Success
-          - Failed
-          - Cancelled
-          - Pending
-        startTime:
-          description: Timestamp when the of the custom index creation started
-          type: string
-          format: date-time
-        endTime:
-          description: Timestamp when the the custom index creation ended.
-          type: string
-          format: date-time
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

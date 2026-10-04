@@ -96,38 +96,11 @@ paths:
         - ESG_READ
 components:
   schemas:
-    OneTrustResponseListMetricDataAggregateResponseDetails:
-      type: object
-      properties:
-        data:
-          description: The parameters that detail entity data.
-          type: array
-          items:
-            $ref: '#/components/schemas/MetricDataAggregateResponseDetails'
-        errors:
-          description: This parameter provides error details if 400 Bad Request is returned.
-          type: array
-          items:
-            type: object
-        meta:
-          $ref: '#/components/schemas/OneTrustMetadata'
     OneTrustMetadata:
       type: object
       properties:
         page:
           $ref: '#/components/schemas/OneTrustPage'
-    OneTrustSort:
-      type: object
-      properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
-          type: string
     OneTrustPage:
       type: object
       properties:
@@ -176,6 +149,21 @@ components:
           type: string
           format: date
           example: '2019-12-31'
+    OneTrustResponseListMetricDataAggregateResponseDetails:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricDataAggregateResponseDetails'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          $ref: '#/components/schemas/OneTrustMetadata'
     MetricDataAggregateResponseDetails:
       type: object
       properties:
@@ -206,6 +194,18 @@ components:
       required:
       - frameworkName
       - metricName
+    OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
   securitySchemes:
     oauth2:
       type: oauth2

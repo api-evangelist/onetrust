@@ -590,93 +590,15 @@ paths:
         - OBJECT_MANAGER_WRITE
 components:
   schemas:
-    AssociatedAttribute:
+    AttributeOptionMetadata:
       type: object
       properties:
-        fieldName:
-          description: The fieldName parameter value of the attribute.
+        hint:
+          description: The hint of the attribute option.
           type: string
-        name:
-          description: The name of the attribute.
+        hintKey:
+          description: The hint key of the attribute option used for translation purposes.
           type: string
-        nameKey:
-          description: The name key of the attribute used for translation purposes.
-          type: string
-        description:
-          description: The description of the attribute.
-          type: string
-        descriptionKey:
-          description: The description key of the attribute used for translation purposes.
-          type: string
-        options:
-          description: The options for the attribute.
-          type: array
-          items:
-            $ref: '#/components/schemas/AttributeOptionRequest'
-      required:
-      - name
-      - options
-    AttributeOptionRequest:
-      type: object
-      properties:
-        option:
-          description: The name of the attribute option.
-          type: string
-          example: Example Option
-          maxLength: 255
-          minLength: 1
-        optionKey:
-          description: The name key of the attribute option used for translation purposes.
-          type: string
-          example: example_option
-          maxLength: 255
-        optionSelectionValue:
-          description: The selection value of an option for the attribute.
-          type: string
-          example: value1
-          maxLength: 255
-        colorCode:
-          description: The color code associated with the attribute option.
-          type: string
-          example: '#FFFFFF'
-          enum:
-          - '#000000'
-          - '#FFFFFF'
-          - '#FF0000'
-          - '#00FF00'
-          - '#0000FF'
-          maxLength: 7
-          minLength: 4
-          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
-        metadata:
-          description: The metadata details of the attribute option.
-          example:
-            hint: This option provides additional information about the attribute
-            hintKey: attribute.option.hint.key
-          $ref: '#/components/schemas/AttributeOptionMetadata'
-      example:
-        option: Example Option
-        optionKey: example_option
-        optionSelectionValue: value1
-        colorCode: '#FFFFFF'
-      required:
-      - option
-      title: Attribute Option Request
-    CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the category.
-          type: string
-          format: uuid
-        name:
-          description: The name of the category.
-          type: string
-          example: Financial Category
-        nameKey:
-          description: The name key of the category used for translation purposes.
-          type: string
-          example: IM.FinancialCategoryName
     AttributeOptionInformation:
       type: object
       properties:
@@ -718,6 +640,57 @@ components:
           $ref: '#/components/schemas/AttributeOptionMetadata'
       required:
       - option
+    AssociatedAttributeRequest:
+      type: object
+      properties:
+        associatedAttributes:
+          description: The details of the associated attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttribute'
+      required:
+      - associatedAttributes
+    AssociatedAttribute:
+      type: object
+      properties:
+        fieldName:
+          description: The fieldName parameter value of the attribute.
+          type: string
+        name:
+          description: The name of the attribute.
+          type: string
+        nameKey:
+          description: The name key of the attribute used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute used for translation purposes.
+          type: string
+        options:
+          description: The options for the attribute.
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeOptionRequest'
+      required:
+      - name
+      - options
+    IntakeQuestion:
+      type: object
+      properties:
+        nameKey:
+          description: The name key of the attribute intake question used for translation purposes.
+          type: string
+        name:
+          description: The name of the attribute intake question.
+          type: string
+        descriptionKey:
+          description: The description key of the attribute intake question used for translation purposes.
+          type: string
+        description:
+          description: The description of the attribute intake question.
+          type: string
     AssociatedAttributeInformation:
       type: object
       properties:
@@ -801,6 +774,52 @@ components:
       - id
       - name
       - responseType
+    AttributeOptionRequest:
+      type: object
+      properties:
+        option:
+          description: The name of the attribute option.
+          type: string
+          example: Example Option
+          maxLength: 255
+          minLength: 1
+        optionKey:
+          description: The name key of the attribute option used for translation purposes.
+          type: string
+          example: example_option
+          maxLength: 255
+        optionSelectionValue:
+          description: The selection value of an option for the attribute.
+          type: string
+          example: value1
+          maxLength: 255
+        colorCode:
+          description: The color code associated with the attribute option.
+          type: string
+          example: '#FFFFFF'
+          enum:
+          - '#000000'
+          - '#FFFFFF'
+          - '#FF0000'
+          - '#00FF00'
+          - '#0000FF'
+          maxLength: 7
+          minLength: 4
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+        metadata:
+          description: The metadata details of the attribute option.
+          example:
+            hint: This option provides additional information about the attribute
+            hintKey: attribute.option.hint.key
+          $ref: '#/components/schemas/AttributeOptionMetadata'
+      example:
+        option: Example Option
+        optionKey: example_option
+        optionSelectionValue: value1
+        colorCode: '#FFFFFF'
+      required:
+      - option
+      title: Attribute Option Request
     AttributeCreateRequest:
       type: object
       properties:
@@ -932,31 +951,24 @@ components:
       - fieldName
       - name
       - responseType
-    IntakeQuestion:
+    AttributeOptionMetadataInformation:
       type: object
       properties:
-        nameKey:
-          description: The name key of the attribute intake question used for translation purposes.
+        entityTypeName:
+          description: The type of system list used to source the attribute option.
           type: string
-        name:
-          description: The name of the attribute intake question.
+          example: Location
+        basicServiceContextPath:
+          description: The base path of the API URL used to source the attribute option.
           type: string
-        descriptionKey:
-          description: The description key of the attribute intake question used for translation purposes.
+          example: /api/location
+        optionUrl:
+          description: The API URL path used to source the attribute option.
           type: string
-        description:
-          description: The description of the attribute intake question.
+          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
+        viewType:
+          description: The display format of the attribute option.
           type: string
-    AssociatedAttributeRequest:
-      type: object
-      properties:
-        associatedAttributes:
-          description: The details of the associated attributes.
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttribute'
-      required:
-      - associatedAttributes
     AttributeInformation:
       type: object
       properties:
@@ -1141,6 +1153,21 @@ components:
       - enabled
       - fieldName
       - name
+    CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the category.
+          type: string
+          format: uuid
+        name:
+          description: The name of the category.
+          type: string
+          example: Financial Category
+        nameKey:
+          description: The name key of the category used for translation purposes.
+          type: string
+          example: IM.FinancialCategoryName
     AttributeContext:
       type: object
       properties:
@@ -1149,33 +1176,6 @@ components:
           additionalProperties:
             type: object
           type: object
-    AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: The hint of the attribute option.
-          type: string
-        hintKey:
-          description: The hint key of the attribute option used for translation purposes.
-          type: string
-    AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: The type of system list used to source the attribute option.
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: The base path of the API URL used to source the attribute option.
-          type: string
-          example: /api/location
-        optionUrl:
-          description: The API URL path used to source the attribute option.
-          type: string
-          example: /api/location/ui/v1/entity-types/names/Location/entities/basic-details
-        viewType:
-          description: The display format of the attribute option.
-          type: string
   securitySchemes:
     OAUTH2:
       type: oauth2

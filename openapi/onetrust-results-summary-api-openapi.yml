@@ -105,6 +105,28 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_CsvResultsSummaryShareRequest:
+      allOf:
+      - $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AbstractResultsSummaryShareRequest'
+      required:
+      - comment
+      - reportType
+      title: Share results summary in CSV format
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_PdfResultsSummaryShareRequest:
+      allOf:
+      - $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AbstractResultsSummaryShareRequest'
+      - type: object
+        properties:
+          reportTemplate:
+            description: Template ID (UUID) for PDF report generation. This is required for PDF exports.
+            type: string
+            format: uuid
+            example: 3bacb8fd-e581-438f-b713-fb5ac8160387
+      required:
+      - comment
+      - reportTemplate
+      - reportType
+      title: Share results summary in PDF format
     PrivacyAutomation-DataSubjectRequestDSRAutomation_AbstractResultsSummaryShareRequest:
       type: object
       properties:
@@ -139,28 +161,6 @@ components:
       required:
       - comment
       - reportType
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_PdfResultsSummaryShareRequest:
-      allOf:
-      - $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AbstractResultsSummaryShareRequest'
-      - type: object
-        properties:
-          reportTemplate:
-            description: Template ID (UUID) for PDF report generation. This is required for PDF exports.
-            type: string
-            format: uuid
-            example: 3bacb8fd-e581-438f-b713-fb5ac8160387
-      required:
-      - comment
-      - reportTemplate
-      - reportType
-      title: Share results summary in PDF format
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_CsvResultsSummaryShareRequest:
-      allOf:
-      - $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_AbstractResultsSummaryShareRequest'
-      required:
-      - comment
-      - reportType
-      title: Share results summary in CSV format
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

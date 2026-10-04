@@ -95,6 +95,34 @@ paths:
         - CONSENT
 components:
   schemas:
+    ConsentAPI_JobCreateRequest:
+      type: object
+      properties:
+        EntityId:
+          description: The unique identifier of the entity for which the job is being created.
+          type: string
+          example: 478059e6-97ff-4080-ae18-46989056fabb
+        Name:
+          description: The name of the job.
+          type: string
+          example: import123
+        Description:
+          description: The description of the job.
+          type: string
+          example: Bulk import of consent data subjects
+        Type:
+          description: The type of job.
+          type: string
+          enum:
+          - consent_ds_bulk_actions
+        Token:
+          description: The authentication token required to execute the job.
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      required:
+      - EntityId
+      - Name
+      - Token
     ConsentAPI_JobResponse:
       type: object
       properties:
@@ -143,34 +171,6 @@ components:
           type: string
           format: date-time
           example: '2026-02-11T06:32:23.769+00:00'
-    ConsentAPI_JobCreateRequest:
-      type: object
-      properties:
-        EntityId:
-          description: The unique identifier of the entity for which the job is being created.
-          type: string
-          example: 478059e6-97ff-4080-ae18-46989056fabb
-        Name:
-          description: The name of the job.
-          type: string
-          example: import123
-        Description:
-          description: The description of the job.
-          type: string
-          example: Bulk import of consent data subjects
-        Type:
-          description: The type of job.
-          type: string
-          enum:
-          - consent_ds_bulk_actions
-        Token:
-          description: The authentication token required to execute the job.
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-      required:
-      - EntityId
-      - Name
-      - Token
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

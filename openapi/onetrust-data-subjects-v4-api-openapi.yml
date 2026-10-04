@@ -1239,6 +1239,178 @@ paths:
         - CONSENT_READ
 components:
   schemas:
+    ConsentAPI_DsProfileCustomPreferenceResponseDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the purpose preference.
+          type: string
+          format: uuid
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: The name of the purpose preference.
+          type: string
+          example: Email Frequency
+        options:
+          description: List containing the Custom Preference's Options
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DsProfileCustomPreferenceOptionResponseDto'
+    ConsentAPI_DataSubjectInformationResponseDto:
+      type: object
+      properties:
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        identifierType:
+          description: The type of data subject identifier used for the data subject's identifier.
+          type: string
+          example: Email
+        language:
+          description: The language set for the data subject.
+          type: string
+          example: en-us
+        createdDate:
+          description: The date and time that the data subject record was created.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastTransactionDate:
+          description: The date and time that the last transaction for the data subject was written to the database.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        lastReceiptGuid:
+          description: The unique identifier of the latest consent receipt for the data subject.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        testDataSubject:
+          description: This flag indicates whether the data subject is used for testing purposes.
+          type: boolean
+          example: true
+        dataElements:
+          description: The additional information about the data subject.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementResponseDto'
+        latestGeoLocation:
+          description: The geolocation details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectGeolocationResponseDto'
+        consentGroups:
+          description: The list of data subject group identifiers to which the data subject belongs.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: '[633ba071-61b0-485f-81a0-a2245777b432, 25d9ccac-db88-4d34-849c-3d602a629961]'
+        latestSource:
+          description: The source details of the latest consent receipt.
+          $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
+        linkTokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_EmailLinkTokenResponseDto'
+        consentStrings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_ConsentStringResponseDto'
+        id:
+          description: Unique Identifier identifying a Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        lastUpdatedDate:
+          description: The date that the Data Subject record was last updated on
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        doNotCall:
+          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list
+          type: boolean
+          example: true
+        notices:
+          description: The Data Subject notices.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_NoticeDetailResponseDto'
+        attachments:
+          description: Documents attached to Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
+    ConsentAPI_ConsentStringResponseDto:
+      type: object
+      properties:
+        type:
+          description: The type of consent string.
+          type: string
+          example: GPP
+        content:
+          description: The content of the consent string.
+          example: DBABMA~CQJ4dQAQJ4dQAPoABABGBUEAAAAAAAAAAAAAAAAAAAAA.QAAA.IAAA
+          type: string
+        receivedDate:
+          description: The date and time that the consent string was received.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+        interactionDate:
+          description: The date and time of the last interaction with the consent string.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+    ConsentAPI_DataSubjectAttachmentResponseDto:
+      type: object
+      properties:
+        attachmentId:
+          description: The unique identifier of the file attached to the data subject record.
+          type: string
+          format: uuid
+          example: 25d9ccac-db88-4d34-849c-3d602a629961
+        fileName:
+          description: The name of the file attached to the data subject record.
+          type: string
+          example: policy.pdf
+        uploadedBy:
+          description: The name of the user who uploaded the file.
+          type: string
+          example: John Doe
+        uploadDate:
+          description: The date and time on which the file was uploaded.
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00'
+    ConsentAPI_DataSubjectElementDto:
+      type: object
+      properties:
+        name:
+          description: The name of the data element.
+          type: string
+          example: Work Email
+        value:
+          description: The value of the data element.
+          type: object
+          example: example@otprivacy.com, [Red, Blue]
+        linked:
+          description: This flag indicates whether the data element is linked to the data subject.
+          type: boolean
+      required:
+      - name
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentAPI_DataSubjectResponseSliceDto:
       type: object
       properties:
@@ -1275,6 +1447,24 @@ components:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
           example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
     ConsentAPI_VersionedEntity:
       type: object
       properties:
@@ -1297,23 +1487,41 @@ components:
           type: integer
           format: int64
           example: 2
-    ConsentAPI_DsProfileCustomPreferenceResponseDto:
+    ConsentAPI_DataSubjectSearchResponse:
       type: object
       properties:
-        id:
-          description: The unique identifier of the purpose preference.
-          type: string
-          format: uuid
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: The name of the purpose preference.
-          type: string
-          example: Email Frequency
-        options:
-          description: List containing the Custom Preference's Options
+        data:
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_DsProfileCustomPreferenceOptionResponseDto'
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileDto'
+        continuationToken:
+          type: string
+    ConsentAPI_PurposeNoteResponseDto:
+      type: object
+      properties:
+        noteId:
+          description: The unique identifier of the reason template.
+          type: string
+          format: uuid
+          example: f312dd9b-58b4-4f34-b5ff-10b9b464bc4f
+        noteType:
+          description: The type of reason template.
+          type: string
+          example: UNSUBSCRIBE_REASON
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The ISO code for the language of the reason template.
+          type: string
+          example: en-us
+        noteText:
+          description: The text of the reason template.
+          type: string
+          example: I did not sign up for this.
+        isValidNote:
+          description: This flag indicates whether the note is a valid reason template.
+          type: boolean
+          example: true
     ConsentAPI_NameGuidPair:
       type: object
       properties:
@@ -1326,15 +1534,6 @@ components:
           description: The name of the entity.
           type: string
           example: Marketing
-    ConsentAPI_DataSubjectSearchResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileDto'
-        continuationToken:
-          type: string
     ConsentAPI_DataSubjectProfilePurposeDto:
       type: object
       properties:
@@ -1412,24 +1611,27 @@ components:
           description: Version of the collection point used in the last transaction
           type: integer
           format: int64
-    ConsentAPI_PageableObject:
+    ConsentAPI_DataSubjectSourceResponseDto:
       type: object
       properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
+        dataSubjectId:
+          description: The unique identifier of the data subject.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        receiptGuid:
+          description: The unique identifier of the consent receipt for which source details were sent.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        sourceType:
+          description: The type of source that captured the consent interaction.
+          type: string
+          example: WEB
+        sourceContent:
+          description: The URL or identifier of the source where the consent interaction took place.
+          type: string
+          example: https://example.com/consent
     ConsentAPI_DsProfileCustomPreferenceOptionResponseDto:
       type: object
       properties:
@@ -1442,148 +1644,82 @@ components:
           description: The name of the purpose preference options.
           type: string
           example: Weekly
-    ConsentAPI_SortObject:
+    ConsentAPI_NoticeDetailResponseDto:
       type: object
       properties:
+        id:
+          description: The unique identifier of the collection point notice.
+          type: string
+          format: uuid
+          example: 05e30742-7e6c-4916-a5a1-7742a14ee984
+        name:
+          description: The name of the collection point notice.
+          type: string
+          example: Marketing Notice
+        url:
+          description: The URL where the collection point notice can be found.
+          type: string
+          example: www.onetrust.com
+        guid:
+          description: The unique identifier of a embedded privacy notice.
+          type: string
+          format: uuid
+          example: 1439b150-ef4c-444c-a20e-44622c8ccaf3
+        type:
+          description: The type of collection point notice.
+          type: string
+          example: EMBEDDED
+          enum:
+          - LINKED
+          - EMBEDDED
+        purposes:
+          description: The details of the purposes linked to the collection point notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_NameGuidPair'
+          uniqueItems: true
+        privacyNoticeVersion:
+          description: The version details of the collection point notice.
+          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
+        collectionPoint:
+          description: The details of the collection point to which the privacy notice is linked.
+          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
+    ConsentAPI_DataSubjectProfileResponseSliceDto:
+      type: object
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
+          type: array
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentAPI_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentAPI_PurposeNoteResponseDto:
-      type: object
-      properties:
-        noteId:
-          description: The unique identifier of the reason template.
+        requestContinuation:
+          description: The token used to paginate a response if the number of records is more than a page.
           type: string
-          format: uuid
-          example: f312dd9b-58b4-4f34-b5ff-10b9b464bc4f
-        noteType:
-          description: The type of reason template.
-          type: string
-          example: UNSUBSCRIBE_REASON
-          enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: The ISO code for the language of the reason template.
-          type: string
-          example: en-us
-        noteText:
-          description: The text of the reason template.
-          type: string
-          example: I did not sign up for this.
-        isValidNote:
-          description: This flag indicates whether the note is a valid reason template.
-          type: boolean
-          example: true
-    ConsentAPI_PurposeNoteDto:
-      type: object
-      properties:
-        noteId:
-          description: Unique identifier for the purpose note
-          type: string
-          format: uuid
-          example: d1a8f6f2-781a-4b2b-b1db-07e25f1c9a94
-        noteType:
-          description: Type of the note
-          type: string
-          enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: Language of the purpose note
-          type: string
-          example: en-us
-        noteText:
-          description: The actual text of the note
-          type: string
-          example: 0e7ed8b7-a64d-4e38-a7ea-7c28dbdd5869
-    ConsentAPI_DataSubjectProfileDto:
-      type: object
-      properties:
-        language:
-          description: The language set for the data subject.
-          type: string
-          example: en-us
-        identifier:
-          description: The data subject identifier of the data subject.
-          type: string
-          example: example@otprivacy.com
-        linkToken:
-          description: Token used for magic link authentication of the Data Subject
-          type: string
-          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
-        createdDate:
-          description: The date and time that the data subject record was created.
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        testDataSubject:
-          description: This flag indicates whether the data subject is used for testing purposes.
-          type: boolean
-          example: true
-        id:
-          description: Unique Identifier identifying a Data Subject
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        lastUpdatedDate:
-          description: The date that the Data Subject record was last updated on
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        dataElements:
-          description: The additional information about the data subject.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementDto'
-        purposes:
-          description: List of purposes associated with the Data Subject's profile
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfilePurposeDto'
-    ConsentAPI_EmailLinkTokenResponseDto:
-      type: object
-      properties:
-        token:
-          description: The data subject link token. This token can be appended to the preference center URL to form the preference center magic link.
-          type: string
-          example: QFpXYCFOYUrFZfstplM5l1hjdLv4YlaQtkbYt7gpZUc=
-        identifier:
-          description: The data subject identifier of the data subject.
-          type: string
-          example: example@otprivacy.com
-        createdDate:
-          description: The date and time that the data subject link token was created.
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000'
-        expiryDate:
-          description: The date and time that the data subject link token expires.
-          type: string
-          format: date-time
-          example: '2024-02-01T00:00:00.000'
-    ConsentAPI_DataSubjectAttachmentResponseDto:
-      type: object
-      properties:
-        attachmentId:
-          description: The unique identifier of the file attached to the data subject record.
-          type: string
-          format: uuid
-          example: 25d9ccac-db88-4d34-849c-3d602a629961
-        fileName:
-          description: The name of the file attached to the data subject record.
-          type: string
-          example: policy.pdf
-        uploadedBy:
-          description: The name of the user who uploaded the file.
-          type: string
-          example: John Doe
-        uploadDate:
-          description: The date and time on which the file was uploaded.
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00'
+          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
     ConsentAPI_DeletePurposeFromDataSubjectV4:
       type: object
       properties:
@@ -1607,6 +1743,45 @@ components:
       required:
       - identifier
       - purposes
+    ConsentAPI_EmailLinkTokenResponseDto:
+      type: object
+      properties:
+        token:
+          description: The data subject link token. This token can be appended to the preference center URL to form the preference center magic link.
+          type: string
+          example: QFpXYCFOYUrFZfstplM5l1hjdLv4YlaQtkbYt7gpZUc=
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        createdDate:
+          description: The date and time that the data subject link token was created.
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00.000'
+        expiryDate:
+          description: The date and time that the data subject link token expires.
+          type: string
+          format: date-time
+          example: '2024-02-01T00:00:00.000'
+    ConsentAPI_DataSubjectElementResponseDto:
+      type: object
+      properties:
+        name:
+          description: The name of the data element.
+          type: string
+          example: Work Email
+        value:
+          description: The value of the data element.
+          type: object
+          example: example@otprivacy.com, [Red, Blue]
+        doNotCall:
+          description: This flag indicates whether the data subject's phone number is on the Federal Trade Commissions (FTC's) Do Not Call list.
+          type: boolean
+          example: true
+        linked:
+          description: This flag indicates whether the data element is linked to the data subject.
+          type: boolean
     ConsentAPI_DataSubjectResponseDto:
       type: object
       properties:
@@ -1683,6 +1858,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
+    ConsentAPI_DataSubjectGeolocationResponseDto:
+      type: object
+      properties:
+        dataSubjectId:
+          description: The unique identifier of the data subject.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        receiptGuid:
+          description: The unique identifier of the consent receipt for which geolocation details were sent.
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        country:
+          description: The country where the consent interaction occurred.
+          type: string
+          example: US
+        state:
+          description: The state code where the consent interaction occurred.
+          type: string
+          example: GA
+        stateName:
+          description: The name of the state where the consent interaction occurred.
+          type: string
+          example: Georgia
     ConsentAPI_DataSubjectSearchByElementRequest:
       type: object
       properties:
@@ -1699,18 +1899,6 @@ components:
         requestContinuation:
           description: Request continuation token for pagination
           type: string
-    ConsentAPI_DataSubjectProfileTopicResponseDto:
-      type: object
-      properties:
-        id:
-          description: Unique Identifier identifying a Purpose Topic
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        name:
-          description: The name of the topic.
-          type: string
-          example: Car Marketing
     ConsentAPI_DataSubjectProfileResponseDto:
       type: object
       properties:
@@ -1839,213 +2027,6 @@ components:
         source:
           description: The source details of the consent interaction.
           $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
-    ConsentAPI_DataSubjectElementDto:
-      type: object
-      properties:
-        name:
-          description: The name of the data element.
-          type: string
-          example: Work Email
-        value:
-          description: The value of the data element.
-          type: object
-          example: example@otprivacy.com, [Red, Blue]
-        linked:
-          description: This flag indicates whether the data element is linked to the data subject.
-          type: boolean
-      required:
-      - name
-    ConsentAPI_ConsentStringResponseDto:
-      type: object
-      properties:
-        type:
-          description: The type of consent string.
-          type: string
-          example: GPP
-        content:
-          description: The content of the consent string.
-          example: DBABMA~CQJ4dQAQJ4dQAPoABABGBUEAAAAAAAAAAAAAAAAAAAAA.QAAA.IAAA
-          type: string
-        receivedDate:
-          description: The date and time that the consent string was received.
-          type: string
-          format: date-time
-          example: '2024-02-01T00:00:00.000'
-        interactionDate:
-          description: The date and time of the last interaction with the consent string.
-          type: string
-          format: date-time
-          example: '2024-02-01T00:00:00.000'
-    ConsentAPI_DataSubjectProfileResponseSliceDto:
-      type: object
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
-          type: array
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 1
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentAPI_PageableObject'
-        last:
-          description: Flag indicating whether this is the last page or not.
-          type: boolean
-          example: false
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-        requestContinuation:
-          description: The token used to paginate a response if the number of records is more than a page.
-          type: string
-          example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
-    ConsentAPI_DataSubjectInformationResponseDto:
-      type: object
-      properties:
-        identifier:
-          description: The data subject identifier of the data subject.
-          type: string
-          example: example@otprivacy.com
-        identifierType:
-          description: The type of data subject identifier used for the data subject's identifier.
-          type: string
-          example: Email
-        language:
-          description: The language set for the data subject.
-          type: string
-          example: en-us
-        createdDate:
-          description: The date and time that the data subject record was created.
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        lastTransactionDate:
-          description: The date and time that the last transaction for the data subject was written to the database.
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        lastReceiptGuid:
-          description: The unique identifier of the latest consent receipt for the data subject.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        testDataSubject:
-          description: This flag indicates whether the data subject is used for testing purposes.
-          type: boolean
-          example: true
-        dataElements:
-          description: The additional information about the data subject.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementResponseDto'
-        latestGeoLocation:
-          description: The geolocation details of the latest consent receipt.
-          $ref: '#/components/schemas/ConsentAPI_DataSubjectGeolocationResponseDto'
-        consentGroups:
-          description: The list of data subject group identifiers to which the data subject belongs.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example: '[633ba071-61b0-485f-81a0-a2245777b432, 25d9ccac-db88-4d34-849c-3d602a629961]'
-        latestSource:
-          description: The source details of the latest consent receipt.
-          $ref: '#/components/schemas/ConsentAPI_DataSubjectSourceResponseDto'
-        profiles:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfileResponseDto'
-        linkTokens:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_EmailLinkTokenResponseDto'
-        consentStrings:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_ConsentStringResponseDto'
-        id:
-          description: Unique Identifier identifying a Data Subject
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        lastUpdatedDate:
-          description: The date that the Data Subject record was last updated on
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        doNotCall:
-          description: This attribute determines if a phone number is listed in FCC’s Do Not Call list
-          type: boolean
-          example: true
-        notices:
-          description: The Data Subject notices.
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_NoticeDetailResponseDto'
-        attachments:
-          description: Documents attached to Data Subject
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentAPI_DataSubjectAttachmentResponseDto'
-    ConsentAPI_DataSubjectGeolocationResponseDto:
-      type: object
-      properties:
-        dataSubjectId:
-          description: The unique identifier of the data subject.
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        receiptGuid:
-          description: The unique identifier of the consent receipt for which geolocation details were sent.
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        country:
-          description: The country where the consent interaction occurred.
-          type: string
-          example: US
-        state:
-          description: The state code where the consent interaction occurred.
-          type: string
-          example: GA
-        stateName:
-          description: The name of the state where the consent interaction occurred.
-          type: string
-          example: Georgia
-    ConsentAPI_DataSubjectSourceResponseDto:
-      type: object
-      properties:
-        dataSubjectId:
-          description: The unique identifier of the data subject.
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        receiptGuid:
-          description: The unique identifier of the consent receipt for which source details were sent.
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        sourceType:
-          description: The type of source that captured the consent interaction.
-          type: string
-          example: WEB
-        sourceContent:
-          description: The URL or identifier of the source where the consent interaction took place.
-          type: string
-          example: https://example.com/consent
     ConsentAPI_DataSubjectDeleteRequestV4:
       type: object
       properties:
@@ -2060,64 +2041,83 @@ components:
       required:
       - identifier
       - retainReceipts
-    ConsentAPI_DataSubjectElementResponseDto:
+    ConsentAPI_PurposeNoteDto:
       type: object
       properties:
-        name:
-          description: The name of the data element.
+        noteId:
+          description: Unique identifier for the purpose note
           type: string
-          example: Work Email
-        value:
-          description: The value of the data element.
-          type: object
-          example: example@otprivacy.com, [Red, Blue]
-        doNotCall:
-          description: This flag indicates whether the data subject's phone number is on the Federal Trade Commissions (FTC's) Do Not Call list.
-          type: boolean
-          example: true
-        linked:
-          description: This flag indicates whether the data element is linked to the data subject.
-          type: boolean
-    ConsentAPI_NoticeDetailResponseDto:
+          format: uuid
+          example: d1a8f6f2-781a-4b2b-b1db-07e25f1c9a94
+        noteType:
+          description: Type of the note
+          type: string
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: Language of the purpose note
+          type: string
+          example: en-us
+        noteText:
+          description: The actual text of the note
+          type: string
+          example: 0e7ed8b7-a64d-4e38-a7ea-7c28dbdd5869
+    ConsentAPI_DataSubjectProfileTopicResponseDto:
       type: object
       properties:
         id:
-          description: The unique identifier of the collection point notice.
+          description: Unique Identifier identifying a Purpose Topic
           type: string
           format: uuid
-          example: 05e30742-7e6c-4916-a5a1-7742a14ee984
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
         name:
-          description: The name of the collection point notice.
+          description: The name of the topic.
           type: string
-          example: Marketing Notice
-        url:
-          description: The URL where the collection point notice can be found.
+          example: Car Marketing
+    ConsentAPI_DataSubjectProfileDto:
+      type: object
+      properties:
+        language:
+          description: The language set for the data subject.
           type: string
-          example: www.onetrust.com
-        guid:
-          description: The unique identifier of a embedded privacy notice.
+          example: en-us
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        linkToken:
+          description: Token used for magic link authentication of the Data Subject
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
+        createdDate:
+          description: The date and time that the data subject record was created.
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        testDataSubject:
+          description: This flag indicates whether the data subject is used for testing purposes.
+          type: boolean
+          example: true
+        id:
+          description: Unique Identifier identifying a Data Subject
           type: string
           format: uuid
-          example: 1439b150-ef4c-444c-a20e-44622c8ccaf3
-        type:
-          description: The type of collection point notice.
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        lastUpdatedDate:
+          description: The date that the Data Subject record was last updated on
           type: string
-          example: EMBEDDED
-          enum:
-          - LINKED
-          - EMBEDDED
-        purposes:
-          description: The details of the purposes linked to the collection point notice.
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        dataElements:
+          description: The additional information about the data subject.
           type: array
           items:
-            $ref: '#/components/schemas/ConsentAPI_NameGuidPair'
-          uniqueItems: true
-        privacyNoticeVersion:
-          description: The version details of the collection point notice.
-          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
-        collectionPoint:
-          description: The details of the collection point to which the privacy notice is linked.
-          $ref: '#/components/schemas/ConsentAPI_VersionedEntity'
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectElementDto'
+        purposes:
+          description: List of purposes associated with the Data Subject's profile
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentAPI_DataSubjectProfilePurposeDto'
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

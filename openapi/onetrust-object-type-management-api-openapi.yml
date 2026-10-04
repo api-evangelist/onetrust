@@ -816,78 +816,6 @@ paths:
         - OBJECT_MANAGER_WRITE
 components:
   schemas:
-    StageExceptionConfiguration:
-      type: object
-      properties:
-        stageExceptionApprovers:
-          description: The details of the workflow stage exception approvers.
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowStageApproverRequest'
-          examples:
-          - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
-          - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
-          - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
-        exceptionGrantedTargetStageId:
-          description: The unique identifier of the workflow stage for exception approval.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        workflowExceptionApprovalRequiredFromAll:
-          description: This flag indicates whether approval is required from all workflow stage exception approvers.
-          type: boolean
-          example: true
-          default: 'false'
-    AdvanceStageActionRequest:
-      type: object
-      properties:
-        actionType:
-          description: Advance Stage Action Type
-          type: string
-          enum:
-          - ATTRIBUTES, ATTACHMENT
-        actionMetadata:
-          description: Advance Stage Action Metadata
-          type: object
-          example:
-            fieldName: value
-          additionalProperties:
-            type: object
-      example:
-      - actionType: ATTRIBUTES
-        actionMetadata:
-          fieldName: value
-      required:
-      - actionType
-    Pageable:
-      type: object
-      properties:
-        pageNumber:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 0
-        pageSize:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 10
-        offset:
-          description: The number of results to exclude from the start of the list.
-          type: integer
-          format: int64
-          example: 0
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          $ref: '#/components/schemas/Sort'
-        paged:
-          description: This flag indicates whether the list is paged.
-          type: boolean
-          example: true
-        unpaged:
-          description: This flag indicates whether the list is not paged.
-          type: boolean
-          example: false
     AttributeQueryCriteria:
       type: object
       properties:
@@ -900,11 +828,15 @@ components:
         fullText:
           description: The key terms for the search criteria.
           type: string
-    EntityTypeSettingRequest:
+    EntityTypeSettingInformation:
       type: object
       properties:
         enableWorkflow:
           description: This flag indicates whether the workflow is enabled.
+          type: boolean
+          example: true
+        enableWorkflowStageTracking:
+          description: This flag indicates whether workflow stage tracking is enabled.
           type: boolean
           example: true
         assessable:
@@ -935,49 +867,16 @@ components:
           description: This flag indicates whether comments are enabled.
           type: boolean
           example: false
-    WorkflowStageApproverRequest:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the workflow stage exception approver.
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        approverType:
-          description: The user type of the workflow stage exception approver.
-          type: string
-          example: SYSTEM_USER
-          enum:
-          - SYSTEM_USER
-          - USER_ATTRIBUTE
-        approverUserId:
-          description: The unique identifier of the user assigned as the workflow stage exception approver.
-          type: string
-          format: uuid
-          example: 456e7890-e89b-12d3-a456-426614174000
-        referenceApproverUserSourceId:
-          description: The reference identifier for the approver's source, e.g. fieldName from Attribute Manager.
-          type: string
-          example: manager_id
-        referenceApproverUserSourceOwner:
-          description: The reference source owner, e.g. schemaName from Attribute Manager.
-          type: string
-          example: employee_schema
-        approverUserGroupId:
-          description: The unique identifier of the user group assigned as the workflow stage exception approver.
-          type: string
-          format: uuid
-          example: 789e0123-e89b-12d3-a456-426614174000
-        approverIdPresent:
-          description: This flag indicates whether the unique identifier of the workflow stage exception approver is present.
-          type: boolean
-      examples:
-      - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
-      - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
-      - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
       required:
-      - approverType
-      - id
+      - assessable
+      - enableComment
+      - enableControl
+      - enableDocument
+      - enableRisk
+      - enableTask
+      - enableWebForm
+      - enableWorkflow
+      - enableWorkflowStageTracking
     EntityTypeUpdateRequest:
       type: object
       properties:
@@ -1022,6 +921,133 @@ components:
             - name: Start
             - name: End
           $ref: '#/components/schemas/EntityDefaultWorkflowRequest'
+    PageEntityTypeInformation:
+      type: object
+      properties:
+        content:
+          description: The data of the returned objects.
+          example:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: Customer
+            nameKey: EntityType.Customer
+          items:
+            $ref: '#/components/schemas/EntityTypeInformation'
+          type: array
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+          example: 75
+          minimum: 0
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int32
+          example: 8
+          minimum: 0
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+          minimum: 0
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+          maximum: 1000
+          minimum: 20
+        first:
+          description: This flag indicates whether the current page is the first page of the list.
+          type: boolean
+          example: true
+        last:
+          description: This flag indicates whether the current page is the last page of the list.
+          type: boolean
+          example: false
+        empty:
+          description: The flag indicates whether no results exist on the page.
+          type: boolean
+          example: false
+        numberOfElements:
+          description: The number of results on the current page.
+          type: integer
+          format: int32
+          example: 10
+          minimum: 0
+        hasNext:
+          description: This flag indicates whether there is a next page in the list.
+          type: boolean
+          example: true
+        hasPrevious:
+          description: This flag indicates whether there is a previous page in the list.
+          type: boolean
+          example: false
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        pageable:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/Pageable'
+      example:
+        content:
+        - id: 123e4567-e89b-12d3-a456-426614174000
+          name: Customer
+          nameKey: EntityType.Customer
+          description: Customer entity type
+          seeded: true
+          moduleName: EntityManagement
+          schemaName: customer
+        totalElements: 75
+        totalPages: 8
+        number: 0
+        size: 10
+        first: true
+        last: false
+        empty: false
+        numberOfElements: 10
+      required:
+      - content
+      - empty
+      - first
+      - hasNext
+      - hasPrevious
+      - last
+      - number
+      - numberOfElements
+      - size
+      - totalElements
+      - totalPages
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+        offset:
+          description: The number of results to exclude from the start of the list.
+          type: integer
+          format: int64
+          example: 0
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        paged:
+          description: This flag indicates whether the list is paged.
+          type: boolean
+          example: true
+        unpaged:
+          description: This flag indicates whether the list is not paged.
+          type: boolean
+          example: false
     EntityTypeInformation:
       type: object
       properties:
@@ -1141,100 +1167,70 @@ components:
       - id
       - name
       - settings
-    EntityTypeSettingInformation:
+    AdvanceStageActionRequest:
       type: object
       properties:
-        enableWorkflow:
-          description: This flag indicates whether the workflow is enabled.
-          type: boolean
-          example: true
-        enableWorkflowStageTracking:
-          description: This flag indicates whether workflow stage tracking is enabled.
-          type: boolean
-          example: true
-        assessable:
-          description: This flag indicates whether the object type is assessable.
-          type: boolean
-          example: false
-        enableTask:
-          description: This flag indicates whether tasks are enabled.
-          type: boolean
-          example: false
-        enableRisk:
-          description: This flag indicates whether risks are enabled.
-          type: boolean
-          example: false
-        enableDocument:
-          description: This flag indicates whether documents are enabled.
-          type: boolean
-          example: false
-        enableControl:
-          description: This flag indicates whether controls are enabled.
-          type: boolean
-          example: false
-        enableWebForm:
-          description: This flag indicates whether web forms are enabled.
-          type: boolean
-          example: false
-        enableComment:
-          description: This flag indicates whether comments are enabled.
-          type: boolean
-          example: false
+        actionType:
+          description: Advance Stage Action Type
+          type: string
+          enum:
+          - ATTRIBUTES, ATTACHMENT
+        actionMetadata:
+          description: Advance Stage Action Metadata
+          type: object
+          example:
+            fieldName: value
+          additionalProperties:
+            type: object
+      example:
+      - actionType: ATTRIBUTES
+        actionMetadata:
+          fieldName: value
       required:
-      - assessable
-      - enableComment
-      - enableControl
-      - enableDocument
-      - enableRisk
-      - enableTask
-      - enableWebForm
-      - enableWorkflow
-      - enableWorkflowStageTracking
-    EntityBasicUserInformation:
+      - actionType
+    WorkflowStageApproverRequest:
       type: object
       properties:
         id:
-          description: The unique identifier of the user who last modified the record.
+          description: The unique identifier of the workflow stage exception approver.
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the record.
+          example: 123e4567-e89b-12d3-a456-426614174000
+        approverType:
+          description: The user type of the workflow stage exception approver.
           type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the record.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the record.
-          type: string
-          example: FL
-    EntityDefaultWorkflowRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the workflow.
-          type: string
-          example: Default Vendor On-Boarding
-        description:
-          description: The description of the workflow.
-          type: string
-          example: Default Vendor On-Boarding For New Vendors
-        status:
-          description: The status of the workflow.
-          type: string
+          example: SYSTEM_USER
           enum:
-          - PUBLISHED
-          - DRAFT
-          - ARCHIVED
-        stages:
-          description: The stages of the workflow.
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowStageCreateRequest'
+          - SYSTEM_USER
+          - USER_ATTRIBUTE
+        approverUserId:
+          description: The unique identifier of the user assigned as the workflow stage exception approver.
+          type: string
+          format: uuid
+          example: 456e7890-e89b-12d3-a456-426614174000
+        referenceApproverUserSourceId:
+          description: The reference identifier for the approver's source, e.g. fieldName from Attribute Manager.
+          type: string
+          example: manager_id
+        referenceApproverUserSourceOwner:
+          description: The reference source owner, e.g. schemaName from Attribute Manager.
+          type: string
+          example: employee_schema
+        approverUserGroupId:
+          description: The unique identifier of the user group assigned as the workflow stage exception approver.
+          type: string
+          format: uuid
+          example: 789e0123-e89b-12d3-a456-426614174000
+        approverIdPresent:
+          description: This flag indicates whether the unique identifier of the workflow stage exception approver is present.
+          type: boolean
+      examples:
+      - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
+      - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
+      - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
       required:
-      - name
+      - approverType
+      - id
     WorkflowStageSubTaskCreateRequest:
       type: object
       properties:
@@ -1290,131 +1286,76 @@ components:
       required:
       - id
       - name
-    PageEntityTypeInformation:
+    EntityTypeSettingRequest:
       type: object
       properties:
-        content:
-          description: The data of the returned objects.
-          example:
-          - id: 123e4567-e89b-12d3-a456-426614174000
-            name: Customer
-            nameKey: EntityType.Customer
-          items:
-            $ref: '#/components/schemas/EntityTypeInformation'
-          type: array
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-          example: 75
-          minimum: 0
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int32
-          example: 8
-          minimum: 0
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 0
-          minimum: 0
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 10
-          maximum: 1000
-          minimum: 20
-        first:
-          description: This flag indicates whether the current page is the first page of the list.
+        enableWorkflow:
+          description: This flag indicates whether the workflow is enabled.
           type: boolean
           example: true
-        last:
-          description: This flag indicates whether the current page is the last page of the list.
+        assessable:
+          description: This flag indicates whether the object type is assessable.
+          type: boolean
+          example: false
+        enableTask:
+          description: This flag indicates whether tasks are enabled.
+          type: boolean
+          example: false
+        enableRisk:
+          description: This flag indicates whether risks are enabled.
+          type: boolean
+          example: false
+        enableDocument:
+          description: This flag indicates whether documents are enabled.
+          type: boolean
+          example: false
+        enableControl:
+          description: This flag indicates whether controls are enabled.
+          type: boolean
+          example: false
+        enableWebForm:
+          description: This flag indicates whether web forms are enabled.
+          type: boolean
+          example: false
+        enableComment:
+          description: This flag indicates whether comments are enabled.
+          type: boolean
+          example: false
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
+    Sort:
+      type: object
+      properties:
+        sorted:
+          description: This flag indicates whether the results were sorted.
+          type: boolean
+          example: true
+        unsorted:
+          description: This flag indicates whether the results were unsorted.
           type: boolean
           example: false
         empty:
-          description: The flag indicates whether no results exist on the page.
+          description: This flag indicates whether sort criteria was left undefined.
           type: boolean
           example: false
-        numberOfElements:
-          description: The number of results on the current page.
-          type: integer
-          format: int32
-          example: 10
-          minimum: 0
-        hasNext:
-          description: This flag indicates whether there is a next page in the list.
-          type: boolean
-          example: true
-        hasPrevious:
-          description: This flag indicates whether there is a previous page in the list.
-          type: boolean
-          example: false
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          $ref: '#/components/schemas/Sort'
-        pageable:
-          description: The configuration parameters of the page.
-          $ref: '#/components/schemas/Pageable'
-      example:
-        content:
-        - id: 123e4567-e89b-12d3-a456-426614174000
-          name: Customer
-          nameKey: EntityType.Customer
-          description: Customer entity type
-          seeded: true
-          moduleName: EntityManagement
-          schemaName: customer
-        totalElements: 75
-        totalPages: 8
-        number: 0
-        size: 10
-        first: true
-        last: false
-        empty: false
-        numberOfElements: 10
-      required:
-      - content
-      - empty
-      - first
-      - hasNext
-      - hasPrevious
-      - last
-      - number
-      - numberOfElements
-      - size
-      - totalElements
-      - totalPages
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the record was created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the record was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The creation details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The last modified details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
     WorkflowStageCreateRequest:
       type: object
       properties:
@@ -1558,6 +1499,80 @@ components:
             fieldName: value
       required:
       - name
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    EntityDefaultWorkflowRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the workflow.
+          type: string
+          example: Default Vendor On-Boarding
+        description:
+          description: The description of the workflow.
+          type: string
+          example: Default Vendor On-Boarding For New Vendors
+        status:
+          description: The status of the workflow.
+          type: string
+          enum:
+          - PUBLISHED
+          - DRAFT
+          - ARCHIVED
+        stages:
+          description: The stages of the workflow.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageCreateRequest'
+      required:
+      - name
+    StageExceptionConfiguration:
+      type: object
+      properties:
+        stageExceptionApprovers:
+          description: The details of the workflow stage exception approvers.
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverRequest'
+          examples:
+          - "{\n \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserId\": \"456e7890-e89b-12d3-a456-426614174000\"\n }"
+          - "{\n \"id\": \"234e5678-e89b-12d3-a456-426614174000\",\n \"approverType\": \"USER_ATTRIBUTE\",\n \"referenceApproverUserSourceId\": \"department_manager\",\n \"referenceApproverUserSourceOwner\": \"employee_schema\"\n }"
+          - "{\n \"id\": \"345e6789-e89b-12d3-a456-426614174000\",\n \"approverType\": \"SYSTEM_USER\",\n \"approverUserGroupId\": \"789e0123-e89b-12d3-a456-426614174000\"\n }"
+        exceptionGrantedTargetStageId:
+          description: The unique identifier of the workflow stage for exception approval.
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        workflowExceptionApprovalRequiredFromAll:
+          description: This flag indicates whether approval is required from all workflow stage exception approvers.
+          type: boolean
+          example: true
+          default: 'false'
     AttributePredicate:
       type: object
       properties:
@@ -1599,21 +1614,6 @@ components:
           - type: number
       required:
       - field
-    Sort:
-      type: object
-      properties:
-        sorted:
-          description: This flag indicates whether the results were sorted.
-          type: boolean
-          example: true
-        unsorted:
-          description: This flag indicates whether the results were unsorted.
-          type: boolean
-          example: false
-        empty:
-          description: This flag indicates whether sort criteria was left undefined.
-          type: boolean
-          example: false
   securitySchemes:
     OAUTH2:
       type: oauth2

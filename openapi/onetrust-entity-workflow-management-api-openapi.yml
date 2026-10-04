@@ -115,6 +115,68 @@ paths:
         - AI_GOVERNANCE_WRITE
 components:
   schemas:
+    AdvanceStageActionInformation:
+      type: object
+      properties:
+        id:
+          description: Advance Stage Action Identifier
+          type: string
+          format: uuid
+        actionType:
+          description: Advance Stage Action Type
+          type: string
+          enum:
+          - ATTRIBUTES, ATTACHMENT
+        actionMetadata:
+          description: Advance Stage Action metadata
+          type: object
+          additionalProperties:
+            type: object
+      required:
+      - actionType
+      - id
+    WorkflowStageApproverInformation:
+      type: object
+      properties:
+        id:
+          description: Workflow Stage Approver Identifier
+          type: string
+          format: uuid
+        workFlowStageId:
+          description: Workflow Stage Id
+          type: string
+          format: uuid
+        approverType:
+          description: Workflow Stage Approver Type
+          type: string
+          enum:
+          - SYSTEM_USER, USER_ATTRIBUTE
+        approverUserId:
+          description: Workflow Stage Approver User Id, User ID from Onetrust System
+          type: string
+          format: uuid
+        referenceApproverUserSourceId:
+          description: Reference identifier for approver' source. ie, fieldName from attribute Manager
+          type: string
+        referenceApproverUserSourceOwner:
+          description: Reference Source Owner. ie, schemaname from attribute manager
+          type: string
+        approverUserGroupId:
+          description: Workflow Stage Approver User Group Id, User Group ID from Onetrust System
+          type: string
+          format: uuid
+        approverCategory:
+          description: Field to indicate if the approver is for stage approval or exception
+          type: string
+        customFields:
+          description: Custom fields
+          type: object
+          additionalProperties:
+            type: object
+      required:
+      - approverType
+      - id
+      - workFlowStageId
     WorkflowSpecificStageNavigationRequest:
       type: object
       properties:
@@ -139,6 +201,21 @@ components:
           skipValidation: true
       required:
       - nextStageName
+    StageExceptionInformation:
+      type: object
+      properties:
+        stageExceptionApprovers:
+          description: Workflow Stage Exception Approvers
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverInformation'
+        exceptionGrantedTargetStageId:
+          description: Target stage for exception approval
+          type: string
+          format: uuid
+        workflowExceptionApprovalRequiredFromAll:
+          description: Is exception required from all approvers
+          type: boolean
     WorkflowStageListInformation:
       type: object
       properties:
@@ -257,83 +334,6 @@ components:
       - id
       - name
       - sequence
-    StageExceptionInformation:
-      type: object
-      properties:
-        stageExceptionApprovers:
-          description: Workflow Stage Exception Approvers
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowStageApproverInformation'
-        exceptionGrantedTargetStageId:
-          description: Target stage for exception approval
-          type: string
-          format: uuid
-        workflowExceptionApprovalRequiredFromAll:
-          description: Is exception required from all approvers
-          type: boolean
-    WorkflowStageApproverInformation:
-      type: object
-      properties:
-        id:
-          description: Workflow Stage Approver Identifier
-          type: string
-          format: uuid
-        workFlowStageId:
-          description: Workflow Stage Id
-          type: string
-          format: uuid
-        approverType:
-          description: Workflow Stage Approver Type
-          type: string
-          enum:
-          - SYSTEM_USER, USER_ATTRIBUTE
-        approverUserId:
-          description: Workflow Stage Approver User Id, User ID from Onetrust System
-          type: string
-          format: uuid
-        referenceApproverUserSourceId:
-          description: Reference identifier for approver' source. ie, fieldName from attribute Manager
-          type: string
-        referenceApproverUserSourceOwner:
-          description: Reference Source Owner. ie, schemaname from attribute manager
-          type: string
-        approverUserGroupId:
-          description: Workflow Stage Approver User Group Id, User Group ID from Onetrust System
-          type: string
-          format: uuid
-        approverCategory:
-          description: Field to indicate if the approver is for stage approval or exception
-          type: string
-        customFields:
-          description: Custom fields
-          type: object
-          additionalProperties:
-            type: object
-      required:
-      - approverType
-      - id
-      - workFlowStageId
-    AdvanceStageActionInformation:
-      type: object
-      properties:
-        id:
-          description: Advance Stage Action Identifier
-          type: string
-          format: uuid
-        actionType:
-          description: Advance Stage Action Type
-          type: string
-          enum:
-          - ATTRIBUTES, ATTACHMENT
-        actionMetadata:
-          description: Advance Stage Action metadata
-          type: object
-          additionalProperties:
-            type: object
-      required:
-      - actionType
-      - id
   securitySchemes:
     OAUTH2:
       type: oauth2

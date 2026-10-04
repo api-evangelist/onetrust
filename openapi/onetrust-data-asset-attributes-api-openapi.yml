@@ -136,78 +136,6 @@ paths:
         - DATA_CATALOG_READ
 components:
   schemas:
-    DataUseGovernance-DataAssetManagement_OneTrustResponseListOfAttributeInformationWrapper:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeInformation'
-        errors:
-          type: array
-          items:
-            type: object
-    DataUseGovernance-DataAssetManagement_AttributeOptionMetadata:
-      type: object
-      properties:
-        hint:
-          description: Hint
-          type: string
-        hintKey:
-          description: Hint key which can be used for translation
-          type: string
-    DataUseGovernance-DataAssetManagement_AttributeDomainOptionOverrideInformation:
-      type: object
-      properties:
-        id:
-          description: Override Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        attributeDomainOptionId:
-          description: Domain Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        targetAttributeId:
-          description: Target Attribute GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440002
-        targetOptionId:
-          description: Target Option GUID
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440003
-        option:
-          description: Option name
-          type: string
-          example: TypeA
-        optionKey:
-          description: Option name key
-          type: string
-          example: TypeB
-        optionSelectionValue:
-          description: Option selection value
-          type: string
-          example: 10
-        colorCode:
-          description: Color code for the option
-          type: string
-          example: '#FF5733'
-          maxLength: 7
-        sequence:
-          description: Option sequence for ordering
-          type: integer
-          format: int32
-          example: 1
-          maximum: 32767
-          minimum: 1
-        enabled:
-          description: Indicates if the option is enabled or disabled
-          type: boolean
-          example: true
-          default: 'true'
     DataUseGovernance-DataAssetManagement_AttributeOptionInformation:
       type: object
       properties:
@@ -249,21 +177,6 @@ components:
           $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeOptionMetadata'
       required:
       - option
-    DataUseGovernance-DataAssetManagement_CategoryInformation:
-      type: object
-      properties:
-        id:
-          description: Category unique identifier
-          type: string
-          format: uuid
-        name:
-          description: Category name
-          type: string
-          example: Financial Category
-        nameKey:
-          description: Category nameKey for localization support
-          type: string
-          example: IM.FinancialCategoryName
     DataUseGovernance-DataAssetManagement_IntakeQuestion:
       type: object
       properties:
@@ -283,156 +196,17 @@ components:
           type: string
           maxLength: 500
           minLength: 0
-    DataUseGovernance-DataAssetManagement_AttributeOptionMetadataInformation:
-      type: object
-      properties:
-        entityTypeName:
-          description: Option Source Entity Type
-          type: string
-          example: Location
-        basicServiceContextPath:
-          description: Basic Url for the Option source Service
-          type: string
-          example: /api/location
-        optionUrl:
-          description: Api URL for the Drop Down Api
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
-        optionListUrl:
-          description: Api URL for the Drop Down Api. Complete List of entities
-          type: string
-          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
-        viewType:
-          description: This will help to identify the view type of list
-          type: string
-        optionType:
-          description: Option Type
-          type: string
-          example: BusinessLocations
-        permissions:
-          description: Permissions
-          type: array
-          items:
-            type: string
-          example: '[features.core-constructs.view]'
-        applicationUrl:
-          description: Application Url
-          type: string
-          example: /settings/location-management/location/Location
-    DataUseGovernance-DataAssetManagement_OneTrustResponseListOfStringWrapper:
+    DataUseGovernance-DataAssetManagement_OneTrustResponseListOfAttributeInformationWrapper:
       type: object
       properties:
         data:
           type: array
           items:
-            type: string
-          example:
-          - FileType
-          - Content Size
-          - File Owner
-    DataUseGovernance-DataAssetManagement_AssociatedAttributeInformation:
-      type: object
-      properties:
-        id:
-          description: Associated Attribute GUID
-          type: string
-          format: uuid
-        name:
-          description: Name
-          type: string
-          example: Count of members
-          minLength: 1
-        nameKey:
-          description: Name key
-          type: string
-          example: IM.CountOfMembersName
-        description:
-          description: Description
-          type: string
-          example: Provide details about count associated with this attribute
-        descriptionKey:
-          description: Description Key
-          type: string
-          example: IM.CountOfMembersDesc
-        schemaId:
-          description: Attribute Schema GUID
-          type: string
-          format: uuid
-        schemaName:
-          description: Attribute Schema Name
-          type: string
-          example: risk
-        fieldName:
-          description: Attribute field name
-          type: string
-          example: countOfMembers
-          minLength: 1
-        mappedFieldName:
-          description: Mapped Attribute field name. Should be used for sorting
-          type: string
-          example: count
-        enabled:
-          description: Indicator for attribute enabled/disabled
-          type: boolean
-        responseType:
-          description: Response Type
-          type: string
-          enum:
-          - Text
-          - SingleSelect
-          - MultiSelect
-          - Date
-          - DateTime
-          - NumericalText
-          - NumericalSingleSelect
-          - RadioButton
-          - TextArea
-          - Formula
-          - Level
-          - Range
-          - Score
-          - System
-        responseSubType:
-          description: Response sub type
-          type: string
-          enum:
-          - Standard
-          - Formula
-          - Matrix
-          - RollUp
-        formula:
-          description: Formula for attribute
-          type: string
-          example: sum(1, 3)
-        options:
-          description: Attribute options
+            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeInformation'
+        errors:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeOptionInformation'
-        optionsByDomain:
-          description: Override options by Domain
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeDomainOptionOverrideInformation'
-      required:
-      - enabled
-      - fieldName
-      - id
-      - responseType
-    DataUseGovernance-DataAssetManagement_AbacBasicAssignmentInfo:
-      type: object
-      properties:
-        assignmentId:
-          description: GUID of the linked assignment
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assignmentName:
-          description: Name of the linked assignment
-          type: string
-          example: Assignment1
+            type: object
     DataUseGovernance-DataAssetManagement_AttributeInformation:
       type: object
       properties:
@@ -633,6 +407,232 @@ components:
       - enabled
       - fieldName
       - name
+    DataUseGovernance-DataAssetManagement_AttributeOptionMetadataInformation:
+      type: object
+      properties:
+        entityTypeName:
+          description: Option Source Entity Type
+          type: string
+          example: Location
+        basicServiceContextPath:
+          description: Basic Url for the Option source Service
+          type: string
+          example: /api/location
+        optionUrl:
+          description: Api URL for the Drop Down Api
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details/pages
+        optionListUrl:
+          description: Api URL for the Drop Down Api. Complete List of entities
+          type: string
+          example: /api/ontology/ui/v1/entity-types/names/purpose/entities/basic-details
+        viewType:
+          description: This will help to identify the view type of list
+          type: string
+        optionType:
+          description: Option Type
+          type: string
+          example: BusinessLocations
+        permissions:
+          description: Permissions
+          type: array
+          items:
+            type: string
+          example: '[features.core-constructs.view]'
+        applicationUrl:
+          description: Application Url
+          type: string
+          example: /settings/location-management/location/Location
+    DataUseGovernance-DataAssetManagement_AbacBasicAssignmentInfo:
+      type: object
+      properties:
+        assignmentId:
+          description: GUID of the linked assignment
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assignmentName:
+          description: Name of the linked assignment
+          type: string
+          example: Assignment1
+    DataUseGovernance-DataAssetManagement_OneTrustResponseListOfStringWrapper:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+          example:
+          - FileType
+          - Content Size
+          - File Owner
+    DataUseGovernance-DataAssetManagement_AttributeDomainOptionOverrideInformation:
+      type: object
+      properties:
+        id:
+          description: Override Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        attributeDomainOptionId:
+          description: Domain Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440001
+        targetAttributeId:
+          description: Target Attribute GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440002
+        targetOptionId:
+          description: Target Option GUID
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440003
+        option:
+          description: Option name
+          type: string
+          example: TypeA
+        optionKey:
+          description: Option name key
+          type: string
+          example: TypeB
+        optionSelectionValue:
+          description: Option selection value
+          type: string
+          example: 10
+        colorCode:
+          description: Color code for the option
+          type: string
+          example: '#FF5733'
+          maxLength: 7
+        sequence:
+          description: Option sequence for ordering
+          type: integer
+          format: int32
+          example: 1
+          maximum: 32767
+          minimum: 1
+        enabled:
+          description: Indicates if the option is enabled or disabled
+          type: boolean
+          example: true
+          default: 'true'
+    DataUseGovernance-DataAssetManagement_CategoryInformation:
+      type: object
+      properties:
+        id:
+          description: Category unique identifier
+          type: string
+          format: uuid
+        name:
+          description: Category name
+          type: string
+          example: Financial Category
+        nameKey:
+          description: Category nameKey for localization support
+          type: string
+          example: IM.FinancialCategoryName
+    DataUseGovernance-DataAssetManagement_AssociatedAttributeInformation:
+      type: object
+      properties:
+        id:
+          description: Associated Attribute GUID
+          type: string
+          format: uuid
+        name:
+          description: Name
+          type: string
+          example: Count of members
+          minLength: 1
+        nameKey:
+          description: Name key
+          type: string
+          example: IM.CountOfMembersName
+        description:
+          description: Description
+          type: string
+          example: Provide details about count associated with this attribute
+        descriptionKey:
+          description: Description Key
+          type: string
+          example: IM.CountOfMembersDesc
+        schemaId:
+          description: Attribute Schema GUID
+          type: string
+          format: uuid
+        schemaName:
+          description: Attribute Schema Name
+          type: string
+          example: risk
+        fieldName:
+          description: Attribute field name
+          type: string
+          example: countOfMembers
+          minLength: 1
+        mappedFieldName:
+          description: Mapped Attribute field name. Should be used for sorting
+          type: string
+          example: count
+        enabled:
+          description: Indicator for attribute enabled/disabled
+          type: boolean
+        responseType:
+          description: Response Type
+          type: string
+          enum:
+          - Text
+          - SingleSelect
+          - MultiSelect
+          - Date
+          - DateTime
+          - NumericalText
+          - NumericalSingleSelect
+          - RadioButton
+          - TextArea
+          - Formula
+          - Level
+          - Range
+          - Score
+          - System
+        responseSubType:
+          description: Response sub type
+          type: string
+          enum:
+          - Standard
+          - Formula
+          - Matrix
+          - RollUp
+        formula:
+          description: Formula for attribute
+          type: string
+          example: sum(1, 3)
+        options:
+          description: Attribute options
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeOptionInformation'
+        optionsByDomain:
+          description: Override options by Domain
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/DataUseGovernance-DataAssetManagement_AttributeDomainOptionOverrideInformation'
+      required:
+      - enabled
+      - fieldName
+      - id
+      - responseType
+    DataUseGovernance-DataAssetManagement_AttributeOptionMetadata:
+      type: object
+      properties:
+        hint:
+          description: Hint
+          type: string
+        hintKey:
+          description: Hint key which can be used for translation
+          type: string
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

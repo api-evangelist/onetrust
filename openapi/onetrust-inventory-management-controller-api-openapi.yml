@@ -314,25 +314,60 @@ paths:
         - INVENTORY_WRITE
 components:
   schemas:
-    VendorSearchResult:
+    KeyIdDto:
       type: object
       properties:
-        id:
+        businessKey:
+          type: string
+        inventoryId:
           type: string
           format: uuid
-        name:
+      required:
+      - businessKey
+    InventoryFilterRequest:
+      type: object
+      properties:
+        filterCriteria:
+          description: A map of filter criteria, where the key is a logical operator (AND, OR) and the value is a list of criteria definitions. This allows for building complex queries.
+          type: object
+          example:
+            AND:
+            - fieldName: name
+              operator: CONTAINS
+              value: Server
+            - fieldName: status.key
+              operator: EQUALS
+              value: active
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/CriteriaDefinition'
+        searchText:
+          description: A simple text string to search across multiple relevant fields of an inventory item. Used for quick search functionality.
           type: string
-        website:
+          example: Mainframe Alpha
+        searchOnNumber:
+          description: Indicates if the searchText should specifically target numeric fields. Default is false.
+          type: boolean
+          example: false
+          default: 'false'
+    DateDto:
+      type: object
+      properties:
+        fromDateValue:
+          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
           type: string
-        matchType:
+          example: '2023-01-01'
+          maxLength: 60
+          minLength: 0
+        toDateValue:
+          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
           type: string
-          enum:
-          - NAME
-          - WEBSITE
-          - BOTH
-          - NONE
-        vendorUrl:
-          type: string
+          example: '2023-01-31'
+          maxLength: 60
+          minLength: 0
+      required:
+      - fromDateValue
     Pageable:
       type: object
       properties:
@@ -400,60 +435,25 @@ components:
         date:
           description: A DTO for specifying date values, used when the attribute is a date type and the operator requires date comparison (e.g., DATE_EQUALS, DATE_BETWEEN).
           $ref: '#/components/schemas/DateDto'
-    KeyIdDto:
+    VendorSearchResult:
       type: object
       properties:
-        businessKey:
-          type: string
-        inventoryId:
+        id:
           type: string
           format: uuid
-      required:
-      - businessKey
-    InventoryFilterRequest:
-      type: object
-      properties:
-        filterCriteria:
-          description: A map of filter criteria, where the key is a logical operator (AND, OR) and the value is a list of criteria definitions. This allows for building complex queries.
-          type: object
-          example:
-            AND:
-            - fieldName: name
-              operator: CONTAINS
-              value: Server
-            - fieldName: status.key
-              operator: EQUALS
-              value: active
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/CriteriaDefinition'
-        searchText:
-          description: A simple text string to search across multiple relevant fields of an inventory item. Used for quick search functionality.
+        name:
           type: string
-          example: Mainframe Alpha
-        searchOnNumber:
-          description: Indicates if the searchText should specifically target numeric fields. Default is false.
-          type: boolean
-          example: false
-          default: 'false'
-    DateDto:
-      type: object
-      properties:
-        fromDateValue:
-          description: 'The start date for a date range filter, or the specific date if toDateValue is not provided or is the same. Expected format: YYYY-MM-DD.'
+        website:
           type: string
-          example: '2023-01-01'
-          maxLength: 60
-          minLength: 0
-        toDateValue:
-          description: 'The end date for a date range filter. If filtering for a single day, this can be the same as fromDateValue or omitted if the operator implies a single date. Expected format: YYYY-MM-DD.'
+        matchType:
           type: string
-          example: '2023-01-31'
-          maxLength: 60
-          minLength: 0
-      required:
-      - fromDateValue
+          enum:
+          - NAME
+          - WEBSITE
+          - BOTH
+          - NONE
+        vendorUrl:
+          type: string
   securitySchemes:
     OAUTH2:
       type: oauth2

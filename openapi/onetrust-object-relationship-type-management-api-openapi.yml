@@ -366,75 +366,6 @@ paths:
         - OBJECT_MANAGER_WRITE
 components:
   schemas:
-    BasicEntityTypeInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the object type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the object type.
-          type: string
-          example: Vendor
-        seeded:
-          description: 'This flag indicates whether the object type is seeded. '
-          type: boolean
-          example: true
-        moduleName:
-          description: The name of the product where the object type exists.
-          type: string
-          example: Vendor
-          enum:
-          - Vendor
-          - DataMapping
-          - Risk
-          - Assessments
-          - CustomEntityManagement
-        schemaName:
-          description: The name of the schema.
-          type: string
-          example: vendor
-          enum:
-          - vendor
-          - data-mapping
-          - risk
-          - assessments
-          - customEntityManagement
-      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
-      required:
-      - id
-      - name
-    Pageable:
-      type: object
-      properties:
-        pageNumber:
-          description: The page number of the results.
-          type: integer
-          format: int32
-          example: 0
-        pageSize:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 10
-        offset:
-          description: The number of results to exclude from the start of the list.
-          type: integer
-          format: int64
-          example: 0
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          $ref: '#/components/schemas/Sort'
-        paged:
-          description: This flag indicates whether the list is paged.
-          type: boolean
-          example: true
-        unpaged:
-          description: This flag indicates whether the list is not paged.
-          type: boolean
-          example: false
     AttributeQueryCriteria:
       type: object
       properties:
@@ -447,116 +378,6 @@ components:
         fullText:
           description: The key terms for the search criteria.
           type: string
-    LinkTypeInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the relationship type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the relationship type.
-          type: string
-          example: Product/Service
-          maxLength: 255
-          minLength: 1
-        nameKey:
-          description: The name key of the relationship type used for translation purposes.
-          type: string
-          example: link.type.productservice.name
-        seeded:
-          description: This flag indicates whether the relationship type is seeded.
-          type: boolean
-          example: true
-          default: 'false'
-        moduleName:
-          description: The name of the product where the relationship type exists.
-          type: string
-          example: CustomEntityManagement
-        description:
-          description: The description of the relationship type.
-          type: string
-          example: Links between vendors and their products
-        descriptionKey:
-          description: The description key of the relationship type used for translation purposes.
-          type: string
-          example: entity.link.vendor_product.description
-        entityType1ToEntityType2EntityLinkName:
-          description: The name of the source object type's relationship to the target object type.
-          type: string
-          example: Vendor provides Product
-        entityType1ToEntityType2EntityLinkNameKey:
-          description: The name key of the source object type's relationship to the target object type used for translation purposes.
-          type: string
-          example: entity.link.vendor_to_product
-        entityType2ToEntityType1EntityLinkName:
-          description: The name of the target object type's relationship to the source object type.
-          type: string
-          example: Product belongs to Vendor
-        entityType2ToEntityType1EntityLinkNameKey:
-          description: The name key of the target object type's relationship to the source object type used for translation purposes.
-          type: string
-          example: entity.link.product_to_vendor
-        enableAudit:
-          description: This flag indicates whether audit activity is enabled.
-          type: boolean
-          example: true
-          default: 'false'
-        allowNewCustomLinkAssociation:
-          description: This flag indicates whether new custom relationship links are allowed.
-          type: boolean
-          example: false
-          default: 'true'
-        auditFields:
-          description: The activity details of when the record was created and last updated.
-          $ref: '#/components/schemas/EntityRecordAuditInformation'
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: Vendor-Product
-        nameKey: entity.link.vendor_product
-        description: Links between vendors and their products
-        descriptionKey: entity.link.vendor_product.description
-        displayName: Vendor Product Relationship
-        displayNameKey: entity.link.vendor_product.display
-        entityType1Id: 789e4567-e89b-12d3-a456-426614174123
-        entityType1Name: Vendor
-        entityType2Id: 456e4567-e89b-12d3-a456-426614174789
-        entityType2Name: Product
-        entityType1ToEntityType2EntityLinkName: Vendor provides Product
-        entityType1ToEntityType2EntityLinkNameKey: entity.link.vendor_to_product
-        entityType2ToEntityType1EntityLinkName: Product belongs to Vendor
-        entityType2ToEntityType1EntityLinkNameKey: entity.link.product_to_vendor
-        enableAudit: true
-        allowNewCustomLinkAssociation: false
-        auditFields:
-          createdBy: john.doe@example.com
-          createdTimestamp: '2025-01-15T10:30:45Z'
-          lastModifiedBy: jane.smith@example.com
-          lastModifiedTimestamp: '2025-06-10T14:15:22Z'
-      required:
-      - id
-      - name
-    EntityBasicUserInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the user who last modified the record.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the user who last modified the record.
-          type: string
-          example: First Last
-        email:
-          description: The email address of the user who last modified the record.
-          type: string
-          example: user@gmail.com
-        initials:
-          description: The initials of the user who last modified the record.
-          type: string
-          example: FL
     LinkTypeAssociationInformation:
       type: object
       properties:
@@ -595,204 +416,6 @@ components:
       - entityType2
       - id
       - seeded
-    CustomLinkTypeCreateRequest:
-      type: object
-      properties:
-        name:
-          description: The name of the relationship type.
-          type: string
-          example: Product/Service
-        description:
-          description: The description of the relationship type.
-          type: string
-          example: Defined link between Vendor and Product/Service
-        linkAssociations:
-          description: The details of linked relationships.
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkTypeAssociationRequest'
-          example:
-          - entityType1:
-              name: Vendors
-            entityType2:
-              name: Assets
-          - entityType1:
-              name: Vendors
-            entityType2:
-              name: Vendors
-          uniqueItems: true
-        entityType1ToEntityType2EntityLinkName:
-          description: The name of the source object type's relationship to the target object type.
-          type: string
-          example: OneTrust provides GRC
-        entityType2ToEntityType1EntityLinkName:
-          description: The name of the target object type's relationship to the source object type.
-          type: string
-          example: GRC belongs to OneTrust
-      required:
-      - linkAssociations
-      - name
-    EntityRecordAuditInformation:
-      type: object
-      properties:
-        createdDate:
-          description: The date and time that the record was created.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        lastUpdatedDate:
-          description: The date and time that the record was last updated.
-          type: string
-          format: date-time
-          example: '2021-05-13T13:06:49.853Z'
-        createdBy:
-          description: The creation details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-        lastModifiedBy:
-          description: The last modified details of the record.
-          example:
-            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
-            name: Name
-          $ref: '#/components/schemas/EntityBasicUserInformation'
-      required:
-      - createdDate
-    LinkTypeDetailedInformation:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the relationship type.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: 'The name of the relationship type. '
-          type: string
-          example: Product/Service
-          maxLength: 255
-          minLength: 1
-        nameKey:
-          description: The name key of the relationship type used for translation purposes.
-          type: string
-          example: link.type.productservice.name
-        seeded:
-          description: This flag indicates whether the relationship type is seeded.
-          type: boolean
-          example: true
-          default: 'false'
-        moduleName:
-          description: The name of the product where the relationship type exists.
-          type: string
-          example: CustomEntityManagement
-        description:
-          description: The description of the relationship type.
-          type: string
-          example: Links between vendors and their products
-        descriptionKey:
-          description: The description key of the relationship type used for translation purposes.
-          type: string
-          example: entity.link.vendor_product.description
-        entityType1ToEntityType2EntityLinkName:
-          description: The name of the source object type's relationship to the target object type.
-          type: string
-          example: Vendor provides Product
-        entityType1ToEntityType2EntityLinkNameKey:
-          description: The name key of the source object type's relationship to the target object type used for translation purposes.
-          type: string
-          example: entity.link.vendor_to_product
-        entityType2ToEntityType1EntityLinkName:
-          description: The name of the target object type's relationship to the source object type.
-          type: string
-          example: Product belongs to Vendor
-        entityType2ToEntityType1EntityLinkNameKey:
-          description: The name key of the target object types's relationship to the source object type.
-          type: string
-          example: entity.link.product_to_vendor
-        enableAudit:
-          description: This flag indicates whether audit activity is enabled.
-          type: boolean
-          example: true
-          default: 'false'
-        allowNewCustomLinkAssociation:
-          description: This flag indicates whether new relationship links are allowed.
-          type: boolean
-          example: false
-          default: 'true'
-        auditFields:
-          description: The activity details of when the record was created and last updated.
-          $ref: '#/components/schemas/EntityRecordAuditInformation'
-        linkAssociations:
-          description: The details of linked relationships.
-          type: array
-          items:
-            $ref: '#/components/schemas/LinkTypeAssociationInformation'
-          example: '[{"moduleName": "Inventory" ,"entityTypePair": {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Assets"}}, {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Vendors"}}}]'
-      required:
-      - id
-      - linkAssociations
-      - name
-    LinkTypeAssociationRequest:
-      type: object
-      properties:
-        entityType1:
-          description: The details of the source object type in the relationship.
-          example:
-            name: Vendors
-          $ref: '#/components/schemas/BasicEntityTypeInformation'
-        entityType2:
-          description: The details of the target object type in the relationship.
-          example:
-            name: Vendors
-          $ref: '#/components/schemas/BasicEntityTypeInformation'
-        entityTypePairKey:
-          description: The pair key of the linked object types.
-          type: string
-      required:
-      - entityType1
-      - entityType2
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field by which to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and the value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: The value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: The end value by which to filter results.
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
     PageLinkTypeDetailedInformation:
       type: object
       properties:
@@ -890,6 +513,188 @@ components:
       - size
       - totalElements
       - totalPages
+    BasicEntityTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the object type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the object type.
+          type: string
+          example: Vendor
+        seeded:
+          description: 'This flag indicates whether the object type is seeded. '
+          type: boolean
+          example: true
+        moduleName:
+          description: The name of the product where the object type exists.
+          type: string
+          example: Vendor
+          enum:
+          - Vendor
+          - DataMapping
+          - Risk
+          - Assessments
+          - CustomEntityManagement
+        schemaName:
+          description: The name of the schema.
+          type: string
+          example: vendor
+          enum:
+          - vendor
+          - data-mapping
+          - risk
+          - assessments
+          - customEntityManagement
+      example: "{\n \"id\": \"f2229953-b4b5-4042-8cb9-b78038cc4c46\",\n \"name\": \"Vendor\",\n \"nameKey\": \"EntityType.Vendor.Name\",\n \"seeded\": true,\n \"moduleName\": \"Vendor\",\n \"schemaName\": \"vendor\"\n},\n"
+      required:
+      - id
+      - name
+    LinkTypeAssociationRequest:
+      type: object
+      properties:
+        entityType1:
+          description: The details of the source object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        entityType2:
+          description: The details of the target object type in the relationship.
+          example:
+            name: Vendors
+          $ref: '#/components/schemas/BasicEntityTypeInformation'
+        entityTypePairKey:
+          description: The pair key of the linked object types.
+          type: string
+      required:
+      - entityType1
+      - entityType2
+    LinkTypeDetailedInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: 'The name of the relationship type. '
+          type: string
+          example: Product/Service
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the relationship type used for translation purposes.
+          type: string
+          example: link.type.productservice.name
+        seeded:
+          description: This flag indicates whether the relationship type is seeded.
+          type: boolean
+          example: true
+          default: 'false'
+        moduleName:
+          description: The name of the product where the relationship type exists.
+          type: string
+          example: CustomEntityManagement
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Links between vendors and their products
+        descriptionKey:
+          description: The description key of the relationship type used for translation purposes.
+          type: string
+          example: entity.link.vendor_product.description
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey:
+          description: The name key of the source object type's relationship to the target object type used for translation purposes.
+          type: string
+          example: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey:
+          description: The name key of the target object types's relationship to the source object type.
+          type: string
+          example: entity.link.product_to_vendor
+        enableAudit:
+          description: This flag indicates whether audit activity is enabled.
+          type: boolean
+          example: true
+          default: 'false'
+        allowNewCustomLinkAssociation:
+          description: This flag indicates whether new relationship links are allowed.
+          type: boolean
+          example: false
+          default: 'true'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+        linkAssociations:
+          description: The details of linked relationships.
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkTypeAssociationInformation'
+          example: '[{"moduleName": "Inventory" ,"entityTypePair": {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Assets"}}, {"entityType1": {"name": "Vendors"}, "entityType2": {"name": "Vendors"}}}]'
+      required:
+      - id
+      - linkAssociations
+      - name
+    Pageable:
+      type: object
+      properties:
+        pageNumber:
+          description: The page number of the results.
+          type: integer
+          format: int32
+          example: 0
+        pageSize:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 10
+        offset:
+          description: The number of results to exclude from the start of the list.
+          type: integer
+          format: int64
+          example: 0
+        sort:
+          description: The sort criteria that dictates the order of the results.
+          $ref: '#/components/schemas/Sort'
+        paged:
+          description: This flag indicates whether the list is paged.
+          type: boolean
+          example: true
+        unpaged:
+          description: This flag indicates whether the list is not paged.
+          type: boolean
+          example: false
+    EntityBasicUserInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the user who last modified the record.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the user who last modified the record.
+          type: string
+          example: First Last
+        email:
+          description: The email address of the user who last modified the record.
+          type: string
+          example: user@gmail.com
+        initials:
+          description: The initials of the user who last modified the record.
+          type: string
+          example: FL
     Sort:
       type: object
       properties:
@@ -905,6 +710,201 @@ components:
           description: This flag indicates whether sort criteria was left undefined.
           type: boolean
           example: false
+    EntityRecordAuditInformation:
+      type: object
+      properties:
+        createdDate:
+          description: The date and time that the record was created.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        lastUpdatedDate:
+          description: The date and time that the record was last updated.
+          type: string
+          format: date-time
+          example: '2021-05-13T13:06:49.853Z'
+        createdBy:
+          description: The creation details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+        lastModifiedBy:
+          description: The last modified details of the record.
+          example:
+            id: c21319953-b4b5-4042-8cb9-b78038cc4c51
+            name: Name
+          $ref: '#/components/schemas/EntityBasicUserInformation'
+      required:
+      - createdDate
+    LinkTypeInformation:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the relationship type.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+          maxLength: 255
+          minLength: 1
+        nameKey:
+          description: The name key of the relationship type used for translation purposes.
+          type: string
+          example: link.type.productservice.name
+        seeded:
+          description: This flag indicates whether the relationship type is seeded.
+          type: boolean
+          example: true
+          default: 'false'
+        moduleName:
+          description: The name of the product where the relationship type exists.
+          type: string
+          example: CustomEntityManagement
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Links between vendors and their products
+        descriptionKey:
+          description: The description key of the relationship type used for translation purposes.
+          type: string
+          example: entity.link.vendor_product.description
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey:
+          description: The name key of the source object type's relationship to the target object type used for translation purposes.
+          type: string
+          example: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey:
+          description: The name key of the target object type's relationship to the source object type used for translation purposes.
+          type: string
+          example: entity.link.product_to_vendor
+        enableAudit:
+          description: This flag indicates whether audit activity is enabled.
+          type: boolean
+          example: true
+          default: 'false'
+        allowNewCustomLinkAssociation:
+          description: This flag indicates whether new custom relationship links are allowed.
+          type: boolean
+          example: false
+          default: 'true'
+        auditFields:
+          description: The activity details of when the record was created and last updated.
+          $ref: '#/components/schemas/EntityRecordAuditInformation'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Vendor-Product
+        nameKey: entity.link.vendor_product
+        description: Links between vendors and their products
+        descriptionKey: entity.link.vendor_product.description
+        displayName: Vendor Product Relationship
+        displayNameKey: entity.link.vendor_product.display
+        entityType1Id: 789e4567-e89b-12d3-a456-426614174123
+        entityType1Name: Vendor
+        entityType2Id: 456e4567-e89b-12d3-a456-426614174789
+        entityType2Name: Product
+        entityType1ToEntityType2EntityLinkName: Vendor provides Product
+        entityType1ToEntityType2EntityLinkNameKey: entity.link.vendor_to_product
+        entityType2ToEntityType1EntityLinkName: Product belongs to Vendor
+        entityType2ToEntityType1EntityLinkNameKey: entity.link.product_to_vendor
+        enableAudit: true
+        allowNewCustomLinkAssociation: false
+        auditFields:
+          createdBy: john.doe@example.com
+          createdTimestamp: '2025-01-15T10:30:45Z'
+          lastModifiedBy: jane.smith@example.com
+          lastModifiedTimestamp: '2025-06-10T14:15:22Z'
+      required:
+      - id
+      - name
+    CustomLinkTypeCreateRequest:
+      type: object
+      properties:
+        name:
+          description: The name of the relationship type.
+          type: string
+          example: Product/Service
+        description:
+          description: The description of the relationship type.
+          type: string
+          example: Defined link between Vendor and Product/Service
+        linkAssociations:
+          description: The details of linked relationships.
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkTypeAssociationRequest'
+          example:
+          - entityType1:
+              name: Vendors
+            entityType2:
+              name: Assets
+          - entityType1:
+              name: Vendors
+            entityType2:
+              name: Vendors
+          uniqueItems: true
+        entityType1ToEntityType2EntityLinkName:
+          description: The name of the source object type's relationship to the target object type.
+          type: string
+          example: OneTrust provides GRC
+        entityType2ToEntityType1EntityLinkName:
+          description: The name of the target object type's relationship to the source object type.
+          type: string
+          example: GRC belongs to OneTrust
+      required:
+      - linkAssociations
+      - name
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field by which to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and the value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: The value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: The end value by which to filter results.
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
   securitySchemes:
     OAUTH2:
       type: oauth2

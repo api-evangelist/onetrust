@@ -286,6 +286,25 @@ paths:
         - DSAR_WRITE
 components:
   schemas:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto:
+      type: object
+      properties:
+        fileName:
+          description: Name of the file.
+          type: string
+          example: receipt.pdf
+        fileId:
+          description: Unique Identifier of the File.
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        isRedact:
+          type: boolean
+          writeOnly: true
+        emlAttachmentMetadata:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata'
+        redact:
+          type: boolean
     PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject:
       type: object
       properties:
@@ -304,35 +323,37 @@ components:
           format: int32
         unpaged:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryResultsV2Dto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupV2Dto:
       type: object
       properties:
-        id:
-          description: Unique Identifier for field Id.
+        groupName:
+          description: Name of the group.
+          type: string
+          example: Salesforce Customer Data
+        groupId:
+          description: Unique Identifier of the group.
           type: string
           format: uuid
           example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        fieldName:
-          description: The name for a data field in the results summary
-          type: string
-          example: firstname
-        value:
-          description: This is the actual data element.
-          type: string
-          example: John
-        system:
-          description: Displays the name of the source of a particular data element.
-          type: string
-          example: Salesforce
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
+        dataDiscoveryResultsV2Dtos:
+          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageDataDiscoveryResultsV2Dto'
+        dataDiscoveryAttachmentListDtos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentListDto'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata:
       type: object
       properties:
-        empty:
-          type: boolean
-        unsorted:
-          type: boolean
-        sorted:
-          type: boolean
+        attachmentId:
+          type: string
+          format: uuid
+        emlSubject:
+          type: string
+        senderName:
+          type: string
+        sendDate:
+          type: string
+          format: date-time
     PrivacyAutomation-DataSubjectRequestDSRAutomation_PageDataDiscoveryResultsV2Dto:
       type: object
       properties:
@@ -364,6 +385,15 @@ components:
         pageable:
           $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageableObject'
         empty:
+          type: boolean
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
           type: boolean
     PrivacyAutomation-DataSubjectRequestDSRAutomation_UnStructuredData:
       type: object
@@ -397,41 +427,31 @@ components:
       - key
       - type
       - value
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupDto:
       type: object
       properties:
-        fileName:
-          description: Name of the file.
+        system:
+          description: Name or identifier of the system from which this data is sourced. This will be displayed on the Results Summary.
           type: string
-          example: receipt.pdf
-        fileId:
-          description: Unique Identifier of the File.
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        isRedact:
-          type: boolean
-          writeOnly: true
-        emlAttachmentMetadata:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata'
-        redact:
-          type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupResultV2Dto:
-      type: object
-      properties:
-        groupName:
-          description: Name of the group.
-          type: string
-          example: Salesforce Customer Data
-        groupOrder:
-          description: Order in which group has been created.
-          type: integer
-          format: int64
-        groupId:
-          description: Unique Identifier of the group.
-          type: string
-          format: uuid
-          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+          example: Office365
+        results:
+          description: Dataset that includes list of data groups with nested name-value-pairs to capture structured data.
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: object
+        unstructuredResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_UnStructuredData'
+        attachments:
+          description: Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary.
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto'
+      required:
+      - system
     PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentListDto:
       type: object
       properties:
@@ -459,62 +479,42 @@ components:
           writeOnly: true
         sharable:
           type: boolean
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_EmlAttachmentMetadata:
-      type: object
-      properties:
-        attachmentId:
-          type: string
-          format: uuid
-        emlSubject:
-          type: string
-        senderName:
-          type: string
-        sendDate:
-          type: string
-          format: date-time
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupDto:
-      type: object
-      properties:
-        system:
-          description: Name or identifier of the system from which this data is sourced. This will be displayed on the Results Summary.
-          type: string
-          example: Office365
-        results:
-          description: Dataset that includes list of data groups with nested name-value-pairs to capture structured data.
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: object
-        unstructuredResults:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_UnStructuredData'
-        attachments:
-          description: Optional. List of name-value-pairs containing file names and IDs to attach. Use the Add File API to add file into OneTrust and retrieve the File IDs. These files will be visible in the Results Summary.
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentDto'
-      required:
-      - system
-    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupV2Dto:
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryGroupResultV2Dto:
       type: object
       properties:
         groupName:
           description: Name of the group.
           type: string
           example: Salesforce Customer Data
+        groupOrder:
+          description: Order in which group has been created.
+          type: integer
+          format: int64
         groupId:
           description: Unique Identifier of the group.
           type: string
           format: uuid
           example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
-        dataDiscoveryResultsV2Dtos:
-          $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_PageDataDiscoveryResultsV2Dto'
-        dataDiscoveryAttachmentListDtos:
-          type: array
-          items:
-            $ref: '#/components/schemas/PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryAttachmentListDto'
+    PrivacyAutomation-DataSubjectRequestDSRAutomation_DataDiscoveryResultsV2Dto:
+      type: object
+      properties:
+        id:
+          description: Unique Identifier for field Id.
+          type: string
+          format: uuid
+          example: e2d0f59e-3df0-4b1f-965d-d57547ed44ad
+        fieldName:
+          description: The name for a data field in the results summary
+          type: string
+          example: firstname
+        value:
+          description: This is the actual data element.
+          type: string
+          example: John
+        system:
+          description: Displays the name of the source of a particular data element.
+          type: string
+          example: Salesforce
   securitySchemes:
     PrivacyAutomation-DataSubjectRequestDSRAutomation_OAUTH2:
       type: oauth2

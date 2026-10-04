@@ -98,23 +98,71 @@ paths:
         - DATA_CATALOG_READ
 components:
   schemas:
-    DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria:
+    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
       type: object
       properties:
-        groupOperator:
-          description: Logical operator between criteria groups
+        from:
+          description: Start value for the range
           type: string
-          enum:
-          - AND
-          - OR
-        criteriaGroups:
+          example: '61'
+        to:
+          description: End value for the range
+          type: string
+          example: '80'
+    DataUseGovernance-DataCatalogMetadataExchange_SearchRequest:
+      type: object
+      properties:
+        searchText:
+          description: Text to search for
+          type: string
+          example: data privacy
+        filterCriteria:
+          description: Filter criteria for the search
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria'
+        searchFields:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup'
-            description: Criteria group of a filter criteria
-          minItems: 1
-      required:
-      - groupOperator
+            type: string
+            description: Search fields for the filter criteria
+            example: description
+        facets:
+          type: array
+          items:
+            type: string
+            description: Facets to include in the response
+            example: documentType
+        selectFields:
+          type: array
+          items:
+            type: string
+            description: Fields to include in the response
+            example: description
+        partialSearch:
+          description: Whether to perform partial text matching
+          type: boolean
+          default: 'false'
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage'
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
     DataUseGovernance-DataCatalogMetadataExchange_Criterion:
       type: object
       properties:
@@ -197,71 +245,6 @@ components:
             description: Value range for the criterion
       required:
       - operator
-    DataUseGovernance-DataCatalogMetadataExchange_ExternalSearchResponse:
-      type: object
-      properties:
-        facets:
-          description: Faceted search results grouped by field
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: integer
-              format: int64
-        documents:
-          description: List of search documents matching the search criteria
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument'
-        continuationToken:
-          description: Token for continuing the search from where it left off
-          type: string
-          example: AAEADummyTokenMmFiZTNhN2QtYmE0YS00ZjdkLWDummyTokenIwMWMtNzlkMDMwNDAzMTRj6tK7tU1emDummyTokenbIyvCDNSloQC/Zaher0/mpJhLkkymvYdYvtI76p4
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage:
-      type: object
-      properties:
-        first:
-          description: This parameter indicates whether the current page is the first page of the list.
-          type: boolean
-        last:
-          description: This parameter indicates whether the current page is the last page of the list.
-          type: boolean
-        number:
-          description: The page number of the results.
-          type: integer
-          format: int64
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int64
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort'
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          description: The page number of the results.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage'
-    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
-      type: object
-      properties:
-        from:
-          description: Start value for the range
-          type: string
-          example: '61'
-        to:
-          description: End value for the range
-          type: string
-          example: '80'
     DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup:
       type: object
       properties:
@@ -279,38 +262,33 @@ components:
           minItems: 1
       required:
       - operator
-    DataUseGovernance-DataCatalogMetadataExchange_SearchRequest:
+    DataUseGovernance-DataCatalogMetadataExchange_FieldValue:
       type: object
       properties:
-        searchText:
-          description: Text to search for
+        value:
+          description: Search field value
+          type: object
+          example: Employee Details
+        nameKey:
+          description: Search field name key
           type: string
-          example: data privacy
-        filterCriteria:
-          description: Filter criteria for the search
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria'
-        searchFields:
-          type: array
-          items:
-            type: string
-            description: Search fields for the filter criteria
-            example: description
-        facets:
-          type: array
-          items:
-            type: string
-            description: Facets to include in the response
-            example: documentType
-        selectFields:
-          type: array
-          items:
-            type: string
-            description: Fields to include in the response
-            example: description
-        partialSearch:
-          description: Whether to perform partial text matching
+          example: DataDictionaryParent
+        dataType:
+          description: Search field data type
+          type: string
+          example: String
+        optionType:
+          description: Search field option type
+          type: string
+          example: users
+        enabled:
+          description: Search field boolean value
           type: boolean
-          default: 'false'
+          example: true
+        mappedFieldSchema:
+          description: Search field mapped field's schema
+          type: string
+          example: "\"{\n \"name\": \"ClassificationTerm\",\n \"type\": \"Object\",\n \"fields\": [\n {\n \"type\": \"String\",\n \"name\": \"approvedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTerms\"\n },\n {\n \"type\": \"String\",\n \"name\": \"approvedTermId\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTermIds\"\n },\n {\n \"type\": \"String\",\n \"name\": \"recommendedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchRecommendedTerms\"\n }\n ]\n}\"\n"
     DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument:
       type: object
       properties:
@@ -342,6 +320,41 @@ components:
           description: Source of the search document
           type: string
           example: data-discovery
+    DataUseGovernance-DataCatalogMetadataExchange_ExternalSearchResponse:
+      type: object
+      properties:
+        facets:
+          description: Faceted search results grouped by field
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int64
+        documents:
+          description: List of search documents matching the search criteria
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument'
+        continuationToken:
+          description: Token for continuing the search from where it left off
+          type: string
+          example: AAEADummyTokenMmFiZTNhN2QtYmE0YS00ZjdkLWDummyTokenIwMWMtNzlkMDMwNDAzMTRj6tK7tU1emDummyTokenbIyvCDNSloQC/Zaher0/mpJhLkkymvYdYvtI76p4
+    DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria:
+      type: object
+      properties:
+        groupOperator:
+          description: Logical operator between criteria groups
+          type: string
+          enum:
+          - AND
+          - OR
+        criteriaGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup'
+            description: Criteria group of a filter criteria
+          minItems: 1
+      required:
+      - groupOperator
     DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort:
       type: object
       properties:
@@ -354,49 +367,36 @@ components:
         property:
           description: The criteria by which results are sorted.
           type: string
-    DataUseGovernance-DataCatalogMetadataExchange_FieldValue:
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustPage:
       type: object
       properties:
-        value:
-          description: Search field value
-          type: object
-          example: Employee Details
-        nameKey:
-          description: Search field name key
-          type: string
-          example: DataDictionaryParent
-        dataType:
-          description: Search field data type
-          type: string
-          example: String
-        optionType:
-          description: Search field option type
-          type: string
-          example: users
-        enabled:
-          description: Search field boolean value
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
           type: boolean
-          example: true
-        mappedFieldSchema:
-          description: Search field mapped field's schema
-          type: string
-          example: "\"{\n \"name\": \"ClassificationTerm\",\n \"type\": \"Object\",\n \"fields\": [\n {\n \"type\": \"String\",\n \"name\": \"approvedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTerms\"\n },\n {\n \"type\": \"String\",\n \"name\": \"approvedTermId\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTermIds\"\n },\n {\n \"type\": \"String\",\n \"name\": \"recommendedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchRecommendedTerms\"\n }\n ]\n}\"\n"
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
-      type: object
-      properties:
-        data:
-          description: The parameters that detail entity data.
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
+          type: integer
+          format: int64
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
-        errors:
-          description: This parameter provides error details if 400 Bad Request is returned.
-          type: array
-          items:
-            type: object
-        meta:
-          description: The configuration parameters of the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort'
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

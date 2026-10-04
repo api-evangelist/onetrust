@@ -1028,6 +1028,119 @@ paths:
         - INVENTORY_WRITE
 components:
   schemas:
+    RelationshipType:
+      type: object
+      properties:
+        id:
+          description: RelationshipType ID
+          type: string
+          format: uuid
+        name:
+          description: RelationshipType Name
+          type: string
+        nameKey:
+          description: RelationshipType NameKey
+          type: string
+    LinkRequestDto:
+      type: object
+      properties:
+        sourceInventory:
+          description: Associated Source Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: assets
+          $ref: '#/components/schemas/EntityIdAndType'
+        targetInventory:
+          description: Associated Target Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            type: assets
+          $ref: '#/components/schemas/EntityIdAndType'
+        contextProcess:
+          description: Associated Source Entity Instance for given Entity Type
+          example:
+            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            name: PA Name
+          $ref: '#/components/schemas/BasicEntityIdAndName'
+        attributes:
+          description: Custom Attributes based on schema defined for given link type
+          type: object
+          example:
+            textAttributeName:
+            - value: Text
+            optionBasedAttributeName:
+            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        linkTypeName:
+          description: Link type identifier
+          type: string
+          example:
+            linkTypeName: Data Transfer
+        linkTypeLabel:
+          description: Link type label
+          type: string
+          example:
+            linkTypeLabel: Sends Data To
+      required:
+      - linkTypeLabel
+      - linkTypeName
+      - sourceInventory
+      - targetInventory
+    SearchCriteria:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterInformation'
+          uniqueItems: true
+        searchText:
+          type: string
+        blank:
+          type: boolean
+    EntityListRequest:
+      type: object
+      properties:
+        context:
+          description: User-defined context for the current request
+          $ref: '#/components/schemas/ContextInformation'
+        queryRequest:
+          description: Query request containing search criteria and organization context
+          $ref: '#/components/schemas/EntityQueryRequest'
+        requestedFields:
+          description: Field request specifying which fields to include in the response
+          $ref: '#/components/schemas/EntityFieldRequest'
+      example:
+        queryRequest:
+          criteria:
+            filters:
+            - fieldName: name
+              operator: contains
+              value: OneTrust
+            - fieldName: entityStatus
+              operator: equals
+              value: Active
+            searchQuery: gdpr
+            sort:
+            - fieldName: lastModifiedTimestamp
+              direction: DESC
+          organizationTraversalStrategy: ancestors_and_descendants
+          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+          queryAction: ListEntity
+        requestedFields:
+          includeStandardFields: true
+          includeCustomFields: true
+          includeAuditFields: false
+          specificStandardFields:
+          - name
+          - entityNumber
+          - createdBy
+          specificCustomFields:
+          - vendor_tier
+          - risk_score
     PersonalDataLinkRequest:
       type: object
       properties:
@@ -1044,6 +1157,69 @@ components:
       example:
         dataElementId: f2229953-b4b5-4042-8cb9-b78038cc4c46
         dataSubjectTypeId: a1b2c3d4-e5f6-4042-8cb9-b78038cc4c46
+    AttributePredicate:
+      type: object
+      properties:
+        field:
+          description: The field name used to filter results.
+          type: string
+        operator:
+          description: The relationship that must be met between the field and value.
+          type: string
+          enum:
+          - EQUAL_TO
+          - NOT_EQUAL_TO
+          - GREATER_THAN
+          - GREATER_THAN_EQUAL_TO
+          - LESS_THAN
+          - LESS_THAN_EQUAL_TO
+          - BETWEEN
+        value:
+          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+        toValue:
+          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+          type: object
+          oneOf:
+          - type: string
+            format: date
+          - type: string
+            format: date-time
+          - type: string
+          - type: number
+      required:
+      - field
+    AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
     AttributeQueryCriteria:
       type: object
       properties:
@@ -1056,105 +1232,19 @@ components:
         fullText:
           description: The key terms for the search criteria.
           type: string
-    ObjectReference:
+    InventoryIdentifier:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        value:
-          type: string
-        valueKey:
-          type: string
-    FilterInformation:
-      type: object
-      properties:
-        field:
-          type: string
-        operator:
-          type: string
-          enum:
-          - EQ
-          - EQUAL_TO
-          - IN_BETWEEN
-        value:
-          type: array
-          items:
-            type: string
-        date:
-          $ref: '#/components/schemas/DateDto'
-      required:
-      - field
-    PersonalDataDetailedResponse:
-      type: object
-      properties:
-        dataElement:
-          $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataCategories:
-          type: array
-          items:
-            $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataClassifications:
-          type: array
-          items:
-            $ref: '#/components/schemas/BasePersonalDataResponse'
-        dataSubjectType:
-          $ref: '#/components/schemas/BasePersonalDataResponse'
-        source:
-          type: string
-        dateLinked:
-          type: string
-          format: date-time
-    BasicEntityIdAndName:
-      type: object
-      properties:
-        id:
-          description: Entity identifier
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
         name:
-          description: Entity name
           type: string
-          example: Sample Entity Name
-    RelationshipLabelInformation:
-      type: object
-      properties:
-        name:
-          description: Relationship label name
+        organization:
+          $ref: '#/components/schemas/ObjectReference'
+        inventoryType:
           type: string
-          example: sends data to
-        isContextual:
-          description: Flag to identify if relationship type is direct parent child or contextual
-          type: boolean
-          example: true
-        nameKey:
-          description: Relationship label name key
-          type: string
-          example: sends_data_to
-      example:
-        name: sends data to
-        isContextual: true
-        nameKey: sends_data_to
-    ContextInformation:
-      type: object
-      properties:
-        parameters:
-          additionalProperties:
-            type: object
-          type: object
-    RelationshipType:
-      type: object
-      properties:
-        id:
-          description: RelationshipType ID
-          type: string
-          format: uuid
-        name:
-          description: RelationshipType Name
-          type: string
-        nameKey:
-          description: RelationshipType NameKey
+        identifierKey:
           type: string
     RelationshipTypeInformation:
       type: object
@@ -1213,185 +1303,40 @@ components:
           name: receives data from
           isContextual: true
           nameKey: receives_data_from
-    LinkRequestDto:
-      type: object
-      properties:
-        sourceInventory:
-          description: Associated Source Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            type: assets
-          $ref: '#/components/schemas/EntityIdAndType'
-        targetInventory:
-          description: Associated Target Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            type: assets
-          $ref: '#/components/schemas/EntityIdAndType'
-        contextProcess:
-          description: Associated Source Entity Instance for given Entity Type
-          example:
-            id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            name: PA Name
-          $ref: '#/components/schemas/BasicEntityIdAndName'
-        attributes:
-          description: Custom Attributes based on schema defined for given link type
-          type: object
-          example:
-            textAttributeName:
-            - value: Text
-            optionBasedAttributeName:
-            - id: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        linkTypeName:
-          description: Link type identifier
-          type: string
-          example:
-            linkTypeName: Data Transfer
-        linkTypeLabel:
-          description: Link type label
-          type: string
-          example:
-            linkTypeLabel: Sends Data To
-      required:
-      - linkTypeLabel
-      - linkTypeName
-      - sourceInventory
-      - targetInventory
-    InventoryIdentifier:
+    BaseContextualEntityInformation:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        name:
-          type: string
-        organization:
+        number:
+          type: integer
+          format: int64
+        sourceEntityType:
           $ref: '#/components/schemas/ObjectReference'
-        inventoryType:
-          type: string
-        identifierKey:
-          type: string
-    AttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
+        targetEntityType:
+          $ref: '#/components/schemas/ObjectReference'
+        source:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        target:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        processingActivity:
+          $ref: '#/components/schemas/InventoryIdentifier'
+        contextEntityType:
+          $ref: '#/components/schemas/ObjectReference'
+        relationshipTypeDetail:
+          $ref: '#/components/schemas/RelationshipType'
+        pendingForReview:
           type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    EntityIdAndType:
+        contextual:
+          type: boolean
+    ContextInformation:
       type: object
       properties:
-        id:
-          description: Entity id
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        type:
-          description: Entity type
-          type: string
-          enum:
-          - assets
-          - processing-activities
-          - vendors
-          - entities
-          - data-elements
-          - data-subjects
-      required:
-      - id
-      - type
-    ContextualLinkUpdateRequest:
-      type: object
-      properties:
-        processingActivityId:
-          description: Processing Activity Id
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        attributes:
-          type: object
+        parameters:
           additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-          writeOnly: true
-    AttributePredicate:
-      type: object
-      properties:
-        field:
-          description: The field name used to filter results.
-          type: string
-        operator:
-          description: The relationship that must be met between the field and value.
-          type: string
-          enum:
-          - EQUAL_TO
-          - NOT_EQUAL_TO
-          - GREATER_THAN
-          - GREATER_THAN_EQUAL_TO
-          - LESS_THAN
-          - LESS_THAN_EQUAL_TO
-          - BETWEEN
-        value:
-          description: "The field value used to filter results. If filtering for a range of values, this would be the start of the range and should be used in conjunction with the `toValue` parameter. \nExamples by type: UUID = 'e68d49c4-f11f-4cd9-8f1b-0be8ef945b8f', LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
+            type: object
           type: object
-          oneOf:
-          - type: string
-            format: uuid
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-        toValue:
-          description: "The field value for the end of the range. This field should be used in conjunction with the `value` parameter. \nExamples by type: LocalDate = '2023-01-01', OffsetDateTime = '2023-01-01T00:00:00Z', String = 'Closed', Number = 8"
-          type: object
-          oneOf:
-          - type: string
-            format: date
-          - type: string
-            format: date-time
-          - type: string
-          - type: number
-      required:
-      - field
     EntityQueryRequest:
       type: object
       properties:
@@ -1443,18 +1388,13 @@ components:
         organizationTraversalStrategy: ancestors_and_descendants
         requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
         queryAction: ListEntity
-    SearchCriteria:
+    DateDto:
       type: object
       properties:
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/FilterInformation'
-          uniqueItems: true
-        searchText:
+        fromDateValue:
           type: string
-        blank:
-          type: boolean
+        toDateValue:
+          type: string
     RelationshipInformation:
       type: object
       properties:
@@ -1537,6 +1477,65 @@ components:
           dataTransferType: Cross-Border
           dataTransferDate: '2025-07-21'
           dataTransferPurpose: Business Operations
+    FilterInformation:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          type: string
+          enum:
+          - EQ
+          - EQUAL_TO
+          - IN_BETWEEN
+        value:
+          type: array
+          items:
+            type: string
+        date:
+          $ref: '#/components/schemas/DateDto'
+      required:
+      - field
+    AttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
+          type: string
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
+          type: string
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
     BasePersonalDataResponse:
       type: object
       properties:
@@ -1587,102 +1586,103 @@ components:
           - name
       required:
       - mode
-    AssociatedAttributeValueInformation:
+    BasicEntityIdAndName:
       type: object
       properties:
         id:
-          description: Unique identifier for the attribute option
+          description: Entity identifier
           type: string
           format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: Entity name
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-      required:
-      - value
-    BaseContextualEntityInformation:
+          example: Sample Entity Name
+    RelationshipLabelInformation:
       type: object
       properties:
-        id:
+        name:
+          description: Relationship label name
           type: string
-          format: uuid
-        number:
-          type: integer
-          format: int64
-        sourceEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        targetEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        source:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        target:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        processingActivity:
-          $ref: '#/components/schemas/InventoryIdentifier'
-        contextEntityType:
-          $ref: '#/components/schemas/ObjectReference'
-        relationshipTypeDetail:
-          $ref: '#/components/schemas/RelationshipType'
-        pendingForReview:
+          example: sends data to
+        isContextual:
+          description: Flag to identify if relationship type is direct parent child or contextual
           type: boolean
-        contextual:
-          type: boolean
-    DateDto:
-      type: object
-      properties:
-        fromDateValue:
+          example: true
+        nameKey:
+          description: Relationship label name key
           type: string
-        toDateValue:
-          type: string
-    EntityListRequest:
-      type: object
-      properties:
-        context:
-          description: User-defined context for the current request
-          $ref: '#/components/schemas/ContextInformation'
-        queryRequest:
-          description: Query request containing search criteria and organization context
-          $ref: '#/components/schemas/EntityQueryRequest'
-        requestedFields:
-          description: Field request specifying which fields to include in the response
-          $ref: '#/components/schemas/EntityFieldRequest'
+          example: sends_data_to
       example:
-        queryRequest:
-          criteria:
-            filters:
-            - fieldName: name
-              operator: contains
-              value: OneTrust
-            - fieldName: entityStatus
-              operator: equals
-              value: Active
-            searchQuery: gdpr
-            sort:
-            - fieldName: lastModifiedTimestamp
-              direction: DESC
-          organizationTraversalStrategy: ancestors_and_descendants
-          requestedOrganizationId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-          queryAction: ListEntity
-        requestedFields:
-          includeStandardFields: true
-          includeCustomFields: true
-          includeAuditFields: false
-          specificStandardFields:
-          - name
-          - entityNumber
-          - createdBy
-          specificCustomFields:
-          - vendor_tier
-          - risk_score
+        name: sends data to
+        isContextual: true
+        nameKey: sends_data_to
+    ContextualLinkUpdateRequest:
+      type: object
+      properties:
+        processingActivityId:
+          description: Processing Activity Id
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+          writeOnly: true
+    EntityIdAndType:
+      type: object
+      properties:
+        id:
+          description: Entity id
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        type:
+          description: Entity type
+          type: string
+          enum:
+          - assets
+          - processing-activities
+          - vendors
+          - entities
+          - data-elements
+          - data-subjects
+      required:
+      - id
+      - type
+    PersonalDataDetailedResponse:
+      type: object
+      properties:
+        dataElement:
+          $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataClassifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/BasePersonalDataResponse'
+        dataSubjectType:
+          $ref: '#/components/schemas/BasePersonalDataResponse'
+        source:
+          type: string
+        dateLinked:
+          type: string
+          format: date-time
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
   securitySchemes:
     OAUTH2:
       type: oauth2

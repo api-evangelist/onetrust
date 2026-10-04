@@ -359,29 +359,22 @@ paths:
           description: Internal Server Error
 components:
   schemas:
-    DsPurposeNote:
+    DsPreference:
       type: object
       properties:
-        noteId:
-          description: The unique identifier for a reason template.
+        TopicId:
+          description: The unique identifier of a topic related to the purpose.
           type: string
           format: uuid
           example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
-        noteType:
-          description: The type of reason template.
+        TransactionType:
+          description: 'The type of consent transaction for a single topic ID that specifies the data subject''s action. This parameter is not supported on Web Form Collection Points. '
           type: string
-          example: UNSUBSCRIBE_REASON
+          example: OPT_IN
           enum:
-          - UNSUBSCRIBE_REASON
-        noteLanguage:
-          description: The ISO code for the language of the note text.
-          type: string
-          example: en-us
-        noteText:
-          description: The text of the note to be stored.
-          type: string
-          example: Reason 1
-      title: DsPurposeNote
+          - OPT_IN
+          - OPT_OUT
+      title: DsPreference
     Source:
       type: object
       properties:
@@ -405,40 +398,6 @@ components:
             type: string
             format: uuid
           example: 313ef5eb-aaa5-4c7f-bc1f-0b8883bca1af
-    ConsentReceiptResponse:
-      type: object
-      properties:
-        receipt:
-          description: A JSON web token (JWT) which contains the record of the transaction.
-          type: string
-          example: 625ba071-61b0-485f-81a0-a2245777b430
-        instantLinkToken:
-          description: Instant link tokens operate independently from the magic link creation functionality under Global Settings and will expire after 12 months.
-          type: string
-          example: '{JWT TOKEN}'
-        linkToken:
-          description: The magic link token can be appended to the Preference Center login URL for a data subject login.
-          type: string
-          example: p4S2%2FKWgxNmOkf7Rz0%2FCxVrQR3o9HhvTgN2jgSU9pMk%3D
-    ReceiptOption:
-      type: object
-      properties:
-        option:
-          description: The type of receipt option that applies additional changes to the receipt.
-          type: string
-          example: ClearExpiration
-          enum:
-          - ClearExpiration
-        purposes:
-          description: The list of purposes to which the option applies.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
-          uniqueItems: true
-      title: ReceiptOption
     ConsentString:
       type: object
       properties:
@@ -454,21 +413,6 @@ components:
           description: The actual consent string content
           example: DBACMYA~CQPftcAQPftcAPoABABGBkEAAAAAAAAAAAAAAAAAAAAA.QAAA.IAAA~BQPftcAQPftcAPoABABGB-CAAAAAAAAAAAAAAAAAAA.YAAAAAAAAAA
           type: string
-    DsCustomPreferenceChoices:
-      type: object
-      properties:
-        OptionId:
-          description: The unique identifier of an individual option within a Purpose Preference related to the purpose.
-          type: string
-          format: uuid
-          example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
-        TransactionType:
-          type: string
-          example: OPT_OUT
-          enum:
-          - OPT_IN
-          - OPT_OUT
-      title: DsCustomPreferenceChoices
     ParentPrimaryIdentifiers:
       type: object
       properties:
@@ -492,6 +436,80 @@ components:
           type: boolean
           example: true
       title: ParentPrimaryIdentifiers
+    DsGeolocation:
+      type: object
+      properties:
+        country:
+          description: The country where consent was provided.
+          type: string
+          example: US
+        state:
+          description: The state code where consent was provided.
+          type: string
+          example: GA
+        stateName:
+          description: The name of the state where consent was provided.
+          type: string
+          example: Georgia
+        purposeIds:
+          description: The list of unique identifiers of the purposes for which consent was provided.
+          type: array
+          items:
+            type: string
+            format: uuid
+          minProperties: 1
+          uniqueItems: true
+      title: DsGeolocation
+    DsCustomPreference:
+      type: object
+      properties:
+        Id:
+          description: The unique identifier of a Purpose Preference related to the purpose.
+          type: string
+          format: uuid
+          example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
+        Options:
+          description: The list of unique identifers for only the Purpose Preference options into which the data subject should be opted in.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - aa978afe-bbe9-4419-8fa9-f3691f1046c3
+        Choices:
+          description: The unique identifier(s) of Purpose Preferences that should be modified using the CHANGE_PREFERENCES transactionType.
+          type: array
+          items:
+            $ref: '#/components/schemas/DsCustomPreferenceChoices'
+      title: DsCustomPreference
+    DsAttachments:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the file uploaded for the data subject.
+          type: string
+          format: uuid
+          example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
+      title: DsAttachments
+    ReceiptOption:
+      type: object
+      properties:
+        option:
+          description: The type of receipt option that applies additional changes to the receipt.
+          type: string
+          example: ClearExpiration
+          enum:
+          - ClearExpiration
+        purposes:
+          description: The list of purposes to which the option applies.
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          uniqueItems: true
+      title: ReceiptOption
     RequestInformation:
       type: object
       properties:
@@ -596,55 +614,36 @@ components:
       - identifier
       - requestInformation
       title: RequestInformation
-    DsPreference:
+    ConsentReceiptResponse:
       type: object
       properties:
-        TopicId:
-          description: The unique identifier of a topic related to the purpose.
+        receipt:
+          description: A JSON web token (JWT) which contains the record of the transaction.
+          type: string
+          example: 625ba071-61b0-485f-81a0-a2245777b430
+        instantLinkToken:
+          description: Instant link tokens operate independently from the magic link creation functionality under Global Settings and will expire after 12 months.
+          type: string
+          example: '{JWT TOKEN}'
+        linkToken:
+          description: The magic link token can be appended to the Preference Center login URL for a data subject login.
+          type: string
+          example: p4S2%2FKWgxNmOkf7Rz0%2FCxVrQR3o9HhvTgN2jgSU9pMk%3D
+    DsCustomPreferenceChoices:
+      type: object
+      properties:
+        OptionId:
+          description: The unique identifier of an individual option within a Purpose Preference related to the purpose.
           type: string
           format: uuid
           example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
         TransactionType:
-          description: 'The type of consent transaction for a single topic ID that specifies the data subject''s action. This parameter is not supported on Web Form Collection Points. '
           type: string
-          example: OPT_IN
+          example: OPT_OUT
           enum:
           - OPT_IN
           - OPT_OUT
-      title: DsPreference
-    DsGeolocation:
-      type: object
-      properties:
-        country:
-          description: The country where consent was provided.
-          type: string
-          example: US
-        state:
-          description: The state code where consent was provided.
-          type: string
-          example: GA
-        stateName:
-          description: The name of the state where consent was provided.
-          type: string
-          example: Georgia
-        purposeIds:
-          description: The list of unique identifiers of the purposes for which consent was provided.
-          type: array
-          items:
-            type: string
-            format: uuid
-          minProperties: 1
-          uniqueItems: true
-      title: DsGeolocation
-    DsAttachments:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the file uploaded for the data subject.
-          type: string
-          format: uuid
-          example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
-      title: DsAttachments
+      title: DsCustomPreferenceChoices
     DsPrivacyNotice:
       type: object
       properties:
@@ -732,28 +731,29 @@ components:
               type: string
           readOnly: true
       title: DsPurpose
-    DsCustomPreference:
+    DsPurposeNote:
       type: object
       properties:
-        Id:
-          description: The unique identifier of a Purpose Preference related to the purpose.
+        noteId:
+          description: The unique identifier for a reason template.
           type: string
           format: uuid
           example: aa978afe-bbe9-4419-8fa9-f3691f1046c3
-        Options:
-          description: The list of unique identifers for only the Purpose Preference options into which the data subject should be opted in.
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - aa978afe-bbe9-4419-8fa9-f3691f1046c3
-        Choices:
-          description: The unique identifier(s) of Purpose Preferences that should be modified using the CHANGE_PREFERENCES transactionType.
-          type: array
-          items:
-            $ref: '#/components/schemas/DsCustomPreferenceChoices'
-      title: DsCustomPreference
+        noteType:
+          description: The type of reason template.
+          type: string
+          example: UNSUBSCRIBE_REASON
+          enum:
+          - UNSUBSCRIBE_REASON
+        noteLanguage:
+          description: The ISO code for the language of the note text.
+          type: string
+          example: en-us
+        noteText:
+          description: The text of the note to be stored.
+          type: string
+          example: Reason 1
+      title: DsPurposeNote
   securitySchemes:
     OAUTH2:
       type: oauth2

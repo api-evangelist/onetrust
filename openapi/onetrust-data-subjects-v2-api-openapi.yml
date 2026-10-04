@@ -533,112 +533,30 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
       properties:
-        id:
-          description: Unique identifier for the Data Subject
-          type: string
-          format: uuid
-          example: 633ba071-61b0-485f-81a0-a2245777b432
-        identifier:
-          description: The Data Subject's identifier (e.g., email, phone number)
-          type: string
-          example: example@otprivacy.com
-        language:
-          description: The preferred language code for the Data Subject
-          type: string
-          example: en-us
-        lastUpdatedDate:
-          description: The timestamp when the Data Subject's record was last updated
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        dataElements:
-          description: Map of data elements and their corresponding values for the Data Subject
-          type: object
-          example:
-            Title: Mr
-            FirstName: Example
-          additionalProperties: true
-        dataElementsMetaData:
-          description: List of data elements with metadata for the Data Subject
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2'
-        linkToken:
-          description: Token used for magic link authentication of the Data Subject
-          type: string
-          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
-        createdDate:
-          description: The timestamp when the Data Subject's record was created
-          type: string
-          format: date-time
-          example: '2020-01-12T16:11:25.479Z'
-        identifierType:
-          description: The type of identifier used for the Data Subject
-          type: string
-          example: Email
-        testDataSubject:
-          description: Indicates whether this is a test Data Subject
-          type: boolean
-          example: false
-        doNotCall:
-          description: Indicates if the Data Subject's phone number is on the FCC's Do Not Call list
-          type: boolean
-          example: false
-    ConsentAPI_DeleteDataSubjectByPurposeRequest:
-      type: object
-      properties:
-        jobGuid:
-          description: The UUID of the data exclusion job.
-          type: string
-          format: uuid
-          example: fa0e8400-e29b-41d4-a716-446655441200
-        importId:
-          description: The import ID of the data exclusion job.
-          type: string
-          example: '101'
-        retainTransactions:
-          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
-          type: boolean
-          example: false
-          default: 'false'
-        deletePurposeFromAllDataSubjects:
-          description: This flag indicates whether the purpose should be deleted from all data subjects.
-          type: boolean
-          example: false
-          default: 'false'
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSliceDtoV2:
-      type: object
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2'
-          type: array
-        number:
-          description: The page number of the results.
+        offset:
           type: integer
-          format: int32
-          example: 1
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int32
-          example: 20
-        pageable:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
-        last:
-          description: Flag indicating whether this is the last page or not.
-          type: boolean
-          example: false
+          format: int64
         sort:
           $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        first:
-          type: boolean
-        numberOfElements:
+        pageNumber:
           type: integer
           format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
         empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
           type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_DeletePurposeFromDataSubject:
       properties:
@@ -669,14 +587,6 @@ components:
             type: string
             description: Data Subject identifier (e.g., email, phone number)
             example: user@example.com
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSearchDto:
       type: object
       properties:
@@ -736,16 +646,28 @@ components:
           description: When true, includes Data Subjects that don't have any purpose transactions
           type: boolean
           example: false
-    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto:
+    ConsentAPI_DeleteDataSubjectByPurposeRequest:
+      type: object
       properties:
-        name:
-          description: The name of the data element to search for
+        jobGuid:
+          description: The UUID of the data exclusion job.
           type: string
-          example: Work Email
-        value:
-          description: The value to match against the specified data element name
+          format: uuid
+          example: fa0e8400-e29b-41d4-a716-446655441200
+        importId:
+          description: The import ID of the data exclusion job.
           type: string
-          example: example@otprivacy.com
+          example: '101'
+        retainTransactions:
+          description: This flag indicates whether transactions will be retained while deleting purposes from data subjects. When set to `false`, transactions are removed from the database and no longer appear in the OneTrust Platform UI. However, these transactions are not permanently deleted and can still be retrieved using the [Get List of Receipts API](https://developer.onetrust.com/onetrust/reference/getreceiptlistdetailsusingpost).
+          type: boolean
+          example: false
+          default: 'false'
+        deletePurposeFromAllDataSubjects:
+          description: This flag indicates whether the purpose should be deleted from all data subjects.
+          type: boolean
+          example: false
+          default: 'false'
     ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2:
       properties:
         name:
@@ -768,22 +690,37 @@ components:
       - linked
       - name
       - value
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectSliceDtoV2:
+      type: object
       properties:
-        offset:
+        content:
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2'
+          type: array
+        number:
+          description: The page number of the results.
           type: integer
-          format: int64
+          format: int32
+          example: 1
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int32
+          example: 20
+        pageable:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_PageableObject'
+        last:
+          description: Flag indicating whether this is the last page or not.
+          type: boolean
+          example: false
         sort:
           $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
+        first:
           type: boolean
-        unpaged:
+        numberOfElements:
+          type: integer
+          format: int32
+        empty:
           type: boolean
     ConsentAPI_DataSubjectDeleteRequestV2:
       type: object
@@ -827,6 +764,69 @@ components:
           example: false
         removePIInfo:
           description: This flag indicates whether to remove PII data element values from receipts and transactions. This parameter must be used in conjunction with the `retainReceiptsTransactions` parameter.
+          type: boolean
+          example: false
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementSearchDto:
+      properties:
+        name:
+          description: The name of the data element to search for
+          type: string
+          example: Work Email
+        value:
+          description: The value to match against the specified data element name
+          type: string
+          example: example@otprivacy.com
+    ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectDtoV2:
+      properties:
+        id:
+          description: Unique identifier for the Data Subject
+          type: string
+          format: uuid
+          example: 633ba071-61b0-485f-81a0-a2245777b432
+        identifier:
+          description: The Data Subject's identifier (e.g., email, phone number)
+          type: string
+          example: example@otprivacy.com
+        language:
+          description: The preferred language code for the Data Subject
+          type: string
+          example: en-us
+        lastUpdatedDate:
+          description: The timestamp when the Data Subject's record was last updated
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        dataElements:
+          description: Map of data elements and their corresponding values for the Data Subject
+          type: object
+          example:
+            Title: Mr
+            FirstName: Example
+          additionalProperties: true
+        dataElementsMetaData:
+          description: List of data elements with metadata for the Data Subject
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_DataSubjectElementDtoV2'
+        linkToken:
+          description: Token used for magic link authentication of the Data Subject
+          type: string
+          example: jNJW2e8vm8eWb6DlWyGbZ/7PsfC+AHFN8JqvZHPGzJQ=
+        createdDate:
+          description: The timestamp when the Data Subject's record was created
+          type: string
+          format: date-time
+          example: '2020-01-12T16:11:25.479Z'
+        identifierType:
+          description: The type of identifier used for the Data Subject
+          type: string
+          example: Email
+        testDataSubject:
+          description: Indicates whether this is a test Data Subject
+          type: boolean
+          example: false
+        doNotCall:
+          description: Indicates if the Data Subject's phone number is on the FCC's Do Not Call list
           type: boolean
           example: false
   securitySchemes:

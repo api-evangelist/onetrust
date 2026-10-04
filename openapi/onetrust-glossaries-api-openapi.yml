@@ -137,48 +137,100 @@ paths:
         - DATA_CATALOG_READ
 components:
   schemas:
-    DataUseGovernance-DataCatalog_OneTrustSort:
+    DataUseGovernance-DataCatalog_GlossaryResponse:
       type: object
       properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
+        id:
+          description: Unique identifier
           type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Name of the entity
           type: string
-    DataUseGovernance-DataCatalog_OneTrustPage:
-      type: object
-      properties:
-        first:
-          description: This parameter indicates whether the current page is the first page of the list.
-          type: boolean
-        last:
-          description: This parameter indicates whether the current page is the last page of the list.
-          type: boolean
-        number:
-          description: The page number of the results.
+          example: Sample Name
+        nameKey:
+          description: Key used for name localization
+          type: string
+          example: SAMPLE_NAME_KEY
+        numericId:
+          description: Numeric identifier for the glossary
           type: integer
           format: int64
-        size:
-          description: The number of results per page.
-          type: integer
-          format: int64
-        totalElements:
-          description: The total number of results in the list.
-          type: integer
-          format: int64
-        totalPages:
-          description: The total number of pages in the list.
-          type: integer
-          format: int64
-        sort:
-          description: The sort criteria that dictates the order of the results.
+          example: 12345
+        description:
+          description: Description of the glossary
+          type: string
+          example: This glossary contains financial terms
+        descriptionKey:
+          description: Key used for description localization
+          type: string
+          example: FINANCIAL_GLOSSARY_DESC
+        businessOwner:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
+            type: string
+            format: uuid
+            description: Business Owner's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+          uniqueItems: true
+        dataSteward:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Data Steward's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+          uniqueItems: true
+        subjectMatterExpert:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: Subject Matter Expert's ID
+            example: 123e4567-e89b-12d3-a456-426614174001
+          uniqueItems: true
+        createdDate:
+          description: Creation timestamp
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        lastUpdatedDate:
+          description: Last update timestamp
+          type: string
+          format: date-time
+          example: '2023-01-02T00:00:00Z'
+        createdBy:
+          description: UUID of the user who created the glossary
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174003
+        lastUpdatedBy:
+          description: UUID of the user who last updated the glossary
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174004
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
+            description: Term associated with the glossary
+    DataUseGovernance-DataCatalog_IdValueKeyDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        value:
+          description: Display value
+          type: string
+          example: Sample Value
+        key:
+          description: Key used for localization
+          type: string
+          example: SAMPLE_KEY
     DataUseGovernance-DataCatalog_TermResponse:
       type: object
       properties:
@@ -297,19 +349,6 @@ components:
             example: Notes
         meta:
           $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
-    DataUseGovernance-DataCatalog_OneTrustMetadata:
-      type: object
-      properties:
-        page:
-          description: The page number of the results.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
-    DataUseGovernance-DataCatalog_OneTrustResponseOfGlossaryResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_GlossaryResponse'
-        meta:
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
     DataUseGovernance-DataCatalog_TagResponse:
       type: object
       properties:
@@ -360,100 +399,61 @@ components:
           type: string
           format: uuid
           example: 754e4567-de34-12d3-a456-ddf414174777
-    DataUseGovernance-DataCatalog_IdValueKeyDto:
+    DataUseGovernance-DataCatalog_OneTrustPage:
       type: object
       properties:
-        id:
-          description: Unique identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        value:
-          description: Display value
-          type: string
-          example: Sample Value
-        key:
-          description: Key used for localization
-          type: string
-          example: SAMPLE_KEY
-    DataUseGovernance-DataCatalog_GlossaryResponse:
-      type: object
-      properties:
-        id:
-          description: Unique identifier
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          description: Name of the entity
-          type: string
-          example: Sample Name
-        nameKey:
-          description: Key used for name localization
-          type: string
-          example: SAMPLE_NAME_KEY
-        numericId:
-          description: Numeric identifier for the glossary
+        first:
+          description: This parameter indicates whether the current page is the first page of the list.
+          type: boolean
+        last:
+          description: This parameter indicates whether the current page is the last page of the list.
+          type: boolean
+        number:
+          description: The page number of the results.
           type: integer
           format: int64
-          example: 12345
-        description:
-          description: Description of the glossary
-          type: string
-          example: This glossary contains financial terms
-        descriptionKey:
-          description: Key used for description localization
-          type: string
-          example: FINANCIAL_GLOSSARY_DESC
-        businessOwner:
+        size:
+          description: The number of results per page.
+          type: integer
+          format: int64
+        totalElements:
+          description: The total number of results in the list.
+          type: integer
+          format: int64
+        totalPages:
+          description: The total number of pages in the list.
+          type: integer
+          format: int64
+        sort:
+          description: The sort criteria that dictates the order of the results.
           type: array
           items:
-            type: string
-            format: uuid
-            description: Business Owner's ID
-            example: 123e4567-e89b-12d3-a456-426614174001
-          uniqueItems: true
-        dataSteward:
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Data Steward's ID
-            example: 123e4567-e89b-12d3-a456-426614174001
-          uniqueItems: true
-        subjectMatterExpert:
-          type: array
-          items:
-            type: string
-            format: uuid
-            description: Subject Matter Expert's ID
-            example: 123e4567-e89b-12d3-a456-426614174001
-          uniqueItems: true
-        createdDate:
-          description: Creation timestamp
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustSort'
+    DataUseGovernance-DataCatalog_OneTrustMetadata:
+      type: object
+      properties:
+        page:
+          description: The page number of the results.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustPage'
+    DataUseGovernance-DataCatalog_OneTrustResponseOfGlossaryResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_GlossaryResponse'
+        meta:
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalog_OneTrustMetadata'
+    DataUseGovernance-DataCatalog_OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
           type: string
-          format: date-time
-          example: '2023-01-01T00:00:00Z'
-        lastUpdatedDate:
-          description: Last update timestamp
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
           type: string
-          format: date-time
-          example: '2023-01-02T00:00:00Z'
-        createdBy:
-          description: UUID of the user who created the glossary
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174003
-        lastUpdatedBy:
-          description: UUID of the user who last updated the glossary
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174004
-        terms:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalog_TermResponse'
-            description: Term associated with the glossary
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

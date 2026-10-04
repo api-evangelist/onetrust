@@ -743,278 +743,6 @@ paths:
     - url: https://customer.my.onetrust.com/api/cookiemanager
 components:
   schemas:
-    PublishScriptDto:
-      type: object
-      properties:
-        responseMsg:
-          description: The response message returned from the operation.
-          type: string
-          example: Publish initiated successfully!
-          maxLength: 500
-          minLength: 1
-        publishVersion:
-          description: The version number of the published script.
-          type: string
-          example: 202503.2.0
-          maxLength: 50
-          minLength: 1
-        consentPolicyName:
-          description: The name of the consent policy that is applied.
-          type: string
-          example: Default Consent Policy
-          maxLength: 255
-          minLength: 1
-        autoBlocking:
-          description: This flag indicates whether automatic cookie blocking is enabled.
-          type: boolean
-          example: true
-        reconsentRequired:
-          description: This flag indicates whether user reconsent is required.
-          type: boolean
-          example: true
-        publishedDate:
-          description: The date and time when the script was published.
-          type: string
-          format: date-time
-          example: '2025-05-29T14:53:00Z'
-        userName:
-          description: The name of the user who performed the operation.
-          type: string
-          example: User user
-          maxLength: 255
-          minLength: 1
-    PublishRegionRuleDto:
-      type: object
-      properties:
-        ruleId:
-          description: Unique identifier of the geo rule.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        ruleName:
-          description: Name of a Geolocation rule
-          type: string
-          example: Global
-          maxLength: 255
-          minLength: 1
-    DomainScriptDetailsPublicDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier (UUID).
-          type: string
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        url:
-          description: URL assigned to this domain
-          type: string
-          example: onetrust.com
-          maxLength: 255
-          minLength: 1
-        cdnUrl:
-          description: The CDN script to use for production
-          type: string
-          example: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
-          maxLength: 500
-          minLength: 1
-        geoRuleId:
-          description: Unique identifier of the geo rule.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        geoRuleName:
-          description: Name of the geo rule.
-          type: string
-          example: Europe Rule
-          maxLength: 255
-          minLength: 1
-        publishStatus:
-          description: The status of the script publication
-          type: string
-          example: PUBLISHED
-          enum:
-          - DRAFT
-          - PUBLISHED
-          - PUBLISHING
-          - FAILED
-          - WAITING
-        publishDate:
-          description: Date of this publish (timezone UTC)
-          type: string
-          format: date-time
-          example: '2024-01-15T14:30:45'
-        publishVersion:
-          description: Version of this script publish
-          type: string
-          example: 202212.1.0
-          maxLength: 50
-          minLength: 1
-        publishBy:
-          description: Tenant who triggered this publish
-          type: string
-          example: Adithya H.
-          maxLength: 255
-        webformIntegrationEnabled:
-          description: If webform integration is enabled
-          type: boolean
-          example: false
-        autoBlockingEnabled:
-          description: Is autoblocking enabled for this script
-          type: boolean
-          example: true
-        distinctSrcUrl:
-          type: boolean
-    PublishGeolocationRuleRequestApplicationPublicDto:
-      type: object
-      properties:
-        publishVersion:
-          description: Version to publish, by default the lastest version will be used.
-          type: string
-          example: 202603.1.0
-          maxLength: 255
-          minLength: 1
-        production:
-          description: Publish a test (false) or production (true)
-          type: boolean
-          example: true
-          default: 'false'
-        publishType:
-          description: The type of SDK being published
-          type: string
-          example: PUBLISHERS
-          default: HEADLESS
-          enum:
-          - PUBLISHERS
-          - HEADLESS
-          - UNITY
-          - ROKU
-          - XAMARIN
-          - SAMSUNGTV
-          - LGTV
-          - VIZIOTV
-          - HBBTV
-          - PANASONICTV
-          - PS5
-          - YOUVIEW
-        requireReconsent:
-          description: If users will be required to reconsent once this update is published
-          type: boolean
-          example: false
-          default: 'false'
-        langCodes:
-          description: Languages to publish in, by default all languages will be published.
-          type: array
-          items:
-            type: string
-          example:
-          - fr
-          - de
-          - en
-          maxItems: 100
-          minItems: 0
-        regionRules:
-          description: Individual geolocation rules
-          type: array
-          items:
-            $ref: '#/components/schemas/PublishRegionRuleDto'
-          example:
-          - ruleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
-            ruleName: Global
-          - ruleId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-            ruleName: Europe
-          maxItems: 1000
-          minItems: 0
-    ApplicationScriptDetailsPublicDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of this Application.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of this mobile Application.
-          type: string
-          example: CashPro Mobile-iOS
-          maxLength: 255
-          minLength: 1
-        version:
-          description: The version of the script
-          type: string
-          example: 202212.1.0
-          maxLength: 50
-          minLength: 1
-        geoRuleId:
-          description: Unique identifier of the geo rule.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        geoRuleName:
-          description: Name of the geo rule.
-          type: string
-          example: Europe Rule
-          maxLength: 255
-          minLength: 1
-        platform:
-          description: The platform of this Application.
-          type: string
-          example: IOS
-          enum:
-          - IOS
-          - ANDROID
-          - APPLETV
-          - ANDROIDTV
-          - FIRETV
-          - ROKU
-          - SAMSUNGTV
-          - LGTV
-          - VIZIOTV
-          - HBBTV
-          - PANASONICTV
-          - PS5
-          - YOUVIEW
-        lastPublishedStatus:
-          description: The status of the SDK publication
-          type: string
-          example: PUBLISHED
-          enum:
-          - DRAFT
-          - PUBLISHED
-          - PUBLISHING
-          - FAILED
-          - WAITING
-        lastPublishedDate:
-          description: Last date publish date (timezone UTC)
-          type: string
-          format: date-time
-          example: '2024-01-15T14:30:45'
-        lastPublishedVersion:
-          description: Version of the latest publish
-          type: string
-          example: 202212.1.0
-          maxLength: 50
-          minLength: 1
-        lastPublishedBy:
-          description: User who triggered the latest publish
-          type: string
-          example: Adithya H.
-          maxLength: 255
-          minLength: 1
-        solution:
-          description: The type of the SDK published within the application.
-          type: string
-          example: ONETRUST_SDK
-          enum:
-          - API
-          - ONETRUST_SDK
-        publishedVersions:
-          description: The published version of this script.
-          type: array
-          items:
-            type: string
-          example:
-          - 202602.1.0
-          - 202212.1.1
-          uniqueItems: true
     ScriptPublishRequestDto:
       type: object
       properties:
@@ -1144,40 +872,278 @@ components:
           description: When a user makes any consent choice, the web page and consent banner will refresh automatically. This setting can further prevent unauthorized cookies from dropping without consent.
           type: boolean
           default: 'false'
-    PublishScriptDto_2:
+    PublishScriptDto:
       type: object
       properties:
-        autoBlocking:
-          type: boolean
-          description: Auto-blocking leverages an additional script that must be added to the website to block tracking technologies based on the source setting them.
-          example: false
-        consentPolicyName:
+        responseMsg:
+          description: The response message returned from the operation.
           type: string
-          description: The consent policy that is assigned to the website being published.
-          example: EU GeoRule
+          example: Publish initiated successfully!
+          maxLength: 500
+          minLength: 1
         publishVersion:
+          description: The version number of the published script.
           type: string
-          description: The last published version of the script.
-          example: 6.8.0
+          example: 202503.2.0
+          maxLength: 50
+          minLength: 1
+        consentPolicyName:
+          description: The name of the consent policy that is applied.
+          type: string
+          example: Default Consent Policy
+          maxLength: 255
+          minLength: 1
+        autoBlocking:
+          description: This flag indicates whether automatic cookie blocking is enabled.
+          type: boolean
+          example: true
+        reconsentRequired:
+          description: This flag indicates whether user reconsent is required.
+          type: boolean
+          example: true
         publishedDate:
+          description: The date and time when the script was published.
           type: string
           format: date-time
-          description: The date-time when the script was last published.
-          example: '2002-05-31T14:17:26.598Z'
-        reconsentRequired:
-          type: boolean
-          description: Indicates whether website visitors will be reprompted with the Consent Management Platform.
-          example: false
-        responseMsg:
-          type: string
-          description: Response message indicating whether the publish was initiated successfully or it failed.
-          example: Publish initiated successfully
+          example: '2025-05-29T14:53:00Z'
         userName:
+          description: The name of the user who performed the operation.
           type: string
-          description: The tenant GUID of the user which initiated the scan.
-          example: 123e4567-e89b-12d3-a456-426614174000
-      title: PublishScriptDto
-      description: Gets the details of the published production or test script for the website that is passed.
+          example: User user
+          maxLength: 255
+          minLength: 1
+    ApplicationScriptDetailsPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of this Application.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of this mobile Application.
+          type: string
+          example: CashPro Mobile-iOS
+          maxLength: 255
+          minLength: 1
+        version:
+          description: The version of the script
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        platform:
+          description: The platform of this Application.
+          type: string
+          example: IOS
+          enum:
+          - IOS
+          - ANDROID
+          - APPLETV
+          - ANDROIDTV
+          - FIRETV
+          - ROKU
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        lastPublishedStatus:
+          description: The status of the SDK publication
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        lastPublishedDate:
+          description: Last date publish date (timezone UTC)
+          type: string
+          format: date-time
+          example: '2024-01-15T14:30:45'
+        lastPublishedVersion:
+          description: Version of the latest publish
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        lastPublishedBy:
+          description: User who triggered the latest publish
+          type: string
+          example: Adithya H.
+          maxLength: 255
+          minLength: 1
+        solution:
+          description: The type of the SDK published within the application.
+          type: string
+          example: ONETRUST_SDK
+          enum:
+          - API
+          - ONETRUST_SDK
+        publishedVersions:
+          description: The published version of this script.
+          type: array
+          items:
+            type: string
+          example:
+          - 202602.1.0
+          - 202212.1.1
+          uniqueItems: true
+    PublishGeolocationRuleRequestApplicationPublicDto:
+      type: object
+      properties:
+        publishVersion:
+          description: Version to publish, by default the lastest version will be used.
+          type: string
+          example: 202603.1.0
+          maxLength: 255
+          minLength: 1
+        production:
+          description: Publish a test (false) or production (true)
+          type: boolean
+          example: true
+          default: 'false'
+        publishType:
+          description: The type of SDK being published
+          type: string
+          example: PUBLISHERS
+          default: HEADLESS
+          enum:
+          - PUBLISHERS
+          - HEADLESS
+          - UNITY
+          - ROKU
+          - XAMARIN
+          - SAMSUNGTV
+          - LGTV
+          - VIZIOTV
+          - HBBTV
+          - PANASONICTV
+          - PS5
+          - YOUVIEW
+        requireReconsent:
+          description: If users will be required to reconsent once this update is published
+          type: boolean
+          example: false
+          default: 'false'
+        langCodes:
+          description: Languages to publish in, by default all languages will be published.
+          type: array
+          items:
+            type: string
+          example:
+          - fr
+          - de
+          - en
+          maxItems: 100
+          minItems: 0
+        regionRules:
+          description: Individual geolocation rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PublishRegionRuleDto'
+          example:
+          - ruleId: f2229953-b4b5-4042-8cb9-b78038cc4c46
+            ruleName: Global
+          - ruleId: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            ruleName: Europe
+          maxItems: 1000
+          minItems: 0
+    PublishRegionRuleDto:
+      type: object
+      properties:
+        ruleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        ruleName:
+          description: Name of a Geolocation rule
+          type: string
+          example: Global
+          maxLength: 255
+          minLength: 1
+    DomainScriptDetailsPublicDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier (UUID).
+          type: string
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        url:
+          description: URL assigned to this domain
+          type: string
+          example: onetrust.com
+          maxLength: 255
+          minLength: 1
+        cdnUrl:
+          description: The CDN script to use for production
+          type: string
+          example: https://cdn.cookielaw.org/scripttemplates/otSDKStub.js
+          maxLength: 500
+          minLength: 1
+        geoRuleId:
+          description: Unique identifier of the geo rule.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        geoRuleName:
+          description: Name of the geo rule.
+          type: string
+          example: Europe Rule
+          maxLength: 255
+          minLength: 1
+        publishStatus:
+          description: The status of the script publication
+          type: string
+          example: PUBLISHED
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - PUBLISHING
+          - FAILED
+          - WAITING
+        publishDate:
+          description: Date of this publish (timezone UTC)
+          type: string
+          format: date-time
+          example: '2024-01-15T14:30:45'
+        publishVersion:
+          description: Version of this script publish
+          type: string
+          example: 202212.1.0
+          maxLength: 50
+          minLength: 1
+        publishBy:
+          description: Tenant who triggered this publish
+          type: string
+          example: Adithya H.
+          maxLength: 255
+        webformIntegrationEnabled:
+          description: If webform integration is enabled
+          type: boolean
+          example: false
+        autoBlockingEnabled:
+          description: Is autoblocking enabled for this script
+          type: boolean
+          example: true
+        distinctSrcUrl:
+          type: boolean
     ScriptPublishRequestDto_2:
       type: object
       properties:
@@ -1235,6 +1201,40 @@ components:
           default: false
       title: ScriptPublishRequestDto
       description: Publishes the production or test script for the website that is passed. All available settings for publishing will by default use the saved values from the last publish if not specified.
+    PublishScriptDto_2:
+      type: object
+      properties:
+        autoBlocking:
+          type: boolean
+          description: Auto-blocking leverages an additional script that must be added to the website to block tracking technologies based on the source setting them.
+          example: false
+        consentPolicyName:
+          type: string
+          description: The consent policy that is assigned to the website being published.
+          example: EU GeoRule
+        publishVersion:
+          type: string
+          description: The last published version of the script.
+          example: 6.8.0
+        publishedDate:
+          type: string
+          format: date-time
+          description: The date-time when the script was last published.
+          example: '2002-05-31T14:17:26.598Z'
+        reconsentRequired:
+          type: boolean
+          description: Indicates whether website visitors will be reprompted with the Consent Management Platform.
+          example: false
+        responseMsg:
+          type: string
+          description: Response message indicating whether the publish was initiated successfully or it failed.
+          example: Publish initiated successfully
+        userName:
+          type: string
+          description: The tenant GUID of the user which initiated the scan.
+          example: 123e4567-e89b-12d3-a456-426614174000
+      title: PublishScriptDto
+      description: Gets the details of the published production or test script for the website that is passed.
   securitySchemes:
     OAUTH2:
       type: oauth2

@@ -142,23 +142,49 @@ paths:
         - DATA_CATALOG_READ
 components:
   schemas:
-    DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria:
+    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
       type: object
       properties:
-        groupOperator:
-          description: Logical operator between criteria groups
+        from:
+          description: Start value for the range
           type: string
-          enum:
-          - AND
-          - OR
-        criteriaGroups:
+          example: '61'
+        to:
+          description: End value for the range
+          type: string
+          example: '80'
+    DataUseGovernance-DataCatalogMetadataExchange_SearchRequest:
+      type: object
+      properties:
+        searchText:
+          description: Text to search for
+          type: string
+          example: data privacy
+        filterCriteria:
+          description: Filter criteria for the search
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria'
+        searchFields:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup'
-            description: Criteria group of a filter criteria
-          minItems: 1
-      required:
-      - groupOperator
+            type: string
+            description: Search fields for the filter criteria
+            example: description
+        facets:
+          type: array
+          items:
+            type: string
+            description: Facets to include in the response
+            example: documentType
+        selectFields:
+          type: array
+          items:
+            type: string
+            description: Fields to include in the response
+            example: description
+        partialSearch:
+          description: Whether to perform partial text matching
+          type: boolean
+          default: 'false'
     DataUseGovernance-DataCatalogMetadataExchange_Criterion:
       type: object
       properties:
@@ -241,6 +267,22 @@ components:
             description: Value range for the criterion
       required:
       - operator
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
+      type: object
+      properties:
+        data:
+          description: The parameters that detail entity data.
+          type: array
+          items:
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
+        errors:
+          description: This parameter provides error details if 400 Bad Request is returned.
+          type: array
+          items:
+            type: object
+        meta:
+          description: The configuration parameters of the page.
+          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
     DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata:
       type: object
       properties:
@@ -277,17 +319,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort'
-    DataUseGovernance-DataCatalogMetadataExchange_BetweenValue:
-      type: object
-      properties:
-        from:
-          description: Start value for the range
-          type: string
-          example: '61'
-        to:
-          description: End value for the range
-          type: string
-          example: '80'
     DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup:
       type: object
       properties:
@@ -305,47 +336,6 @@ components:
           minItems: 1
       required:
       - operator
-    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2:
-      type: object
-      properties:
-        searchFieldName:
-          description: Name of the search field
-          type: string
-          example: name
-          minLength: 1
-        searchFieldDataType:
-          description: Data type of the field selected
-          type: string
-          example: string
-        operators:
-          type: array
-          items:
-            type: string
-            description: Operators supported by search field
-            enum:
-            - EQ
-            - NOT_EQ
-            - GREATER_THAN
-            - GREATER_THAN_EQUAL_TO
-            - LESS_THAN_EQUAL_TO
-            - AFTER_OR_ON
-            - BEFORE_OR_ON
-            - MORE_THAN
-            - CONTAINS
-            - BETWEEN
-            - WITHIN_THE_LAST
-            - DOES_NOT_CONTAIN
-            - IS_EMPTY
-            - IS_NOT_EMPTY
-            - LIST_CONTAINS
-            - LIST_DOES_NOT_CONTAIN
-            - EQUALS_TO_ANY_OF
-            - NOT_EQUALS_TO_ANY_OF
-            - EQUALS_TO_ALL_OF
-            - NOT_EQUALS_TO_ALL_OF
-            - LIST_CONTAINS_ANY_OF
-            - LIST_DOES_NOT_CONTAIN_ANY_OF
-            example: EQ
     DataUseGovernance-DataCatalogMetadataExchange_SearchFieldResponse:
       type: object
       properties:
@@ -354,38 +344,6 @@ components:
           items:
             $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2'
             description: List of search fields with their metadata
-    DataUseGovernance-DataCatalogMetadataExchange_SearchRequest:
-      type: object
-      properties:
-        searchText:
-          description: Text to search for
-          type: string
-          example: data privacy
-        filterCriteria:
-          description: Filter criteria for the search
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria'
-        searchFields:
-          type: array
-          items:
-            type: string
-            description: Search fields for the filter criteria
-            example: description
-        facets:
-          type: array
-          items:
-            type: string
-            description: Facets to include in the response
-            example: documentType
-        selectFields:
-          type: array
-          items:
-            type: string
-            description: Fields to include in the response
-            example: description
-        partialSearch:
-          description: Whether to perform partial text matching
-          type: boolean
-          default: 'false'
     DataUseGovernance-DataCatalogMetadataExchange_SearchResponse:
       type: object
       properties:
@@ -431,18 +389,6 @@ components:
           description: Source of the search document
           type: string
           example: data-discovery
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort:
-      type: object
-      properties:
-        direction:
-          description: The order (ASC|DESC) by which results are sorted.
-          type: string
-          enum:
-          - ASC
-          - DESC
-        property:
-          description: The criteria by which results are sorted.
-          type: string
     DataUseGovernance-DataCatalogMetadataExchange_FieldValue:
       type: object
       properties:
@@ -470,22 +416,76 @@ components:
           description: Search field mapped field's schema
           type: string
           example: "\"{\n \"name\": \"ClassificationTerm\",\n \"type\": \"Object\",\n \"fields\": [\n {\n \"type\": \"String\",\n \"name\": \"approvedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTerms\"\n },\n {\n \"type\": \"String\",\n \"name\": \"approvedTermId\",\n \"nameKey\": \"DataDictionaryGovSearchApprovedTermIds\"\n },\n {\n \"type\": \"String\",\n \"name\": \"recommendedTerm\",\n \"nameKey\": \"DataDictionaryGovSearchRecommendedTerms\"\n }\n ]\n}\"\n"
-    DataUseGovernance-DataCatalogMetadataExchange_OneTrustResponseListOTSearchDocument:
+    DataUseGovernance-DataCatalogMetadataExchange_FilterCriteria:
       type: object
       properties:
-        data:
-          description: The parameters that detail entity data.
+        groupOperator:
+          description: Logical operator between criteria groups
+          type: string
+          enum:
+          - AND
+          - OR
+        criteriaGroups:
           type: array
           items:
-            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OTSearchDocument'
-        errors:
-          description: This parameter provides error details if 400 Bad Request is returned.
+            $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_CriteriaGroup'
+            description: Criteria group of a filter criteria
+          minItems: 1
+      required:
+      - groupOperator
+    DataUseGovernance-DataCatalogMetadataExchange_OneTrustSort:
+      type: object
+      properties:
+        direction:
+          description: The order (ASC|DESC) by which results are sorted.
+          type: string
+          enum:
+          - ASC
+          - DESC
+        property:
+          description: The criteria by which results are sorted.
+          type: string
+    DataUseGovernance-DataCatalogMetadataExchange_SearchFieldV2:
+      type: object
+      properties:
+        searchFieldName:
+          description: Name of the search field
+          type: string
+          example: name
+          minLength: 1
+        searchFieldDataType:
+          description: Data type of the field selected
+          type: string
+          example: string
+        operators:
           type: array
           items:
-            type: object
-        meta:
-          description: The configuration parameters of the page.
-          $ref: '#/components/schemas/DataUseGovernance-DataCatalogMetadataExchange_OneTrustMetadata'
+            type: string
+            description: Operators supported by search field
+            enum:
+            - EQ
+            - NOT_EQ
+            - GREATER_THAN
+            - GREATER_THAN_EQUAL_TO
+            - LESS_THAN_EQUAL_TO
+            - AFTER_OR_ON
+            - BEFORE_OR_ON
+            - MORE_THAN
+            - CONTAINS
+            - BETWEEN
+            - WITHIN_THE_LAST
+            - DOES_NOT_CONTAIN
+            - IS_EMPTY
+            - IS_NOT_EMPTY
+            - LIST_CONTAINS
+            - LIST_DOES_NOT_CONTAIN
+            - EQUALS_TO_ANY_OF
+            - NOT_EQUALS_TO_ANY_OF
+            - EQUALS_TO_ALL_OF
+            - NOT_EQUALS_TO_ALL_OF
+            - LIST_CONTAINS_ANY_OF
+            - LIST_DOES_NOT_CONTAIN_ANY_OF
+            example: EQ
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

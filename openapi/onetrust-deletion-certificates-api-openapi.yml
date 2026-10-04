@@ -118,6 +118,15 @@ paths:
         - CONSENT_READ
 components:
   schemas:
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentAPI_DeletionCertificateResponseDto:
       type: object
       properties:
@@ -204,15 +213,6 @@ components:
           type: integer
           format: int32
         unpaged:
-          type: boolean
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
           type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:

@@ -85,30 +85,6 @@ paths:
         - CONTROL
 components:
   schemas:
-    TechRiskCompliance-ITRiskManagement_LinkableEntity:
-      type: object
-      properties:
-        id:
-          description: Linkable Entity Identifier
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
-        type:
-          description: Linkable Entity Type
-          type: string
-          example: Control
-          minLength: 1
-        name:
-          description: Linkable Entity Name
-          type: string
-          example: Information security policy
-        orgGroupId:
-          description: Linkable Entity Organization Group Identifier
-          type: string
-          format: uuid
-          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5pe3
-      required:
-      - id
     TechRiskCompliance-ITRiskManagement_ControlBulkLinkCreateRequest:
       type: object
       properties:
@@ -138,19 +114,6 @@ components:
       - destinations
       - linkTypeNameKey
       - source
-    TechRiskCompliance-ITRiskManagement_LinkTypeInformation:
-      type: object
-      properties:
-        id:
-          description: Link Type Information Identifier
-          type: string
-          format: uuid
-        name:
-          description: Link Type Information Name
-          type: string
-        nameKey:
-          description: Link Type Information Name Key used for translation
-          type: string
     TechRiskCompliance-ITRiskManagement_LinkInformation:
       type: object
       properties:
@@ -182,6 +145,43 @@ components:
         linkType:
           description: Link Information Link Type Information
           $ref: '#/components/schemas/TechRiskCompliance-ITRiskManagement_LinkTypeInformation'
+    TechRiskCompliance-ITRiskManagement_LinkTypeInformation:
+      type: object
+      properties:
+        id:
+          description: Link Type Information Identifier
+          type: string
+          format: uuid
+        name:
+          description: Link Type Information Name
+          type: string
+        nameKey:
+          description: Link Type Information Name Key used for translation
+          type: string
+    TechRiskCompliance-ITRiskManagement_LinkableEntity:
+      type: object
+      properties:
+        id:
+          description: Linkable Entity Identifier
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q
+        type:
+          description: Linkable Entity Type
+          type: string
+          example: Control
+          minLength: 1
+        name:
+          description: Linkable Entity Name
+          type: string
+          example: Information security policy
+        orgGroupId:
+          description: Linkable Entity Organization Group Identifier
+          type: string
+          format: uuid
+          example: 1a2b3c4e-5f6g-7h8i-9j0k-1l2m3n4o5pe3
+      required:
+      - id
   securitySchemes:
     TechRiskCompliance-ITRiskManagement_OAUTH2:
       type: oauth2

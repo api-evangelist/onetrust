@@ -1009,6 +1009,189 @@ paths:
         - INVENTORY_WRITE
 components:
   schemas:
+    PersonalDataLinkAttributesRequest:
+      type: object
+      properties:
+        linkAttributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/InventoryValue'
+    InventoryValue:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the inventory value
+          type: string
+          format: uuid
+          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
+        value:
+          description: The display value
+          type: string
+          example: High Risk
+        valueKey:
+          description: The key of the value
+          type: string
+          example: HIGH_RISK
+        colorCode:
+          description: Color code associated with the value
+          type: string
+          example: '#FF0000'
+        selectionValue:
+          description: Selection value
+          type: string
+          example: high
+    InventoryAssociationCreateRequest:
+      type: object
+      properties:
+        relation:
+          description: The type of relationship between inventory records
+          type: string
+          example: JointControllerLinkType
+          enum:
+          - ControllerLinkType
+          - JointControllerLinkType
+          - RelatedLinkType
+          - RecipientOfSaleLinkType
+          - SubProcessorLinkType
+          - ProcessorLinkType
+          - DestinationAccessLinkType
+          - ProductOrServiceProviderLinkType
+          - StorageProcessingLinkType
+          - SourceCollectionLinkType
+        id:
+          description: The unique identifier of the inventory record to link to
+          type: string
+          format: uuid
+          example: d31425ae-1321-4738-bb76-bdca83c0944c
+        entityType:
+          description: The type of the inventory entity
+          type: string
+          example: vendors
+      required:
+      - id
+    InventoryAssociationUpdateRequest:
+      type: object
+      properties:
+        relation:
+          description: The type of relationship between inventory records
+          type: string
+          example: JointControllerLinkType
+          enum:
+          - ControllerLinkType
+          - JointControllerLinkType
+          - RelatedLinkType
+          - RecipientOfSaleLinkType
+          - SubProcessorLinkType
+          - ProcessorLinkType
+          - DestinationAccessLinkType
+          - ProductOrServiceProviderLinkType
+          - StorageProcessingLinkType
+          - SourceCollectionLinkType
+        InventoryType:
+          type: string
+          example: vendors
+          enum:
+          - processing-activities
+          - vendors
+          - assets
+          - entities
+        Ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a1087fcb-1058-40ba-8c36-43dfafc0bba8
+          - f9d7a8f1-af0d-418e-9092-e860307a48a3
+      required:
+      - Ids
+      - InventoryType
+    PersonalDataMetadataRequest:
+      type: object
+      properties:
+        fieldMetadataMapId:
+          type: string
+          format: uuid
+        fieldName:
+          type: string
+        basePath:
+          type: string
+        subPath:
+          type: string
+        fieldType:
+          type: string
+        fieldValue:
+          type: string
+        fieldDescription:
+          type: string
+        fieldLabel:
+          type: string
+        systemType:
+          type: string
+        recordCount:
+          type: integer
+          format: int32
+        key:
+          type: string
+        metadataId:
+          type: string
+          format: uuid
+        dataSourceId:
+          type: string
+          format: uuid
+      required:
+      - fieldName
+      - systemType
+    InventoryControlImplementationsRequest:
+      type: object
+      properties:
+        controlIds:
+          description: Set of control IDs to be implemented for the given inventory entity
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - a8d2f0c6-63e5-476b-b600-79a447251a2a
+          - b9e3f1d7-74f6-587c-c711-8ba558362b3b
+          uniqueItems: true
+        status:
+          description: Implementation status of the controls being added to the inventory. If not provided, defaults to 'Pending'
+          type: string
+          example: Implemented
+          enum:
+          - Implemented
+          - Not Implemented
+          - Partially Implemented
+          - Not Applicable
+          - Pending
+      required:
+      - controlIds
+    ObjectReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: string
+        valueKey:
+          type: string
+    BaseInventoryAssociationDto:
+      type: object
+      properties:
+        inventoryId:
+          description: The unique identifier of the linked inventory record
+          type: string
+          format: uuid
+          example: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
+        inventoryAssociationId:
+          description: The unique identifier of the association between inventory records
+          type: string
+          format: uuid
+          example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
     PersonalDataLinkRequest:
       type: object
       properties:
@@ -1080,86 +1263,6 @@ components:
           type: string
           format: uuid
           example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
-    PersonalDataLinkAttributesRequest:
-      type: object
-      properties:
-        linkAttributes:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/InventoryValue'
-    InventoryAssociationRemoveRequest:
-      type: object
-      properties:
-        inventoryAssociationId:
-          description: The unique identifier of the association to remove
-          type: string
-          format: uuid
-          example: d31425ae-1321-4738-bb76-bdca83c0944c
-      required:
-      - inventoryAssociationId
-    InventoryAssociationUpdateRequest:
-      type: object
-      properties:
-        relation:
-          description: The type of relationship between inventory records
-          type: string
-          example: JointControllerLinkType
-          enum:
-          - ControllerLinkType
-          - JointControllerLinkType
-          - RelatedLinkType
-          - RecipientOfSaleLinkType
-          - SubProcessorLinkType
-          - ProcessorLinkType
-          - DestinationAccessLinkType
-          - ProductOrServiceProviderLinkType
-          - StorageProcessingLinkType
-          - SourceCollectionLinkType
-        InventoryType:
-          type: string
-          example: vendors
-          enum:
-          - processing-activities
-          - vendors
-          - assets
-          - entities
-        Ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - a1087fcb-1058-40ba-8c36-43dfafc0bba8
-          - f9d7a8f1-af0d-418e-9092-e860307a48a3
-      required:
-      - Ids
-      - InventoryType
-    InventoryValue:
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the inventory value
-          type: string
-          format: uuid
-          example: 7e9d5f2a-8b1c-4d3e-9f6a-1a2b3c4d5e6f
-        value:
-          description: The display value
-          type: string
-          example: High Risk
-        valueKey:
-          description: The key of the value
-          type: string
-          example: HIGH_RISK
-        colorCode:
-          description: Color code associated with the value
-          type: string
-          example: '#FF0000'
-        selectionValue:
-          description: Selection value
-          type: string
-          example: high
     InventoryAssociationRequest:
       type: object
       properties:
@@ -1178,119 +1281,16 @@ components:
           - ProductOrServiceProviderLinkType
           - StorageProcessingLinkType
           - SourceCollectionLinkType
-    ObjectReference:
+    InventoryAssociationRemoveRequest:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        value:
-          type: string
-        valueKey:
-          type: string
-    PersonalDataMetadataRequest:
-      type: object
-      properties:
-        fieldMetadataMapId:
-          type: string
-          format: uuid
-        fieldName:
-          type: string
-        basePath:
-          type: string
-        subPath:
-          type: string
-        fieldType:
-          type: string
-        fieldValue:
-          type: string
-        fieldDescription:
-          type: string
-        fieldLabel:
-          type: string
-        systemType:
-          type: string
-        recordCount:
-          type: integer
-          format: int32
-        key:
-          type: string
-        metadataId:
-          type: string
-          format: uuid
-        dataSourceId:
-          type: string
-          format: uuid
-      required:
-      - fieldName
-      - systemType
-    InventoryControlImplementationsRequest:
-      type: object
-      properties:
-        controlIds:
-          description: Set of control IDs to be implemented for the given inventory entity
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - a8d2f0c6-63e5-476b-b600-79a447251a2a
-          - b9e3f1d7-74f6-587c-c711-8ba558362b3b
-          uniqueItems: true
-        status:
-          description: Implementation status of the controls being added to the inventory. If not provided, defaults to 'Pending'
-          type: string
-          example: Implemented
-          enum:
-          - Implemented
-          - Not Implemented
-          - Partially Implemented
-          - Not Applicable
-          - Pending
-      required:
-      - controlIds
-    InventoryAssociationCreateRequest:
-      type: object
-      properties:
-        relation:
-          description: The type of relationship between inventory records
-          type: string
-          example: JointControllerLinkType
-          enum:
-          - ControllerLinkType
-          - JointControllerLinkType
-          - RelatedLinkType
-          - RecipientOfSaleLinkType
-          - SubProcessorLinkType
-          - ProcessorLinkType
-          - DestinationAccessLinkType
-          - ProductOrServiceProviderLinkType
-          - StorageProcessingLinkType
-          - SourceCollectionLinkType
-        id:
-          description: The unique identifier of the inventory record to link to
+        inventoryAssociationId:
+          description: The unique identifier of the association to remove
           type: string
           format: uuid
           example: d31425ae-1321-4738-bb76-bdca83c0944c
-        entityType:
-          description: The type of the inventory entity
-          type: string
-          example: vendors
       required:
-      - id
-    BaseInventoryAssociationDto:
-      type: object
-      properties:
-        inventoryId:
-          description: The unique identifier of the linked inventory record
-          type: string
-          format: uuid
-          example: 9a7c3ec1-7830-4811-8563-36e0a093e7ae
-        inventoryAssociationId:
-          description: The unique identifier of the association between inventory records
-          type: string
-          format: uuid
-          example: 4374d5da-44ac-4308-a298-3efdb0f34ba4
+      - inventoryAssociationId
   securitySchemes:
     OAUTH2:
       type: oauth2

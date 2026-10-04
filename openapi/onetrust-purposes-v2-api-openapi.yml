@@ -298,149 +298,20 @@ paths:
         - CONSENT_READ
 components:
   schemas:
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail:
-      properties:
-        id:
-          description: Unique identifier of the purpose-topic relationship
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        transactionType:
-          description: Type of transaction associated with the topic
-          type: string
-          example: OPT_IN
-        name:
-          description: Name of the topic
-          type: string
-          example: Car Marketing
-        integrationKey:
-          description: Integration key formed by combining purpose and topic names
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        languages:
-          description: List of language-specific content for the topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail'
-        canDelete:
-          description: Indicates whether this topic can be deleted
-          type: boolean
-          example: true
-      required:
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple:
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail:
       properties:
         name:
           type: string
-        language:
-          type: string
-        default:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail:
-      properties:
-        id:
-          type: string
-        transactionType:
-          type: string
-        label:
-          type: string
-        order:
-          type: integer
-          format: int32
-        isDefault:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple:
-      properties:
-        id:
-          description: Unique identifier of the purpose-topic relationship
-          type: string
-          format: uuid
-          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
-        transactionType:
-          description: Type of transaction associated with the topic
-          type: string
-          example: OPT_IN
-        name:
-          description: Name of the topic
-          type: string
-          example: Car Marketing
-        integrationKey:
-          description: Integration key formed by combining purpose and topic names
-          type: string
-          example: Marketing-Communications_Car-Marketing
-        languages:
-          description: List of language-specific content for the topic
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple'
-        canDelete:
-          description: Indicates whether this topic can be deleted
-          type: boolean
-          example: true
-      required:
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2_Detail:
-      properties:
-        name:
-          description: The purpose name in the specified language
-          type: string
-          example: Marketing Communications
         description:
-          description: The purpose description in the specified language
           type: string
-          example: Collect customer emails for marketing purposes
-        implicitConsentConfirmDesc:
-          description: Description text for the implicit consent confirmation checkbox in the specified language
-          type: string
-          example: I agree to the processing of my personal data for this purpose
         language:
-          description: IETF BCP 47 language tag for the content
           type: string
-          example: en-US
         default:
-          description: Indicates if this is the default language for the purpose
           type: boolean
-          example: true
-        hardOptOutMessage:
-          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
-          type: string
-          example: This purpose is required and cannot be opted out
-      required:
-      - description
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Simple:
-      properties:
-        id:
-          description: Unique identifier of the purpose-custom preference relationship
-          type: string
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: Name of the custom preference
-          type: string
-          example: Email Frequency
-        displayAs:
-          description: Display type for rendering the custom preference in the UI
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        customPreferenceOptions:
-          description: List of available options for this custom preference
+        options:
           type: array
           items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
-        languages:
-          description: List of language-specific content for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple'
-      required:
-      - displayAs
-      - id
-      - name
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeDetailDtoV2_Detail:
       type: object
       properties:
@@ -599,22 +470,48 @@ components:
       - purposeType
       - status
       - version
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple:
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple:
       properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
+        empty:
           type: boolean
-        unpaged:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail:
+      properties:
+        id:
+          type: string
+        transactionType:
+          type: string
+        label:
+          type: string
+        order:
+          type: integer
+          format: int32
+        isDefault:
           type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeDtoV2_Simple:
       properties:
@@ -758,87 +655,6 @@ components:
       - purposeType
       - status
       - version
-    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail:
-      properties:
-        name:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
-    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail:
-      properties:
-        id:
-          description: Unique identifier of the purpose-custom preference relationship
-          type: string
-          example: c4a57a38-3774-45ad-9fa4-dbc545542232
-        name:
-          description: Name of the custom preference
-          type: string
-          example: Email Frequency
-        displayAs:
-          description: Display type for rendering the custom preference in the UI
-          type: string
-          example: BUTTONS
-          enum:
-          - BUTTONS
-          - CHECKBOXES
-        customPreferenceOptions:
-          description: List of available options for this custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
-        languages:
-          description: List of language-specific content for the custom preference
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail'
-      required:
-      - displayAs
-      - id
-      - name
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail:
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple:
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple:
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        language:
-          type: string
-        default:
-          type: boolean
-        options:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
     ConsentPreferences-UniversalConsentPreferenceManag_PagePurposeVersionsGroupedByGuid_Simple:
       type: object
       properties:
@@ -888,6 +704,159 @@ components:
           type: integer
           format: int32
           example: 20
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeLanguageDtoV2_Detail:
+      properties:
+        name:
+          description: The purpose name in the specified language
+          type: string
+          example: Marketing Communications
+        description:
+          description: The purpose description in the specified language
+          type: string
+          example: Collect customer emails for marketing purposes
+        implicitConsentConfirmDesc:
+          description: Description text for the implicit consent confirmation checkbox in the specified language
+          type: string
+          example: I agree to the processing of my personal data for this purpose
+        language:
+          description: IETF BCP 47 language tag for the content
+          type: string
+          example: en-US
+        default:
+          description: Indicates if this is the default language for the purpose
+          type: boolean
+          example: true
+        hardOptOutMessage:
+          description: The message to display with the purpose when the consent status is Hard opt-out. This message only displays when hardOptOutDisplayFormat is set to LOCK.
+          type: string
+          example: This purpose is required and cannot be opted out
+      required:
+      - description
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Detail:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Detail'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Detail'
+      required:
+      - displayAs
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Detail:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Detail'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeTopicDtoV2_Simple:
+      properties:
+        id:
+          description: Unique identifier of the purpose-topic relationship
+          type: string
+          format: uuid
+          example: 497c4383-2c61-4906-aed0-660e3fd03ef0
+        transactionType:
+          description: Type of transaction associated with the topic
+          type: string
+          example: OPT_IN
+        name:
+          description: Name of the topic
+          type: string
+          example: Car Marketing
+        integrationKey:
+          description: Integration key formed by combining purpose and topic names
+          type: string
+          example: Marketing-Communications_Car-Marketing
+        languages:
+          description: List of language-specific content for the topic
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple'
+        canDelete:
+          description: Indicates whether this topic can be deleted
+          type: boolean
+          example: true
+      required:
+      - id
+      - name
+    ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple:
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject_Simple:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject_Simple'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_TopicLanguageDtoV2_Simple:
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+        default:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PurposeVersionsGroupedByGuid_Simple:
       properties:
         purposeId:
@@ -937,6 +906,37 @@ components:
       - createdDate
       - purposeId
       - versions
+    ConsentPreferences-UniversalConsentPreferenceManag_PurposeCustomPreferenceDtoV2_Simple:
+      properties:
+        id:
+          description: Unique identifier of the purpose-custom preference relationship
+          type: string
+          example: c4a57a38-3774-45ad-9fa4-dbc545542232
+        name:
+          description: Name of the custom preference
+          type: string
+          example: Email Frequency
+        displayAs:
+          description: Display type for rendering the custom preference in the UI
+          type: string
+          example: BUTTONS
+          enum:
+          - BUTTONS
+          - CHECKBOXES
+        customPreferenceOptions:
+          description: List of available options for this custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceOptionDtoV2_Simple'
+        languages:
+          description: List of language-specific content for the custom preference
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_CustomPreferenceLanguageDtoV2_Simple'
+      required:
+      - displayAs
+      - id
+      - name
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

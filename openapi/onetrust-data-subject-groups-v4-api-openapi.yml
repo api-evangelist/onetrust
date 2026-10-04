@@ -502,100 +502,6 @@ paths:
         - CONSENT
 components:
   schemas:
-    ConsentAPI_LinkedIdentityGroupDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the data subject group.
-          type: string
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The name of the data subject group.
-          type: string
-          example: a2229953-b4b5-4042-8cb9-b78038cc4c41
-        identifier:
-          description: The data subject identifier of the data subject.
-          type: string
-          example: example@otprivacy.com
-        isPrimary:
-          description: This flag indicates whether the data subject identifier is the primary identifier associated with the data subject group.
-          type: boolean
-          example: true
-        addedDate:
-          description: The date and time that the data subject was added to the data subject group.
-          type: string
-          format: date-time
-          example: '2020-05-30T12:23:42.145Z'
-    ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto:
-      type: object
-      properties:
-        id:
-          description: Unique identifier (UUID) of the data subject
-          type: string
-          format: uuid
-          example: a3f8d56a-b123-4b2a-9eab-12cfea1bc456
-        identifier:
-          description: The original identifier value for the data subject
-          type: string
-          example: user@example.com
-        identifierType:
-          description: Type of identifier (e.g., EMAIL, PHONE)
-          type: string
-          example: EMAIL
-        addedDate:
-          description: Date and time when the data subject was added to the group
-          type: string
-          format: date-time
-          example: '2024-11-12T10:15:30'
-    ConsentAPI_LinkedIdentityGroupPageItemDto:
-      type: object
-      properties:
-        id:
-          description: The unique identifier for a data subject group.
-          type: string
-          format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
-        name:
-          description: The unique name for a data subject group.
-          type: string
-          example: Marketing Data Subject Group
-        createdDate:
-          description: The date on which the data subject group was created.
-          type: string
-          format: date-time
-          example: '2020-05-30T12:23:42.145Z'
-        lastModifiedDate:
-          description: The date on which the data subject group was last modified.
-          type: string
-          format: date-time
-          example: '2020-05-30T12:23:42.145Z'
-    ConsentAPI_PageableObject:
-      type: object
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentAPI_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        pageSize:
-          type: integer
-          format: int32
-        unpaged:
-          type: boolean
-    ConsentAPI_SortObject:
-      type: object
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
     ConsentAPI_LinkedIdentityGroupResponseDto:
       type: object
       properties:
@@ -622,6 +528,69 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto'
+    ConsentAPI_LinkedIdentityGroupDataSubjectResponseDto:
+      type: object
+      properties:
+        id:
+          description: Unique identifier (UUID) of the data subject
+          type: string
+          format: uuid
+          example: a3f8d56a-b123-4b2a-9eab-12cfea1bc456
+        identifier:
+          description: The original identifier value for the data subject
+          type: string
+          example: user@example.com
+        identifierType:
+          description: Type of identifier (e.g., EMAIL, PHONE)
+          type: string
+          example: EMAIL
+        addedDate:
+          description: Date and time when the data subject was added to the group
+          type: string
+          format: date-time
+          example: '2024-11-12T10:15:30'
+    ConsentAPI_LinkedIdentityGroupDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the data subject group.
+          type: string
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the data subject group.
+          type: string
+          example: a2229953-b4b5-4042-8cb9-b78038cc4c41
+        identifier:
+          description: The data subject identifier of the data subject.
+          type: string
+          example: example@otprivacy.com
+        isPrimary:
+          description: This flag indicates whether the data subject identifier is the primary identifier associated with the data subject group.
+          type: boolean
+          example: true
+        addedDate:
+          description: The date and time that the data subject was added to the data subject group.
+          type: string
+          format: date-time
+          example: '2020-05-30T12:23:42.145Z'
+    ConsentAPI_PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentAPI_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
     ConsentAPI_LinkedIdentityGroupPageItemSliceDto:
       type: object
       properties:
@@ -694,6 +663,28 @@ components:
           description: The token used to paginate a response if the number of records is more than a page.
           type: string
           example: '{\"compositeToken\": \"jmxpAKZxe9nZkAoAAAAAAA==\"}'
+    ConsentAPI_LinkedIdentityGroupPageItemDto:
+      type: object
+      properties:
+        id:
+          description: The unique identifier for a data subject group.
+          type: string
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The unique name for a data subject group.
+          type: string
+          example: Marketing Data Subject Group
+        createdDate:
+          description: The date on which the data subject group was created.
+          type: string
+          format: date-time
+          example: '2020-05-30T12:23:42.145Z'
+        lastModifiedDate:
+          description: The date on which the data subject group was last modified.
+          type: string
+          format: date-time
+          example: '2020-05-30T12:23:42.145Z'
     ConsentAPI_LinkedIdentityGroupRequestDto:
       type: object
       properties:
@@ -721,6 +712,15 @@ components:
       - groupName
       - memberIdentifiers
       - primaryIdentifiers
+    ConsentAPI_SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

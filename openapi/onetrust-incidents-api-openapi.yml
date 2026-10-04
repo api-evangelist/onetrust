@@ -543,355 +543,24 @@ paths:
         - INCIDENT
 components:
   schemas:
-    IncidentStatus:
-      type: string
-      example: OPEN
-      enum:
-      - OPEN
-      - CLOSED
-    WorkflowSpecificStageNavigationRequest:
+    IncidentAssigneeInformation:
       type: object
       properties:
-        nextStageName:
-          description: Name of the next stage to navigate to
-          type: string
-          example: Investigation
-        parameters:
-          description: Additional parameters for workflow navigation customization
-          additionalProperties:
-            type: object
-          example:
-            skipValidation: true
-            notifyUsers: false
-          type: object
-      example:
-        nextStageName: Investigation
-        parameters:
-          notifyUsers: false
-          priority: high
-          reason: Critical security incident
-          skipValidation: true
-      required:
-      - nextStageName
-    LinkCreationMode:
-      type: string
-      example: INTEGRATION
-      default: MANUAL
-      enum:
-      - MANUAL
-      - ASSESSMENT
-      - INTEGRATION
-    IncidentCreateRequest:
-      type: object
-      properties:
-        name:
-          description: 'Name of the incident.
-
-            Provide a descriptive name to the incident so that it can be quickly referenced in the incident register.
-
-            '
-          type: string
-          example: Joe sent an email to the wrong client
-        description:
-          description: Brief description of the incident.
-          type: string
-          example: 'An employee accessed a restricted HR file without proper authorization.
-
-            Access logs confirmed the breach, and the user’s permissions were immediately revoked.
-
-            '
-        incidentTypeName:
-          description: The name of the type of incident that has occurred.
-          type: string
-          example: Misdirected Email
-          default: Unknown
-        orgGroupId:
-          description: 'Incident Organization ID.
-
-            This can be retrieved from the [Get List of Organizations](/onetrust/reference/organizationtreestructureusingget) API.
-
-            '
+        assigneeId:
+          description: Incident User Assignee Id
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        dateOccurred:
-          description: The date and time when the incident occurred, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2019-05-31T12:43:24.173Z'
-        dateDiscovered:
-          description: The date and time when the incident was discovered, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2019-05-31T15:00:00.000Z'
-        deadline:
-          description: The date by which the incident investigation or notification must be completed, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2019-07-31T12:43:24.173Z'
-        sourceType:
-          description: Creation Source
-          example: INTEGRATION
-          default: MANUAL
-          enum:
-          - MANUAL
-          - ASSESSMENT
-          - WEBFORM
-          - INTEGRATION
-          $ref: '#/components/schemas/IncidentSourceType'
-        rootCause:
-          description: The root cause summary of the incident.
-          type: string
-          example: 'The root cause was traced to a lack of validation in the email recipient auto-fill feature,
-
-            leading to sensitive data being sent to the wrong external recipient.
-
-            '
-        notificationNeeded:
-          description: Indicates whether a notification is required for this incident either to an authority or affected individuals.
-          example: 'YES'
-          default: UNKNOWN
-          enum:
-          - 'YES'
-          - 'NO'
-          - UNKNOWN
-          $ref: '#/components/schemas/NotificationNeededType'
-        attributeValues:
-          description: 'A map of custom attribute field names to the list of values associated with each attribute.
-
-            Each entry in the list can contain either an ''id'' (for predefined options) or a ''value'', depending on the attribute configuration.
-
-            If any attribute value is missing in the JSON array, the existing value for that attribute will be overridden, and the attribute will have empty values.
-
-            '
-          type: object
-          example:
-            customTextAttributeFieldName:
-            - value: Attribute Value
-            customSingleSelectAttributeFieldName:
-            - value: Option Value 1
-            customMultiSelectAttributeFieldName:
-            - value: Option Value 2
-            - value: Option Value 3
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
-        incidentAssigneeRequests:
-          description: A list of incident assignee requests, where each request includes an assignee's ID, optional email, and type (USER or GROUP).
-          type: array
-          items:
-            $ref: '#/components/schemas/IncidentAssigneeRequest'
-          properties:
-            list:
-              type: array
-              items:
-                $ref: '#/components/schemas/IncidentAssigneeRequest'
-            empty:
-              type: boolean
-            first:
-              $ref: '#/components/schemas/IncidentAssigneeRequest'
-            last:
-              $ref: '#/components/schemas/IncidentAssigneeRequest'
-        jurisdictions:
-          type: array
-          items:
-            $ref: '#/components/schemas/IncidentJurisdictionCreateRequest'
-            description: Impacted jurisdictions for the incident.
-        linkedInventories:
-          description: 'Map of inventory types to a single inventory link request.
-
-            Keys represent inventory types (''assets'', ''processing-activities'', ''vendors'', ''entities''),
-
-            and the value contains either externalIds or inventoryIds.
-
-            '
-          type: object
-          example:
-            assets:
-              externalIds:
-              - Asset External ID
-            processing-activities:
-              externalIds:
-              - Processing Activity External ID
-            vendors:
-              externalIds:
-              - Vendor External ID
-            entities:
-              externalIds:
-              - Legal Entity External ID
-          additionalProperties:
-            $ref: '#/components/schemas/InventoryLinkCreationRequest'
-        autoAssessJurisdictions:
-          description: If set to true, automatically assess jurisdictions after incident creation.
-          type: boolean
-          default: 'false'
-      required:
-      - incidentTypeName
-      - name
-      - orgGroupId
-    IncidentListInformation:
-      type: object
-      properties:
-        incidentId:
-          description: Incident Identifier
-          type: string
-          format: uuid
-          example: 1d429adf-26c5-413b-9b01-e7845a5dde99
-        number:
-          description: Incident Number
-          type: integer
-          format: int64
-          example: 1
-        incidentTypeId:
-          description: The unique identifier for the incident type.
-          type: string
-          format: uuid
-        incidentTypeName:
-          description: The name of the incident type.
-          type: string
-          example: Misdirected Email
-        description:
-          description: Incident Description
-          type: string
-          example: 'An employee accessed a restricted HR file without proper authorization.
-
-            Access logs confirmed the breach, and the user’s permissions were immediately revoked.
-
-            '
-        sourceType:
-          description: Creation Source
-          type: string
-          example: INTEGRATION
-          enum:
-          - MANUAL
-          - ASSESSMENT
-          - WEBFORM
-          - NONE
-          - INTEGRATION
-        orgGroupId:
-          description: Organization Group Id
-          type: string
-          format: uuid
-        orgGroupName:
-          description: Organization Group Name
-          type: string
-          example: Business Unit
-        dateOccurred:
-          description: The date and time when the incident occurred, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2025-04-01T12:43:24.173Z'
-        dateClosed:
-          description: The date and time when the incident was closed, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2025-04-03T12:43:24.173Z'
-        dateDiscovered:
-          description: The date and time when the incident was discovered, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2025-04-02T12:43:24.173Z'
-        deadline:
-          description: The date by which the incident investigation or notification must be completed, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2025-04-03T12:43:24.173Z'
         assigneeName:
           description: Incident User Assignee Name
           type: string
           example: User Name
-        totalAssessment:
-          description: Count of Assessment Linked to this Incident
-          type: integer
-          format: int64
-          example: 0
-        isExtended:
-          description: Indicates whether the notification deadline has been extended.
-          type: boolean
-        isDeleted:
-          description: Indicates whether the incident has been deleted.
-          type: boolean
-          example: false
-        createdBy:
-          description: Incident Created User Id.
+        type:
+          description: Indicates whether the assignee is an individual user or a group of users.
           type: string
-          format: uuid
-        creator:
-          description: Incident Created User Name
-          type: string
-          example: User Name
-        createdDate:
-          description: The date and time when the incident was created, represented as an ISO 8601 timestamp in UTC.
-          type: string
-          format: date-time
-          example: '2025-04-02T13:00:00.173Z'
-        name:
-          description: Incident Name
-          type: string
-          example: Joe sent an email to the wrong client
-        openAssessment:
-          description: Count of Open Assessments Linked to this Incident
-          type: integer
-          format: int64
-          example: 1
-        workflowId:
-          description: Incident Workflow Id
-          type: string
-          format: uuid
-        workflowName:
-          description: Incident Workflow Name.
-          type: string
-          example: Default Workflow
-        incidentStageId:
-          description: Incident Stage Id
-          type: string
-          format: uuid
-        incidentStageName:
-          description: Incident Stage Name
-          type: string
-          example: Investigating
-        incidentStageBadgeColor:
-          description: The badge color of the incident workflow stage.
-          type: string
-          example: InProgress
-        notificationNeeded:
-          description: Incident Notification Needed
-          type: string
-          example: UNKNOWN
+          default: USER
           enum:
-          - 'YES'
-          - 'NO'
-          - UNKNOWN
-        incidentStatus:
-          description: Incident Status
-          type: string
-          example: OPEN
-          enum:
-          - OPEN
-          - CLOSED
-        attributeValues:
-          description: Custom Attributes
-          type: object
-          example:
-            customTextAttributeFieldName:
-            - value: Attribute Value
-              disabled: false
-            customSingleSelectAttributeFieldName:
-            - id: 0f5afc29-7fe1-4145-b541-ac33158312b6
-              value: Option Value 1
-              disabled: false
-            customMultiSelectAttributeFieldName:
-            - id: 736a8cb4-4e0e-4938-a43f-74edbaf46c0a
-              value: Option Value 2
-              disabled: false
-            - id: b4e17ed9-5e11-44f8-bb20-100af4d9e39b
-              value: Option Value 3
-              disabled: false
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/AttributeValueInformation'
+          - USER
+          - GROUP
     IncidentInformation:
       type: object
       properties:
@@ -1090,7 +759,190 @@ components:
             description: Impacted jurisdictions for the incident.
         closedSettingOn:
           type: boolean
-    IncidentUpdateRequest:
+    InventoryLinkCreationRequest:
+      type: object
+      properties:
+        inventoryIds:
+          description: Inventory Identifiers
+          type: array
+          items:
+            type: string
+            format: uuid
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+          - 550e8400-e29b-41d4-a716-446655440001
+          uniqueItems: true
+        externalIds:
+          description: Set of unique identifiers for the record from an external system
+          type: array
+          items:
+            type: string
+          example:
+          - EXT-12345
+          - EXT-67890
+          uniqueItems: true
+        sourceType:
+          description: Source of inventory link creation
+          type: string
+          example: INTEGRATION
+          default: MANUAL
+          enum:
+          - MANUAL
+          - ASSESSMENT
+          - INTEGRATION
+          $ref: '#/components/schemas/LinkCreationMode'
+    StageExceptionInformation:
+      type: object
+      properties:
+        stageExceptionApprovers:
+          description: Workflow Stage Exception Approvers
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageApproverInformation'
+        exceptionGrantedTargetStageId:
+          description: Target stage for exception approval
+          type: string
+          format: uuid
+        workflowExceptionApprovalRequiredFromAll:
+          description: Is exception required from all approvers
+          type: boolean
+    AssociatedAttributeValueInformation:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the attribute option
+          type: string
+          format: uuid
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
+          type: string
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
+          type: string
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
+          type: string
+          example: red
+      required:
+      - value
+    BasicEntityDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    SearchCriteriaInformation:
+      type: object
+      properties:
+        filters:
+          description: filters, which is a map of the field name and the value. Can filter on Incident Id, assignee Id, type Id, organization group Id, number, created By, is extended, is deleted
+          type: object
+          additionalProperties:
+            type: object
+            description: filters, which is a map of the field name and the value. Can filter on Incident Id, assignee Id, type Id, organization group Id, number, created By, is extended, is deleted
+        fullText:
+          description: full text search term. Can search on Incident name, description, type name, assignee name, organization group name, root cause, creator and stage name
+          type: string
+          example: Joe
+    IncidentJurisdictionCreateRequest:
+      type: object
+      properties:
+        jurisdictionId:
+          description: Incident Jurisdiction Id
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        countryCode:
+          description: Three-digit country code of the jurisdiction.
+          type: string
+          default: USA
+        stateProvinceCode:
+          description: State Province Code. **Required if countryCode is 'USA' or 'CAN'**.
+          type: string
+          example: CA
+      required:
+      - countryCode
+    IncidentJurisdictionGuidanceInformation:
+      type: object
+      properties:
+        jurisdictionId:
+          description: Incident Jurisdiction Id
+          type: string
+          format: uuid
+        regionName:
+          description: Region Name
+          type: string
+          example: Americas
+        countryName:
+          description: Country Name
+          type: string
+          example: United States of America
+        countryCode:
+          description: Country Code
+          type: string
+          example: USA
+        stateProvinceName:
+          description: State Province Name
+          type: string
+          example: California
+        stateProvinceCode:
+          description: State Province Code
+          type: string
+          example: CA
+        urgency:
+          description: Urgency
+          type: string
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - NONE
+        notifyIndividual:
+          description: Individual Incident Guidance Notification State
+          type: string
+          example: NOTIFICATION_REQUIRED
+          enum:
+          - NOTIFICATION_REQUIRED
+          - NOTIFICATION_NOT_REQUIRED
+          - NEEDS_MORE_INFO
+        notifyIndividualDeadline:
+          description: The recommended deadline by which an individual should be notified, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+        notifyAuthority:
+          description: Guidance Notify Authority
+          type: string
+          example: NOTIFICATION_REQUIRED
+          enum:
+          - NOTIFICATION_REQUIRED
+          - NOTIFICATION_NOT_REQUIRED
+          - NEEDS_MORE_INFO
+        notifyAuthorityDeadline:
+          description: The recommended notification deadline for an authority, in ISO 8601 UTC format.
+          type: string
+          format: date-time
+        numberOfGuidances:
+          description: Number Of Guidances
+          type: integer
+          format: int32
+          example: 2
+        numberOfAcceptedGuidances:
+          description: Number Of Accepted Guidances
+          type: integer
+          format: int32
+          example: 1
+        numberOfAddressedGuidances:
+          description: Number Of Addressed Guidances
+          type: integer
+          format: int32
+          example: 1
+    IncidentCreateRequest:
       type: object
       properties:
         name:
@@ -1207,168 +1059,96 @@ components:
           items:
             $ref: '#/components/schemas/IncidentJurisdictionCreateRequest'
             description: Impacted jurisdictions for the incident.
+        linkedInventories:
+          description: 'Map of inventory types to a single inventory link request.
+
+            Keys represent inventory types (''assets'', ''processing-activities'', ''vendors'', ''entities''),
+
+            and the value contains either externalIds or inventoryIds.
+
+            '
+          type: object
+          example:
+            assets:
+              externalIds:
+              - Asset External ID
+            processing-activities:
+              externalIds:
+              - Processing Activity External ID
+            vendors:
+              externalIds:
+              - Vendor External ID
+            entities:
+              externalIds:
+              - Legal Entity External ID
+          additionalProperties:
+            $ref: '#/components/schemas/InventoryLinkCreationRequest'
+        autoAssessJurisdictions:
+          description: If set to true, automatically assess jurisdictions after incident creation.
+          type: boolean
+          default: 'false'
       required:
       - incidentTypeName
       - name
       - orgGroupId
-    EntityOrganizationInformation:
+    IncidentStatus:
+      type: string
+      example: OPEN
+      enum:
+      - OPEN
+      - CLOSED
+    WorkflowStageAssignmentInformation:
       type: object
       properties:
         id:
-          description: The unique identifier of the organization.
+          description: Workflow Stage Assignment Id
           type: string
           format: uuid
-          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
         name:
-          description: The name of the organization.
+          description: Workflow Stage Assignment name
           type: string
-          example: Business Unit
-      required:
-      - id
-    SearchCriteriaInformation:
+        sourceType:
+          description: Assignment type System/Customer
+          type: string
+        approverCategory:
+          description: 'Approver Category for stage assignment: Stage/Exception'
+          type: string
+    InventoryLinkAssociationInformation:
       type: object
       properties:
-        filters:
-          description: filters, which is a map of the field name and the value. Can filter on Incident Id, assignee Id, type Id, organization group Id, number, created By, is extended, is deleted
-          type: object
-          additionalProperties:
-            type: object
-            description: filters, which is a map of the field name and the value. Can filter on Incident Id, assignee Id, type Id, organization group Id, number, created By, is extended, is deleted
-        fullText:
-          description: full text search term. Can search on Incident name, description, type name, assignee name, organization group name, root cause, creator and stage name
+        inventoryType:
+          description: Type of the associated inventory
           type: string
-          example: Joe
-    WorkflowStageListInformation:
-      type: object
-      properties:
+          example: assets
+          enum:
+          - assets
+          - processing-activities
+          - vendors
+          - entities
         id:
-          description: Workflow Stage Identifier
+          description: Unique identifier of the associated inventory
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
+          example: 550e8400-e29b-41d4-a716-446655440001
         name:
-          description: Workflow Stage Name
+          description: Name of the associated inventory
           type: string
-          example: Investigation
-        nameKey:
-          description: Workflow Stage Name Key for translation purposes
-          type: string
-          example: workflow.stage.investigation
-        description:
-          description: Workflow Stage Description
-          type: string
-          example: Investigation stage for incident workflow
-        descriptionKey:
-          description: Workflow Stage Description Key for translation purposes
-          type: string
-          example: workflow.stage.investigation.description
-        sequence:
-          description: Workflow Stage Sequence number
-          type: integer
-          format: int32
-          example: 2
-          minimum: 1
-        allowDeletion:
-          description: Indicates if Workflow Stage can be deleted
-          type: boolean
-          example: true
-          default: 'false'
-        badgeColor:
-          description: Workflow Stage Badge Color for UI purposes
-          type: string
-          example: blue
-        approvalStage:
-          description: Indicates if the stage is an approval stage
-          type: boolean
-          example: true
-          default: 'false'
-        exceptionStage:
-          description: Indicates if the stage is an exception approval stage
-          type: boolean
-          example: false
-          default: 'false'
-        autoAdvanceOnApproval:
-          description: Can Workflow Stage Auto-Advance on Approval?
-          type: boolean
-          example: true
-          default: 'false'
-        customFields:
-          description: Custom fields
-          type: object
+          example: Customer Data Asset
+        organization:
+          description: Organization of the associated inventory
           example:
-            priority: high
-            category: security
-          additionalProperties:
-            type: object
-        stageApprovers:
-          description: Workflow Stage Approvers
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowStageApproverInformation'
-        additionalFields:
-          description: Additional fields associated with Workflow Stage
-          type: object
-          example:
-            notificationEnabled: true
-          additionalProperties:
-            type: object
-        advanceStageActionEnabled:
-          description: Does Workflow Stage has advance stage action enabled?
-          type: boolean
-          example: true
-          default: 'false'
-        advanceStageActions:
-          description: Workflow Stage Advance Actions
-          type: array
-          items:
-            $ref: '#/components/schemas/AdvanceStageActionInformation'
-        stageExceptionConfiguration:
-          description: Workflow Stage Exception details
-          $ref: '#/components/schemas/StageExceptionInformation'
-        stageAssignments:
-          description: Workflow Stage assignments
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkflowStageAssignmentInformation'
-      example:
-        id: 123e4567-e89b-12d3-a456-426614174000
-        name: Investigation
-        nameKey: workflow.stage.investigation
-        description: Investigation stage for incident workflow
-        descriptionKey: workflow.stage.investigation.description
-        sequence: 2
-        allowDeletion: true
-        badgeColor: blue
-        approvalStage: true
-        exceptionStage: false
-        autoAdvanceOnApproval: true
-        customFields:
-          priority: high
-          category: security
-        stageApprovers:
-        - id: abc-123
-          name: Security Approver
-        additionalFields:
-          notificationEnabled: true
-        advanceStageActionEnabled: true
-        advanceStageActions:
-        - id: def-456
-          name: Approve
-        stageExceptionConfiguration:
-          enabled: true
-          approverCount: 2
-      required:
-      - id
-      - name
-      - sequence
-    BasicEntityDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
+            id: d1119953-b4b5-4042-8cb9-b78038cc2c46
+            name: Organization
+          $ref: '#/components/schemas/EntityOrganizationInformation'
+    IncidentSourceType:
+      type: string
+      example: INTEGRATION
+      default: MANUAL
+      enum:
+      - MANUAL
+      - ASSESSMENT
+      - WEBFORM
+      - INTEGRATION
     AdvanceStageActionInformation:
       type: object
       properties:
@@ -1389,38 +1169,43 @@ components:
       required:
       - actionType
       - id
-    InventoryLinkCreationRequest:
+    EntityOrganizationInformation:
       type: object
       properties:
-        inventoryIds:
-          description: Inventory Identifiers
-          type: array
-          items:
-            type: string
-            format: uuid
-          example:
-          - 550e8400-e29b-41d4-a716-446655440000
-          - 550e8400-e29b-41d4-a716-446655440001
-          uniqueItems: true
-        externalIds:
-          description: Set of unique identifiers for the record from an external system
-          type: array
-          items:
-            type: string
-          example:
-          - EXT-12345
-          - EXT-67890
-          uniqueItems: true
-        sourceType:
-          description: Source of inventory link creation
+        id:
+          description: The unique identifier of the organization.
           type: string
-          example: INTEGRATION
-          default: MANUAL
+          format: uuid
+          example: f2229953-b4b5-4042-8cb9-b78038cc4c46
+        name:
+          description: The name of the organization.
+          type: string
+          example: Business Unit
+      required:
+      - id
+    IncidentAssigneeRequest:
+      type: object
+      properties:
+        assigneeId:
+          description: Incident User Assignee Id
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        assigneeEmail:
+          description: Email of the incident assignee. This field is valid only when the assignee type is "USER".
+          type: string
+          format: email
+          example: user@example.com
+        type:
+          description: Indicates whether the assignee is an individual user or a group of users.
+          type: string
+          example: USER
+          default: USER
           enum:
-          - MANUAL
-          - ASSESSMENT
-          - INTEGRATION
-          $ref: '#/components/schemas/LinkCreationMode'
+          - USER
+          - GROUP
+      required:
+      - assigneeId
     AttributeValueInformation:
       type: object
       properties:
@@ -1461,66 +1246,22 @@ components:
           default: 'false'
       required:
       - value
-    NamedAttributeValueInformation:
-      type: object
-      properties:
-        attributeName:
-          description: Customer-defined attribute name
-          type: string
-          example: Custom_SS
-        id:
-          description: Unique identifier for the attribute option
-          type: string
-          format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
-          type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
-          type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
-          type: string
-          example: red
-        optionSelectionValue:
-          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
-          type: string
-          example: '3.5'
-        displayLabel:
-          description: Display name for the option, used for external attributes managed by other systems
-          type: string
-          example: United State | San Francisco
-        associatedAttributeValueInformation:
-          description: Associated attribute option information
-          type: array
-          items:
-            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
-        disabled:
-          description: Indicates whether this attribute option is currently disabled.
-          type: boolean
-          example: false
-          default: 'false'
-      required:
-      - value
-    WorkflowStageAssignmentInformation:
-      type: object
-      properties:
-        id:
-          description: Workflow Stage Assignment Id
-          type: string
-          format: uuid
-        name:
-          description: Workflow Stage Assignment name
-          type: string
-        sourceType:
-          description: Assignment type System/Customer
-          type: string
-        approverCategory:
-          description: 'Approver Category for stage assignment: Stage/Exception'
-          type: string
+    LinkCreationMode:
+      type: string
+      example: INTEGRATION
+      default: MANUAL
+      enum:
+      - MANUAL
+      - ASSESSMENT
+      - INTEGRATION
+    NotificationNeededType:
+      type: string
+      example: 'YES'
+      default: UNKNOWN
+      enum:
+      - 'YES'
+      - 'NO'
+      - UNKNOWN
     IncidentDetails:
       type: object
       properties:
@@ -1714,39 +1455,129 @@ components:
               name: John Doe
         closedSettingOn:
           type: boolean
-    IncidentAssigneeInformation:
+    WorkflowStageListInformation:
       type: object
       properties:
-        assigneeId:
-          description: Incident User Assignee Id
+        id:
+          description: Workflow Stage Identifier
           type: string
           format: uuid
-        assigneeName:
-          description: Incident User Assignee Name
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          description: Workflow Stage Name
           type: string
-          example: User Name
-        type:
-          description: Indicates whether the assignee is an individual user or a group of users.
+          example: Investigation
+        nameKey:
+          description: Workflow Stage Name Key for translation purposes
           type: string
-          default: USER
-          enum:
-          - USER
-          - GROUP
-    StageExceptionInformation:
-      type: object
-      properties:
-        stageExceptionApprovers:
-          description: Workflow Stage Exception Approvers
+          example: workflow.stage.investigation
+        description:
+          description: Workflow Stage Description
+          type: string
+          example: Investigation stage for incident workflow
+        descriptionKey:
+          description: Workflow Stage Description Key for translation purposes
+          type: string
+          example: workflow.stage.investigation.description
+        sequence:
+          description: Workflow Stage Sequence number
+          type: integer
+          format: int32
+          example: 2
+          minimum: 1
+        allowDeletion:
+          description: Indicates if Workflow Stage can be deleted
+          type: boolean
+          example: true
+          default: 'false'
+        badgeColor:
+          description: Workflow Stage Badge Color for UI purposes
+          type: string
+          example: blue
+        approvalStage:
+          description: Indicates if the stage is an approval stage
+          type: boolean
+          example: true
+          default: 'false'
+        exceptionStage:
+          description: Indicates if the stage is an exception approval stage
+          type: boolean
+          example: false
+          default: 'false'
+        autoAdvanceOnApproval:
+          description: Can Workflow Stage Auto-Advance on Approval?
+          type: boolean
+          example: true
+          default: 'false'
+        customFields:
+          description: Custom fields
+          type: object
+          example:
+            priority: high
+            category: security
+          additionalProperties:
+            type: object
+        stageApprovers:
+          description: Workflow Stage Approvers
           type: array
           items:
             $ref: '#/components/schemas/WorkflowStageApproverInformation'
-        exceptionGrantedTargetStageId:
-          description: Target stage for exception approval
-          type: string
-          format: uuid
-        workflowExceptionApprovalRequiredFromAll:
-          description: Is exception required from all approvers
+        additionalFields:
+          description: Additional fields associated with Workflow Stage
+          type: object
+          example:
+            notificationEnabled: true
+          additionalProperties:
+            type: object
+        advanceStageActionEnabled:
+          description: Does Workflow Stage has advance stage action enabled?
           type: boolean
+          example: true
+          default: 'false'
+        advanceStageActions:
+          description: Workflow Stage Advance Actions
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvanceStageActionInformation'
+        stageExceptionConfiguration:
+          description: Workflow Stage Exception details
+          $ref: '#/components/schemas/StageExceptionInformation'
+        stageAssignments:
+          description: Workflow Stage assignments
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkflowStageAssignmentInformation'
+      example:
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Investigation
+        nameKey: workflow.stage.investigation
+        description: Investigation stage for incident workflow
+        descriptionKey: workflow.stage.investigation.description
+        sequence: 2
+        allowDeletion: true
+        badgeColor: blue
+        approvalStage: true
+        exceptionStage: false
+        autoAdvanceOnApproval: true
+        customFields:
+          priority: high
+          category: security
+        stageApprovers:
+        - id: abc-123
+          name: Security Approver
+        additionalFields:
+          notificationEnabled: true
+        advanceStageActionEnabled: true
+        advanceStageActions:
+        - id: def-456
+          name: Approve
+        stageExceptionConfiguration:
+          enabled: true
+          approverCount: 2
+      required:
+      - id
+      - name
+      - sequence
     AssessmentInformation:
       type: object
       properties:
@@ -1771,140 +1602,237 @@ components:
           type: boolean
       required:
       - assessmentId
-    IncidentAssigneeRequest:
+    WorkflowStageApproverInformation:
       type: object
       properties:
-        assigneeId:
-          description: Incident User Assignee Id
-          type: string
-          format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440000
-        assigneeEmail:
-          description: Email of the incident assignee. This field is valid only when the assignee type is "USER".
-          type: string
-          format: email
-          example: user@example.com
-        type:
-          description: Indicates whether the assignee is an individual user or a group of users.
-          type: string
-          example: USER
-          default: USER
-          enum:
-          - USER
-          - GROUP
-      required:
-      - assigneeId
-    IncidentSourceType:
-      type: string
-      example: INTEGRATION
-      default: MANUAL
-      enum:
-      - MANUAL
-      - ASSESSMENT
-      - WEBFORM
-      - INTEGRATION
-    InventoryLinkAssociationInformation:
-      type: object
-      properties:
-        inventoryType:
-          description: Type of the associated inventory
-          type: string
-          example: assets
-          enum:
-          - assets
-          - processing-activities
-          - vendors
-          - entities
         id:
-          description: Unique identifier of the associated inventory
+          description: Workflow Stage Approver Identifier
           type: string
           format: uuid
-          example: 550e8400-e29b-41d4-a716-446655440001
-        name:
-          description: Name of the associated inventory
+        workFlowStageId:
+          description: Workflow Stage Id
           type: string
-          example: Customer Data Asset
-        organization:
-          description: Organization of the associated inventory
-          example:
-            id: d1119953-b4b5-4042-8cb9-b78038cc2c46
-            name: Organization
-          $ref: '#/components/schemas/EntityOrganizationInformation'
-    IncidentJurisdictionGuidanceInformation:
+          format: uuid
+        approverType:
+          description: Workflow Stage Approver Type
+          type: string
+          enum:
+          - SYSTEM_USER, USER_ATTRIBUTE
+        approverUserId:
+          description: Workflow Stage Approver User Id, User ID from Onetrust System
+          type: string
+          format: uuid
+        referenceApproverUserSourceId:
+          description: Reference identifier for approver' source. ie, fieldName from attribute Manager
+          type: string
+        referenceApproverUserSourceOwner:
+          description: Reference Source Owner. ie, schemaname from attribute manager
+          type: string
+        approverUserGroupId:
+          description: Workflow Stage Approver User Group Id, User Group ID from Onetrust System
+          type: string
+          format: uuid
+        approverCategory:
+          description: Field to indicate if the approver is for stage approval or exception
+          type: string
+        customFields:
+          description: Custom fields
+          type: object
+          additionalProperties:
+            type: object
+      required:
+      - approverType
+      - id
+      - workFlowStageId
+    NamedAttributeValueInformation:
       type: object
       properties:
-        jurisdictionId:
-          description: Incident Jurisdiction Id
+        attributeName:
+          description: Customer-defined attribute name
+          type: string
+          example: Custom_SS
+        id:
+          description: Unique identifier for the attribute option
           type: string
           format: uuid
-        regionName:
-          description: Region Name
+          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
+        value:
+          description: Attribute value
           type: string
-          example: Americas
-        countryName:
-          description: Country Name
+          example: Text Value
+        valueKey:
+          description: Translation key used for localizing the value
           type: string
-          example: United States of America
-        countryCode:
-          description: Country Code
+          example: attribute.option.valueKey
+        colorCode:
+          description: Color code associated with the option. Used for score-based attributes.
           type: string
-          example: USA
-        stateProvinceName:
-          description: State Province Name
+          example: red
+        optionSelectionValue:
+          description: Selection score value linked to the option. Used for score-based or numerical-based attributes.
           type: string
-          example: California
-        stateProvinceCode:
-          description: State Province Code
+          example: '3.5'
+        displayLabel:
+          description: Display name for the option, used for external attributes managed by other systems
           type: string
-          example: CA
-        urgency:
-          description: Urgency
+          example: United State | San Francisco
+        associatedAttributeValueInformation:
+          description: Associated attribute option information
+          type: array
+          items:
+            $ref: '#/components/schemas/AssociatedAttributeValueInformation'
+        disabled:
+          description: Indicates whether this attribute option is currently disabled.
+          type: boolean
+          example: false
+          default: 'false'
+      required:
+      - value
+    WorkflowSpecificStageNavigationRequest:
+      type: object
+      properties:
+        nextStageName:
+          description: Name of the next stage to navigate to
           type: string
-          example: HIGH
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-          - NONE
-        notifyIndividual:
-          description: Individual Incident Guidance Notification State
+          example: Investigation
+        parameters:
+          description: Additional parameters for workflow navigation customization
+          additionalProperties:
+            type: object
+          example:
+            skipValidation: true
+            notifyUsers: false
+          type: object
+      example:
+        nextStageName: Investigation
+        parameters:
+          notifyUsers: false
+          priority: high
+          reason: Critical security incident
+          skipValidation: true
+      required:
+      - nextStageName
+    IncidentUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: 'Name of the incident.
+
+            Provide a descriptive name to the incident so that it can be quickly referenced in the incident register.
+
+            '
           type: string
-          example: NOTIFICATION_REQUIRED
-          enum:
-          - NOTIFICATION_REQUIRED
-          - NOTIFICATION_NOT_REQUIRED
-          - NEEDS_MORE_INFO
-        notifyIndividualDeadline:
-          description: The recommended deadline by which an individual should be notified, represented as an ISO 8601 timestamp in UTC.
+          example: Joe sent an email to the wrong client
+        description:
+          description: Brief description of the incident.
+          type: string
+          example: 'An employee accessed a restricted HR file without proper authorization.
+
+            Access logs confirmed the breach, and the user’s permissions were immediately revoked.
+
+            '
+        incidentTypeName:
+          description: The name of the type of incident that has occurred.
+          type: string
+          example: Misdirected Email
+          default: Unknown
+        orgGroupId:
+          description: 'Incident Organization ID.
+
+            This can be retrieved from the [Get List of Organizations](/onetrust/reference/organizationtreestructureusingget) API.
+
+            '
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        dateOccurred:
+          description: The date and time when the incident occurred, represented as an ISO 8601 timestamp in UTC.
           type: string
           format: date-time
-        notifyAuthority:
-          description: Guidance Notify Authority
-          type: string
-          example: NOTIFICATION_REQUIRED
-          enum:
-          - NOTIFICATION_REQUIRED
-          - NOTIFICATION_NOT_REQUIRED
-          - NEEDS_MORE_INFO
-        notifyAuthorityDeadline:
-          description: The recommended notification deadline for an authority, in ISO 8601 UTC format.
+          example: '2019-05-31T12:43:24.173Z'
+        dateDiscovered:
+          description: The date and time when the incident was discovered, represented as an ISO 8601 timestamp in UTC.
           type: string
           format: date-time
-        numberOfGuidances:
-          description: Number Of Guidances
-          type: integer
-          format: int32
-          example: 2
-        numberOfAcceptedGuidances:
-          description: Number Of Accepted Guidances
-          type: integer
-          format: int32
-          example: 1
-        numberOfAddressedGuidances:
-          description: Number Of Addressed Guidances
-          type: integer
-          format: int32
-          example: 1
+          example: '2019-05-31T15:00:00.000Z'
+        deadline:
+          description: The date by which the incident investigation or notification must be completed, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+          example: '2019-07-31T12:43:24.173Z'
+        sourceType:
+          description: Creation Source
+          example: INTEGRATION
+          default: MANUAL
+          enum:
+          - MANUAL
+          - ASSESSMENT
+          - WEBFORM
+          - INTEGRATION
+          $ref: '#/components/schemas/IncidentSourceType'
+        rootCause:
+          description: The root cause summary of the incident.
+          type: string
+          example: 'The root cause was traced to a lack of validation in the email recipient auto-fill feature,
+
+            leading to sensitive data being sent to the wrong external recipient.
+
+            '
+        notificationNeeded:
+          description: Indicates whether a notification is required for this incident either to an authority or affected individuals.
+          example: 'YES'
+          default: UNKNOWN
+          enum:
+          - 'YES'
+          - 'NO'
+          - UNKNOWN
+          $ref: '#/components/schemas/NotificationNeededType'
+        attributeValues:
+          description: 'A map of custom attribute field names to the list of values associated with each attribute.
+
+            Each entry in the list can contain either an ''id'' (for predefined options) or a ''value'', depending on the attribute configuration.
+
+            If any attribute value is missing in the JSON array, the existing value for that attribute will be overridden, and the attribute will have empty values.
+
+            '
+          type: object
+          example:
+            customTextAttributeFieldName:
+            - value: Attribute Value
+            customSingleSelectAttributeFieldName:
+            - value: Option Value 1
+            customMultiSelectAttributeFieldName:
+            - value: Option Value 2
+            - value: Option Value 3
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
+        incidentAssigneeRequests:
+          description: A list of incident assignee requests, where each request includes an assignee's ID, optional email, and type (USER or GROUP).
+          type: array
+          items:
+            $ref: '#/components/schemas/IncidentAssigneeRequest'
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/IncidentAssigneeRequest'
+            empty:
+              type: boolean
+            first:
+              $ref: '#/components/schemas/IncidentAssigneeRequest'
+            last:
+              $ref: '#/components/schemas/IncidentAssigneeRequest'
+        jurisdictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncidentJurisdictionCreateRequest'
+            description: Impacted jurisdictions for the incident.
+      required:
+      - incidentTypeName
+      - name
+      - orgGroupId
     IncidentAttachmentResponse:
       type: object
       properties:
@@ -1954,96 +1882,168 @@ components:
       - Incident Attachment Link
       - Incident Attachment Name
       - Incident Attachment Type
-    IncidentJurisdictionCreateRequest:
+    IncidentListInformation:
       type: object
       properties:
-        jurisdictionId:
-          description: Incident Jurisdiction Id
+        incidentId:
+          description: Incident Identifier
           type: string
           format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        countryCode:
-          description: Three-digit country code of the jurisdiction.
-          type: string
-          default: USA
-        stateProvinceCode:
-          description: State Province Code. **Required if countryCode is 'USA' or 'CAN'**.
-          type: string
-          example: CA
-      required:
-      - countryCode
-    AssociatedAttributeValueInformation:
-      type: object
-      properties:
-        id:
-          description: Unique identifier for the attribute option
+          example: 1d429adf-26c5-413b-9b01-e7845a5dde99
+        number:
+          description: Incident Number
+          type: integer
+          format: int64
+          example: 1
+        incidentTypeId:
+          description: The unique identifier for the incident type.
           type: string
           format: uuid
-          example: a34ccec7-1ec0-4d65-9075-bdd0d923f1d1
-        value:
-          description: Attribute value
+        incidentTypeName:
+          description: The name of the incident type.
           type: string
-          example: Text Value
-        valueKey:
-          description: Translation key used for localizing the value
+          example: Misdirected Email
+        description:
+          description: Incident Description
           type: string
-          example: attribute.option.valueKey
-        colorCode:
-          description: Color code associated with the option. Used for score-based attributes.
+          example: 'An employee accessed a restricted HR file without proper authorization.
+
+            Access logs confirmed the breach, and the user’s permissions were immediately revoked.
+
+            '
+        sourceType:
+          description: Creation Source
           type: string
-          example: red
-      required:
-      - value
-    NotificationNeededType:
-      type: string
-      example: 'YES'
-      default: UNKNOWN
-      enum:
-      - 'YES'
-      - 'NO'
-      - UNKNOWN
-    WorkflowStageApproverInformation:
-      type: object
-      properties:
-        id:
-          description: Workflow Stage Approver Identifier
-          type: string
-          format: uuid
-        workFlowStageId:
-          description: Workflow Stage Id
-          type: string
-          format: uuid
-        approverType:
-          description: Workflow Stage Approver Type
-          type: string
+          example: INTEGRATION
           enum:
-          - SYSTEM_USER, USER_ATTRIBUTE
-        approverUserId:
-          description: Workflow Stage Approver User Id, User ID from Onetrust System
+          - MANUAL
+          - ASSESSMENT
+          - WEBFORM
+          - NONE
+          - INTEGRATION
+        orgGroupId:
+          description: Organization Group Id
           type: string
           format: uuid
-        referenceApproverUserSourceId:
-          description: Reference identifier for approver' source. ie, fieldName from attribute Manager
+        orgGroupName:
+          description: Organization Group Name
           type: string
-        referenceApproverUserSourceOwner:
-          description: Reference Source Owner. ie, schemaname from attribute manager
+          example: Business Unit
+        dateOccurred:
+          description: The date and time when the incident occurred, represented as an ISO 8601 timestamp in UTC.
           type: string
-        approverUserGroupId:
-          description: Workflow Stage Approver User Group Id, User Group ID from Onetrust System
+          format: date-time
+          example: '2025-04-01T12:43:24.173Z'
+        dateClosed:
+          description: The date and time when the incident was closed, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+          example: '2025-04-03T12:43:24.173Z'
+        dateDiscovered:
+          description: The date and time when the incident was discovered, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+          example: '2025-04-02T12:43:24.173Z'
+        deadline:
+          description: The date by which the incident investigation or notification must be completed, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+          example: '2025-04-03T12:43:24.173Z'
+        assigneeName:
+          description: Incident User Assignee Name
+          type: string
+          example: User Name
+        totalAssessment:
+          description: Count of Assessment Linked to this Incident
+          type: integer
+          format: int64
+          example: 0
+        isExtended:
+          description: Indicates whether the notification deadline has been extended.
+          type: boolean
+        isDeleted:
+          description: Indicates whether the incident has been deleted.
+          type: boolean
+          example: false
+        createdBy:
+          description: Incident Created User Id.
           type: string
           format: uuid
-        approverCategory:
-          description: Field to indicate if the approver is for stage approval or exception
+        creator:
+          description: Incident Created User Name
           type: string
-        customFields:
-          description: Custom fields
+          example: User Name
+        createdDate:
+          description: The date and time when the incident was created, represented as an ISO 8601 timestamp in UTC.
+          type: string
+          format: date-time
+          example: '2025-04-02T13:00:00.173Z'
+        name:
+          description: Incident Name
+          type: string
+          example: Joe sent an email to the wrong client
+        openAssessment:
+          description: Count of Open Assessments Linked to this Incident
+          type: integer
+          format: int64
+          example: 1
+        workflowId:
+          description: Incident Workflow Id
+          type: string
+          format: uuid
+        workflowName:
+          description: Incident Workflow Name.
+          type: string
+          example: Default Workflow
+        incidentStageId:
+          description: Incident Stage Id
+          type: string
+          format: uuid
+        incidentStageName:
+          description: Incident Stage Name
+          type: string
+          example: Investigating
+        incidentStageBadgeColor:
+          description: The badge color of the incident workflow stage.
+          type: string
+          example: InProgress
+        notificationNeeded:
+          description: Incident Notification Needed
+          type: string
+          example: UNKNOWN
+          enum:
+          - 'YES'
+          - 'NO'
+          - UNKNOWN
+        incidentStatus:
+          description: Incident Status
+          type: string
+          example: OPEN
+          enum:
+          - OPEN
+          - CLOSED
+        attributeValues:
+          description: Custom Attributes
           type: object
+          example:
+            customTextAttributeFieldName:
+            - value: Attribute Value
+              disabled: false
+            customSingleSelectAttributeFieldName:
+            - id: 0f5afc29-7fe1-4145-b541-ac33158312b6
+              value: Option Value 1
+              disabled: false
+            customMultiSelectAttributeFieldName:
+            - id: 736a8cb4-4e0e-4938-a43f-74edbaf46c0a
+              value: Option Value 2
+              disabled: false
+            - id: b4e17ed9-5e11-44f8-bb20-100af4d9e39b
+              value: Option Value 3
+              disabled: false
           additionalProperties:
-            type: object
-      required:
-      - approverType
-      - id
-      - workFlowStageId
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeValueInformation'
   securitySchemes:
     OAUTH2:
       type: oauth2

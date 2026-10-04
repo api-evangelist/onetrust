@@ -170,14 +170,6 @@ components:
       required:
       - termId
       - termName
-    DataUseGovernance-DataAssetManagement_DataAssetBasicResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the data asset.
-          type: string
-          format: uuid
-          example: 6756206c-845c-4ecc-8826-0e25d12b0d0c
     DataUseGovernance-DataAssetManagement_DataAssetTagAssociationRequest:
       type: object
       properties:
@@ -193,6 +185,14 @@ components:
       required:
       - tagId
       - tagName
+    DataUseGovernance-DataAssetManagement_DataAssetBasicResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the data asset.
+          type: string
+          format: uuid
+          example: 6756206c-845c-4ecc-8826-0e25d12b0d0c
   securitySchemes:
     DataUseGovernance-DataCatalog_OAUTH2:
       type: oauth2

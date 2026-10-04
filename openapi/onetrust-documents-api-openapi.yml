@@ -434,22 +434,42 @@ paths:
         - POLICY
 components:
   schemas:
-    PolicyCreationApiRequest:
+    OrgGroupResponse:
       type: object
       properties:
-        orgGroup:
-          description: The details of the organization responsible for the policy, standard, procedure, or privacy notice.
-          $ref: '#/components/schemas/OrgGroupAssignmentRequest'
+        id:
+          description: The unique identifier of the organization responsible for the policy, standard, procedure, or privacy notice.
+          type: string
+          format: uuid
+        name:
+          description: The name of the organization responsible for the policy, standard, procedure, or privacy notice.
+          type: string
+    PolicyApiResponse:
+      type: object
+      properties:
+        guid:
+          description: The unique identifier of the policy, standard, procedure, or privacy notice.
+          type: string
+          format: uuid
         name:
           description: The name of the policy, standard, procedure, or privacy notice.
           type: string
-          maxLength: 200
-          minLength: 1
         description:
           description: The description of the policy, standard, procedure, or privacy notice.
           type: string
-          maxLength: 2000
-          minLength: 0
+        orgGroup:
+          description: The details of the organization responsible for the policy, standard, procedure, or privacy notice.
+          $ref: '#/components/schemas/OrgGroupResponse'
+        owners:
+          description: The details of the user(s) responsible for creating and updating the policy, standard, procedure, or privacy notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerResponse'
+        approvers:
+          description: The details of the user(s) responsible for approving all drafts and changes made to the policy, standard, procedure, or privacy notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/ApproverResponse'
         effectiveDate:
           description: The date on which the policy, standard, procedure, or privacy notice takes effect.
           type: string
@@ -460,48 +480,61 @@ components:
           type: string
           format: date
           example: '2024-12-31'
-        approvers:
-          description: The details of the user(s) responsible for approving all drafts and changes made to the policy, standard, procedure, or privacy notice.
-          type: array
-          items:
-            $ref: '#/components/schemas/ApproverAssignmentRequest'
-        owners:
-          description: The details of the user(s) responsible for creating and updating the policy, standard, procedure, or privacy notice.
-          type: array
-          items:
-            $ref: '#/components/schemas/OwnerAssignmentRequest'
+        id:
+          description: The unique identifier of the policy, standard, procedure, or privacy notice.
+          type: integer
+          format: int64
         defaultLanguageCode:
-          description: The default language of the policy, standard, procedure, or privacy notice.
+          description: 'The default language of the policy, standard, procedure, or privacy notice.
+
+
+            For more information, see [Supported Languages and HTML Language Codes.](https://developer.onetrust.com/onetrust/reference/supported-languages-and-html-language-codes-1)'
           type: string
           pattern: ^[a-z]{2}(-[a-z]{2})?$
-      required:
-      - approvers
-      - defaultLanguageCode
-      - name
-      - orgGroup
-      - owners
-    PolicyVersionSectionResponse:
+        versions:
+          description: The details of the versions of the policy, standard, procedure, or privacy notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyVersionApiResponse'
+    PolicyVersionCreateApiRequest:
       type: object
       properties:
-        name:
-          description: The name of a section within a policy, standard, procedure, or privacy notice.
-          type: string
-        description:
-          description: The description of a section within a policy, standard, procedure, or privacy notice.
-          type: string
-        content:
-          description: The content of a section within a policy, standard, procedure, or privacy notice.
-          type: string
-        sectionType:
-          description: The type of section within a policy, standard, procedure, or privacy notice.
+        policyContentType:
+          description: The method used to build the policy, standard, or procedure.
           type: string
           enum:
-          - PLAIN
-          - TEMPLATE
-        order:
-          description: The numerical order in which a section appears within a policy, standard, procedure, or privacy notice.
+          - PDF
+          - MS_WOPI
+        attachmentId:
+          description: The unique identifier of the file attached to the policy, standard, or procedure. This value is obtained using the [Upload File API](/onetrust/reference/fileupload).
+          type: string
+          format: uuid
+        publishVersionType:
+          description: The version type of the policy, standard, or procedure.
+          type: string
+          enum:
+          - Major
+          - Minor
+        versionSequence:
+          description: The version number of the policy, standard, or procedure. The number should be incremented to the next major or minor version based on the `publishVersionType` parameter.
           type: integer
           format: int32
+        status:
+          description: The publish status for the version of the policy, standard, or procedure.
+          type: string
+          enum:
+          - DRAFT
+          - PUBLISHED
+          - ARCHIVED
+        descriptionOfChanges:
+          description: The description of changes made to the policy, standard, or procedure for the version.
+          type: string
+          maxLength: 10000
+          minLength: 0
+      required:
+      - policyContentType
+      - status
+      - versionSequence
     PolicyVersionApiResponse:
       type: object
       properties:
@@ -553,6 +586,120 @@ components:
           description: The number of minor versions created for a policy, standard, procedure, or privacy notice.
           type: integer
           format: int64
+    OwnerResponse:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of a policy, standard, procedure, or privacy notice owner.
+          type: string
+          format: uuid
+        name:
+          description: The name of a policy, standard, procedure, or privacy notice owner.
+          type: string
+        email:
+          description: The email address of a policy, standard, procedure, or privacy notice owner.
+          type: string
+          format: email
+    ApproverAssignmentRequest:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the policy, standard, procedure, or privacy notice approver. This value is obtained using the [Get List of Users API](/onetrust/reference/getusers).
+          type: string
+          format: uuid
+      required:
+      - id
+    PolicyVersionSectionResponse:
+      type: object
+      properties:
+        name:
+          description: The name of a section within a policy, standard, procedure, or privacy notice.
+          type: string
+        description:
+          description: The description of a section within a policy, standard, procedure, or privacy notice.
+          type: string
+        content:
+          description: The content of a section within a policy, standard, procedure, or privacy notice.
+          type: string
+        sectionType:
+          description: The type of section within a policy, standard, procedure, or privacy notice.
+          type: string
+          enum:
+          - PLAIN
+          - TEMPLATE
+        order:
+          description: The numerical order in which a section appears within a policy, standard, procedure, or privacy notice.
+          type: integer
+          format: int32
+    OwnerAssignmentRequest:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the policy, standard, procedure, or privacy notice owner. This value is obtained using the [Get List of Users API](/onetrust/reference/getusers).
+          type: string
+          format: uuid
+      required:
+      - id
+    PolicyCreationApiRequest:
+      type: object
+      properties:
+        orgGroup:
+          description: The details of the organization responsible for the policy, standard, procedure, or privacy notice.
+          $ref: '#/components/schemas/OrgGroupAssignmentRequest'
+        name:
+          description: The name of the policy, standard, procedure, or privacy notice.
+          type: string
+          maxLength: 200
+          minLength: 1
+        description:
+          description: The description of the policy, standard, procedure, or privacy notice.
+          type: string
+          maxLength: 2000
+          minLength: 0
+        effectiveDate:
+          description: The date on which the policy, standard, procedure, or privacy notice takes effect.
+          type: string
+          format: date
+          example: '2024-12-13'
+        expirationDate:
+          description: The date on which the policy, standard, procedure, or privacy notice expires.
+          type: string
+          format: date
+          example: '2024-12-31'
+        approvers:
+          description: The details of the user(s) responsible for approving all drafts and changes made to the policy, standard, procedure, or privacy notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/ApproverAssignmentRequest'
+        owners:
+          description: The details of the user(s) responsible for creating and updating the policy, standard, procedure, or privacy notice.
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerAssignmentRequest'
+        defaultLanguageCode:
+          description: The default language of the policy, standard, procedure, or privacy notice.
+          type: string
+          pattern: ^[a-z]{2}(-[a-z]{2})?$
+      required:
+      - approvers
+      - defaultLanguageCode
+      - name
+      - orgGroup
+      - owners
+    OrgGroupAssignmentRequest:
+      type: object
+      properties:
+        id:
+          description: The unique identifier of the organization responsible for the policy, standard, procedure, or privacy notice.. This value is obtained using the [Get List of Organizations API](/onetrust/reference/organizationtreestructureusingget).
+          type: string
+          format: uuid
+        name:
+          description: The name of the organization responsible for the policy, standard, procedure, or privacy notice.
+          type: string
+          minLength: 1
+      required:
+      - id
+      - name
     PolicyListApiResponse:
       type: object
       properties:
@@ -608,39 +755,6 @@ components:
           description: The unique identifier of the organization responsible for the policy, standard, procedure, or privacy notice.
           type: string
           format: uuid
-    OrgGroupResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the organization responsible for the policy, standard, procedure, or privacy notice.
-          type: string
-          format: uuid
-        name:
-          description: The name of the organization responsible for the policy, standard, procedure, or privacy notice.
-          type: string
-    ApproverAssignmentRequest:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the policy, standard, procedure, or privacy notice approver. This value is obtained using the [Get List of Users API](/onetrust/reference/getusers).
-          type: string
-          format: uuid
-      required:
-      - id
-    OwnerResponse:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of a policy, standard, procedure, or privacy notice owner.
-          type: string
-          format: uuid
-        name:
-          description: The name of a policy, standard, procedure, or privacy notice owner.
-          type: string
-        email:
-          description: The email address of a policy, standard, procedure, or privacy notice owner.
-          type: string
-          format: email
     ApproverResponse:
       type: object
       properties:
@@ -655,120 +769,6 @@ components:
           description: The email address of a policy, standard, procedure, or privacy notice approver.
           type: string
           format: email
-    OwnerAssignmentRequest:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the policy, standard, procedure, or privacy notice owner. This value is obtained using the [Get List of Users API](/onetrust/reference/getusers).
-          type: string
-          format: uuid
-      required:
-      - id
-    PolicyApiResponse:
-      type: object
-      properties:
-        guid:
-          description: The unique identifier of the policy, standard, procedure, or privacy notice.
-          type: string
-          format: uuid
-        name:
-          description: The name of the policy, standard, procedure, or privacy notice.
-          type: string
-        description:
-          description: The description of the policy, standard, procedure, or privacy notice.
-          type: string
-        orgGroup:
-          description: The details of the organization responsible for the policy, standard, procedure, or privacy notice.
-          $ref: '#/components/schemas/OrgGroupResponse'
-        owners:
-          description: The details of the user(s) responsible for creating and updating the policy, standard, procedure, or privacy notice.
-          type: array
-          items:
-            $ref: '#/components/schemas/OwnerResponse'
-        approvers:
-          description: The details of the user(s) responsible for approving all drafts and changes made to the policy, standard, procedure, or privacy notice.
-          type: array
-          items:
-            $ref: '#/components/schemas/ApproverResponse'
-        effectiveDate:
-          description: The date on which the policy, standard, procedure, or privacy notice takes effect.
-          type: string
-          format: date
-          example: '2024-12-13'
-        expirationDate:
-          description: The date on which the policy, standard, procedure, or privacy notice expires.
-          type: string
-          format: date
-          example: '2024-12-31'
-        id:
-          description: The unique identifier of the policy, standard, procedure, or privacy notice.
-          type: integer
-          format: int64
-        defaultLanguageCode:
-          description: 'The default language of the policy, standard, procedure, or privacy notice.
-
-
-            For more information, see [Supported Languages and HTML Language Codes.](https://developer.onetrust.com/onetrust/reference/supported-languages-and-html-language-codes-1)'
-          type: string
-          pattern: ^[a-z]{2}(-[a-z]{2})?$
-        versions:
-          description: The details of the versions of the policy, standard, procedure, or privacy notice.
-          type: array
-          items:
-            $ref: '#/components/schemas/PolicyVersionApiResponse'
-    OrgGroupAssignmentRequest:
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the organization responsible for the policy, standard, procedure, or privacy notice.. This value is obtained using the [Get List of Organizations API](/onetrust/reference/organizationtreestructureusingget).
-          type: string
-          format: uuid
-        name:
-          description: The name of the organization responsible for the policy, standard, procedure, or privacy notice.
-          type: string
-          minLength: 1
-      required:
-      - id
-      - name
-    PolicyVersionCreateApiRequest:
-      type: object
-      properties:
-        policyContentType:
-          description: The method used to build the policy, standard, or procedure.
-          type: string
-          enum:
-          - PDF
-          - MS_WOPI
-        attachmentId:
-          description: The unique identifier of the file attached to the policy, standard, or procedure. This value is obtained using the [Upload File API](/onetrust/reference/fileupload).
-          type: string
-          format: uuid
-        publishVersionType:
-          description: The version type of the policy, standard, or procedure.
-          type: string
-          enum:
-          - Major
-          - Minor
-        versionSequence:
-          description: The version number of the policy, standard, or procedure. The number should be incremented to the next major or minor version based on the `publishVersionType` parameter.
-          type: integer
-          format: int32
-        status:
-          description: The publish status for the version of the policy, standard, or procedure.
-          type: string
-          enum:
-          - DRAFT
-          - PUBLISHED
-          - ARCHIVED
-        descriptionOfChanges:
-          description: The description of changes made to the policy, standard, or procedure for the version.
-          type: string
-          maxLength: 10000
-          minLength: 0
-      required:
-      - policyContentType
-      - status
-      - versionSequence
   securitySchemes:
     OAUTH2:
       type: oauth2

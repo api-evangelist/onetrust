@@ -431,6 +431,31 @@ paths:
         - CONSENT
 components:
   schemas:
+    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_PageMergeDSRequestDto:
       type: object
       properties:
@@ -480,23 +505,6 @@ components:
           type: integer
           format: int32
           example: 20
-    ConsentPreferences-UniversalConsentPreferenceManag_PageableObject:
-      properties:
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: '#/components/schemas/ConsentPreferences-UniversalConsentPreferenceManag_SortObject'
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        paged:
-          type: boolean
-        unpaged:
-          type: boolean
     ConsentPreferences-UniversalConsentPreferenceManag_MergeDSRequestDto:
       type: object
       properties:
@@ -566,14 +574,6 @@ components:
       - mergeCondition
       - mergeRequestId
       - mergeRequestName
-    ConsentPreferences-UniversalConsentPreferenceManag_SortObject:
-      properties:
-        empty:
-          type: boolean
-        sorted:
-          type: boolean
-        unsorted:
-          type: boolean
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2

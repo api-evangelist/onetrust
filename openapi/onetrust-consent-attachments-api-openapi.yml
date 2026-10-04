@@ -385,6 +385,17 @@ paths:
         - CONSENT_READ
 components:
   schemas:
+    DSPreferneceCache_ConsentAttachmentReferencesResponse:
+      type: object
+      properties:
+        identifier:
+          description: Identifier of the data subject
+          type: string
+          example: user@example.com
+        statusMessage:
+          description: Status message describing the result of the operation
+          type: string
+          example: Attachment references deletion Request has been accepted for processing
     DSPreferneceCache_UploadDataDto:
       type: object
       properties:
@@ -410,17 +421,6 @@ components:
           description: Fully qualified name/path of the uploaded file in storage.
           type: string
           example: tenant123/attachments/consent_form.pdf
-    DSPreferneceCache_ConsentAttachmentReferencesResponse:
-      type: object
-      properties:
-        identifier:
-          description: Identifier of the data subject
-          type: string
-          example: user@example.com
-        statusMessage:
-          description: Status message describing the result of the operation
-          type: string
-          example: Attachment references deletion Request has been accepted for processing
   securitySchemes:
     ConsentPreferences-UniversalConsentPreferenceManag_OAUTH2:
       type: oauth2
