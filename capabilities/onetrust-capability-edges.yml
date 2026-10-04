@@ -1,0 +1,642 @@
+slug: onetrust
+provider: OneTrust
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 61
+edges:
+- tag: Carbon Management
+  spec_file: onetrust-carbon-management-api-openapi.yml
+  capability_id: BC-740.20
+  capability_id_l1: BC-740
+  capability_name: Climate & Carbon Management
+  confidence: 0.95
+  evidence: '''APIs to manage emission factors and emission transactions''; ''Create Emission Factor'',
+    ''Create Emission Transaction'''
+  reason: Operations create and list emission factors and emission transactions — carbon footprint accounting,
+    squarely Climate & Carbon Management.
+- tag: Request Queues
+  spec_file: onetrust-request-queues-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.9
+  evidence: '''The Privacy Rights Automation are used to manage, process, and fulfill data subject access
+    requests (DSARs)''; GET /api/datasubject/v2/requestqueues/delete-certificate/{requestRefId} ''Get
+    Deletion Certificate'''
+  reason: Operations create, search, stage-advance and certify deletion of data subject requests — direct
+    realisation of data subject rights handling within privacy and data protection management.
+- tag: User Groups V2
+  spec_file: onetrust-user-groups-v2-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.88
+  evidence: GET /api/access/v2/user-groups/{groupId}/access-levels getAccessLevelsForUserGroupByIdV2 Get
+    User Group Roles
+  reason: Group CRUD plus role/access-level assignment and membership management is explicit identity
+    and access management (authorisation administration).
+- tag: Audits
+  spec_file: onetrust-audits-api-openapi.yml
+  capability_id: BC-140
+  capability_id_l1: BC-140
+  capability_name: Internal Audit Management
+  confidence: 0.85
+  evidence: '''The Audit Management API provides comprehensive REST endpoints for managing enterprise
+    audits, workpapers, and compliance assessments''; operations ''Create Audit'', ''Update Audit Scope'';
+    schemas AuditorInformation, ApproverInformation'
+  reason: 'Clearly enterprise/internal audit management: audit creation, scoping, auditor and approver
+    assignment. L2 left null because the surface spans planning (scope/auditor assignment) and execution
+    without clearly favouring one.'
+- tag: Consent Receipts
+  spec_file: onetrust-consent-receipts-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: '"The Consent Receipts APIs are used to integrate external systems and streamline the flow
+    of consent receipt data"; "Create Identified Consent Receipts"; schemas DsPrivacyNotice, DsPurpose'
+  reason: Creation of consent receipts with privacy-notice and purpose payloads is proof-of-consent record
+    keeping, a core privacy/data-protection compliance capability.
+- tag: Documents
+  spec_file: onetrust-documents-api-openapi.yml
+  capability_id: BC-130.20
+  capability_id_l1: BC-130
+  capability_name: Policy Management
+  confidence: 0.85
+  evidence: '''Create Document'' / ''Create Document Version'' with schemas PolicyCreationApiRequest,
+    PolicyVersionApiResponse, ApproverAssignmentRequest in ''Enterprise Policy Management'''
+  reason: Despite the generic 'Documents' tag, the operationIds (createPolicy, getPublishedPolicyVersion)
+    and schemas are all policy objects with owners and approvers — the policy drafting/approval/publication
+    lifecycle.
+- tag: Purposes
+  spec_file: onetrust-purposes-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: POST /api/consentmanager/v1/purposes 'Create Purpose'; 'Get List of Data Subjects by Purpose';
+    Universal Consent & Preference Management APIs
+  reason: Operations define, version, publish and retire consent purposes linked to data subjects — consent/purpose
+    management under privacy and data protection compliance (GDPR-style lawful basis), not a generic catalogue
+    object.
+- tag: Receipts
+  spec_file: onetrust-receipts-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: GET /api/consentmanager/v1/receipt-list 'Get List of Receipts by Data Subject'; ConsentStringDto
+  reason: Consent receipts evidencing a data subject's consent per purpose — proof-of-consent records
+    are part of privacy and data protection compliance, not financial receipts.
+- tag: Risk Management
+  spec_file: onetrust-risk-management-api-openapi.yml
+  capability_id: BC-120
+  capability_id_l1: BC-120
+  capability_name: Enterprise Risk Management
+  confidence: 0.85
+  evidence: PUT /api/risk/v2/risks/upsert 'Create or Update Risk'; PUT /api/risk/v2/risks/{riskId}/owners
+    'Update Risk Owners'; RiskCategoryInformation
+  reason: CRUD and stewardship of risk register records (owners, categories, approvers, stages) in an
+    IT Risk Management API — clearly enterprise risk management; evidence does not pin a single sub-capability.
+- tag: Subtasks
+  spec_file: onetrust-subtasks-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: '''The Privacy Rights Automation are used to manage, process, and fulfill data subject access
+    requests (DSARs), including request creation, subtask management''; PUT /api/datasubject/v2/subtasks/{subtaskID}/complete
+    ''Complete Subtask'''
+  reason: Subtasks are the work items used to fulfil data subject access requests, directly realising
+    data subject rights handling under privacy regulation.
+- tag: Training
+  spec_file: onetrust-training-api-openapi.yml
+  capability_id: BC-300.40
+  capability_id_l1: BC-300
+  capability_name: Learning & Development Management
+  confidence: 0.85
+  evidence: POST /v2/enrollments enrollUsersToCourseUsingPost Enroll Users to Course
+  reason: Course catalogue, user enrolment, enrolment progress and unenrolment are learning-management
+    operations, realising Learning & Development Management regardless of the compliance-training context.
+- tag: Transactions
+  spec_file: onetrust-transactions-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: PUT /api/consentmanager/v1/transactions/withdraw/fordatasubject Withdraw Consent on Behalf
+    of a Data Subject
+  reason: Consent withdrawal on behalf of a data subject is squarely privacy and data protection compliance
+    (consent and data-subject rights), not financial transactions.
+- tag: Users V2
+  spec_file: onetrust-users-v2-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: '"Get User Roles", "Add User Role", "Remove User Role" on /api/access/v2/users/{userId}/access-levels
+    plus SCIM /api/scim/v2/Users CRUD'
+  reason: Operations create users and grant/revoke access levels (roles) — plainly user identity and access
+    administration rather than any HR or customer capability.
+- tag: Verification Methods
+  spec_file: onetrust-verification-methods-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.85
+  evidence: '"Privacy Rights Automation are used to manage, process, and fulfill data subject access requests
+    (DSARs), including ... verification methods"'
+  reason: Verification methods are part of identity verification within DSAR fulfilment — squarely data
+    subject rights handling under privacy and data protection management.
+- tag: Consent Groups
+  spec_file: onetrust-consent-groups-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.82
+  evidence: '"Universal Consent & Preference Management APIs"; operations "Create Consent Group", "Add
+    Data Subjects to Parent Consent Group", "Add Purpose Rules to Consent Group"'
+  reason: Operations manage consent groups, data subjects and lawful-basis purpose rules — this is consent/preference
+    administration for privacy compliance, which maps to Privacy & Data Protection Management rather than
+    any marketing or CRM capability.
+- tag: DROP Management
+  spec_file: onetrust-drop-management-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.82
+  evidence: '"used to manage, process, and fulfill data subject access requests (DSARs)"; POST /api/drop-manager/v2/drop/{dropId}/request
+    "Create Data Subject Request for DROP Record"'
+  reason: Operations create and update data subject request records, which is the data-subject-rights
+    element of Privacy & Data Protection Management.
+- tag: Data Subject Access Request (DSAR)
+  spec_file: onetrust-data-subject-access-request-dsar-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.82
+  evidence: POST /cfw/cmp/v1/dsar  "Submit Global Opt-Out Request"
+  reason: Submission of a data-subject/opt-out request is squarely privacy & data protection (data subject
+    rights) handling, exposed via the consent management platform.
+- tag: User Groups
+  spec_file: onetrust-user-groups-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.82
+  evidence: The Access Management APIs enable you to programmatically control user access, manage organizational
+    hierarchies
+  reason: User group lifecycle and membership administration within an access-management module is Identity
+    & Access Management.
+- tag: Cookies
+  spec_file: onetrust-cookies-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.8
+  evidence: POST /api/cmp/v1/cookies/categorized "Get Categorized Cookies"; PUT /api/cmp/v1/webscans/{scanId}/recategorize
+    "Recategorize Cookies"
+  reason: Cookie inventory, categorisation and website scan reporting within the Cookie Consent/CMP product
+    serve cookie-consent compliance, i.e. privacy and data protection management.
+- tag: Data Subjects V4
+  spec_file: onetrust-data-subjects-v4-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.8
+  evidence: '"Delete Data Subject", "Get List of All Purpose Details by Data Subject"'
+  reason: Data-subject consent purpose retrieval and erasure operations are privacy & data protection
+    (consent and data-subject rights) functions.
+- tag: Metric Details
+  spec_file: onetrust-metric-details-api-openapi.yml
+  capability_id: BC-740.10
+  capability_id_l1: BC-740
+  capability_name: ESG Strategy & Reporting Management
+  confidence: 0.8
+  evidence: openapi title "ESG Program Reporting & Disclosures Metric Details API"; POST /v1/metrics/metric-details
+    fetchMetricsDetails Get Metric Details; schema MetricDataAggregateResponseDetails, ReportingPeriodDateOption
+  reason: Operations fetch aggregated ESG metric data over reporting periods, which supports sustainability/ESG
+    disclosure reporting. Mapped to ESG Strategy & Reporting Management; slight uncertainty as it is a
+    single read endpoint.
+- tag: Purposes V2
+  spec_file: onetrust-purposes-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.8
+  evidence: GET /api/consentmanager/v2/purposes 'Get List of Purpose Versions'; PurposeDetailDtoV2
+  reason: Read-side v2 of the same consent-purpose registry within Universal Consent & Preference Management;
+    realises privacy/consent data protection management.
+- tag: Receipts V2
+  spec_file: onetrust-receipts-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.8
+  evidence: POST /api/consent/v2/receipts 'Get List of Receipts'; ConsentAPI_ReceiptInformationDetailDto,
+    ConsentAPI_ConsentString
+  reason: Consent receipt retrieval (ConsentAPI schemas, consent strings, data-subject geolocation) —
+    privacy consent evidence, homograph with financial receipts avoided.
+- tag: Risks
+  spec_file: onetrust-risks-api-openapi.yml
+  capability_id: BC-120.20
+  capability_id_l1: BC-120
+  capability_name: Risk Identification & Assessment
+  confidence: 0.8
+  evidence: POST /api/risk/v2/risks 'Create Risk'; GET /api/risk/v2/risk-settings/matrix 'Get Risk Matrix
+    Configuration'; 'Get List of Risk Categories'
+  reason: Operations create, score (risk matrix / standard score settings), categorise and link risks
+    to entities — plainly risk identification, assessment and scoring. Some ambiguity between assessment
+    and framework sub-capabilities, hence 0.8.
+- tag: Terms
+  spec_file: onetrust-terms-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.8
+  evidence: enabling users to create, retrieve, and organize business glossaries, terms, and tags for
+    effective data classification and metadata management
+  reason: Business glossary term management in a Data Catalog is core data governance (stewardship, taxonomy,
+    metadata standards), mapping to Information & Data Management / Data Governance.
+- tag: Vulnerabilities
+  spec_file: onetrust-vulnerabilities-api-openapi.yml
+  capability_id: BC-620.40
+  capability_id_l1: BC-620
+  capability_name: Vulnerability Management
+  confidence: 0.8
+  evidence: '"The IT Risk Management API provides ... endpoints for managing enterprise security controls,
+    threats, vulnerabilities"; "Create Vulnerability", "Get List of Vulnerabilities"'
+  reason: CRUD over a vulnerability register tied to security controls and frameworks realises vulnerability
+    management; it is a GRC register rather than scanner tooling, but the capability named is still vulnerability
+    management.
+- tag: Workpapers
+  spec_file: onetrust-workpapers-api-openapi.yml
+  capability_id: BC-140.20
+  capability_id_l1: BC-140
+  capability_name: Audit Execution Management
+  confidence: 0.8
+  evidence: '"The Audit Management API provides ... endpoints for managing enterprise audits, workpapers,
+    and compliance assessments"; "Get Workpaper Control Details"'
+  reason: Workpapers are audit fieldwork/evidence artefacts with control details and results, which is
+    internal audit execution.
+- tag: Applications
+  spec_file: onetrust-applications-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: The Cookie Consent APIs are used to integrate external systems and streamline the flow of
+    data with Cookie Consent in the OneTrust Platform ... GET /api/cmp/v1/applications/{id}/scans/{scanId}/privacy-manifest
+    getAppPrivacyManifest
+  reason: Despite the generic 'Applications' tag, the operations register apps for cookie/SDK consent
+    scanning and retrieve privacy manifests and SDK disclosures — privacy and data-protection compliance
+    work, not application portfolio management.
+- tag: Data Assets
+  spec_file: onetrust-data-assets-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.78
+  evidence: '"Create Data Asset", "Create Term Associations"; "organize business glossaries, terms, and
+    tags for effective data classification"'
+  reason: Full CRUD over catalogued data assets plus glossary/tag association is the data cataloguing
+    and stewardship core of Data Governance Management.
+- tag: Data Subjects
+  spec_file: onetrust-data-subjects-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: '"Get List of Purposes for a Data Subject"; schema DataSubjectProfilePurposeDto-style "PurposeInformation"'
+  reason: Data-subject profiles with consent purposes and data elements are the record-keeping backbone
+    of privacy consent compliance.
+- tag: Data Subjects V2
+  spec_file: onetrust-data-subjects-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: '"Delete Purposes from Data Subject", "Delete Data Subjects"'
+  reason: Deletion of data subjects and their consent purposes implements data-subject rights and consent
+    lifecycle under privacy & data protection management.
+- tag: Log Consent
+  spec_file: onetrust-log-consent-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: POST /cfw/cmp/v1/save-log-consent  post_LogConsent  Log Consent — "server-based APIs that
+    will act as a medium between the OT hosted server ... and the client-side SDK" (Consent Management
+    Platform (CMP))
+  reason: The operation records an end-user's consent decision via the consent management platform, which
+    is the execution of privacy/data-protection obligations (consent capture and proof). Mapped to Privacy
+    & Data Protection Management; some residual doubt only because the single endpoint is a write-through
+    from an SDK.
+- tag: Targeted Data Discovery
+  spec_file: onetrust-targeted-data-discovery-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: POST /api/datasubject/v2/datadiscovery/requestqueues/{requestQueueRefId} 'Add Targeted Data
+    Discovery Results Summary to Request'
+  reason: Discovery results are attached to data subject request queues within the DSR automation API,
+    serving fulfilment of data subject access rights — privacy and data protection management.
+- tag: Transactions V2
+  spec_file: onetrust-transactions-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.78
+  evidence: POST /api/consent/v2/transactions getTransactionsUsingPOST Get List of Transactions, schemas
+    ConsentAPI_PreferenceDto, ConsentAPI_PrivacyNoticeDto
+  reason: '''Transactions'' here are consent/preference records with privacy notices — consent record
+    retrieval under Universal Consent & Preference Management, i.e. privacy compliance evidence, not payments.'
+- tag: Collection Points
+  spec_file: onetrust-collection-points-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.75
+  evidence: '''Create Collection Point'', ''Get Collection Point Token''; schemas PurposeDto, PrivacyNoticeVersionDtoV2,
+    PreferenceCenterSummaryDto under ''Universal Consent & Preference Management'''
+  reason: Manages consent collection points with processing purposes and privacy notices — core consent/privacy
+    compliance machinery (data subject consent capture), mapping to Privacy & Data Protection Management.
+- tag: Collection Points V2
+  spec_file: onetrust-collection-points-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.75
+  evidence: '''Get List of Collection Points'', ''Create New Collection Point Version''; schemas PurposeDetailDtoV2,
+    PrivacyNoticeVersionDtoV2'
+  reason: V2 of the consent collection point surface, including versioning of collection points, purposes
+    and privacy notices — consent capture for privacy compliance.
+- tag: Data Subjects V3
+  spec_file: onetrust-data-subjects-v3-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.75
+  evidence: GET /rest/api/preferences/v3/datasubject-profiles  "Get List of Data Subjects"
+  reason: Read surface over data-subject consent/preference profiles within the privacy consent platform.
+- tag: Glossaries
+  spec_file: onetrust-glossaries-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.75
+  evidence: '"managing data governance assets within Data Catalog, enabling users to create, retrieve,
+    and organize business glossaries, terms, and tags for effective data classification and metadata management"'
+  reason: Business glossary/terms/tags in a data catalog are classic data governance artefacts (ownership,
+    standards, vocabulary). Data Governance Management is the best fit; taxonomy/knowledge management
+    is a weaker alternative reading.
+- tag: Preference Centers
+  spec_file: onetrust-preference-centers-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.75
+  evidence: DELETE .../datasubjects/preferences withdrawPreferencesApiUsingDELETE Withdraw Data Subject's
+    Consent for All Purposes in a Preference Center
+  reason: Operations read, update and withdraw a data subject's consent preferences by purpose — direct
+    realisation of consent management and data-subject rights under privacy regulation.
+- tag: Resolutions
+  spec_file: onetrust-resolutions-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.75
+  evidence: GET /api/datasubject/v2/resolutions 'Get List of Resolutions'; RequestResolutionV2Dto; description
+    mentions 'resolution codes'
+  reason: Configuration of resolution codes used to close data subject requests in the DSR automation
+    module; supports privacy/data-subject rights fulfilment, though it is a configuration list (hence
+    moderate confidence).
+- tag: Risk Relationships
+  spec_file: onetrust-risk-relationships-api-openapi.yml
+  capability_id: BC-120
+  capability_id_l1: BC-120
+  capability_name: Enterprise Risk Management
+  confidence: 0.75
+  evidence: POST /api/risk/v2/risks/{riskId}/control-implementations 'Add Controls to Risk'; 'Add Threat
+    to Risk'; 'Add Vulnerabilities to Risk'
+  reason: Associates controls, threats and vulnerabilities with a risk record — risk assessment/treatment
+    linkage in an enterprise IT risk register; sub-capability ambiguous between identification/assessment
+    and treatment.
+- tag: User Groups V3
+  spec_file: onetrust-user-groups-v3-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: '"Create User Group" / "Delete User Group" via /api/scim/v3/Groups; description: "SCIM 2.0
+    ... automated management of user identities and groups in cloud applications"'
+  reason: SCIM group provisioning endpoints manage identity groups used for access control, which is Identity
+    & Access Management (joiners-movers-leavers / federation). A tenant-identity-federation reading is
+    also possible, hence not maximal confidence.
+- tag: Users V3
+  spec_file: onetrust-users-v3-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.75
+  evidence: '"SCIM 2.0 ... facilitate the automated management of user identities" with "Create User",
+    "Modify User" on /api/scim/v3/Users'
+  reason: SCIM user lifecycle provisioning is identity administration; schemas (UserResource, EnterpriseUser,
+    Manager) are SCIM identity constructs, not employee master data.
+- tag: Assessment Actions
+  spec_file: onetrust-assessment-actions-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.72
+  evidence: POST /api/assessment/v2/assessments Launch Assessment; POST /api/assessment/v2/assessments/{assessmentId}/risks
+    Create Assessment Risk; schema PersonalDataAttributeQuestionResponseDetails
+  reason: Operations execute the privacy assessment (PIA/DPIA) workflow — launch, submit responses, review,
+    reassess — with personal-data attribute schemas, which realises privacy-by-design assessment under
+    Privacy & Data Protection Management. Some ambiguity with generic risk assessment, hence moderate
+    confidence.
+- tag: Assessments
+  spec_file: onetrust-assessments-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.72
+  evidence: GET /api/assessment/v2/assessments/assessment-results Get List of Assessment Results; GET
+    /api/assessment/v2/assessments/{assessmentId}/score-profiles
+  reason: Read/reporting surface over privacy automation assessments — results, score profiles, workflow
+    stages, comments — supporting PIA/DPIA execution and evidencing, i.e. Privacy & Data Protection Management.
+- tag: Data Asset Attributes
+  spec_file: onetrust-data-asset-attributes-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.72
+  evidence: '"Get List of Data Asset Attributes"; description: "managing data governance assets within
+    Data Catalog ... for effective data classification and metadata management"'
+  reason: Operations read data-catalog attribute metadata definitions used for classification/governance
+    of data assets — an information & data governance capability, not a privacy-consent one.
+- tag: Data Asset Management
+  spec_file: onetrust-data-asset-management-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.72
+  evidence: '"Delete Multiple Data Asset Term Associations" / "Delete Multiple Data Asset Tag Associations"'
+  reason: Associating/dissociating glossary terms and tags with catalogued data assets is data governance
+    stewardship (taxonomy, classification) over the data estate.
+- tag: Document Attachments
+  spec_file: onetrust-document-attachments-api-openapi.yml
+  capability_id: BC-130.20
+  capability_id_l1: BC-130
+  capability_name: Policy Management
+  confidence: 0.72
+  evidence: POST /v1/{complianceType}/{policyId}/documents  addDocumentToPolicy  'Add Document Attachments'
+  reason: The operation attaches supporting documents to a policy inside 'Enterprise Policy Management',
+    so it serves the policy lifecycle. It is a single attachment endpoint, which keeps confidence moderate.
+- tag: Scans
+  spec_file: onetrust-scans-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.72
+  evidence: POST /api/cmp/v1/webscans 'Scan Websites'; GET .../scandelta 'Get List of Added or Removed
+    Cookies'; 'The Cookie Consent APIs are used to integrate external systems... with Cookie Consent in
+    the OneTrust Platform'
+  reason: Website scanning to inventory cookies and trackers underpins cookie-consent compliance (GDPR/ePrivacy),
+    which is privacy and data protection management rather than generic web monitoring.
+- tag: Controls
+  spec_file: onetrust-controls-api-openapi.yml
+  capability_id: BC-620.10
+  capability_id_l1: BC-620
+  capability_name: Security Strategy & Governance Management
+  confidence: 0.7
+  evidence: POST /api/controls/v1/controls "Create Control"; "managing enterprise security controls, threats,
+    vulnerabilities"
+  reason: CRUD over the enterprise security control library is security governance/GRC control framework
+    management.
+- tag: Data Subject Groups
+  spec_file: onetrust-data-subject-groups-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.7
+  evidence: '"Create Data Subject Group"; "Universal Consent & Preference Management APIs ... in the OneTrust
+    Platform"'
+  reason: Manages linked data-subject identity groups inside consent & preference management, i.e. privacy/GDPR
+    consent record administration rather than marketing segmentation.
+- tag: Data Subject Groups V4
+  spec_file: onetrust-data-subject-groups-v4-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.7
+  evidence: '"Get List of Data Subject Group Associations by Data Subject" under /rest/api/consent/v4/linkedidentitygroups'
+  reason: Same consent-platform data-subject grouping surface (v4), supporting privacy & data protection
+    consent administration.
+- tag: Domain Data
+  spec_file: onetrust-domain-data-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.7
+  evidence: '''Use this API to retrieve all templates, consent model, and vendor list data for a specific
+    Website Domain by a user’s geolocation.'' with schemas ConsentIntegration, IabData'
+  reason: This serves cookie-consent banner configuration (consent model, IAB vendor list, geolocation
+    rules) — a privacy/data-protection compliance mechanism, not web/marketing content management.
+- tag: Groups V2
+  spec_file: onetrust-groups-v2-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: '"System for Cross-Domain Identity Management (SCIM) is an open specification to help facilitate
+    the automated management of user identities and groups in cloud applications"; GET /api/scim/v2/Groups,
+    PATCH "Modify Group"'
+  reason: SCIM group provisioning is identity and access management (joiner-mover-leaver group membership
+    sync). Ambiguity exists between generic IAM and the SaaS-specific Tenant Identity Federation capability;
+    IAM chosen as the operations are plain SCIM group CRUD.
+- tag: Organizations
+  spec_file: onetrust-organizations-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.7
+  evidence: The Access Management APIs enable you to programmatically control user access, manage organizational
+    hierarchies, and monitor authentication activities; organizationTreeStructureUsingGET Get List of
+    Organizations
+  reason: Organizations here are org-hierarchy units within the Access Management (user access / authentication)
+    surface, which is the access-scoping dimension of identity and access management rather than legal-entity
+    or HR structure.
+- tag: Results Summary
+  spec_file: onetrust-results-summary-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.7
+  evidence: POST /api/datasubject/v2/requestqueues/results-summary/share/{requestQueueRefId} 'Share Results
+    Summary'
+  reason: Sharing the results package (PDF/CSV) back for a data subject request queue — part of DSR fulfilment
+    under privacy and data protection management; single narrow operation so confidence is moderate.
+- tag: Risk Actions
+  spec_file: onetrust-risk-actions-api-openapi.yml
+  capability_id: BC-120.30
+  capability_id_l1: BC-120
+  capability_name: Risk Treatment Management
+  confidence: 0.7
+  evidence: PUT /api/risk/v2/risks/{riskId}/grant-exception 'Grant Risk Exception'; 'Approve Risk'; RiskGrantExceptionRequest
+  reason: Workflow actions on risk records — approval, exception request/grant, reopen, send-back — i.e.
+    risk treatment and acceptance decisions within enterprise/IT risk management. L2 treatment chosen
+    because exceptions/acceptance dominate, with some ambiguity versus risk monitoring.
+- tag: Risk Templates
+  spec_file: onetrust-risk-templates-api-openapi.yml
+  capability_id: BC-120
+  capability_id_l1: BC-120
+  capability_name: Enterprise Risk Management
+  confidence: 0.7
+  evidence: GET /api/risk-template/v1/templates/{riskTemplateId} 'Get Risk Template'; schemas TechRiskCompliance-RiskTemplate_RiskLevelDetails,
+    _RiskCategoryInformation, _ThreatInformation
+  reason: Retrieves reusable risk templates carrying risk categories, levels, threats and controls — the
+    taxonomy/framework scaffolding of enterprise (IT) risk management. L1 only, since a single read endpoint
+    does not clearly name whether it serves appetite/framework definition or assessment execution.
+- tag: Tags
+  spec_file: onetrust-tags-api-openapi.yml
+  capability_id: BC-610.10
+  capability_id_l1: BC-610
+  capability_name: Data Governance Management
+  confidence: 0.7
+  evidence: '''managing data governance assets within Data Catalog, enabling users to create, retrieve,
+    and organize business glossaries, terms, and tags for effective data classification and metadata management'';
+    POST /api/glossary/v2/tags ''Create Tag'''
+  reason: Catalog tags linked to glossary terms are classification/metadata artefacts for data governance
+    stewardship. Mapped to data governance rather than master data, though the glossary angle leaves some
+    ambiguity.
+- tag: Threats
+  spec_file: onetrust-threats-api-openapi.yml
+  capability_id: BC-620
+  capability_id_l1: BC-620
+  capability_name: Cybersecurity Management
+  confidence: 0.7
+  evidence: The IT Risk Management API provides comprehensive REST endpoints for managing enterprise security
+    controls, threats, vulnerabilities, and their implementations
+  reason: Threat register CRUD linked to security controls and compliance frameworks — cybersecurity risk/control
+    management. L2 left null as the surface spans security governance, vulnerability and risk assessment
+    without naming one.
+- tag: Websites V2
+  spec_file: onetrust-websites-v2-api-openapi.yml
+  capability_id: BC-130.50
+  capability_id_l1: BC-130
+  capability_name: Privacy & Data Protection Management
+  confidence: 0.7
+  evidence: '"Add Websites to Scan" and "Get List of Websites" under "Consent & Preferences - Cookie Consent"'
+  reason: Website registration for cookie scanning in a cookie-consent product serves privacy/cookie compliance.
+    Operations are thin (two endpoints) so confidence is moderate.

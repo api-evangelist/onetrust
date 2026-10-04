@@ -11823,6 +11823,9 @@ apis:
   - type: Documentation
     url: https://developer.onetrust.com/onetrust/reference/contracts
 common:
+  - type: CapabilityMap
+    url: capabilities/onetrust-capability-edges.yml
+    name: OneTrust Business Capability Map
   - type: Overlay
     url: overlays/onetrust-ai-governance-ai-governance-overlay.yaml
   - type: Overlay
