@@ -71,3 +71,18 @@ metered_signals:
   operationId: getCreditsInformationGET
   path: GET /api/ot-insights/v1/bulk-export-jobs/credits
   detail: The only consumption balance exposed through the API.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: Enterprise (Module-Based)
+    access: enterprise
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - year
