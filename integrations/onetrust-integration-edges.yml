@@ -1,5 +1,35 @@
 generated: '2026-10-14'
 edges:
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/cordova-plugin-onetrust-cmp
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: cordova-plugin-onetrust-cmp
+      version: 202609.2.0
+      released: '2026-10-08'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/cordova-plugin-onetrust-cmp
+      repo_leg: domain:onetrust.com
+      publisher_leg: email:onetrust.com
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
 - partner_name: mParticle
   partner: mparticle
   partner_match: aggregator
@@ -45,41 +75,43 @@ edges:
     builder: Fivetran
   detected_by: sweep-data-integration.py
   first_seen: '2026-10-18'
-- partner_name: npm registry
-  partner: npm
+- partner_name: Cloud Security Alliance STAR Registry
+  partner: null
   partner_match: register
   type: register
-  direction: provider-built
-  category: official SDK (JavaScript/TypeScript)
-  evidence: https://www.npmjs.com/package/cordova-plugin-onetrust-cmp
-  channel: package-registry
-  relationship: distribution-channel
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://cloudsecurityalliance.org/star/registry/onetrust/services/onetrust-platform
+  category: Cloud security assurance
   contract_reference:
-    register: npm registry (public registry JSON)
+    register: CSA STAR Registry (cloudsecurityalliance.org/star/registry)
     spec_file: null
-    language: JavaScript/TypeScript
-    packages:
-    - name: cordova-plugin-onetrust-cmp
-      version: 202609.2.0
-      released: '2026-10-08'
-      released_field: modified
-      lapsed: false
-      page: https://www.npmjs.com/package/cordova-plugin-onetrust-cmp
-      repo_leg: domain:onetrust.com
-      publisher_leg: email:onetrust.com
-      matched_by: domain+name-among-holders
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-official-sdks.py
-    detected: '2026-10-18'
-  detected_by: sweep-official-sdks.py
-  first_seen: '2026-10-18'
+    standard: CSA STAR
+    role: star-level-1
+    registered_name: OneTrust
+    registry_id: onetrust
+    service_url: https://www.onetrust.com/products
+    matched_domain: onetrust.com
+    matched_by: domain+name-among-holders
+    identity_source: the service URL the organisation filed on its STAR listing (no lookup)
+    levels:
+    - STAR Level 1
+    certified_products: []
+    signal_note: STAR Level 1 (CAIQ self-assessment) = participation; certified_products = one entry per STAR Level
+      2 / STAR for AI Level 2 assessment TYPE (third-party certification, attestation, C-STAR, ValidAIted); lapsed
+      = every instance marked (Deprecated) by the registry; service counts never recorded
+    detected_by: sweep-compliance-assurance.py
+    detected: '2026-10-20'
+  detected_by: sweep-compliance-assurance.py
+  first_seen: '2026-10-20'
 method: searched
 checked:
 - https://api.nuget.org/v3
+- https://cloudsecurityalliance.org/star/registry
 - https://crates.io/api/v1
 - https://docs.mparticle.com/integrations/onetrust/event/
+- https://eucoc.cloud/en/public-register/list-of-adherent-services
 - https://fivetran.com/docs-sitemap.xml
 - https://fivetran.com/docs/connectors/partner-built-program
 - https://proxy.golang.org
