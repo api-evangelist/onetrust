@@ -132,3 +132,86 @@
     identity_source: wikidata P856 (labelled provenance step; Kin 2026-10-15 decision 1)
   status: not-a-workflow
   arazzo: null
+- slug: onetrust-cocoapods-trunk
+  label: CocoaPods trunk
+  partner_name: CocoaPods trunk
+  category: iOS SDK (CocoaPods)
+  type: register
+  channel: package-registry
+  evidence: https://cocoapods.org/pods/OneTrust-CMP-Web-XCFramework
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: CocoaPods trunk (cdn.cocoapods.org Specs; github.com/CocoaPods/Specs)
+    spec_file: null
+    role: cocoapods-publisher
+    registered_name: OneTrust, LLC.
+    matched_domain: onetrust.com
+    matched_by: domain+name-among-holders
+    pods:
+    - pod: OneTrust-CMP-Web-XCFramework
+      version: 6.33.0.0-beta2
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.1
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.1-BitcodeDisabled
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.1-BitcodeDisabled-Test
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.1-Test
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.2.1
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.2.1-BitcodeDisabled
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.2.1-BitcodeDisabled-Test
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.2.1-Test
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.4
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.4-BitcodeDisabled
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    - pod: OneTrust-CMP-Web-Xcode11.4-BitcodeDisabled-Test
+      version: 6.7.0.0-beta1
+      homepage: https://www.onetrust.com/
+      deprecated: false
+    signal_note: latest podspec homepage (domain) + authors (name); pods, versions and counts are context
+    detected_by: sweep-mobile-sdk-index.py
+    detected: '2026-10-21'
+  status: not-a-workflow
+  arazzo: null
+- slug: onetrust-google-play-developer-google-play-sdk-index
+  label: Google Play Developer (Google Play SDK Index)
+  partner: google-play
+  partner_name: Google Play Developer (Google Play SDK Index)
+  category: mobile SDK (data-management)
+  type: marketplace
+  marketplace: Google Play SDK Index
+  channel: partner-built
+  evidence: https://play.google.com/sdks/details/com-onetrust-cmp-native-sdk
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
