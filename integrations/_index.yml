@@ -202,19 +202,6 @@
     detected: '2026-10-21'
   status: not-a-workflow
   arazzo: null
-- slug: onetrust-google-play-developer-google-play-sdk-index
-  label: Google Play Developer (Google Play SDK Index)
-  partner: google-play
-  partner_name: Google Play Developer (Google Play SDK Index)
-  category: mobile SDK (data-management)
-  type: marketplace
-  marketplace: Google Play SDK Index
-  channel: partner-built
-  evidence: https://play.google.com/sdks/details/com-onetrust-cmp-native-sdk
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
 - slug: onetrust-tx-ramp
   label: TX-RAMP
   partner_name: TX-RAMP
@@ -256,5 +243,31 @@
       lapsed: false
     detected_by: sweep-tx-ramp-certified-cloud.py
     detected: '2026-10-22'
+  status: not-a-workflow
+  arazzo: null
+- slug: onetrust-google-play-developer-google-play-sdk-index
+  label: Google Play Developer (Google Play SDK Index)
+  partner: google-play
+  partner_name: Google Play Developer (Google Play SDK Index)
+  category: mobile SDK (data-management)
+  type: marketplace
+  marketplace: Google Play SDK Index
+  channel: partner-built
+  evidence: https://play.google.com/sdks/details/com-onetrust-cmp-native-sdk
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: onetrust-adobe-experience-cloud-own
+  label: Adobe Experience Cloud (own)
+  partner: adobe-experience-cloud
+  partner_name: Adobe Experience Cloud (own)
+  category: Adobe Exchange Experience Cloud listing (Experience Platform)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/ec/101610
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
